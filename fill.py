@@ -710,7 +710,8 @@ def fill_page(page, resume, overwrite, company="", role=""):
         t_prev = (time.time(), label)
         if re.fullmatch(r"[a-z]+[A-Z][A-Za-z]*", label or "") and re.search(r"button|menu", label, re.I):
             continue  # Workday chrome like 'utilityMenuButton', not a question
-        loc = target.locator(f'[data-af-id="{f["id"]}"]').first if not f["id"].startswith(("radio:", "yn:")) else None
+        target_el_id = f["ids"][0] if f.get("ids") else f.get("id", "")
+        loc = target.locator(f'[data-af-id="{target_el_id}"]').first if target_el_id else target.locator("body")
         try:
             # ---- resume upload
             if f["type"] == "file":
@@ -900,7 +901,7 @@ def fill_page(page, resume, overwrite, company="", role=""):
                 ans_v = str(ans).strip().lower()
                 if cur_v == ans_v or (len(ans_v) > 2 and cur_v.startswith(ans_v)):
                     val_matches = True
-                elif rule.get("option") and re.search(rule["option"], cur_v, re.I):
+                elif isinstance(rule.get("option"), str) and re.search(rule["option"], cur_v, re.I):
                     val_matches = True
                 if val_matches and f["type"] not in ("yesno", "radio"):
                     continue
@@ -1195,7 +1196,7 @@ def fill_page(page, resume, overwrite, company="", role=""):
                         active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
                 except Exception:
                     pass
-                opt_pat = rule.get("option") or re.escape(str(ans))
+                opt_pat = str(rule["option"]) if isinstance(rule.get("option"), str) and rule["option"] else re.escape(str(ans))
                 # Search visible options across page, strictly excluding closing popups and already-selected item pills
                 try:
                     if active_lb.count() > 0 and active_lb.is_visible(timeout=800):
@@ -1210,7 +1211,7 @@ def fill_page(page, resume, overwrite, company="", role=""):
                     pass
                 clicked = False
                 # Direct check on rule-specified option regex
-                if rule.get("option"):
+                if isinstance(rule.get("option"), str) and rule["option"]:
                     try:
                         pat_re = re.compile(rule["option"], re.I)
                         target_opt = opts.filter(has_text=pat_re).first
@@ -1641,6 +1642,7 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
 
 
 def log_applied(url, company, role, resume, job_url=None):
+    target_url = job_url or url
     path = ROOT / "applications.csv"
     try:
         from tools.file_lock import FileLock
@@ -1655,7 +1657,6 @@ def log_applied(url, company, role, resume, job_url=None):
             cols = [c.lstrip("\ufeff") for c in raw_rows[0].keys()] if raw_rows else []
             rows = [{k.lstrip("\ufeff"): v for k, v in r.items()} for r in raw_rows]
             today = datetime.date.today().isoformat()
-            target_url = job_url or url
             host = re.sub(r"^https?://", "", target_url).split("?")[0][:60]
             hit = None
             for r in rows:
@@ -1703,7 +1704,7 @@ def log_applied(url, company, role, resume, job_url=None):
                     w.writeheader()
                     w.writerows(rows)
                     break
-                except (IOError, PermissionError):
+                except OSError:
                     time.sleep(0.05 * (attempt + 1))
             print(f"Logged as Applied in applications.csv: {hit['Company']} - {hit['Role']}")
         except Exception as e:
@@ -1959,11 +1960,11 @@ def main():
             """
 
         try:
-            ctx = p.chromium.launch_persistent_context(**kw)
+            ctx = p.chromium.launch_persistent_context(**kw)  # type: ignore
         except Exception:
             kw_fallback = dict(kw)
             kw_fallback.pop("channel", None)
-            ctx = p.chromium.launch_persistent_context(**kw_fallback)
+            ctx = p.chromium.launch_persistent_context(**kw_fallback)  # type: ignore
 
         ctx.add_init_script(stealth_js)
         ctx.set_default_timeout(10000)
