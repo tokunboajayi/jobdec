@@ -21,6 +21,9 @@ queue_ranked.txt
 .used_auth_links.txt
 # runtime output written by the pipeline every run
 results.csv
+applications.csv
+tracker.csv
+outreach_log.csv
 unanswered.json
 outcomes_report.md
 outreach_drafts.csv

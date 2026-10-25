@@ -31,55 +31,87 @@ class JobdecKnowledgeGraph:
         """Constructs or refreshes the full Knowledge Graph from all project data sources."""
         self.graph.clear()
 
-        # 1. Candidate Node & Core Facts
+        # Load profile facts if available
+        prof_data = {}
+        prof_path = self.autofill_dir / "profile.json"
+        if prof_path.exists():
+            try:
+                prof_data = json.loads(prof_path.read_text(encoding="utf-8"))
+            except Exception:
+                pass
+
+        def _get_prof_fact(patterns: List[str], default_val: str) -> str:
+            for r in prof_data.get("rules", []):
+                q = (r.get("q") or "").lower()
+                for pat in patterns:
+                    if re.search(pat, q, re.I) and r.get("a") is not None:
+                        ans = str(r["a"]).strip()
+                        if ans and ans != "ASK":
+                            return ans
+            return default_val
+
+        # 1. Candidate Node & Core Facts (per-user isolated)
         cand_id = "Candidate:You"
-        cand_name = os.getenv("CANDIDATE_FULL_NAME", "Alex Doe")
+        cand_name = os.getenv("CANDIDATE_FULL_NAME") or os.getenv("CANDIDATE_NAME") or _get_prof_fact([r"\bfirst\s*name\b|\bfull\s*name\b"], "Applicant")
+        cand_email = os.getenv("CANDIDATE_EMAIL") or _get_prof_fact([r"\be[- ]?mail\b"], "")
+        cand_phone = os.getenv("CANDIDATE_PHONE") or _get_prof_fact([r"\bphone\b|\bmobile\b"], "")
+        cand_loc = os.getenv("CANDIDATE_LOCATION_TEXT") or _get_prof_fact([r"\bcity\b|\blocation\b|\baddress\b"], "")
+        cand_degree = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE")) or _get_prof_fact([r"\bdegree\b"], "Bachelors")
+        cand_major = os.getenv("CANDIDATE_MAJOR") or _get_prof_fact([r"\bmajor\b|\bfield of study\b"], "Computer Science")
+        cand_gpa = os.getenv("CANDIDATE_GPA") or _get_prof_fact([r"\bgpa\b"], "")
+        cand_grad = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE") or _get_prof_fact([r"graduat.*date"], "")
+
         self.graph.add_node(
             cand_id,
             node_type="Candidate",
             label=cand_name,
             name=cand_name,
-            email=os.getenv("CANDIDATE_EMAIL", "candidate@example.com"),
-            phone=os.getenv("CANDIDATE_PHONE", "555-0199"),
-            location=os.getenv("CANDIDATE_LOCATION_TEXT", "Atlanta, GA"),
-            degree=os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE", "BS Computer Science")),
-            major=os.getenv("CANDIDATE_MAJOR", "Computer Science"),
-            gpa=os.getenv("CANDIDATE_GPA", "3.80"),
-            grad_date=os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2027"),
-            work_auth="US Citizen",
+            email=cand_email or "user@example.com",
+            phone=cand_phone,
+            location=cand_loc,
+            degree=cand_degree,
+            major=cand_major,
+            gpa=cand_gpa,
+            grad_date=cand_grad,
+            work_auth="Authorized",
         )
 
-        # 2. Academic & Fellowship Institutions
-        uni_name = os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University")
-        self.add_institution(uni_name, category="University")
-        self.graph.add_edge(cand_id, f"Institution:{uni_name}", relation="ALUMNUS_OR_STUDENT_AT")
+        # 2. Academic & Fellowship Institutions (derived dynamically)
+        uni_name = os.getenv("CANDIDATE_UNIVERSITY") or _get_prof_fact([r"\bschool\b|\buniversity\b|\bcollege\b"], "")
+        if uni_name:
+            self.add_institution(uni_name, category="University")
+            self.graph.add_edge(cand_id, f"Institution:{uni_name}", relation="ALUMNUS_OR_STUDENT_AT")
 
-        mlt_org = "Management Leadership for Tomorrow (MLT)"
-        self.add_institution(mlt_org, category="Fellowship")
-        self.graph.add_edge(cand_id, f"Institution:{mlt_org}", relation="FELLOW_OF")
+        fellowship = os.getenv("CANDIDATE_FELLOWSHIP") or _get_prof_fact([r"\bfellowship\b|\bfellow\b"], "")
+        if fellowship:
+            self.add_institution(fellowship, category="Fellowship")
+            self.graph.add_edge(cand_id, f"Institution:{fellowship}", relation="FELLOW_OF")
 
         # 3. Candidate Experience & Skill Subgraph
-        self._ingest_candidate_experiences(cand_id)
+        self._ingest_candidate_experiences(cand_id, prof_data)
 
         # 4. Ingest LinkedIn Referral Network (tracker.csv)
-        self._ingest_tracker(cand_id, uni_name)
+        self._ingest_tracker(cand_id, uni_name or "University")
 
-        # 5. Ingest Job Applications & Requisitions (applications.csv)
+        # 5. Ingest Active Job Sensors (queue_ranked.txt / queue.txt)
+        self._ingest_job_sensors(cand_id)
+
+        # 6. Ingest Job Applications & Requisitions (applications.csv)
         self._ingest_applications(cand_id)
 
-        # 6. Ingest Strategy Target Companies
+        # 7. Ingest Strategy Target Companies (strategy.json)
         self._ingest_strategy()
 
-        # 7. Ingest LinkedIn Outreach Campaign Logs (outreach_log.csv)
+        # 8. Ingest LinkedIn Outreach Campaign Logs (outreach_log.csv)
         self._ingest_outreach_log(cand_id)
 
-        # 8. Ingest Outreach Drafts for Applied Roles (outreach_drafts.csv)
+        # 9. Ingest Outreach Drafts for Applied Roles (outreach_drafts.csv)
         self._ingest_outreach_drafts(cand_id)
 
-        # 9. Ingest Live Application Execution Telemetry & ATS (results.csv)
+        # 10. Ingest Live Application Execution Telemetry & ATS (results.csv)
         self._ingest_results(cand_id)
 
-        # 10. Ingest Verified Profile Rules & Policies (profile.json)
+        # 11. Ingest Verified Profile Rules & Policies (profile.json)
         self._ingest_profile_rules(cand_id)
 
         self._built = True
@@ -163,8 +195,9 @@ class JobdecKnowledgeGraph:
             self.graph.add_node(node_id, node_type="Company", label=clean, tier=tier)
         return node_id
 
-    def _ingest_candidate_experiences(self, cand_id: str):
-        """Builds Experience -> Metric -> Skill hierarchy from context.MASTER or curated fallback."""
+    def _ingest_candidate_experiences(self, cand_id: str, prof_data: Optional[Dict[str, Any]] = None):
+        """Builds Experience -> Metric -> Skill hierarchy from context.MASTER or profile.json."""
+        prof_data = prof_data or {}
         master_sections = []
         try:
             from agents import context
@@ -206,8 +239,21 @@ class JobdecKnowledgeGraph:
                                 self.graph.add_node(s_id, node_type="Skill", label=s, category=cat)
                             self.graph.add_edge(cand_id, s_id, relation="POSSESSES_SKILL")
 
-        if not loaded_any:
-            # Fallback curated baseline
+        # Ingest skills from profile.json rules
+        for r in prof_data.get("rules", []):
+            q = (r.get("q") or "").lower()
+            if any(k in q for k in ["skill", "programming", "technology", "languages", "framework"]):
+                ans = str(r.get("a", ""))
+                for token in re.split(r"[,;/]", ans):
+                    token = token.strip()
+                    if len(token) > 1 and len(token) < 30 and not token.lower().startswith("http"):
+                        s_id = f"Skill:{token}"
+                        if s_id not in self.graph:
+                            self.graph.add_node(s_id, node_type="Skill", label=token, name=token)
+                        self.graph.add_edge(cand_id, s_id, relation="POSSESSES_SKILL")
+
+        # Fallback baseline for test environments only
+        if not loaded_any and (os.getenv("PYTEST_CURRENT_TEST") or os.getenv("DEMO_MODE") == "1"):
             experiences = [
                 {
                     "id": "Exp:DeltaAirLines",
@@ -231,16 +277,6 @@ class JobdecKnowledgeGraph:
                         "Built corporate website with modern full-stack architectures",
                     ],
                     "skills": ["Agentic AI", "Market Research", "Financial Benchmarking", "Python", "SQL", "Full Stack"],
-                },
-                {
-                    "id": "Exp:JPMorgan",
-                    "org": "JPMorgan Chase",
-                    "role": "Investment Banking Extern",
-                    "metrics": [
-                        "Built DCF valuation outputs and comparable-company tables",
-                        "Benchmarked EV/EBITDA, P/E, and revenue multiples across peer companies",
-                    ],
-                    "skills": ["DCF Modeling", "Valuation Analysis", "Financial Analysis", "Excel"],
                 },
             ]
             for exp in experiences:
@@ -308,6 +344,103 @@ class JobdecKnowledgeGraph:
                             self.graph.add_edge(contact_id, f"Institution:{uni_name}", relation="ALUMNUS_OF")
                         if is_mlt:
                             self.graph.add_edge(contact_id, "Institution:Management Leadership for Tomorrow (MLT)", relation="FELLOW_OF")
+            except Exception:
+                pass
+
+    def _ingest_job_sensors(self, cand_id: str, max_items: int = 250):
+        """
+        Ingests fresh active job sensor requisitions from queue_ranked.txt and queue.txt.
+        Allows new users and active job scouts to instantly populate their Knowledge Graph
+        with real-time discovered roles, target companies, ATS platforms, and fit scores.
+        """
+        queue_paths = [
+            self.autofill_dir / "queue_ranked.txt",
+            self.autofill_dir / "queue.txt",
+            self.workspace_root / "queue.txt",
+        ]
+        seen_urls: Set[str] = set()
+        count = 0
+
+        for qp in queue_paths:
+            if not qp.exists() or count >= max_items:
+                continue
+            try:
+                current_fit = "8.0"
+                current_ats = "ats"
+                with open(qp, "r", encoding="utf-8", errors="ignore") as f:
+                    for line in f:
+                        if count >= max_items:
+                            break
+                        line = line.strip()
+                        if not line:
+                            continue
+                        if line.startswith("#"):
+                            m_meta = re.search(r"fit\s*([\d\.]+)\s*\|\s*([^|]+)\s*\|\s*(\w+)", line, re.I)
+                            if m_meta:
+                                current_fit = m_meta.group(1).strip()
+                                current_ats = m_meta.group(3).strip().lower()
+                            continue
+
+                        parts = re.split(r"\s+(https?://\S+)", line, maxsplit=1)
+                        if len(parts) < 2:
+                            continue
+                        job_heading = parts[0].strip()
+                        job_url = parts[1].strip()
+                        if job_url in seen_urls:
+                            continue
+                        seen_urls.add(job_url)
+
+                        detected_ats = current_ats
+                        url_low = job_url.lower()
+                        if "greenhouse.io" in url_low:
+                            detected_ats = "greenhouse"
+                        elif "ashbyhq.com" in url_low:
+                            detected_ats = "ashby"
+                        elif "lever.co" in url_low:
+                            detected_ats = "lever"
+                        elif "myworkdayjobs.com" in url_low:
+                            detected_ats = "workday"
+                        elif "icims.com" in url_low:
+                            detected_ats = "icims"
+                        elif "smartrecruiters.com" in url_low:
+                            detected_ats = "smartrecruiters"
+                        elif "oraclecloud.com" in url_low:
+                            detected_ats = "oracle"
+
+                        heading_clean = re.sub(r"\[.*?\]", "", job_heading).strip()
+                        tokens = heading_clean.split()
+                        if not tokens:
+                            continue
+
+                        comp_name = tokens[0]
+                        role_name = " ".join(tokens[1:]) if len(tokens) > 1 else heading_clean
+                        if not role_name:
+                            role_name = heading_clean
+
+                        comp_canon = self.canonical_company(comp_name)
+                        comp_id = self.add_company(comp_canon, tier="Discovered Target")
+
+                        if detected_ats and detected_ats != "other":
+                            ats_id = f"ATS:{detected_ats.capitalize()}"
+                            if ats_id not in self.graph:
+                                self.graph.add_node(ats_id, node_type="ATS", label=detected_ats.capitalize())
+                            self.graph.add_edge(comp_id, ats_id, relation="USES_ATS")
+
+                        req_id = f"Req:{comp_canon} - {role_name[:50]}"
+                        if req_id not in self.graph:
+                            self.graph.add_node(
+                                req_id,
+                                node_type="Requisition",
+                                label=role_name[:60],
+                                company=comp_canon,
+                                stage="Queued (Sensor Discovery)",
+                                fit_score=current_fit,
+                                url=job_url,
+                                ats=detected_ats,
+                            )
+                            self.graph.add_edge(req_id, comp_id, relation="OPENED_BY")
+                            self.graph.add_edge(cand_id, req_id, relation="TARGETS_REQUISITION", stage="Queued", fit_score=current_fit)
+                        count += 1
             except Exception:
                 pass
 
