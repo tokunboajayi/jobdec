@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>React-select style combobox</title>
+<style>.menu{border:1px solid #999}.menu div{padding:4px}</style></head>
+<body>
+<form>
+  <label for="grad">Are you graduating in December 2027 or May/June 2028?*</label>
+  <div class="select__control">
+    <div class="select__single-value" id="grad_value"></div>
+    <input id="grad" class="select__input" role="combobox" aria-expanded="false" aria-required="true" required autocomplete="off">
+  </div>
+  <div id="grad_menu"></div>
+</form>
+<script>
+  // Like react-select in Greenhouse: clicking does not open the menu; typing filters; ArrowDown opens the full list.
+  const OPTIONS = ["December 2027", "May/June 2028"];
+  const input = document.getElementById("grad"), menu = document.getElementById("grad_menu"), val = document.getElementById("grad_value");
+  function render(filter) {
+    menu.innerHTML = "";
+    const list = OPTIONS.filter(o => !filter || o.toLowerCase().includes(filter.toLowerCase()));
+    if (!list.length) { menu.textContent = "0 results available for search term " + filter; return; }
+    menu.className = "menu";
+    for (const o of list) {
+      const d = document.createElement("div");
+      d.setAttribute("role", "option"); d.className = "select__option"; d.textContent = o;
+      d.addEventListener("click", () => { val.textContent = o; input.value = ""; menu.innerHTML = ""; input.dataset.chosen = o; });
+      menu.appendChild(d);
+    }
+    input.setAttribute("aria-expanded", "true");
+  }
+  input.addEventListener("input", () => render(input.value));
+  input.addEventListener("keydown", e => { if (e.key === "ArrowDown" && !menu.querySelector("[role=option]")) render(input.value); });
+</script>
+</body></html>

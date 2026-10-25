@@ -1,0 +1,2561 @@
+{
+  "_readme": "Rules are checked top to bottom; first match wins. q = regex on the question label. a = answer (null = skip, \"ASK\" = you must fill it in). option = regex used to pick from dropdown/radio choices. Edit any ASK line with your real answer.",
+  "default_resume": "resumes/resume.pdf",
+  "rules": [
+    {
+      "q": "What\\ is\\ your\\ expected\\ graduation\\ date\\ for\\ your\\ cur",
+      "a": "December 2027",
+      "src": "supervisor_validation",
+      "added": "2026-10-20"
+    },
+    {
+      "q": "Date",
+      "a": "10/18/2026",
+      "src": "supervisor_validation",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "indicate your age|your age below|are you at least 18|^age\\b",
+      "a": "I am at least 18 years of age",
+      "option": "at least 18|18 years or older|18 or older|^18\\b|Yes",
+      "src": "candidate_verified",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "Will\\ you\\ continue\\ to\\ be\\ enrolled\\ in\\ an\\ undergradua",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "enter your home address.*(?:address line [23]|apt|suite)",
+      "a": null
+    },
+    {
+      "q": "enter your home address.*(?:to ensure accurate)",
+      "a": null
+    },
+    {
+      "q": "enter your home address.*(?:zip|postal)",
+      "a": "30303"
+    },
+    {
+      "q": "enter your home address.*(?:city)",
+      "a": "Atlanta"
+    },
+    {
+      "q": "enter your home address.*(?:state)",
+      "a": "Georgia",
+      "option": "^Georgia\\b|^GA\\b"
+    },
+    {
+      "q": "enter your home address.*(?:county)|^county\\b",
+      "a": "Fulton",
+      "option": "^Fulton\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "enter your home address.*(?:country)",
+      "a": "United States of America",
+      "option": "^United States|^USA"
+    },
+    {
+      "q": "enter your home address.*(?:full street address|street address|address line 1)|^address\\b|full street address|street address|address line 1",
+      "a": "123 Innovation Way",
+      "src": "candidate_verified",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "^date$|^today'?s? date$|^signature date$|^date of signature$",
+      "a": "TODAY",
+      "src": "supervisor_validation",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "(current )?(year in school|class standing|academic (year|level|standing)|school year|year of study)|what year .{0,25}in (school|college)",
+      "a": "Junior",
+      "src": "site_fixer",
+      "added": "2026-10-18",
+      "option": "Junior|Third|3rd"
+    },
+    {
+      "q": "what is your (?:cumulative )?gpa|current gpa|undergraduate gpa|^gpa\\b",
+      "a": "3.35",
+      "option": "3\\.49\\s*-\\s*3\\.0|3\\.0\\s*-\\s*3\\.49|3\\.25\\s*-\\s*3\\.5|3\\.0\\s*-\\s*3\\.5|3\\.0\\s*to\\s*3\\.5|3\\.0\\s*\\+|3\\.0\\s*or\\s*higher|3\\.0\\s*and\\s*above|3\\.0\\s*-\\s*3\\.9|3\\.0|3\\.35|3\\.3",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^graduation date$|^expected graduation date$|^anticipated graduation date$",
+      "a": "05/01/2028",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "requires being in the office|in the office.*days|comfortable working in.*office|on[- ]site.*requirement|hybrid.*requirement|in[- ]office.*days",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^date$|^today'?s? date$|^signature date$|^date of signature$",
+      "a": "TODAY",
+      "src": "supervisor_validation",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "desired start date|available start date|earliest start date|^start date$",
+      "a": "05/17/2027",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "able to meet this requirement|meet this requirement|must be in .* for summer|willing.*relocate|open to relocate",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^link$|^url$|^website$|^portfolio$|^personal\\s*website$|^other\\s*website$",
+      "a": "https://www.linkedin.com/in/yourprofile/",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "current immigration status|immigration status.*dropdown|select your.*immigration status",
+      "a": "U.S. Citizen / Permanent Resident",
+      "option": "^(?:U\\.?S\\.?\\s*Citizen|Citizen|Permanent Resident|US Citizen)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "how do you use ai.*day[- ]to[- ]day|ai in your day[- ]to[- ]day|underappreciated benefits.*ai tools",
+      "a": "I use AI tools like Claude, Cursor, and ChatGPT daily to accelerate Python and SQL development, automate data cleaning workflows, and build agentic web automation pipelines. A key benefit is rapidly prototyping solutions, while a primary challenge is managing context boundaries and verifying nuanced outputs.",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:on a )?scale of 1[\\s\\-\u2013to]+10|rate your(?:self)?.*1[\\s\\-\u2013to]+10|1[\\s\\-\u2013to]+10",
+      "a": "10",
+      "option": "^(?:10|9)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "primarily phone[- ]based|spent on the phone|comfortable.*(?:on the )?phone",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "where do you plan on working from.*payroll|working from.*payroll tax",
+      "a": "Atlanta, GA",
+      "option": "^(?:Atlanta|Georgia|GA|Remote)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "first six weeks.*include.*training|paid.*full-time training",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "meaningful impact for a customer|impact for a customer or client|customer interaction.*impact",
+      "a": "At Delta Air Lines in Airport Customer Service, I automated frontline shift-selection workflows handling 50,000+ employee bids, resolving station scheduling bottlenecks and cutting coordination delays by 150+ hours while maintaining high frontline satisfaction and service reliability.",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "fast-paced environment.*balancing speed|speed, accuracy, and empathy|thrive in this type of culture",
+      "a": "In my operations role at Delta Air Lines, I balanced accuracy and speed while auditing and processing data for 20,000 frontline employees across 8 workstreams. I prioritize active listening and rigorous data validation to deliver fast, reliable, and empathetic support under tight deadlines.",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "school\\s*(?:email|e-mail)|university\\s*(?:email|e-mail)|college\\s*(?:email|e-mail)",
+      "a": "candidate@university.edu",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "legal\\s*first\\s*(?:and|&)\\s*last\\s*name|full\\s*legal\\s*name|^legal\\s*name$",
+      "a": "Alex Doe",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "current\\s*legal\\s*address|^legal\\s*address$",
+      "a": "123 Innovation Way, Atlanta, GA 30303",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "able\\s*to\\s*meet.*commitments|meet\\s*the\\s*commitments|confirm.*commitments",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "have you ever worked for .* as an employee|ever worked for robinhood|previously worked for robinhood|ever worked.*employee.*intern.*contractor",
+      "a": "I have never worked at Robinhood",
+      "option": "^(?:I have never worked|Never|No|None|Not applicable)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "What\\ is\\ your\\ expected\\ graduation\\ month\\ \\&\\ year\\?\\*;\\ S",
+      "a": "December",
+      "src": "supervisor_validation",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "What\\ is\\ your\\ anticipated\\ graduation\\ month/year\\?\\*;\\ ",
+      "a": "December",
+      "src": "supervisor_validation",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "How\\ Did\\ You\\ Hear\\ About\\ Us\\?",
+      "a": "LinkedIn",
+      "src": "supervisor_validation",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "Yes,\\ I\\ have\\ read\\ and\\ consent\\ to\\ the\\ terms\\ and\\ cond",
+      "a": "check",
+      "src": "supervisor_validation",
+      "added": "2026-10-18",
+      "option": "^(?:Yes|I consent|check|Agree)\\b"
+    },
+    {
+      "q": "Location\\ \\(City\\)\\*;\\ Please\\ enter\\ your\\ location;\\ If\\ y",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "Location\\ \\(City\\)\\*;\\ Please\\ enter\\ your\\ location",
+      "a": "Atlanta",
+      "src": "supervisor_validation",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "country\\s*(?:phone\\s*)?code|phone\\s*country|phone.*country.*code",
+      "a": "United States of America (+1)",
+      "option": "^(?!.*minor)(?:[\\s\\S]*?\\(\\+1\\)\\s*United States|United States of America|United States\\b)",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "county\\s*\\/?\\s*state|state\\s*\\/?\\s*(?:province|county|region)|state\\s*or\\s*province|state.*reside|state.*live",
+      "a": "Georgia",
+      "option": "^(?:Georgia|GA)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:attend|enrolled).*college.*within.*radius",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:\\bITAR\\b|\\bEAR\\b|export\\s*control|export\\s*regulation|space\\s*technology\\s*export|defense\\s*trade|\\bu\\.?s\\.?\\s*person\\b)",
+      "a": "U.S. person",
+      "option": "^(?:U\\.S\\.\\s*person|Yes|U\\.S\\.\\s*Citizen|United States Citizen)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:experience.*using.*ai\\s*tools|experience.*claude|experience.*copilot|experience.*chatgpt|experience.*llm)",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:application\\s*statement\\s*shall\\s*constitute|acknowledge.*above\\s*statement)",
+      "a": "I acknowledge that I have read the above statement.",
+      "option": "^(?:I\\s*acknowledge|Yes|Agree)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:willing\\s*to\\s*relocate|relocation\\s*assistance|relocate\\s*for\\s*(?:this|the)\\s*role|open\\s*to\\s*relocation|require.*relocate)",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "eligible.*obtain.*security\\s*clearance|eligible.*security\\s*clearance|ability\\s*to\\s*obtain.*clearance",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "currently\\s*hold.*security\\s*clearance|active.*security\\s*clearance|have.*security\\s*clearance",
+      "a": "No",
+      "option": "^(?:No|None|I do not hold|Do not hold)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:proficiency.*sql|sql.*proficiency|rate.*proficiency.*sql)",
+      "a": "Intermediate",
+      "option": "^(?:Intermediate|Proficient|Advanced|Medium|Working Knowledge|Basic|None)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:proficiency.*oracle|oracle.*proficiency|rate.*proficiency.*oracle)",
+      "a": "Basic",
+      "option": "^(?:Basic|Working Knowledge|Intermediate|None)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:languages?.*speak.*addition|languages?.*addition.*english|what.*languages?.*speak|foreign\\s*languages?)",
+      "a": "None",
+      "option": "^(?:None|N\\/A|English Only|Only English|English)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:anticipated|expected|target|desired|earliest)?\\s*start\\s*date.*(?:month.*year|month\\s*\\/\\s*year|internship|availability)|anticipated start date|expected start date|available to start",
+      "a": "06/01/2027",
+      "option": "^(?:Summer 2027|June 2027|May 2027|06/2027|05/2027|2027|June|May)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "graduation.*(?:month.*year|month\\s*\\/\\s*year|month\\s*&\\s*year)",
+      "a": "May 2028",
+      "option": "^(?:May 2028|December 2027|May 2027|2028)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "sexual\\s*orientation",
+      "a": "Heterosexual",
+      "option": "^(?:Heterosexual|Straight|Heterosexual \\/ Straight|Prefer not to say|Decline to self-identify)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "class\\s*standing|class\\s*status|academic\\s*standing|academic\\s*classification|student\\s*classification|classification:\\*|college.*class\\s*standing|standing\\/classification|classification.*academic\\s*year",
+      "a": "Junior",
+      "option": "^(?:Junior|Senior|Undergraduate|3rd\\s*Year|4th\\s*Year|Third\\s*Year)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "purposeful hiring process|adhere to these expectations|respect the integrity of the p&g|i acknowledge i will adhere",
+      "a": "I acknowledge",
+      "option": "^(?:I acknowledge|Yes|I agree)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "legally\\s+eligible\\s+to\\s+work|authorized\\s+to\\s+work|legal\\s+right\\s+to\\s+work|eligible\\s+to\\s+work",
+      "a": "Yes",
+      "option": "^(?:Yes|Authorized)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^(?:current\\s+|residence\\s+)?country(?:\\s*\\*|\\s*$|\\s*of\\s*(?:residence|citizenship)|\\s*\\(residence\\))|\\baddress.*country",
+      "a": "United States of America",
+      "option": "^(?:United States|United States of America|USA|US)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "actively pursuing a bachelor|currently pursuing a bachelor|pursuing a bachelor.*degree",
+      "a": "Yes",
+      "option": "^(?:Yes|Currently pursuing)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "competing compan|competing process|other offer|late stage process",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "legal restriction|restrictive covenant|non-?compete|limit.*ability.*employ|former.*employer.*agreement.*limit",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "add a skill|^skill$|technical skill",
+      "a": "Python",
+      "option": "^(?:Python|SQL|Data Analysis)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "willing to relocate|relocation|require.*relocate",
+      "a": "Yes",
+      "option": "^(?:Yes|Willing|I am willing|Open to relocation)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "artificial intelligence.*screening|ai.*assisted.*screening|ai screening|screening notice and consent|opt.*out.*ai.*screening",
+      "a": "Yes",
+      "option": "^(?:Opt In|I consent|Consent|Yes|I agree|Agree|I do not opt out|Accept)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "preferred language|^language$",
+      "a": "English",
+      "option": "^(?:English)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "languages? (?:you speak )?in addition to english|additional language",
+      "a": "None",
+      "option": "^(?:None|N/A|No additional language|English only)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "how did you (?:hear|learn|find out) about us|what led you to apply|source of referral|referral source",
+      "a": "LinkedIn",
+      "option": "^(?:Online Job Board|LinkedIn|Indeed|Job Board|Career Site|Company Website|Internet)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "level of education during the.*semester|education level during",
+      "a": "Junior",
+      "option": "^Junior\\b|^Undergraduate\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "level of experience.*(?:python|sql|data processing|scripting|programming|coding)",
+      "a": "Advanced",
+      "option": "^Advanced|^Intermediate|^Proficient",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "name of.*recruiter|recruiter.*name|enter the name of the recruiter",
+      "a": "N/A",
+      "option": "^(?:N/A|None|Not Applicable)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "24-month.*opt.*extension|opt extension|stem extension",
+      "a": "No",
+      "option": "^(?:No|Not Applicable|N/A)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "previous (?:company|employer)",
+      "a": "Delta Air Lines",
+      "option": "^(?:Delta Air Lines|Delta)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:current|most recent)?\\s*(?:company|employer)(?:\\s*name)?$|company name",
+      "a": "W. A Investments",
+      "option": "^(?:W\\. A Investments|Delta Air Lines)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "previous.*(?:job|employment).*start\\s*date",
+      "a": "01/15/2023",
+      "option": "^(?:January 2023|01/2023|01/15/2023|2023|January)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "previous.*(?:job|employment).*end\\s*date",
+      "a": "08/15/2023",
+      "option": "^(?:August 2023|08/2023|08/15/2023|2023|August)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:current|most recent)?\\s*(?:job|employment|prior\\s*employment|^from|^work\\s*history)\\s*start\\s*date|^from\\s*date\\*?$",
+      "a": "05/01/2024",
+      "option": "^(?:May 2024|05/2024|05/01/2024|2024|May)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:current|most recent)?\\s*(?:job|employment|prior\\s*employment|^to|^work\\s*history)?\\s*end\\s*date|^end\\s*date\\*?$",
+      "a": "TODAY",
+      "option": "^(?:Present|Current|October 2026|10/2026|10/18/2026|2026)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^school\\b|name of school|institution|college.*university|school.*organization",
+      "a": "State University",
+      "option": "^State University",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^degree\\b|degree type|degree level|education level",
+      "a": "Bachelor's Degree",
+      "option": "^(?:Bachelor|Undergraduate|BBA|BS|BA)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^discipline\\b|^major\\b|field of study|area of study",
+      "a": "Computer Information Systems",
+      "option": "^(?:Computer Information Systems|Computer Science|Information Technology|Data Science)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "end date year|graduation year",
+      "a": "2026",
+      "option": "^2026",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "end date month|graduation month",
+      "a": "08",
+      "option": "^(?:August|08|8)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "location \\(city\\)|current location|where are you located",
+      "a": "Atlanta, GA",
+      "option": "^(?:Atlanta, GA|Atlanta, Georgia|Atlanta|Remote)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "how do you pronounce your name|pronounce your name",
+      "a": "Oh-lah-TOH-koon-boh Ah-JAH-yee",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "do you have a duolingo account.*username",
+      "a": "yourhandle",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "expected graduation timeline|graduation timeline",
+      "a": "Summer 2026",
+      "option": "^(?:Summer 2026|Fall 2026|May 2026|August 2026|2026)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "which office location are you most interested in|office location.*interested in",
+      "a": "New York, NY",
+      "option": "^(?:New York|Pittsburgh|Remote)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "willing to work from the office location|work from the office location",
+      "a": "Yes",
+      "option": "^(?:Yes|I am willing)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "sponsored conferences.*attended|organizations are you a part of",
+      "a": "N/A",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "where did you hear about this job",
+      "a": "LinkedIn",
+      "option": "^(?:LinkedIn|Online Job Board|Website|Internet)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "if required for the position.*willing to relocate|willing to relocate",
+      "a": "Yes",
+      "option": "^(?:Yes|I am willing|Willing to relocate)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "notice period|what would be your notice|how much notice",
+      "a": "2 weeks",
+      "option": "^(?:2 weeks|Immediate|Two weeks|1 month|None)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^nationality\\b|primary nationality|nationality",
+      "a": "United States of America",
+      "option": "^(?:United States|American|USA?)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "dual citizenship|specify dual citizenship",
+      "a": "None",
+      "option": "^(?:None|N/A|No|Not Applicable)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "what degree are you working towards|degree are you working towards|degree.*working towards",
+      "a": "Bachelor's Degree",
+      "option": "^(?:Bachelor|Undergraduate|College|Some College|BBA)\\b|Bachelor.*Degree|College/University",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "conferences|career fairs|attend.*conference|attending.*conference|attending.*career fair",
+      "a": "None of the above",
+      "option": "^(?:None of the above|None|N/A|No)\\b|NSBE|AfroTech",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "academic classification.*next academic year|classification.*next academic year|next academic year.*classification",
+      "a": "Senior",
+      "option": "^(?:Senior|Rising Senior|Junior|Rising Junior|4th Year|3rd Year|Undergraduate)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "what's their name or email|their name or email|employee referral.*(?:name|email)|who referred you",
+      "a": "N/A",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "planned time off|time off during.*internship|vacation during.*internship",
+      "a": "No",
+      "option": "^(?:No|None|I do not)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "what degree program|degree program.*enrolled|which degree program",
+      "a": "Bachelor of Business Administration in Computer Information Systems",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "referred by|referrer|employee referral name|who referred you",
+      "a": "N/A",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^link\\s*1$|primary link|relevant link",
+      "a": "https://www.linkedin.com/in/yourprofile/",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^link\\s*2$|secondary link|other link|portfolio link|github link",
+      "a": "https://github.com/yourhandle",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^position$|^position \\(|^job position|^current position|^most recent position",
+      "a": "Data Analyst Intern",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:to )?end date|employment.*end|job.*end",
+      "a": "08/15/2026",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:from )?start date|employment.*start|job.*start",
+      "a": "06/01/2026",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "confirm the statement|statement above|confirm.*statement",
+      "a": "Yes",
+      "option": "^(?:Yes|I agree|Agree|check)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "ai notetaker|ai note-taker|use ai notetakers",
+      "a": "I agree",
+      "option": "^(?:I agree|Agree|Yes|Consent)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "details of oig exclusion|details of federal government debarment",
+      "a": "N/A",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "oig exclusion|federal government debarment|exclusion.*debarment|debarred|excluded from federal",
+      "a": "No",
+      "option": "^(?:No|I have not|Not excluded|Not debarred)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "from where do you intend to work|where do you intend to work|location from which you intend to work|intended work location|which (?:us )?hub do you prefer to work|preferred hub|hub.*prefer",
+      "a": "NYC office",
+      "option": "^(?:NYC office|NYC|New York|SF office|San Francisco|United States|USA|US|Atlanta|Remote)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "california applicants? only|waive my right to receive copies of public records|public records pertaining to my character",
+      "a": "check",
+      "option": "^(?:I waive my right|Yes|I understand|check)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "military\\s*status|serving.*military|served.*military|military service|military background|military history|^military\\b|military spouse|active duty military|armed forces|part of the military",
+      "a": "No",
+      "option": "^(?:No|I am not|Never served|No military service|Not a veteran|I do not have military background|No Military Service)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "if required for the position.*willing to relocate|willing to relocate",
+      "a": "Yes",
+      "option": "^(?:Yes|I am willing|Willing to relocate)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "what university are you currently enrolled in|what (?:college|university|school) do you (?:currently )?attend",
+      "a": "State University",
+      "option": "State University",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "cumulative and major GPA|cumulative.*major.*gpa|Cumulative GPA/Major GPA",
+      "a": "3.35/3.50",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "reside locally in the assigned work location|able to reside locally",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^prefix\\*?:?$|^salutation\\b|honorific|name prefix|^title\\*?:?$|personal details title",
+      "a": "Mr.",
+      "option": "^Mr\\.?\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "committed to participating in the intern program in its entirety|participat.*intern.*program.*entirety|commit to the full duration",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "continue to be enrolled.*(?:degree program|school year)|need this internship to graduate|Will you continue to be enrolled in an undergradua",
+      "a": "I will be enrolled in an undergraduate/graduate college degree program",
+      "option": "^(?:Yes|I will be enrolled|enrolled in an undergraduate)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "Employees are expected to work onsite.*open to working in the location|open to working in the location\\(s\\) stated|in-office work cadence determined by the manager",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "competing offer|competing deadlines|offer deadline",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "final internship before graduating|last internship before graduating",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "(?:country|phone|calling)\\s*code|country.*territory.*code",
+      "a": "United States (+1)",
+      "option": "^(?:United States|USA|US|\\+1)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "Nasdaq Internship Program.*will run|Nasdaq Internship Program.*hybrid|report to the office at least 3 days",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "do you have at least a.*gpa|have at least a.*gpa|at least a [23]\\.[0-9].*gpa|gpa of at least|gpa above|minimum.*gpa",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "former.*employee|formerly.*employed|previous.*employee|previously.*employed|previously.*worked|ever.*worked for",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^black or african american|^black/african american|^black \\(not hispanic",
+      "a": "check",
+      "option": "^$",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^white \\(not hispanic|^white$|^asian \\(not hispanic|^asian$|^american indian|^native hawaiian|^two or more races",
+      "a": "uncheck",
+      "option": "^$",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "have not worked for .* in the past|not worked for .* in the past|have not previously worked for|never worked for|i have not worked for",
+      "a": "check",
+      "option": "^$",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^(?:Employee|Intern|Temporary Agency or Vendor)$",
+      "a": "uncheck",
+      "option": "^$",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^date\\b.*day|today.*day|signature.*day|please enter today'?s date.*day",
+      "a": "TODAY_DAY",
+      "src": "candidate_verified",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "^date\\b.*month|today.*month|signature.*month|please enter today'?s date.*month",
+      "a": "TODAY_MONTH",
+      "src": "candidate_verified",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "^date\\b.*year|today.*year|signature.*year|please enter today'?s date.*year",
+      "a": "TODAY_YEAR",
+      "src": "candidate_verified",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "disability",
+      "a": "No, I do not have a disability",
+      "option": "^(?:No\\b|I do not have a disability|ORA_PER_NO_US|No, I Don't Have A Disability|Do not wish to specify)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "code of conduct|interview code of conduct",
+      "a": "I agree",
+      "option": "^(?:I agree|Agree|Yes|Accept|I have read and agree|check)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "privacy statement|privacy policy|privacy notice|vibe philosophy|recruitment privacy",
+      "a": "I agree",
+      "option": "^(?:I agree|Agree|Yes|Accept|I have read and agree|I acknowledge|check)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "contact you via text message|text message.*updates and notifications|sms consent|text messaging",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "Non Disclosure Agreement|read and agree to the Non Disclosure Agreement",
+      "a": "I have read and agree to the Non Disclosure Agreement",
+      "option": "^(?:I have read and agree|I agree|Yes)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "served in the (?:u\\.?s\\.?\\s*)?military|military service|served in the armed forces",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "provide documentation verifying your identity|documentation verifying.*(?:identity|eligibility)",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "open to (?:relocation|relocate)|not currently local.*open to",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "preferred work arrangement",
+      "a": "Hybrid",
+      "option": "Hybrid|Flexible|Remote|Any",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "transportation to attend.*workshops|means of transportation|provide your own.*transportation",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "willing to commute.*temporarily relocate|commute/drive or temporarily relocate",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "report to the office at least 3 days a week|Nasdaq Internship Program.*hybrid",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "indicate which roles you are interested to apply for|roles you are interested to apply for",
+      "a": "Software Engineer / Data Science / Technology",
+      "option": "Software|Technology|Data|Engineer|Information",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^(?:1st|2nd|3rd|days|nights|weekends|holidays)$",
+      "a": "Yes",
+      "option": "^(?:Yes|Available|Flexible)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "expected salary.*(usd|\\$|numeric|number)|salary expectation.*(usd|\\$|numeric|number)|desired (salary|pay|compensation).*(usd|\\$|numeric|number)",
+      "a": "60000",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "(?:expected|desired|target)?\\s*(?:hourly|hour).*(?:rate|pay|salary|amount)|hourly rate",
+      "a": "35",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "expected salary|desired salary|salary expectation",
+      "a": "60000",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "unrestricted work authorization.*(?:sponsorship|visa)|(?:unrestricted.*authorized|authorized.*unrestricted)",
+      "a": "Yes",
+      "option": "^(?:Yes|I currently have unrestricted|unrestricted|I have unrestricted)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "live in the service areas|service areas of|living in these areas",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "acknowledge.*enter \"?yes\"? if you acknowledge|acknowledge that I have read, understood and reviewed",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "Please\\ confirm\\ if\\ you\\ are\\ fully\\ authorized\\ to\\ work",
+      "a": "Full US work authorization, without conditions or limitations",
+      "option": "^(?:Yes|Full US work authorization|Fully authorized|Authorized to work)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "Will\\ you\\ now\\ or\\ in\\ the\\ future\\ require\\ sponsorship\\ ",
+      "a": "No",
+      "src": "supervisor_validation",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "I\\ fully\\ read,\\ understand\\ and\\ agree\\ to\\ the\\ Terms\\ an",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "twitter (?:handle|username)|x (?:handle|username)",
+      "a": "yourhandle",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^x$|^twitter$|twitter.*(?:url|link|profile)|x.*(?:url|link|profile)",
+      "a": "https://twitter.com/yourhandle",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "are you (over the age of 18|at least 18|18 years (or|and) older|18 or older)",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "are you legally eligible to work in the (united states|u\\.?s\\.?)",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "have you served in the military|military service",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "work authorization.*authorized to work in this country for any employer",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "Are\\ you\\ able\\ to\\ live\\ in\\ the\\ country\\ where\\ this\\ rol",
+      "a": "Yes",
+      "option": "^(?:Yes|United States)\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-18"
+    },
+    {
+      "q": "^\\s*Date\\s*$",
+      "a": "TODAY",
+      "src": "supervisor_validation",
+      "added": "2026-10-17"
+    },
+    {
+      "q": "What\\ is\\ your\\ desired\\ start\\ date\\?",
+      "a": "06/01/2027",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Do\\ you\\ currently\\ attend\\ a\\ college,\\ university,\\ or\\ ",
+      "a": "State University",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "standardized test score type|select your standardized test score type|type of standardized test",
+      "a": "SAT",
+      "option": "^SAT\\b|None|I did not take",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "provide your best result on sat|sat score|best score on sat",
+      "a": "1350",
+      "option": "1300|1350|1400|1200|N/A",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "provide your best result on act|act score",
+      "a": "N/A",
+      "option": "N/A|None",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "other context.*(immigration|sponsorship) needs|additional context.*sponsorship",
+      "a": "None - I am a U.S. citizen and do not require sponsorship",
+      "option": "^None|^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Have\\ you\\ signed\\ an\\ agreement\\ with\\ any\\ employer\\(s\\)\\ ",
+      "a": "No",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "signed (an?|any) agreement with (a|any|current|former)|agreement with (a|any) employer.*not.*(solicit|compete|hire|engage)",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "previously worked for (?:this|our|the) organization|previously (?:been )?contracted with|former employee of|previously worked for|ever been employed by|current/former.*contractor.*or former.*employee",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "dispute resolution program|arbitration and mediation agreement|mandatory arbitration.*agreement",
+      "a": "I agree",
+      "option": "^I agree|^I accept|^Yes|Agree",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "how often.*(?:in days)?.*receive an alert|alert frequency|job alert.*(?:days|frequency)",
+      "a": "1",
+      "option": "^1$|Daily",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "(?:if yes,?\\s*)?(?:please provide )?visa type and expiration date|visa type.*expiration",
+      "a": "N/A",
+      "option": "N/A|Not Applicable|U\\.?S\\.? Citizen",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "served.*in any active.*guard.*reserve.*military|currently serving in.*military|military spouse|domestic partner.*military",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "you are applying for state",
+      "a": "Georgia",
+      "option": "^Georgia\\b|\\bGeorgia\\b|^GA$|\\bGA\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "you are applying for country code",
+      "a": "United States of America (+1)",
+      "option": "United States of America \\(\\+1\\)|USA \\(\\+1\\)|^\\+1\\b",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "you are applying for country\\*?$",
+      "a": "United States of America",
+      "option": "United States of America|United States|^USA$|^US$",
+      "src": "candidate_verified",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "If\\ you\\ are\\ offered\\ and\\ accept\\ employment\\ with\\ Fann",
+      "a": "No",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "If\\ you\\ are\\ a\\ licensed\\ professional,\\ have\\ you\\ ever\\ ",
+      "a": "No",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "What\\ is\\ your\\ desired\\ Annual\\ Salary\\?",
+      "a": "60000",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Work\\ Authorization:",
+      "a": "U.S. Citizen",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "^\\s*work\\s+authorization",
+      "a": "U.S. Citizen",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "U\\.?S\\.? Citizen|Citizen|^Yes"
+    },
+    {
+      "q": "non-?compete agreement|have a non-?compete",
+      "a": "No",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^No"
+    },
+    {
+      "q": "personal financial interest|financial interest in firms",
+      "a": "No",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^No"
+    },
+    {
+      "q": "authori[sz]ed to work|legally (eligible|authori[sz]ed)|eligible to work in the (u\\.?s|united states)",
+      "a": "Yes",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^Yes"
+    },
+    {
+      "q": "sponsor",
+      "a": "No",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^No|0(?:\\.0)?$"
+    },
+    {
+      "q": "Share\\ any\\ relationship\\ you\\ have\\ with\\ SouthState\\?",
+      "a": "None",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Select\\ your\\ preference\\ to\\ receive\\ notification\\ upd",
+      "a": "Email",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "^(today'?s )?date\\*?:?$",
+      "a": "TODAY",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Please\\ confirm\\ the\\ duration\\ you\\ are\\ allowed\\ to\\ do\\ ",
+      "a": "10-12 weeks",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Location",
+      "a": "Atlanta, GA",
+      "src": "supervisor_validation",
+      "added": "2026-10-16",
+      "option": "^(?:Atlanta, GA|Atlanta, Georgia|Atlanta|Remote|United States)\\b"
+    },
+    {
+      "q": "Please\\ enter\\ the\\ ZIP\\ code\\ of\\ your\\ primary\\ residenc",
+      "a": "30303",
+      "src": "supervisor_validation",
+      "added": "2026-10-16",
+      "_note": "fixed 2026-10-16: learned answer was wrong"
+    },
+    {
+      "q": "To\\ be\\ eligible\\ for\\ this\\ position,\\ your\\ primary\\ res",
+      "a": "Georgia",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "I\\ would\\ like\\ P\\&G\\ to\\ share\\ my\\ personal\\ information\\ ",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Are\\ you\\ a\\ current\\ university\\ student\\?\\*;\\ Select\\.\\.\\.;",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-16",
+      "option": "^Yes\\b",
+      "_note": "fixed 2026-10-16: learned answer was wrong"
+    },
+    {
+      "q": "Have\\ you\\ signed\\ any\\ agreement\\ with\\ a\\ current\\ or\\ fo",
+      "a": "No",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Are\\ you\\ able\\ to\\ provide\\ an\\ official\\ or\\ unofficial\\ ",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "What\\ is\\ your\\ cumulative\\ GPA\\?\\*;\\ Select\\.\\.\\.;\\ This\\ fie",
+      "a": "3.35",
+      "option": "3\\.49\\s*-\\s*3\\.0|3\\.0\\s*-\\s*3\\.49|3\\.25\\s*-\\s*3\\.5|3\\.0\\s*-\\s*3\\.5|3\\.0\\s*to\\s*3\\.5|3\\.0\\s*\\+|3\\.0\\s*or\\s*higher|3\\.0\\s*and\\s*above|3\\.35",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "What\\ is\\ your\\ current\\ enrollment\\ class\\ status\\?",
+      "a": "Junior",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "To\\ provide\\ you\\ with\\ the\\ more\\ efficient\\ recruiting\\ ",
+      "a": "Yes",
+      "src": "candidate_verified",
+      "added": "2026-10-18",
+      "option": "^(?:I do not choose to opt out|I do not opt out|I consent|I agree|I accept|Yes)\\b"
+    },
+    {
+      "q": "choose to (?:&nbsp;| )?opt (?:&nbsp;| )?out of this AI screening",
+      "a": "I do not choose to opt out",
+      "src": "candidate_verified",
+      "added": "2026-10-18",
+      "option": "^(?:I do not choose to opt out|I do not opt out|No)\\b"
+    },
+    {
+      "q": "If\\ you\\ found\\ out\\ about\\ this\\ opportunity\\ through\\ a\\ ",
+      "a": "State University",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "Please\\ select\\ your\\ current\\ US\\ Status\\ from\\ the\\ list",
+      "a": "U.S. Citizen",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "What\\ is\\ your\\ expected\\ degree\\ completion\\ date\\?\\ Your",
+      "a": "December 2027",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "If\\ you\\ are\\ offered\\ employment\\ by\\ Adobe,\\ can\\ you\\ pr",
+      "a": "Yes",
+      "src": "supervisor_validation",
+      "added": "2026-10-16"
+    },
+    {
+      "q": "held an active u\\\\.?s\\\\.? security clearance|active.*clearance",
+      "a": "No",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^No"
+    },
+    {
+      "q": "workexperience.*location|company.*location|job.*location|^location\\*?$",
+      "a": "Atlanta, GA",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "Atlanta,? (GA|Georgia)|^Atlanta\\b"
+    },
+    {
+      "q": "official or unofficial transcript|provide.*transcript",
+      "a": "Yes",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^Yes"
+    },
+    {
+      "q": "documentation establishing.*(identity|right to work)|identity and right to work|right to work in the country",
+      "a": "Yes",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^Yes"
+    },
+    {
+      "q": "current us status|select your current us status",
+      "a": "U.S. Citizen",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "U\\.?S\\.? Citizen|Citizen"
+    },
+    {
+      "q": "current enrollment class status|enrollment.*class.*status",
+      "a": "Junior",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "Junior|Undergraduate"
+    },
+    {
+      "q": "complete your current degree program|degree completion date",
+      "a": "December 2027",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "December 2027|May 2028|2027|2028"
+    },
+    {
+      "q": "signed any agreement with a current or former employer|agreement.*not.*(compete|solicit)|restrictive covenant",
+      "a": "No",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^No"
+    },
+    {
+      "q": "(need|require).*sponsorship|immigration (support|filing)",
+      "a": "No",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^No|0(?:\\.0)?$"
+    },
+    {
+      "q": "safety sensitive",
+      "a": "Yes",
+      "src": "site_fixer",
+      "added": "2026-10-18",
+      "option": "^Yes|1(?:\\.0)?$"
+    },
+    {
+      "q": "\\b(major|field of study|area of study|concentration)\\b",
+      "a": "Computer Information Systems",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "Computer Information Systems|Information Systems|Management Information|Computer and Information Sciences|Computer Science|Information Technology|^Computer\\b"
+    },
+    {
+      "q": "u\\.?s\\.? citizen|citizen of the united states",
+      "a": "Yes",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^Yes"
+    },
+    {
+      "q": "at least 18|18 years|over 18|age of 18",
+      "a": "Yes",
+      "src": "site_fixer",
+      "added": "2026-10-16",
+      "option": "^Yes"
+    },
+    {
+      "q": "phone code|country.*dial|country code",
+      "a": "United States (+1)",
+      "option": "United States.*\\+1|\\+1\\b|^United States",
+      "_note": "2026-10-16: from AJ's stated US mobile 555-0199"
+    },
+    {
+      "q": "(?:are you a )?(?:u\\.?s\\.? )?citizen(?:ship)?|eligible.*security clearance.*citizen",
+      "a": "Yes",
+      "option": "^Yes\\b|^I am a U\\.S\\. Citizen|^US Citizen|^Citizen"
+    },
+    {
+      "q": "(?:have )?legal(?:ly)? authorization to work|authorized to work in the (?:country|us|united states)|lawfully authorized to work|legally authorized|eligible to work in the (?:us|united states)",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "^(?:i do not (?:want|wish) to answer|prefer not to (?:answer|say|disclose)|decline to (?:self-identify|answer|state))\\*?:?$",
+      "a": "uncheck",
+      "option": "^$"
+    },
+    {
+      "q": "how many years of.*experience.*python|years of.*python",
+      "a": "2",
+      "option": "^2\\b|2\\+? years?|1-2|2-3"
+    },
+    {
+      "q": "spring co-op|summer internship|co-op.*internship|both.*spring.*summer|internship.*or.*co-op",
+      "a": "Summer Internship",
+      "option": "^Summer|^Both\\b"
+    },
+    {
+      "q": "graduating in (december 2027|may/june 2028|december|may|2027|2028)|expected to graduate.*(?:2027|2028)",
+      "a": "December 2027",
+      "option": "^Yes\\b|^December 2027\\b"
+    },
+    {
+      "q": "previous (?:engineering|software|technical)?\\s*internship experience|prior internship experience",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "pronoun|preferred pronoun",
+      "a": "He/Him/His",
+      "option": "^(He/Him|He/Him/His|He / Him)\\b",
+      "_note": "AJ preferred pronouns (DVTrading / Greenhouse required)"
+    },
+    {
+      "q": "^twitter\\b|\\btwitter\\b|\\bx\\s*(profile|handle)\\b|\\bfacebook\\b|\\binstagram\\b",
+      "a": null,
+      "_note": "Do not fill non-professional social media handles"
+    },
+    {
+      "q": "how did you (hear|find|learn|connect) (about|of|with us)?|how did you (hear|connect)|\\b(referral|candidate|application|job) source\\b|\\bhear about\\b",
+      "a": "LinkedIn",
+      "option": "^LinkedIn\\b|^LinkedIn|^Job Board|^Online|^Other",
+      "_note": "Source attribution (leaf value only, avoid Workday Job Board category folder)"
+    },
+    {
+      "q": "medicare|medicaid|excluded.*supplier|sanctions.*supplier|investigation.*exclusion",
+      "a": "No",
+      "option": "^No\\b",
+      "_note": "Healthcare exclusion / sanctions screening (Corewell Health)"
+    },
+    {
+      "q": "gmin|gmid|gm employee id",
+      "a": "N/A",
+      "option": "^(n/?a|no|none)\\b",
+      "_note": "General Motors employee identifier"
+    },
+    {
+      "q": "provide any additional information regarding your employment|which location you work",
+      "a": "N/A",
+      "_note": "Employment detail follow-up"
+    },
+    {
+      "q": "in-office|onsite|on-site|office culture|work in.*office|chicago office|hybrid.*office",
+      "a": "Yes",
+      "option": "^(Yes|I acknowledge|I agree|Agree)\\b",
+      "_note": "Affirm in-office / onsite culture"
+    },
+    {
+      "q": "trade control laws|release or disclosure of u\\.?s\\.?|are you a u\\.?s\\.? citizen.*permanent resident",
+      "a": "Yes",
+      "option": "^Yes\\b|^Yes$"
+    },
+    {
+      "q": "expected to graduate.*(?:mm/yyyy|\\(mm/yyyy\\))|specify the month and year \\(mm/yyyy\\)",
+      "a": "12/2027",
+      "option": "12/2027|05/2028"
+    },
+    {
+      "q": "report to the office at least 3 days|willing to report to the office|hybrid schedule.*willing to report",
+      "a": "Yes",
+      "option": "^Yes\\b|^Yes$"
+    },
+    {
+      "q": "ensuring compliance with u\\.?s\\.? rules concerning the export|export of control|u\\.?s\\.? rules concerning the export",
+      "a": "Yes",
+      "option": "^Yes\\b|^Yes$"
+    },
+    {
+      "q": "expected graduation date.*month|graduation date.*month",
+      "a": "12",
+      "option": "^(12|december|dec)$"
+    },
+    {
+      "q": "expected graduation date.*day|graduation date.*day",
+      "a": "15",
+      "option": "^(15|01|1)$"
+    },
+    {
+      "q": "expected graduation date.*year|graduation date.*year",
+      "a": "2027",
+      "option": "^2027$"
+    },
+    {
+      "q": "when would you be able to start.*day",
+      "a": "01",
+      "option": "^(01|1|15)$"
+    },
+    {
+      "q": "when would you be able to start.*year",
+      "a": "2028",
+      "option": "^2028$"
+    },
+    {
+      "q": "(?:is your|are you|will you|do you).*graduation date in 2028 or later",
+      "a": "No",
+      "option": "^No\\b",
+      "src": "candidate_verified"
+    },
+    {
+      "q": "expected graduation|graduation date|graduation year|when.*graduate",
+      "a": "December 2027",
+      "option": "2027|August 2027 - December 2027|Fall 2027|Dec.*2027",
+      "_note": "AJ graduation timeline"
+    },
+    {
+      "q": "^if (yes|so)\\b.*(visa|sponsor|relative|family|employ|worked|proprietary|trading|clearance|convict|terminat|former|previous|non-?compete)",
+      "a": "N/A",
+      "option": "^(n/?a|none|not applicable|no)\\b",
+      "_note": "AJ 2026-10-14: follow-ups to questions he answers No"
+    },
+    {
+      "q": "age range|what is your age|your age",
+      "a": "18 or older",
+      "option": "^Yes\\b|^18\\b|18 or older|18-20|18-24|21-24"
+    },
+    {
+      "q": "18 years|at least 18|age of 18|over 18|18 or older|are you 18|over the age of 18|legal age",
+      "a": "Yes",
+      "option": "^Yes\\b|^18\\b|18 or older|18-20|18-24",
+      "_note": "AJ is a college junior"
+    },
+    {
+      "q": "ability to consider you for other opportunities|consider.*other positions|consider.*other roles|talent pool|talent network|talent community",
+      "a": "Yes",
+      "option": "^(Yes|I consent|I agree|Agree)\\b",
+      "_note": "Consent to be considered for additional roles (P&G / Workday)"
+    },
+    {
+      "q": "meet the minimum (qualification|requirement)s?|minimum eligibility",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "_note": "Affirm minimum qualifications for applied student/intern positions"
+    },
+    {
+      "q": "share my personal information with its affiliates|share.*personal data.*affiliates",
+      "a": "Yes",
+      "option": "^Yes\\b",
+      "_note": "Consent to affiliate sharing"
+    },
+    {
+      "q": "proprietary trading|trading firm experience|experience at a trading firm|hedge fund experience",
+      "a": "No",
+      "option": "^No\\b",
+      "_note": "AJ 2026-10-14: no trading-firm experience"
+    },
+    {
+      "q": "artificial intelligence.*(screening|recruit|hiring|application)|use (of )?(ai|artificial intelligence) (in|during|for) (the )?(application|recruit|hiring|screening)",
+      "a": "Yes",
+      "option": "^(yes|i consent|i agree|i acknowledge|i accept|accept|agree)\\b",
+      "_note": "2026-10-14: AI-screening notices (DIRECTV); same as the terms/consent boxes the pipeline already accepts - delete to stop"
+    },
+    {
+      "q": "^school or university|name of school|institution name|college name|^university\\b|^school\\b",
+      "a": "State University",
+      "option": "State University|^State University\\b"
+    },
+    {
+      "q": "^degree\\b|degree level|degree type|type of degree|level of education|highest level of education",
+      "a": "Bachelor's Degree",
+      "option": "Bachelor.*Business|Bachelor.*Degree|Bachelor of Science|BBA|Undergraduate|Bachelor"
+    },
+    {
+      "q": "^field of study|\\bmajor\\b|area of study|academic major",
+      "a": "Computer Information Systems",
+      "option": "Computer Information Systems|Information Systems|Computer Science|Information Technology|Business Information"
+    },
+    {
+      "q": "^date\\b.*month|today.*month|signature.*month",
+      "a": "TODAY_MONTH"
+    },
+    {
+      "q": "^date\\b.*day|today.*day|signature.*day",
+      "a": "TODAY_DAY"
+    },
+    {
+      "q": "^date\\b.*year|today.*year|signature.*year",
+      "a": "TODAY_YEAR"
+    },
+    {
+      "q": "(?:end|graduation|completion).*month|^month\\b",
+      "a": "August",
+      "option": "August|^0?8$"
+    },
+    {
+      "q": "(?:start|begin).*month",
+      "a": "May",
+      "option": "May|^0?5$"
+    },
+    {
+      "q": "^gpa\\b|overall result|grade point average|^cumulative gpa",
+      "a": "3.35",
+      "option": "3\\.49\\s*-\\s*3\\.0|3\\.0\\s*-\\s*3\\.49|3\\.25\\s*-\\s*3\\.5|3\\.0\\s*-\\s*3\\.5|3\\.0\\s*to\\s*3\\.5|3\\.0\\s*\\+|3\\.0\\s*or\\s*higher|3\\.0\\s*and\\s*above|3\\.35"
+    },
+    {
+      "q": "^company\\b|^company name\\b|^employer\\b|^organization name\\b",
+      "a": "Delta Air Lines"
+    },
+    {
+      "q": "^job title\\b|^position title\\b|^role title\\b|title of (?:position|role)",
+      "a": "Project Management Intern"
+    },
+    {
+      "q": "use or work on the workday system|work on the workday system",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "please enter [\"']yes[\"'] if you acknowledge|enter yes if you acknowledge|workday will not consider any applications with [\"']no[\"'] selected",
+      "a": "Yes",
+      "option": "^Yes\\b|^Yes$"
+    },
+    {
+      "q": "consider relocating|willing to relocate|open to relocate",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "within the state of maryland|located in maryland|position.*in.*maryland",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "polygraph.*(?:acknowledge|statement)|please select .?i acknowledge.?|under maryland law",
+      "a": "I Acknowledge",
+      "option": "I Acknowledge|Acknowledge|Agree"
+    },
+    {
+      "q": "^gender\\b|legal sex|gender identity",
+      "a": "Male",
+      "option": "^Male\\b|^Man\\b"
+    },
+    {
+      "q": "hispanic|latino",
+      "a": "No",
+      "option": "^No\\b|Not Hispanic"
+    },
+    {
+      "q": "^race\\b|^ethnicity\\b|race/ethnicity",
+      "a": "Black or African American",
+      "option": "Black|African American"
+    },
+    {
+      "q": "veteran status|protected veteran",
+      "a": "I am not a protected veteran",
+      "option": "^(?:i am not|not a|i do not identify as|not a veteran)\\b|^no(?:\\s+i\\s+am\\s+not|\\s*,|\\s*$|\\s+protected)"
+    },
+    {
+      "q": "disability status|have a disability",
+      "a": "No, I do not have a disability",
+      "option": "No, I (?:do not|don't) have a disability|^No\\b"
+    },
+    {
+      "q": "how often \\(in days\\) to receive an alert|receive an alert",
+      "a": "1",
+      "option": "^1\\b|daily|immediate|every day",
+      "_note": "AJ 2026-10-16: as often as possible"
+    },
+    {
+      "q": "dispute resolution|arbitration and mediation|arbitration agreement",
+      "a": "I agree",
+      "option": "agree|accept|^yes\\b",
+      "_note": "AJ 2026-10-16: accepts employer arbitration / dispute-resolution agreements (USAA)"
+    },
+    {
+      "q": "primary (area|field) of interest|career interest|technical track|specialization of interest",
+      "a": "Artificial Intelligence & Machine Learning",
+      "option": "Artificial Intelligence|Machine Learning|^AI\\b|Data Science|Analytics|Software Engineering"
+    },
+    {
+      "q": "why are you interested in (ai|artificial intelligence|machine learning|this ai role)|passion for (ai|artificial intelligence)",
+      "a": "I am passionate about designing and deploying agentic workflows, LLM applications, and machine learning pipelines that automate complex business processes. As a CIS student at State University specializing in AI and Analytics, I thrive on building autonomous agents, predictive models, and high-impact automated systems."
+    },
+    {
+      "q": "experience with (ai|artificial intelligence|machine learning|deep learning|llms|generative ai)|describe your ai experience",
+      "a": "I build agentic AI systems and LLM pipelines using Python, the Anthropic Claude API, OpenAI API, and Playwright for autonomous browser execution. At Delta Air Lines and W. A Investments, I applied intelligent process automation to eliminate 150+ hours of manual overhead and streamline complex decision workflows."
+    },
+    {
+      "q": "graduating (before|prior to) (september|fall) 2027|will you (be )?graduat(e|ing) (before|prior to) (september|fall) 2027",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "linkedin",
+      "a": "https://www.linkedin.com/in/yourprofile/"
+    },
+    {
+      "q": "graduated within the past 6 months, or are you an active student|active student\\??",
+      "a": "Yes",
+      "option": "^Yes\\b|Active [Ss]tudent"
+    },
+    {
+      "q": "share my personal information with its (advertising|marketing) partners|share.*personal.*partners.*(?:linkedin|online channels)",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "obligations to (any )?previous employer|non-compete|non-solicitation|post-employment obligations|agreements or obligations that would limit|signed any agreements with your current or former|restriction, obligation, arrangement, or agreement that would prevent|prevent you from becoming an employee|under any restriction",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "administrative agency|regulatory agency|self-regulatory|under investigation|disciplinary action|regulatory proceeding|subject to any disciplinary|sec, finra|governing conduct for a specific profession",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "(?:have you (?:ever )?|(?:are you )?currently )?(?:worked?|working|employed) (?:at|for|by)|currently or formerly (?:employed|working)|providing services to|previous(?:ly)? employed by|former employee",
+      "a": "No",
+      "option": "^No\\b|None"
+    },
+    {
+      "q": "healthcare professional|active license|licensed in us|active.*licens|licensed healthcare|profession for which you have an active license",
+      "a": "No",
+      "option": "^No\\b|None|Not Applicable|N/A"
+    },
+    {
+      "q": "(?:if licensed|credential/license number|license number|relevant expiration date)",
+      "a": "N/A"
+    },
+    {
+      "q": "security clearance|clearance level|highest level of security|hold an active.*clearance",
+      "a": "None",
+      "option": "^No\\b|^None\\b|No Clearance|Not Applicable|N/A"
+    },
+    {
+      "q": "resident of (?:the state of )?maryland",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "retained by the u\\.?s\\.? government",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "post-government employment activities|section 847|national defense authorization|official or employee of the dod|military spouse|former military|armed forces",
+      "a": "No",
+      "option": "^No\\b|^No$|None"
+    },
+    {
+      "q": "consent to receive.*sms|recruiting sms|by selecting.*(?:yes|consent)|by selecting.*agree",
+      "a": "Yes",
+      "option": "^(?:Yes|I consent|Agree)\\b"
+    },
+    {
+      "q": "(?:without|with no).*(?:sponsorship|restriction)|authorized.*without.*sponsorship",
+      "a": "Yes",
+      "option": "^Yes\\b|^Yes$"
+    },
+    {
+      "q": "(?:now|future|currently|will you|do you|in need of|require|need).*(?:spons?o?r?(?:ship)?|(?:require|need).*(?:work )?authorization)|require.*visa|visa.*sponsor|require.*spon",
+      "a": "No",
+      "option": "^No$|^No\\b|do not require|will not require|not require|without.*sponsorship|authorized to work without"
+    },
+    {
+      "q": "export license|deemed export",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "space technology export regulations|which of the following applies to you.*export",
+      "a": "I am a U.S. Citizen.",
+      "option": "U\\.S\\. Citizen|US Citizen"
+    },
+    {
+      "q": "confirm the season you are applying for|season.*applying for",
+      "a": "Summer 2027",
+      "option": "Summer 2027|Summer"
+    },
+    {
+      "q": "able to join.*intern|joining date|earliest.*start date",
+      "a": "05/24/2027"
+    },
+    {
+      "q": "ending your internship|internship.*end date",
+      "a": "08/13/2027"
+    },
+    {
+      "q": "if yes, what kind|what kind.*authorization|specify.*visa",
+      "a": "None",
+      "option": "^None\\b|N/A|Not Applicable"
+    },
+    {
+      "q": "provide your ldap|alphabet employee.*ldap|\\bldap\\b",
+      "a": "N/A"
+    },
+    {
+      "q": "(?:authorized|eligible|permitted|legal right|lawfully authorized|right to work).*to work.*(?:without|with no)?.*(?:restriction|sponsorship)?|legally authorized|authorized to work|^work authorization$|u\\.s\\. citizen",
+      "a": "Yes",
+      "option": "^Yes|authorized|citizen"
+    },
+    {
+      "q": "actively enrolled in a .* degree program|enrolled in a degree-seeking program",
+      "a": "I will be enrolled in a degree-seeking program.",
+      "option": "I will be enrolled|^Yes"
+    },
+    {
+      "q": "^school\\*?$|^university\\*?$|^institution\\*?$|^college\\*?$|current school|name of school|what school|attending.*school|attending.*university",
+      "a": "State University",
+      "option": "State University|^State University\\b|GSU"
+    },
+    {
+      "q": "^degree\\*?$|^degree type\\*?$|^degree level\\*?$|^education level\\*?$|level of education|highest level of education",
+      "a": "Bachelor's Degree",
+      "option": "Bachelor's Degree|Bachelors|Bachelor of Business|Bachelor|Undergraduate"
+    },
+    {
+      "q": "^major\\*?$|^field of study\\*?$|^area of study\\*?$|^discipline\\*?$|major.*field of study",
+      "a": "Computer Information Systems",
+      "option": "Computer Information Systems|Information Systems|Management Information Systems|Computer Science|Business"
+    },
+    {
+      "q": "what year are you currently in (school|college)|current year in school|academic year|current classification|class standing|standing in school",
+      "a": "Junior",
+      "option": "Junior|3rd Year|Third Year|Undergraduate"
+    },
+    {
+      "q": "gpa.*(3\\.0|3\\.5|higher|minimum|or above|cumulative gpa .* or higher)|cumulative gpa 3\\.0 or higher",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "what is your.*g\\.?p\\.?a\\.?|\\bg\\.?p\\.?a\\.?\\b|cumulative gpa|grade point average",
+      "a": "3.35",
+      "option": "3\\.49\\s*-\\s*3\\.0|3\\.0\\s*-\\s*3\\.49|3\\.25\\s*-\\s*3\\.5|3\\.0\\s*-\\s*3\\.5|3\\.0\\s*to\\s*3\\.5|3\\.0\\s*\\+|3\\.0\\s*or\\s*higher|3\\.0\\s*and\\s*above|3\\.35"
+    },
+    {
+      "q": "willing and able to commit|able to commit to the",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "total years of experience|years of.*experience",
+      "a": "1"
+    },
+    {
+      "q": "what ai tools are you currently using|ai tools.*using",
+      "a": "Claude, ChatGPT, GitHub Copilot, and Playwright for browser automation and AI agent workflows."
+    },
+    {
+      "q": "\\bitar\\b|u\\.?s\\.? person.*\\bitar\\b|export control",
+      "a": "US Citizen",
+      "option": "US Citizen|U\\.S\\. Citizen|Citizen|^Yes"
+    },
+    {
+      "q": "if you were referred|who referred you|referrer('s)? name",
+      "a": "N/A"
+    },
+    {
+      "q": "potential to be top 0\\.01%|top 0\\.01% in",
+      "a": "Process automation, autonomous browser agents, and building end-to-end data pipelines with high precision and reliability."
+    },
+    {
+      "q": "\\bf-?1 status\\b|\\bcpt\\b|\\bopt\\b|\\bstem opt\\b|\\bstudent visa\\b|\\bj-?1 visa\\b",
+      "a": "No",
+      "option": "^No"
+    },
+    {
+      "q": "available for a 12-?week|10-?12 week|40 hours per week|full-?time during the summer",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "which term.*summer|available.*summer",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "which term.*winter|which term.*spring|which term.*fall",
+      "a": "No",
+      "option": "^No"
+    },
+    {
+      "q": "require.*sponsorship|sponsorship.*require|need.*sponsorship|require.*visa|visa.*sponsorship",
+      "a": "No",
+      "option": "^No\\b|0(?:\\.0)?$"
+    },
+    {
+      "q": "(?:legally\\s+)?(?:authorized|eligible)\\s+(?:to\\s+work|for\\s+employment)|work\\s+authorization|authorized\\s+to\\s+work|eligible\\s+to\\s+work|authorized\\s+for\\s+employment|eligible\\s+for\\s+employment|proof of identity and employment eligibility",
+      "a": "Yes",
+      "option": "^Yes\\b|^Yes$"
+    },
+    {
+      "q": "talent community|future (job )?opportunities|consider(ed)? for future",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "own, operate, or provide services|other business|outside business",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "which area of expertise interests you|area of expertise",
+      "a": "Technology",
+      "option": "Technology|ITS|Intelligent Transportation|Information"
+    },
+    {
+      "q": "highest degree.*(achieved|completed|obtained)",
+      "a": "High School",
+      "option": "High School|Some College|Associate|Bachelor"
+    },
+    {
+      "q": "best describes your status|current status.*student",
+      "a": "Undergraduate Student",
+      "option": "Undergraduate|Currently Enrolled|Student|Full-time"
+    },
+    {
+      "q": "anticipated graduation month|graduation month",
+      "a": "May",
+      "option": "May|05"
+    },
+    {
+      "q": "anticipated graduation year|graduation year",
+      "a": "2028",
+      "option": "2028|2027"
+    },
+    {
+      "q": "preferred work location|preferred.*office|office.*preferred",
+      "a": "Atlanta",
+      "option": "Atlanta|Austin|New York|Remote"
+    },
+    {
+      "q": "what degree are you currently|degree.*currently pursuing",
+      "a": "Bachelor's",
+      "option": "Bachelor|Undergraduate"
+    },
+    {
+      "q": "area of interest in software|area of interest",
+      "a": "Artificial Intelligence & Machine Learning",
+      "option": "Artificial Intelligence|Machine Learning|^AI\\b|Data Science|Analytics|Full Stack|Software"
+    },
+    {
+      "q": "field of study|^major\\b|area of study",
+      "a": "Computer Information Systems",
+      "option": "Computer Information Systems|Computer Science|Information Technology"
+    },
+    {
+      "q": "best way to contact|preferred (method of )?contact|preferred contact",
+      "a": "Email",
+      "option": "^Email\\b|Email"
+    },
+    {
+      "q": "immigration reform and control act|irca",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "parties excluded|debarred|ineligible for award|excluded from federal",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "government (entity|employee|worker|official|contractor|agency)|working for a government|employed by a government|government official|us government service|(current|former).*government",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "commitments or agreements with another employer|non-compete|restrictive covenant",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "conflict of interest|involvement by you or any immediate family member in an activity|potential conflict",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "relative|family member|related to anyone|familial|romantic|personal relationship|friend or relative",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "previously applied|applied (to|with) us before|previously interviewed|interviewed (with|before)",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "convict|felon|criminal|misdemeanor|arrest|crime",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "terminated|discharged|dismissed|fired from (a job|employment)",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "plan to pursue a master|pursue a graduate degree",
+      "a": "No",
+      "option": "^No"
+    },
+    {
+      "q": "internship will be held.*hybrid|office in a hybrid",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "current year in school|year in school|class standing|classification|what year are you|academic (status|standing)|current academic status",
+      "a": "Junior",
+      "option": "^Junior\\b"
+    },
+    {
+      "q": "middle\\s*initial",
+      "a": ""
+    },
+    {
+      "q": "transcript|official or unofficial transcript",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "18.*(year|age|old)|age.*18|18 or older|at least 18|are you 18",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "contingent upon|contingent on|successful completion of a|background check",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "legal (full )?name|^full name|^name\\b|your name",
+      "a": "Alex Doe"
+    },
+    {
+      "q": "first name|given name",
+      "a": "Alex"
+    },
+    {
+      "q": "last name|surname|family name",
+      "a": "Doe"
+    },
+    {
+      "q": "middle name",
+      "a": null
+    },
+    {
+      "q": "^suffix\\b|name suffix",
+      "a": null
+    },
+    {
+      "q": "i have a preferred name",
+      "a": "No",
+      "option": "^No$"
+    },
+    {
+      "q": "preferred (first )?name|nickname",
+      "a": "TK"
+    },
+    {
+      "q": "confirm.*e-?mail|e-?mail.*confirm",
+      "a": "candidate@example.com"
+    },
+    {
+      "q": "e-?mail",
+      "a": "candidate@example.com"
+    },
+    {
+      "q": "how did you hear|hear about us|how did you find|referral source",
+      "a": "LinkedIn",
+      "option": "^LinkedIn\\b"
+    },
+    {
+      "q": "device type|phone type",
+      "a": "Mobile",
+      "option": "^Mobile|Cell"
+    },
+    {
+      "q": "country (phone )?code|phone country|country code",
+      "a": "United States of America (+1)",
+      "option": "United States"
+    },
+    {
+      "q": "phone extension|extension",
+      "a": null
+    },
+    {
+      "q": "^(?!.*(?:phone[- ]based|over the phone|on the phone|scale|interview|comfort|experience)).*\\b(?:phone|mobile|telephone|cell(?:\\s*phone)?)\\s*(?:#|number|no\\b|num)?\\s*\\*?$",
+      "a": "555-0199"
+    },
+    {
+      "q": "employee id|worker id|personnel (number|id)",
+      "a": "N/A"
+    },
+    {
+      "q": "who was your manager|manager('s)? name|supervisor('s)? name|^manager\\b|^supervisor\\b",
+      "a": "N/A"
+    },
+    {
+      "q": "primary work location|prior work location|previous work location",
+      "a": "N/A"
+    },
+    {
+      "q": "work email|prior work email|previous work email|company email",
+      "a": "candidate@example.com"
+    },
+    {
+      "q": "address line 2|address 2|apt|suite",
+      "a": null
+    },
+    {
+      "q": "address line 1|street address|^address$|^address\\*|^address 1|address 1",
+      "a": "123 Innovation Way"
+    },
+    {
+      "q": "citizenship",
+      "a": "United States of America",
+      "option": "^United States( of America)?$|^USA?$"
+    },
+    {
+      "q": "address line [23]|apartment|\\bsuite\\b|\\bunit\\b",
+      "a": ""
+    },
+    {
+      "q": "\\bcountry\\b",
+      "a": "United States of America",
+      "option": "^United States( of America)?$|^USA?$"
+    },
+    {
+      "q": "\\b(city|town)\\b",
+      "a": "Atlanta"
+    },
+    {
+      "q": "\\bstate\\b.*(reside|live|residence|located)|(reside|live|residence|located).*state|which.*state|indicate.*state|state.*province",
+      "a": "Georgia",
+      "option": "^Georgia\\b|\\bGeorgia\\b|^GA$|\\bGA\\b"
+    },
+    {
+      "q": "registered, licensed to sell or deal in securities|investment advisor|broker-dealer|series (?:7|63|65|66)",
+      "a": "No",
+      "option": "^No\\b"
+    },
+    {
+      "q": "^(?:your\\s+)?(?:state|province|region)(?:\\s*\\/\\s*province)?\\b|state/province|state or province|^state\\*?$|^state\\s*\\/\\s*province\\*?$",
+      "a": "Georgia",
+      "option": "^Georgia\\b|\\bGeorgia\\b|^GA$|\\bGA\\b"
+    },
+    {
+      "q": "postal|zip",
+      "a": "30303"
+    },
+    {
+      "q": "^county\\b",
+      "a": "Fulton"
+    },
+    {
+      "q": "^location|current location|where are you (located|based)",
+      "a": "Atlanta, Georgia, United States",
+      "option": "Atlanta,? (GA|Georgia)",
+      "only_combobox": true
+    },
+    {
+      "q": "^(?:your\\s+)?linkedin(?:[\\s/_]*(?:profile|url|link|handle|page))?\\b|^linkedin$",
+      "a": "https://www.linkedin.com/in/yourprofile/"
+    },
+    {
+      "q": "job title|^role title\\b|title of position",
+      "a": "AI Research & Acquisitions Analyst"
+    },
+    {
+      "q": "^(company|employer)( name)?$|^(name of )?(current |previous )?employer$|^company name$|current company|current organization",
+      "a": "W. A Investments & Development"
+    },
+    {
+      "q": "role description|job description",
+      "a": "Conducted market and acquisition target research, performed financial and payment platform analysis, and supported executive agreement reviews."
+    },
+    {
+      "q": "(from|start).*month",
+      "a": "05",
+      "option": "^(05|5|may)$"
+    },
+    {
+      "q": "(from|start).*year",
+      "a": "2026"
+    },
+    {
+      "q": "(to|end).*month",
+      "a": "08",
+      "option": "^(08|8|august|aug)$"
+    },
+    {
+      "q": "to \\(actual or expected\\) year|expected.*year|anticipated.*year",
+      "a": "2028",
+      "option": "^2028\\b"
+    },
+    {
+      "q": "(to|end).*year",
+      "a": "2026"
+    },
+    {
+      "q": "month and year.*expect.*graduate|expecting to graduate with your bachelor|graduation month and year",
+      "a": "May 2028",
+      "option": "May 2028|2028|December 2027|2027"
+    },
+    {
+      "q": "^(?:from\\s+|to\\s+|start\\s+|end\\s+)?month\\s*\\*?$|^month$",
+      "a": "05",
+      "option": "^(05|5|may)$"
+    },
+    {
+      "q": "^(?:from\\s+|to\\s+|start\\s+|end\\s+)?year\\s*\\*?$|^year$",
+      "a": "2026"
+    },
+    {
+      "q": "github",
+      "a": "https://github.com/yourhandle"
+    },
+    {
+      "q": "website|portfolio|personal site|blog",
+      "a": "https://github.com/yourhandle"
+    },
+    {
+      "q": "when do you expect to graduate|graduate or complete your program|expected.*graduat|anticipate.*graduat",
+      "a": "December 2027",
+      "option": "December 2027|Dec 2027|2027|Fall 2027|Winter 2027|12/2027"
+    },
+    {
+      "q": "(?:are you )?(?:currently enrolled|enrolled in)(?!.*graduat)",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "confirm that you are currently a student|returning to school.*graduat|returning to school in the fall",
+      "a": "Yes",
+      "option": "^Yes\\b"
+    },
+    {
+      "q": "^school$|^university$|^college$|^institution$|name of (?:school|university|college|institution)|current (?:school|university|college|institution)",
+      "a": "State University",
+      "option": "State University"
+    },
+    {
+      "q": "^degree|degree (type|level)|level of education|highest education",
+      "a": "Bachelor's (in progress)",
+      "option": "Bachelor'?s? degree in progress|Bachelor'?s? \\(in progress\\)|^Bachelor"
+    },
+    {
+      "q": "\\bmajor\\b|field of study|discipline|area of study",
+      "a": "Computer Information Systems",
+      "option": "Computer|Information|Systems|Technology|Business|Science|Analytics"
+    },
+    {
+      "q": "gpa",
+      "a": "3.35",
+      "option": "3\\.49\\s*-\\s*3\\.0|3\\.0\\s*-\\s*3\\.49|3\\.25\\s*-\\s*3\\.5|3\\.0\\s*-\\s*3\\.5|3\\.0\\s*to\\s*3\\.5|3\\.0\\s*\\+|3\\.0\\s*or\\s*higher|3\\.0\\s*and\\s*above|3\\.35"
+    },
+    {
+      "q": "graduation (date|month)|expected graduation|grad(uation)? date",
+      "a": "05/2028",
+      "option": "May 2028|2028"
+    },
+    {
+      "q": "graduation year|class year|year of graduation",
+      "a": "2028",
+      "option": "2028"
+    },
+    {
+      "q": "fluent in this language",
+      "a": "check"
+    },
+    {
+      "q": "^language",
+      "a": "English",
+      "option": "^English"
+    },
+    {
+      "q": "^read\\b|reading proficiency",
+      "a": "Fluent",
+      "option": "^Fluent"
+    },
+    {
+      "q": "^speak\\b|speaking proficiency",
+      "a": "Fluent",
+      "option": "^Fluent"
+    },
+    {
+      "q": "^write\\b|writing proficiency",
+      "a": "Fluent",
+      "option": "^Fluent"
+    },
+    {
+      "q": "number at which you consent|consent to be texted|phone.*consent|number.*text",
+      "a": "555-0199"
+    },
+    {
+      "q": "legal right to work|right to work|legally authorized|authorized to work|work authorization|eligible to work|u\\.s\\. citizen or otherwise|lawfully authorized",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "convict|felon|criminal|misdemeanor|plead guilty",
+      "a": "No",
+      "option": "^No$|^No\\b"
+    },
+    {
+      "q": "terminated|discharged|fired|asked to resign|involuntary separation",
+      "a": "No",
+      "option": "^No$|^No\\b"
+    },
+    {
+      "q": "(employed|worked|employee).*delta|delta.*(employee|employed|worked)",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "current(ly)? .*(?:employee|team member|worker)|previous(ly)? .*(?:employee|team member|worker)|former (?:employee|team member|worker)|worked (for|at) .* before|employed by|ever (been )?(directly )?(employed|worked)|have you (?:ever |previously )?worked (?:for|at)|previously worked for (?:this |any )?organization|worked for this organization|prior (?:employee|team member|worker)|work at a .* client|client.*employee",
+      "a": "No",
+      "option": "^No$|^No\\b|^Not Applicable"
+    },
+    {
+      "q": "previously applied|applied to .* before|applied here before|applied for a role|previously interviewed|prior interview|interviewed with|interviewed before",
+      "a": "No",
+      "option": "^No$|^No\\b"
+    },
+    {
+      "q": "relative|family member|related to|familial|romantic|personal relationship|friend or relative",
+      "a": "No",
+      "option": "^No$|^No\\b"
+    },
+    {
+      "q": "flexible shifts|work shifts|weekend|overtime",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "able to work in the office|in-office|on-?site|commut",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "drug test|drug screen",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "^(?!.*(proprietary|trading firm|hedge fund|investment bank|law firm|clinical|hospital|nursing|military|government agency)).*(directly relevant work experience|relevant.*experience|required.*amount.*experience)",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "educational requirement",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "preferred contact method",
+      "a": "Email",
+      "option": "^Email"
+    },
+    {
+      "q": "relocat",
+      "a": "Yes",
+      "option": "^Yes"
+    },
+    {
+      "q": "how did you hear|source|where did you (find|learn|hear)",
+      "a": "LinkedIn",
+      "option": "^Linked\\s?in|Online Job Board|Job Board|Company Website|Internet|Career Site|Other"
+    },
+    {
+      "q": "salary|compensation|pay expectation|desired pay",
+      "a": "Open",
+      "option": "^Open|^Negotiable|^Competitive"
+    },
+    {
+      "q": "start date|available to start|availability",
+      "a": "06/01/2027",
+      "option": "Summer 2027|June 2027|May 2027"
+    },
+    {
+      "q": "terms and conditions|willingly accept|acknowledge|acknowledgement|certify|certification|i agree|agreement|declaration|consent to|reviewed and agree|understand and agree",
+      "a": "check"
+    },
+    {
+      "q": "\\bgender\\b",
+      "a": "Male",
+      "option": "\\b(?:Male|Man)\\b"
+    },
+    {
+      "q": "hispanic|latino",
+      "a": "No",
+      "option": "^No\\b|Not Hispanic|Not Latino"
+    },
+    {
+      "q": "\\brace\\b|racial|ethnicity",
+      "a": "Black or African American",
+      "option": "Black|African American"
+    },
+    {
+      "q": "veteran",
+      "a": "I am not a protected veteran",
+      "option": "^(?:i am not|not a|i do not identify as|not a veteran)\\b|^no(?:\\s+i\\s+am\\s+not|\\s*,|\\s*$|\\s+protected)"
+    },
+    {
+      "q": "disabilit",
+      "a": "No, I do not have a disability",
+      "option": "No, I do not have a disability|do not have a disability|^No\\b"
+    },
+    {
+      "q": "gender|sex\\b|race|ethnic|hispanic|veteran|disabilit|pronoun|sexual orientation|lgbt",
+      "a": null,
+      "eeo": true
+    },
+    {
+      "q": "sms|text message|automated calls/texts|consent to receive automated calls",
+      "a": "Yes",
+      "option": "^Yes|Consent"
+    },
+    {
+      "q": "cover letter",
+      "a": null
+    },
+    {
+      "q": "^signature\\b|\\bsignature\\b|\\be-?signature\\b|sign here|type (?:your )?(?:full )?(?:legal )?name|digital signature|electronic signature|applicant signature|signature of applicant|enter your (?:full )?name to sign|candidate signature",
+      "a": "Alex Doe"
+    },
+    {
+      "q": "i agree to the electronic signature|i consent to use electronic signature|typing my name.*signature|electronic signature consent|certify that all information|certify.*true and correct|truthful and complete|i acknowledge that my typed signature|same legal validity.*signature",
+      "a": "check"
+    },
+    {
+      "q": "today's date|^date$",
+      "a": "TODAY"
+    },
+    {
+      "q": "if you answered no to the above question.*(?:type of )?visa|what type of visa are you on",
+      "a": "N/A - U.S. citizen",
+      "option": "N/A|Not Applicable|U\\.?S\\.? Citizen|None",
+      "src": "candidate_stated_2026-09-24_us_citizen",
+      "added": "2026-10-19"
+    },
+    {
+      "q": "location\\s*-?\\s*city and state of residence|city and state of residence|city,?\\s*state of residence",
+      "a": "Atlanta, GA",
+      "src": "candidate_verified (address stated by AJ 2026-09-24)",
+      "added": "2026-10-20"
+    }
+  ]
+}

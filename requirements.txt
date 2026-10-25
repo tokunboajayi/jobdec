@@ -1,0 +1,14 @@
+# core pipeline
+playwright>=1.63
+python-dotenv>=1.2
+pydantic>=2.13
+# local brain (free, no API key): neural matching + outcome learner
+sentence-transformers>=5.7
+numpy>=2.5
+scikit-learn>=1.9
+# resume PDFs (resumes/resume_gen.py)
+reportlab>=5.0
+# optional: Claude API agents (only used when ANTHROPIC_API_KEY is set)
+anthropic>=1.13
+# tests
+pytest>=9.1

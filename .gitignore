@@ -1,0 +1,49 @@
+# secrets and personal data
+.env
+*.env
+profile.json
+.browser-profile/
+auth_state.json
+response_cache.json
+# runtime output
+__pycache__/
+*.pyc
+records/
+records_test/
+briefings/
+agents/logs/
+agents/cache/
+agents/usage.json
+agents/fixes/
+*.log
+*.png
+queue_ranked.txt
+.used_auth_links.txt
+# runtime output written by the pipeline every run
+results.csv
+unanswered.json
+outcomes_report.md
+outreach_drafts.csv
+retry.json
+site_stats.json
+agents/brain_report.md
+agents/inbox_actions.md
+agents/needs_you.md
+prep/
+queue_pass1_done.txt
+.pytest_cache/
+.pytest_tmp/
+
+# runtime state / logs
+.batch_apply.lock
+*.err
+apply_*.log
+until100_*.log
+daily_run_*.log
+profile.json.bak-*
+queue_retry.txt
+brain/*.json
+*.lock
+.browser-profile*/
+.used_auth_codes.txt
+resumes/
