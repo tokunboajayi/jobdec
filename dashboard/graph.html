@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOBDEC // SYNAPTIC KNOWLEDGE GRAPH [NEURAL NET CORE]</title>
+  
+  <!-- Fonts: Non-blocking async load with system monospace fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@500;700;900&family=Space+Grotesk:wght@400;600&display=swap"></noscript>
+
+  <style>
+    :root {
+      --bg-cosmic: #020409;
+      --bg-panel: rgba(8, 14, 28, 0.78);
+      --bg-panel-solid: #090e1c;
+      --bg-card: rgba(14, 23, 44, 0.7);
+      --border-cyan: #00f0ff;
+      --border-violet: #9d4edd;
+      --border-dim: rgba(0, 240, 255, 0.22);
+      --text-main: #c8d8f0;
+      --text-bright: #00f0ff;
+      --text-dim: #5c7499;
+      --neon-green: #00ff88;
+      --neon-cyan: #00f0ff;
+      --neon-violet: #b5179e;
+      --neon-amber: #ffb703;
+      --neon-coral: #ff2a5f;
+      --neon-sky: #38bdf8;
+      --neon-indigo: #818cf8;
+      --glow-cyan: 0 0 16px rgba(0, 240, 255, 0.6);
+      --glow-violet: 0 0 16px rgba(181, 23, 158, 0.6);
+      --glow-green: 0 0 16px rgba(0, 255, 136, 0.6);
+      --font-display: 'Orbitron', 'Courier New', sans-serif;
+      --font-body: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-cosmic);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 13px;
+      overflow: hidden;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    /* Ambient Neural Grid Background */
+    #neural-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: grab;
+    }
+    #neural-canvas:active { cursor: grabbing; }
+
+    /* Top Navigation HUD */
+    .neural-hud-header {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      right: 16px;
+      height: 58px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--border-dim);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 10;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .pulse-nucleus {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      box-shadow: var(--glow-cyan);
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 26px var(--neon-cyan); }
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.6);
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--neon-cyan);
+      letter-spacing: 1.5px;
+      margin-left: 4px;
+    }
+
+    /* EEG Oscilloscope Box */
+    .eeg-monitor {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+    #eeg-canvas {
+      width: 90px;
+      height: 24px;
+      display: block;
+    }
+    .eeg-meta {
+      display: flex;
+      flex-direction: column;
+      font-size: 9px;
+      line-height: 1.2;
+    }
+    .eeg-rate {
+      color: var(--neon-green);
+      font-weight: bold;
+    }
+    .eeg-lbl {
+      color: var(--text-dim);
+    }
+
+    /* Live Telemetry Pills in Header */
+    .telemetry-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 240, 255, 0.06);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .stat-pill .val {
+      font-weight: bold;
+      color: var(--neon-cyan);
+    }
+    .stat-pill .lbl {
+      color: var(--text-dim);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* Actions in Header */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .hud-btn {
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid var(--border-cyan);
+      color: var(--text-bright);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .hud-btn:hover {
+      background: rgba(0, 240, 255, 0.22);
+      box-shadow: var(--glow-cyan);
+      transform: translateY(-1px);
+    }
+    .hud-btn.active {
+      background: var(--neon-cyan);
+      color: #020409;
+      font-weight: bold;
+    }
+
+    /* Floating Search & Cluster Controls */
+    .cluster-filter-bar {
+      position: absolute;
+      top: 84px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+
+    .search-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .neural-search-input {
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-dim);
+      color: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 8px 14px 8px 32px;
+      border-radius: 6px;
+      width: 280px;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .neural-search-input:focus {
+      width: 340px;
+      border-color: var(--neon-cyan);
+      box-shadow: var(--glow-cyan);
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      color: var(--neon-cyan);
+      font-size: 13px;
+    }
+
+    .filter-chip {
+      background: var(--bg-panel);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .filter-chip:hover {
+      border-color: var(--neon-cyan);
+      color: #ffffff;
+      background: rgba(0, 240, 255, 0.15);
+    }
+    .filter-chip.active {
+      background: rgba(0, 240, 255, 0.22);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+      font-weight: bold;
+    }
+    .filter-chip .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* Floating Viewport Navigation Toolbar */
+    .viewport-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .view-tool-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-dim);
+      color: var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .view-tool-btn:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: var(--glow-cyan);
+      background: rgba(0, 240, 255, 0.2);
+    }
+    .view-tool-btn.active {
+      background: var(--neon-cyan);
+      color: #020409;
+    }
+
+    /* Bottom Synapse Spectrum Legend */
+    .synapse-legend {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-dim);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 10;
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    /* Slide-out Synapse Inspector Drawer */
+    .synapse-inspector {
+      position: absolute;
+      top: 84px;
+      bottom: 20px;
+      right: 20px;
+      width: 360px;
+      background: var(--bg-panel);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-cyan);
+      border-radius: 8px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -8px 12px 40px rgba(0, 0, 0, 0.75), 0 0 20px rgba(0, 240, 255, 0.2);
+      transform: translateX(400px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .synapse-inspector.open {
+      transform: translateX(0);
+    }
+
+    .inspector-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-dim);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+
+    .inspector-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--neon-cyan);
+      margin-bottom: 2px;
+    }
+
+    .inspector-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      word-break: break-word;
+    }
+
+    .inspector-close {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 2px;
+      line-height: 1;
+    }
+    .inspector-close:hover { color: #ffffff; }
+
+    .inspector-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .detail-card {
+      background: rgba(0, 20, 35, 0.5);
+      border: 1px solid var(--border-dim);
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .detail-k {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .detail-v {
+      font-size: 12px;
+      color: #ffffff;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .connected-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .connected-item {
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid var(--border-dim);
+      border-radius: 4px;
+      padding: 6px 10px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .connected-item:hover {
+      background: rgba(0, 240, 255, 0.15);
+      border-color: var(--neon-cyan);
+    }
+
+    /* Tooltip */
+    #hover-tooltip {
+      position: absolute;
+      display: none;
+      pointer-events: none;
+      background: rgba(3, 10, 22, 0.95);
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
+      padding: 8px 12px;
+      border-radius: 6px;
+      z-index: 100;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      max-width: 260px;
+    }
+
+    /* Holographic HUD Card (3D Sphere Spec) */
+    .hologram-hud-card {
+      position: absolute;
+      bottom: 36px;
+      right: 36px;
+      min-width: 300px;
+      max-width: 440px;
+      background: rgba(3, 8, 18, 0.90);
+      border: 2px solid #00f0ff;
+      border-radius: 12px;
+      padding: 16px 24px;
+      box-shadow: 0 0 28px rgba(0, 240, 255, 0.55), inset 0 0 16px rgba(0, 240, 255, 0.18);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      z-index: 50;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      font-family: var(--font-mono);
+    }
+    .hologram-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .hologram-type {
+      font-size: 11px;
+      color: #00f0ff;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    /* Pure Cinematic Mode (Hotkey H) */
+    .neural-hud-header,
+    .cluster-filter-bar,
+    .synapse-legend,
+    .viewport-controls {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    body.cinematic-mode .neural-hud-header,
+    body.cinematic-mode .cluster-filter-bar,
+    body.cinematic-mode .synapse-legend,
+    body.cinematic-mode .viewport-controls {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-8px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Interactive Physics Canvas -->
+  <canvas id="neural-canvas"></canvas>
+
+  <!-- Top Navigation & Telemetry HUD -->
+  <header class="neural-hud-header">
+    <div class="brand-section">
+      <div class="pulse-nucleus"></div>
+      <div>
+        <span class="brand-title">JOBDEC</span>
+        <span class="brand-sub">// SYNAPTIC NEURAL NET</span>
+      </div>
+    </div>
+
+    <!-- Live Synaptic Oscilloscope -->
+    <div class="eeg-monitor">
+      <canvas id="eeg-canvas"></canvas>
+      <div class="eeg-meta">
+        <span class="eeg-rate" id="flux-rate">42.8 GHz</span>
+        <span class="eeg-lbl">SYNAPTIC FLUX</span>
+      </div>
+    </div>
+
+    <div class="telemetry-badges">
+      <div class="stat-pill">
+        <span class="val" id="stat-nodes">3,815</span>
+        <span class="lbl">Synapses</span>
+      </div>
+      <div class="stat-pill">
+        <span class="val" id="stat-edges">6,563</span>
+        <span class="lbl">Axons</span>
+      </div>
+      <div class="stat-pill">
+        <span class="val" id="stat-firms">379</span>
+        <span class="lbl">Cortices</span>
+      </div>
+      <div class="stat-pill">
+        <span class="val" id="stat-contacts">83</span>
+        <span class="lbl">Human Leads</span>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="hud-btn active" id="btn-view-mode" onclick="toggleViewMode()">SPHERE 3D</button>
+      <button class="hud-btn active" id="btn-beam" onclick="toggleBeam()">BEAM: ON</button>
+      <button class="hud-btn" id="btn-cinema" onclick="toggleCinematicMode()" title="Toggle Pure Cinematic View (Hotkey: H)">CINEMA [H]</button>
+      <button class="hud-btn" id="btn-sound" onclick="toggleAudio()">SOUND: ON</button>
+      <button class="hud-btn" id="btn-stimulate" onclick="triggerAxonStorm()">⚡ AXON STORM</button>
+      <button class="hud-btn active" id="btn-orbit" onclick="toggleOrbit()">ORBIT: ON</button>
+      <button class="hud-btn" id="btn-physics" onclick="togglePhysics()">SIM: ON</button>
+      <a href="/" class="hud-btn">← CYBERDECK HUD</a>
+    </div>
+  </header>
+
+  <!-- Cluster Filtering & Global Node Search -->
+  <div class="cluster-filter-bar">
+    <div class="search-container">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="neural-search" class="neural-search-input" placeholder="Search entity (e.g. Amex, Python, Susanna)..." oninput="handleSearch(this.value)" onkeydown="if(event.key==='Enter') focusSearchTarget();">
+    </div>
+
+    <div class="filter-chip active" onclick="setClusterFilter('ALL', this)">
+      <span class="chip-dot" style="background:#ffffff;"></span> ALL (3,815)
+    </div>
+    <div class="filter-chip" onclick="setClusterFilter('Company', this)">
+      <span class="chip-dot" style="background:var(--neon-cyan);"></span> COMPANIES
+    </div>
+    <div class="filter-chip" onclick="setClusterFilter('Contact', this)">
+      <span class="chip-dot" style="background:var(--neon-violet);"></span> HUMAN LEADS
+    </div>
+    <div class="filter-chip" onclick="setClusterFilter('Requisition', this)">
+      <span class="chip-dot" style="background:var(--neon-coral);"></span> REQUISITIONS
+    </div>
+    <div class="filter-chip" onclick="setClusterFilter('OutreachTarget', this)">
+      <span class="chip-dot" style="background:var(--neon-amber);"></span> OUTREACH
+    </div>
+    <div class="filter-chip" onclick="setClusterFilter('PolicyRule', this)">
+      <span class="chip-dot" style="background:var(--neon-indigo);"></span> COGNITIVE RULES
+    </div>
+    <div class="filter-chip" onclick="setClusterFilter('ExecutionResult', this)">
+      <span class="chip-dot" style="background:#64748b;"></span> OUTCOMES
+    </div>
+  </div>
+
+  <!-- Viewport Zoom & Reset Controls -->
+  <div class="viewport-controls">
+    <button class="view-tool-btn" title="Zoom In" onclick="zoomView(1.3)">+</button>
+    <button class="view-tool-btn" title="Zoom Out" onclick="zoomView(0.75)">−</button>
+    <button class="view-tool-btn" title="Reset View" onclick="resetView()">⌖</button>
+    <button class="view-tool-btn" id="btn-autopilot" title="Autopilot Tour" onclick="toggleAutopilot()">✈</button>
+  </div>
+
+  <!-- Synapse Legend -->
+  <div class="synapse-legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--neon-green); box-shadow:var(--glow-green);"></span> Candidate Core</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--neon-cyan); box-shadow:var(--glow-cyan);"></span> Company</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--neon-violet); box-shadow:var(--glow-violet);"></span> LinkedIn Contact</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--neon-amber);"></span> Outreach Pitch</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--neon-coral);"></span> Requisition</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--neon-indigo);"></span> Policy Rule</div>
+  </div>
+
+  <!-- Slide-out Node Inspector -->
+  <aside class="synapse-inspector" id="node-inspector">
+    <div class="inspector-header">
+      <div>
+        <div class="inspector-type" id="insp-type">Entity</div>
+        <div class="inspector-title" id="insp-title">Tokunbo Ajayi</div>
+      </div>
+      <button class="inspector-close" onclick="closeInspector()">✕</button>
+    </div>
+    <div class="inspector-body" id="insp-body">
+      <!-- Dynamically filled on node click -->
+    </div>
+  </aside>
+
+  <!-- Node Hover Tooltip -->
+  <div id="hover-tooltip"></div>
+
+  <!-- Holographic HUD Card (3D Sphere Spec) -->
+  <div class="hologram-hud-card" id="hologram-card">
+    <div class="hologram-title" id="holo-title">TIMEOUT: Apex Analytix</div>
+    <div class="hologram-type" id="holo-type">EXECUTIONRESULT</div>
+  </div>
+
+  <script>
+    /* =========================================================================
+       SYNAPTIC AUDIO SYNTHESIZER (WEB AUDIO API)
+       ========================================================================= */
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playSynapticTone(freq = 520, type = 'sine', duration = 0.08, vol = 0.04) {
+      if (!audioEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('btn-sound');
+      btn.innerText = `SOUND: ${audioEnabled ? 'ON' : 'OFF'}`;
+      btn.classList.toggle('active', audioEnabled);
+      if (audioEnabled) playSynapticTone(660, 'triangle', 0.1, 0.06);
+    }
+
+    /* =========================================================================
+       HIGH-PERFORMANCE NEURAL NET KNOWLEDGE GRAPH ENGINE
+       ========================================================================= */
+
+    const COLOR_MAP = {
+      'Candidate': '#00ff88',
+      'Institution': '#a3e635',
+      'Experience': '#34d399',
+      'Skill': '#4ade80',
+      'Metric': '#2dd4bf',
+      'Company': '#00f0ff',
+      'Contact': '#e879f9',
+      'Requisition': '#ff2a5f',
+      'OutreachTarget': '#ffb703',
+      'OutreachDraft': '#fb8500',
+      'ATS': '#38bdf8',
+      'ExecutionResult': '#64748b',
+      'PolicyRule': '#818cf8',
+    };
+
+    let fullGraph = { nodes: [], links: [] };
+    let filteredNodes = [];
+    let filteredLinks = [];
+    let nodeIndex = new Map();
+    let adjacency = new Map();
+
+    // Viewport camera state (0.88 framing matches 3D holographic sphere perspective)
+    let camera = { x: 0, y: 0, zoom: 0.88 };
+    let isDraggingCanvas = false;
+    let dragStart = { x: 0, y: 0 };
+    let draggedNode = null;
+    let hoveredNode = null;
+    let selectedNode = null;
+    let physicsActive = true;
+    let orbitActive = true;
+    let autopilotActive = false;
+    let currentClusterFilter = 'ALL';
+    let globalTime = 0;
+    let mouseWorldPos = { x: 0, y: 0 };
+
+    // 3D Spherical Neural Hologram & Volumetric Beam State (matches 3D spec)
+    let viewMode = '3D'; // '3D' (Holographic Sphere) or '2D' (Planar Network)
+    let rotX = -0.18;    // Pitch tilt looking slightly down at sphere horizon
+    let rotY = 0;        // Yaw rotation
+    let rotSpeedX = 0;
+    let rotSpeedY = 0;
+    let isRotating3D = false;
+    let lastMousePos = { x: 0, y: 0 };
+    let beamActive = true;
+
+    // Upward-shooting Ion Photons inside the Volumetric Beam
+    let beamIons = [];
+    for (let i = 0; i < 54; i++) {
+      beamIons.push({
+        x: (Math.random() - 0.5) * 320,
+        y: Math.random() * 800 - 400,
+        speed: 4 + Math.random() * 7,
+        radius: 1.2 + Math.random() * 1.8,
+        alpha: 0.35 + Math.random() * 0.55
+      });
+    }
+
+    // Volumetric Striations / Light Flutes
+    let beamStriations = [];
+    for (let i = 0; i < 13; i++) {
+      beamStriations.push({
+        offset: (i - 6) * 28,
+        width: 8 + Math.random() * 16,
+        baseAlpha: 0.09 + Math.random() * 0.16,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    // Radial Cosmic Axon Rays bursting into the void
+    let cosmicRays = [];
+    for (let i = 0; i < 42; i++) {
+      cosmicRays.push({
+        baseAngle: (i / 42) * Math.PI * 2 + (Math.random() - 0.5) * 0.1,
+        length: 160 + Math.random() * 320,
+        alpha: 0.20 + Math.random() * 0.40,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    // Live Synaptic Action Potential Pulses (140+ photons with comet tails)
+    let actionPotentials = [];
+
+    // Background Celestial Dust (70 drifting cosmic ions)
+    let celestialDust = [];
+
+    const canvas = document.getElementById('neural-canvas');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('hover-tooltip');
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      camera.x = window.innerWidth / 2;
+      camera.y = window.innerHeight / 2 + 25;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Initialize Cosmic Celestial Dust
+    for (let i = 0; i < 70; i++) {
+      celestialDust.push({
+        x: (Math.random() - 0.5) * 2400,
+        y: (Math.random() - 0.5) * 2400,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
+        radius: 0.8 + Math.random() * 1.6,
+        alpha: 0.15 + Math.random() * 0.45,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    /* Load High-Fidelity Graph from Backend API */
+    async function fetchGraphData() {
+      try {
+        const res = await fetch('/api/graph');
+        const data = await res.json();
+        
+        fullGraph.nodes = data.nodes || [];
+        fullGraph.links = data.links || [];
+
+        nodeIndex.clear();
+        adjacency.clear();
+
+        // Uniform Fibonacci Sphere distribution for organic holographic globe
+        function fibSphere(idx, total, r) {
+          if (r === 0 || total <= 1) return { x: 0, y: 0, z: 0 };
+          const phi = Math.PI * (3 - Math.sqrt(5)); // ~2.39996323 golden ratio angle
+          const y = 1 - (idx / Math.max(1, total - 1)) * 2; // from 1 to -1
+          const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
+          const theta = phi * idx;
+          return {
+            x: Math.cos(theta) * radiusAtY * r,
+            y: y * r,
+            z: Math.sin(theta) * radiusAtY * r
+          };
+        }
+
+        // Layer hierarchy for 3D holographic sphere shells:
+        // Layer 0: Candidate Nucleus (R = 0)
+        // Layer 1: Core credentials (Skills, Metrics, Experience, Institution) (R = 120)
+        // Layer 2: Engaged outreach & Human leads (Contact, OutreachDraft, OutreachTarget) (R = 230)
+        // Layer 3: Organizations (Company) (R = 330)
+        // Layer 4: Outer shell horizon (Requisition, PolicyRule, ExecutionResult, ATS) (R = 350)
+        const layerTotals = [0, 0, 0, 0, 0];
+        const layerIndices = [0, 0, 0, 0, 0];
+        const layerRadii = [0, 75, 155, 245, 345];
+
+        function getNodeLayer(ntype) {
+          if (ntype === 'Candidate') return 0;
+          if (ntype === 'Skill' || ntype === 'Metric' || ntype === 'Experience' || ntype === 'Institution') return 1;
+          if (ntype === 'Contact' || ntype === 'OutreachDraft' || ntype === 'OutreachTarget') return 2;
+          if (ntype === 'Company') return 3;
+          return 4; // Requisition, PolicyRule, ExecutionResult, ATS
+        }
+
+        fullGraph.nodes.forEach(n => {
+          const l = getNodeLayer(n.type || 'Entity');
+          n.layer = l;
+          layerTotals[l]++;
+        });
+
+        fullGraph.nodes.forEach((n, idx) => {
+          nodeIndex.set(n.id, n);
+          adjacency.set(n.id, new Set());
+
+          const ntype = n.type || 'Entity';
+          const l = n.layer;
+          const idxInLayer = layerIndices[l]++;
+          const p3 = fibSphere(idxInLayer, layerTotals[l], layerRadii[l]);
+
+          // 3D base coordinates (Holographic Sphere)
+          n.baseX3D = p3.x;
+          n.baseY3D = p3.y;
+          n.baseZ3D = p3.z;
+
+          // 2D fallback base coordinates (Planar Disc)
+          const angle2D = (idxInLayer * 0.35) + Math.sin(idx) * 0.22;
+          const r2D = (layerRadii[l] || 320) + (Math.sin(idx * 7) * 45);
+          n.baseX2D = Math.cos(angle2D) * r2D;
+          n.baseY2D = Math.sin(angle2D) * r2D;
+
+          // Current position (starts in 3D sphere)
+          n.x = p3.x;
+          n.y = p3.y;
+          n.z = p3.z;
+          n.screenX = 0;
+          n.screenY = 0;
+          n.projScale = 1;
+          n.p3z = p3.z;
+
+          n.vx = 0;
+          n.vy = 0;
+          n.phase = Math.random() * Math.PI * 2;
+          n.swayFreq = 0.0012 + (idx % 10) * 0.0002;
+          n.swayAmp = (l === 4) ? 2.0 : 4.0;
+          n.flashAlpha = 0;
+
+          // Delicate star-point radii for outer shell so interior is translucent
+          if (ntype === 'Candidate') {
+            n.radius = 18;
+            n.baseAlpha = 1.0;
+          } else if (ntype === 'Company') {
+            n.radius = 8.5;
+            n.baseAlpha = 0.95;
+          } else if (ntype === 'Contact' || ntype === 'OutreachDraft') {
+            n.radius = 6.2;
+            n.baseAlpha = 0.88;
+          } else if (ntype === 'Requisition') {
+            n.radius = 3.2;
+            n.baseAlpha = 0.55;
+          } else if (ntype === 'PolicyRule') {
+            n.radius = 2.4;
+            n.baseAlpha = 0.40;
+          } else {
+            // ExecutionResult & ATS - fine starry dust on the outer sphere
+            n.radius = 2.0;
+            n.baseAlpha = 0.28;
+          }
+          n.color = COLOR_MAP[ntype] || '#00f0ff';
+        });
+
+        // Resolve Links
+        fullGraph.links.forEach(l => {
+          const s = nodeIndex.get(l.source);
+          const t = nodeIndex.get(l.target);
+          if (s && t) {
+            l.sourceNode = s;
+            l.targetNode = t;
+            adjacency.get(s.id).add(t.id);
+            adjacency.get(t.id).add(s.id);
+          }
+        });
+
+        // Seed 140 Action Potential Photons with Dynamic Speed & Color
+        actionPotentials = [];
+        for (let i = 0; i < 140; i++) {
+          if (fullGraph.links.length > 0) {
+            const l = fullGraph.links[Math.floor(Math.random() * fullGraph.links.length)];
+            actionPotentials.push({
+              link: l,
+              t: Math.random(),
+              speed: 0.005 + Math.random() * 0.012,
+              tail: []
+            });
+          }
+        }
+
+        // Update stats
+        if (data.stats) {
+          document.getElementById('stat-nodes').innerText = (data.stats.total_nodes || 3815).toLocaleString();
+          document.getElementById('stat-edges').innerText = (data.stats.total_edges || 6563).toLocaleString();
+          document.getElementById('stat-firms').innerText = (data.stats.companies_count || 379).toLocaleString();
+          document.getElementById('stat-contacts').innerText = (data.stats.contacts_count || 83).toLocaleString();
+        }
+
+        applyClusterFilter();
+        requestAnimationFrame(renderLoop);
+      } catch (err) {
+        console.error("Failed to load full graph:", err);
+      }
+    }
+
+    /* Filtering & Clustered Visibility */
+    function setClusterFilter(filterType, chip) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentClusterFilter = filterType;
+      applyClusterFilter();
+      playSynapticTone(580, 'sine', 0.06, 0.03);
+    }
+
+    function applyClusterFilter() {
+      if (currentClusterFilter === 'ALL') {
+        filteredNodes = fullGraph.nodes;
+        filteredLinks = fullGraph.links;
+      } else {
+        const allowedIds = new Set();
+        fullGraph.nodes.forEach(n => {
+          if (n.type === currentClusterFilter || n.type === 'Candidate') {
+            allowedIds.add(n.id);
+          }
+        });
+        filteredNodes = fullGraph.nodes.filter(n => allowedIds.has(n.id));
+        filteredLinks = fullGraph.links.filter(l => allowedIds.has(l.source) && allowedIds.has(l.target));
+      }
+    }
+
+    /* Mode Toggle Handlers */
+    function toggleViewMode() {
+      viewMode = (viewMode === '3D') ? '2D' : '3D';
+      const btn = document.getElementById('btn-view-mode');
+      btn.innerText = (viewMode === '3D') ? 'SPHERE 3D' : 'FLAT 2D';
+      btn.classList.toggle('active', viewMode === '3D');
+      playSynapticTone(viewMode === '3D' ? 760 : 440, 'triangle', 0.1, 0.05);
+    }
+
+    function toggleBeam() {
+      beamActive = !beamActive;
+      const btn = document.getElementById('btn-beam');
+      btn.innerText = `BEAM: ${beamActive ? 'ON' : 'OFF'}`;
+      btn.classList.toggle('active', beamActive);
+      playSynapticTone(beamActive ? 840 : 360, 'sine', 0.1, 0.04);
+    }
+
+    /* Physics, 3D Rotation & Perspective Projection */
+    function stepPhysics() {
+      globalTime++;
+
+      if (viewMode === '3D') {
+        // Continuous Cosmic Orbit
+        if (orbitActive) {
+          rotY += 0.0022;
+        }
+
+        // Apply Inertial Rotation & Damping
+        rotX += rotSpeedX;
+        rotY += rotSpeedY;
+        rotSpeedX *= 0.90;
+        rotSpeedY *= 0.90;
+        rotX = Math.max(-1.42, Math.min(1.42, rotX)); // clamp pitch tilt
+
+        const cosY = Math.cos(rotY);
+        const sinY = Math.sin(rotY);
+        const cosX = Math.cos(rotX);
+        const sinX = Math.sin(rotX);
+
+        // Project all nodes from 3D to Screen Space
+        for (let i = 0; i < filteredNodes.length; i++) {
+          const n = filteredNodes[i];
+          if (n.flashAlpha > 0) n.flashAlpha *= 0.88;
+
+          // Harmonic micro-sway
+          const swayX = Math.sin(globalTime * n.swayFreq + n.phase) * n.swayAmp;
+          const swayY = Math.cos(globalTime * n.swayFreq + n.phase) * (n.swayAmp * 0.8);
+          const swayZ = Math.sin(globalTime * 0.7 * n.swayFreq + n.phase) * n.swayAmp;
+
+          let curX = n.baseX3D + swayX;
+          let curY = n.baseY3D + swayY;
+          let curZ = n.baseZ3D + swayZ;
+
+          // 3D rotation matrix
+          // Rotate around Y-axis (yaw)
+          const x1 = curX * cosY - curZ * sinY;
+          const z1 = curX * sinY + curZ * cosY;
+
+          // Rotate around X-axis (pitch)
+          const y2 = curY * cosX - z1 * sinX;
+          const z2 = curY * sinX + z1 * cosX;
+
+          n.p3x = x1;
+          n.p3y = y2;
+          n.p3z = z2;
+
+          // Perspective projection (camera fov = 1100)
+          const fov = 1100;
+          const scale = fov / (fov + z2);
+          n.projScale = scale;
+
+          // Screen coordinates
+          n.screenX = camera.x + x1 * scale * camera.zoom;
+          n.screenY = camera.y + y2 * scale * camera.zoom;
+
+          n.x = x1;
+          n.y = y2;
+        }
+      } else {
+        // 2D Planar physics
+        if (orbitActive) {
+          const cosR = Math.cos(0.0006);
+          const sinR = Math.sin(0.0006);
+          for (const n of filteredNodes) {
+            if (n === draggedNode || n.type === 'Candidate') continue;
+            const nx = n.x * cosR - n.y * sinR;
+            const ny = n.x * sinR + n.y * cosR;
+            n.x = nx; n.y = ny;
+          }
+        }
+        for (const n of filteredNodes) {
+          if (n.flashAlpha > 0) n.flashAlpha *= 0.88;
+          n.screenX = camera.x + n.x * camera.zoom;
+          n.screenY = camera.y + n.y * camera.zoom;
+          n.projScale = 1;
+          n.p3z = 0;
+        }
+      }
+
+      // Update Celestial Ion Dust
+      for (const d of celestialDust) {
+        d.x += d.vx;
+        d.y += d.vy;
+        if (d.x > 1400) d.x = -1400;
+        if (d.x < -1400) d.x = 1400;
+        if (d.y > 1400) d.y = -1400;
+        if (d.y < -1400) d.y = 1400;
+      }
+    }
+
+    /* Electrical Action Potential Storm */
+    function triggerAxonStorm() {
+      playSynapticTone(840, 'sawtooth', 0.35, 0.08);
+      setTimeout(() => playSynapticTone(440, 'triangle', 0.3, 0.06), 80);
+
+      for (let i = 0; i < 140; i++) {
+        if (filteredLinks.length > 0) {
+          const l = filteredLinks[Math.floor(Math.random() * filteredLinks.length)];
+          actionPotentials.push({
+            link: l,
+            t: 0,
+            speed: 0.02 + Math.random() * 0.025,
+            tail: []
+          });
+        }
+      }
+
+      // Flash Candidate Core
+      const cand = fullGraph.nodes.find(n => n.type === 'Candidate');
+      if (cand) cand.flashAlpha = 1.0;
+    }
+
+    function togglePhysics() {
+      physicsActive = !physicsActive;
+      const btn = document.getElementById('btn-physics');
+      btn.innerText = `SIM: ${physicsActive ? 'ON' : 'OFF'}`;
+      btn.classList.toggle('active', physicsActive);
+      playSynapticTone(physicsActive ? 720 : 420, 'sine', 0.08, 0.03);
+    }
+
+    function toggleOrbit() {
+      orbitActive = !orbitActive;
+      const btn = document.getElementById('btn-orbit');
+      btn.innerText = `ORBIT: ${orbitActive ? 'ON' : 'OFF'}`;
+      btn.classList.toggle('active', orbitActive);
+      playSynapticTone(orbitActive ? 800 : 400, 'sine', 0.08, 0.03);
+    }
+
+    /* Autopilot Tour */
+    let autopilotTimer = null;
+    let autopilotIdx = 0;
+    function toggleAutopilot() {
+      autopilotActive = !autopilotActive;
+      const btn = document.getElementById('btn-autopilot');
+      btn.classList.toggle('active', autopilotActive);
+
+      if (autopilotActive) {
+        playSynapticTone(880, 'sine', 0.15, 0.05);
+        const highlights = fullGraph.nodes.filter(n => (n.type === 'Contact' && n.warmth_score >= 35) || n.type === 'Company');
+        autopilotTimer = setInterval(() => {
+          if (!autopilotActive || highlights.length === 0) return;
+          autopilotIdx = (autopilotIdx + 1) % highlights.length;
+          const target = highlights[autopilotIdx];
+          focusNode(target);
+          selectNode(target);
+          target.flashAlpha = 1.0;
+          playSynapticTone(500 + target.warmth_score * 4, 'triangle', 0.1, 0.04);
+        }, 3500);
+      } else {
+        clearInterval(autopilotTimer);
+        playSynapticTone(330, 'sine', 0.1, 0.04);
+      }
+    }
+
+    /* Live EEG Oscilloscope Renderer */
+    const eegCanvas = document.getElementById('eeg-canvas');
+    const eegCtx = eegCanvas.getContext('2d');
+    let eegPhase = 0;
+
+    function drawEEG() {
+      eegCtx.clearRect(0, 0, eegCanvas.width, eegCanvas.height);
+      eegCtx.beginPath();
+      eegCtx.lineWidth = 1.6;
+      eegCtx.strokeStyle = '#00ff88';
+      eegCtx.shadowColor = '#00ff88';
+      eegCtx.shadowBlur = 6;
+
+      const w = eegCanvas.width;
+      const h = eegCanvas.height;
+      const mid = h / 2;
+
+      for (let x = 0; x < w; x++) {
+        const freq1 = Math.sin((x * 0.18) + eegPhase) * 6;
+        const freq2 = Math.sin((x * 0.42) - eegPhase * 1.5) * 3;
+        const noise = (Math.random() - 0.5) * 2;
+        const y = mid + freq1 + freq2 + noise;
+        if (x === 0) eegCtx.moveTo(x, y);
+        else eegCtx.lineTo(x, y);
+      }
+      eegCtx.stroke();
+      eegCtx.shadowBlur = 0;
+      eegPhase += 0.12;
+
+      // Random jitter on flux rate
+      if (globalTime % 30 === 0) {
+        const flux = (41.5 + Math.random() * 3.2).toFixed(1);
+        document.getElementById('flux-rate').innerText = `${flux} GHz`;
+      }
+    }
+
+    /* Draw Vertical Volumetric Ion Beam (Flared Celestial Pillar) */
+    function drawVerticalIonBeam(cx, cy) {
+      // 1. Radial glow bloom inside sphere core
+      const coreBloom = ctx.createRadialGradient(cx, cy, 10, cx, cy, 320 * camera.zoom);
+      coreBloom.addColorStop(0, 'rgba(0, 255, 230, 0.7)');
+      coreBloom.addColorStop(0.35, 'rgba(0, 240, 255, 0.42)');
+      coreBloom.addColorStop(0.7, 'rgba(0, 240, 255, 0.12)');
+      coreBloom.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = coreBloom;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 320 * camera.zoom, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 2. Flared Volumetric Light Column (ascending into space)
+      const topY = -140;
+      const bottomY = cy + 40 * camera.zoom;
+      const beamW_top = 640 * camera.zoom;
+      const beamW_bottom = 360 * camera.zoom;
+
+      ctx.save();
+      // Outer flared atmospheric beam
+      ctx.beginPath();
+      ctx.moveTo(cx - beamW_top * 0.5, topY);
+      ctx.lineTo(cx + beamW_top * 0.5, topY);
+      ctx.lineTo(cx + beamW_bottom * 0.5, bottomY);
+      ctx.lineTo(cx - beamW_bottom * 0.5, bottomY);
+      ctx.closePath();
+
+      const gradOuter = ctx.createLinearGradient(cx - beamW_top * 0.5, 0, cx + beamW_top * 0.5, 0);
+      gradOuter.addColorStop(0, 'rgba(0, 240, 255, 0)');
+      gradOuter.addColorStop(0.2, 'rgba(0, 240, 255, 0.16)');
+      gradOuter.addColorStop(0.5, 'rgba(0, 240, 255, 0.55)');
+      gradOuter.addColorStop(0.8, 'rgba(0, 240, 255, 0.16)');
+      gradOuter.addColorStop(1, 'rgba(0, 240, 255, 0)');
+      ctx.fillStyle = gradOuter;
+      ctx.fill();
+
+      // Intense incandescent white-cyan core pillar
+      const coreW_top = 280 * camera.zoom;
+      const coreW_bottom = 150 * camera.zoom;
+      ctx.beginPath();
+      ctx.moveTo(cx - coreW_top * 0.5, topY);
+      ctx.lineTo(cx + coreW_top * 0.5, topY);
+      ctx.lineTo(cx + coreW_bottom * 0.5, bottomY);
+      ctx.lineTo(cx - coreW_bottom * 0.5, bottomY);
+      ctx.closePath();
+
+      const gradCore = ctx.createLinearGradient(cx - coreW_top * 0.5, 0, cx + coreW_top * 0.5, 0);
+      gradCore.addColorStop(0, 'rgba(0, 240, 255, 0)');
+      gradCore.addColorStop(0.25, 'rgba(125, 245, 255, 0.55)');
+      gradCore.addColorStop(0.5, 'rgba(255, 255, 255, 0.98)');
+      gradCore.addColorStop(0.75, 'rgba(125, 245, 255, 0.55)');
+      gradCore.addColorStop(1, 'rgba(0, 240, 255, 0)');
+      ctx.fillStyle = gradCore;
+      ctx.fill();
+
+      // Vertical atmospheric fluting / striations
+      for (let s of beamStriations) {
+        const sx = cx + s.offset * camera.zoom;
+        const sw = s.width * camera.zoom;
+        const sAlpha = s.baseAlpha * (0.6 + 0.4 * Math.sin(globalTime * 0.03 + s.phase));
+        ctx.fillStyle = `rgba(180, 250, 255, ${sAlpha})`;
+        ctx.fillRect(sx - sw / 2, topY, sw, bottomY - topY);
+      }
+
+      // Upward streaming ion photons
+      for (let ion of beamIons) {
+        ion.y -= ion.speed * camera.zoom;
+        if (ion.y < topY) {
+          ion.y = bottomY - Math.random() * 80 * camera.zoom;
+          ion.x = cx + (Math.random() - 0.5) * beamW_bottom * 0.8;
+        }
+        const tailLen = ion.speed * 4 * camera.zoom;
+        ctx.beginPath();
+        ctx.moveTo(ion.x, ion.y + tailLen);
+        ctx.lineTo(ion.x, ion.y);
+        ctx.strokeStyle = `rgba(220, 255, 255, ${ion.alpha})`;
+        ctx.lineWidth = ion.radius * camera.zoom;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(ion.x, ion.y, ion.radius * 1.3 * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // 3. Radial cosmic rays bursting into the deep cosmos (as in user screenshot)
+      ctx.save();
+      for (let r of cosmicRays) {
+        const angle = r.baseAngle + (rotY * 0.2);
+        const innerR = 340 * camera.zoom;
+        const outerR = (340 + r.length) * camera.zoom;
+        const x1 = cx + Math.cos(angle) * innerR;
+        const y1 = cy + Math.sin(angle) * innerR;
+        const x2 = cx + Math.cos(angle) * outerR;
+        const y2 = cy + Math.sin(angle) * outerR;
+
+        const rAlpha = r.alpha * (0.6 + 0.4 * Math.sin(globalTime * 0.02 + r.phase));
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.strokeStyle = `rgba(0, 240, 255, ${rAlpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    /* Main Rendering Loop */
+    function renderLoop() {
+      stepPhysics();
+      drawEEG();
+
+      const dpr = window.devicePixelRatio || 1;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+
+      // Deep space cosmic void
+      ctx.fillStyle = '#020409';
+      ctx.fillRect(0, 0, w, h);
+
+      // Draw Floating Celestial Dust Ions
+      for (const d of celestialDust) {
+        const pulseAlpha = d.alpha * (0.6 + 0.4 * Math.sin(globalTime * 0.02 + d.phase));
+        const dx = camera.x + d.x * camera.zoom;
+        const dy = camera.y + d.y * camera.zoom;
+        ctx.beginPath();
+        ctx.arc(dx, dy, d.radius * camera.zoom, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 240, 255, ${pulseAlpha})`;
+        ctx.fill();
+      }
+
+      // Draw Vertical Volumetric Ion Beam (The Cyan Beacon of Light)
+      if (viewMode === '3D' && beamActive) {
+        drawVerticalIonBeam(camera.x, camera.y);
+      }
+
+      // Sort nodes in 3D: distant background nodes first, foreground nodes last
+      const sortedNodes = (viewMode === '3D')
+        ? [...filteredNodes].sort((a, b) => b.p3z - a.p3z)
+        : filteredNodes;
+
+      // Draw Axon Links
+      const renderLinks = filteredLinks;
+      for (const l of renderLinks) {
+        if (!l.sourceNode || !l.targetNode) continue;
+        const a = l.sourceNode;
+        const b = l.targetNode;
+
+        const isHighlighted = selectedNode && (selectedNode.id === a.id || selectedNode.id === b.id);
+        const isDimmed = selectedNode && !isHighlighted;
+
+        ctx.beginPath();
+        ctx.moveTo(a.screenX, a.screenY);
+        ctx.lineTo(b.screenX, b.screenY);
+
+        if (isHighlighted) {
+          ctx.strokeStyle = 'rgba(0, 240, 255, 0.9)';
+          ctx.lineWidth = 2.4;
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 8;
+        } else if (isDimmed) {
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+          ctx.lineWidth = 0.4;
+          ctx.shadowBlur = 0;
+        } else {
+          // In 3D, depth-based axon transparency
+          let linkAlpha = 0.12;
+          if (viewMode === '3D') {
+            const avgZ = (a.p3z + b.p3z) / 2;
+            const zRatio = (avgZ + 450) / 900;
+            linkAlpha = Math.max(0.025, 0.24 - zRatio * 0.18);
+          }
+          ctx.strokeStyle = `rgba(0, 240, 255, ${linkAlpha})`;
+          ctx.lineWidth = 0.8;
+          ctx.shadowBlur = 0;
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      // Draw Live Synaptic Action Potential Photons
+      for (let i = actionPotentials.length - 1; i >= 0; i--) {
+        const p = actionPotentials[i];
+        p.t += p.speed;
+        if (p.t >= 1) {
+          p.t = 0;
+          if (p.link && p.link.targetNode) {
+            p.link.targetNode.flashAlpha = 0.7;
+          }
+          if (filteredLinks.length > 0) {
+            p.link = filteredLinks[Math.floor(Math.random() * filteredLinks.length)];
+          }
+        }
+        if (p.link && p.link.sourceNode && p.link.targetNode) {
+          const sx = p.link.sourceNode.screenX;
+          const sy = p.link.sourceNode.screenY;
+          const tx = p.link.targetNode.screenX;
+          const ty = p.link.targetNode.screenY;
+          const px = sx + (tx - sx) * p.t;
+          const py = sy + (ty - sy) * p.t;
+
+          // Comet tail
+          const prevT = Math.max(0, p.t - 0.035);
+          const tailX = sx + (tx - sx) * prevT;
+          const tailY = sy + (ty - sy) * prevT;
+
+          ctx.beginPath();
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(px, py);
+          ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+          ctx.lineWidth = 1.8;
+          ctx.stroke();
+
+          // Photon head
+          ctx.beginPath();
+          ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = '#00f0ff';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      // Draw Synaptic Nodes (Depth-Sorted)
+      for (const n of sortedNodes) {
+        const isSelected = selectedNode && (selectedNode.id === n.id);
+        const isNeighbor = selectedNode && adjacency.get(selectedNode.id) && adjacency.get(selectedNode.id).has(n.id);
+        const isHovered = (hoveredNode && hoveredNode.id === n.id);
+        const isDimmed = selectedNode && !isSelected && !isNeighbor;
+
+        // Depth perspective calculation
+        const depth = (viewMode === '3D') ? Math.max(0, Math.min(1, (n.p3z + 460) / 920)) : 0;
+        const depthScale = n.projScale || 1;
+        const depthAlpha = isSelected || isHovered ? 1.0 : (1.0 - depth * 0.72);
+
+        // Dynamic organic radius breathing
+        const breath = 1 + 0.12 * Math.sin(globalTime * 0.04 + n.phase);
+        let r = n.radius * breath * depthScale;
+        if (isSelected) r *= 1.5;
+        else if (isHovered) r *= 1.35;
+
+        // White-hot flash burst
+        if (n.flashAlpha > 0.05) {
+          ctx.beginPath();
+          ctx.arc(n.screenX, n.screenY, r * 2.8, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 255, 255, ${n.flashAlpha * 0.6})`;
+          ctx.fill();
+        }
+
+        // Outer Glow Halo
+        if (isSelected || isHovered || n.type === 'Candidate' || n.type === 'Company' || (n.type === 'Contact' && n.warmth_score >= 40)) {
+          ctx.beginPath();
+          ctx.arc(n.screenX, n.screenY, r * 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = isSelected ? 'rgba(0, 240, 255, 0.45)' : (n.color + '26');
+          ctx.fill();
+        }
+
+        // Node Body
+        ctx.beginPath();
+        ctx.arc(n.screenX, n.screenY, r, 0, Math.PI * 2);
+        ctx.fillStyle = isDimmed ? '#111827' : n.color;
+        ctx.globalAlpha = isDimmed ? 0.12 : (depthAlpha * (n.baseAlpha || 0.65));
+        if (!isDimmed) {
+          ctx.shadowColor = n.color;
+          ctx.shadowBlur = (isSelected || isHovered) ? 24 : (n.type === 'Candidate') ? 28 : (n.type === 'Company') ? 14 : (viewMode === '3D' && depth < 0.4) ? 8 : 0;
+        }
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.globalAlpha = 1.0;
+
+        // Synaptic Nucleus Core
+        ctx.beginPath();
+        ctx.arc(n.screenX, n.screenY, r * 0.42, 0, Math.PI * 2);
+        ctx.fillStyle = '#020409';
+        ctx.fill();
+
+        // Level-of-Detail (LOD) Label Filtering
+        const isCoreEntity = (n.type === 'Candidate' || n.type === 'Company' || n.type === 'Contact' || n.type === 'OutreachDraft');
+        const showLabel = isSelected || isHovered || 
+                          (viewMode === '2D' && isCoreEntity && camera.zoom >= 0.65) || 
+                          (camera.zoom >= 2.5);
+
+        if (showLabel && !isDimmed) {
+          const fontSize = Math.max(9, Math.min(13, 11 * depthScale));
+          ctx.font = `${isSelected || isHovered ? 'bold ' : ''}${fontSize}px "JetBrains Mono", monospace`;
+          
+          let displayLabel = n.label || '';
+          if (displayLabel.length > 28 && !isSelected && !isHovered) {
+            displayLabel = displayLabel.slice(0, 26) + '…';
+          }
+
+          const textWidth = ctx.measureText(displayLabel).width;
+          const textY = n.screenY + r + fontSize + 3;
+
+          ctx.fillStyle = 'rgba(2, 4, 9, 0.78)';
+          ctx.fillRect(n.screenX - textWidth / 2 - 4, textY - fontSize + 1, textWidth + 8, fontSize + 4);
+
+          ctx.fillStyle = isSelected ? '#00f0ff' : isHovered ? '#ffffff' : (isCoreEntity ? '#e2e8f0' : '#64748b');
+          ctx.textAlign = 'center';
+          ctx.fillText(displayLabel, n.screenX, textY);
+        }
+      }
+
+      ctx.restore();
+      requestAnimationFrame(renderLoop);
+    }
+
+    /* Screen-Space Mouse & 3D Gesture Interactivity */
+    let isMouseDown = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      initAudio();
+      isMouseDown = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      rotSpeedX = 0;
+      rotSpeedY = 0;
+
+      // Hit testing in screen coordinates
+      let hit = null;
+      for (let i = filteredNodes.length - 1; i >= 0; i--) {
+        const n = filteredNodes[i];
+        const dx = e.clientX - n.screenX;
+        const dy = e.clientY - n.screenY;
+        const hitR = (n.radius * (n.projScale || 1)) + 9;
+        if (dx * dx + dy * dy <= hitR * hitR) {
+          hit = n;
+          break; // closest in view
+        }
+      }
+
+      if (hit) {
+        draggedNode = hit;
+        hit.flashAlpha = 1.0;
+        selectNode(hit);
+        playSynapticTone(hit.type === 'Candidate' ? 880 : 560 + (hit.warmth_score || 0) * 3, 'triangle', 0.12, 0.05);
+      } else {
+        isDraggingCanvas = true;
+      }
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+
+      if (isMouseDown && isDraggingCanvas) {
+        if (e.shiftKey || e.buttons === 2) {
+          // Pan camera
+          camera.x += dx;
+          camera.y += dy;
+        } else if (viewMode === '3D') {
+          // 3D pitch/yaw rotation with momentum
+          rotSpeedY = dx * 0.0055;
+          rotSpeedX = dy * 0.0055;
+          rotY += rotSpeedY;
+          rotX += rotSpeedX;
+        } else {
+          camera.x += dx;
+          camera.y += dy;
+        }
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+      } else if (!isMouseDown) {
+        // Hover detection in screen space
+        let found = null;
+        for (let i = filteredNodes.length - 1; i >= 0; i--) {
+          const n = filteredNodes[i];
+          const ndx = e.clientX - n.screenX;
+          const ndy = e.clientY - n.screenY;
+          const hitR = (n.radius * (n.projScale || 1)) + 8;
+          if (ndx * ndx + ndy * ndy <= hitR * hitR) {
+            found = n;
+            break;
+          }
+        }
+
+        if (found && found !== hoveredNode) {
+          playSynapticTone(520 + (found.warmth_score || 0) * 2, 'sine', 0.04, 0.02);
+        }
+        hoveredNode = found;
+
+        if (found) {
+          // Update Hologram HUD Card (matches user 3D spec)
+          document.getElementById('holo-title').innerText = found.label;
+          document.getElementById('holo-type').innerText = (found.type || 'Entity').toUpperCase();
+          const card = document.getElementById('hologram-card');
+          card.style.borderColor = found.color;
+          card.style.boxShadow = `0 0 25px ${found.color}77, inset 0 0 14px ${found.color}22`;
+
+          tooltip.style.display = 'block';
+          tooltip.style.left = `${e.clientX + 14}px`;
+          tooltip.style.top = `${e.clientY - 14}px`;
+          tooltip.innerHTML = `
+            <div style="color:${found.color}; font-weight:bold; font-size:12px;">${escapeHtml(found.label)}</div>
+            <div style="color:#64748b; font-size:9px; text-transform:uppercase;">${escapeHtml(found.type)}</div>
+            ${found.role ? `<div style="color:#94a3b8; font-size:10px; margin-top:2px;">${escapeHtml(found.role)}</div>` : ''}
+            ${found.stage ? `<div style="color:var(--neon-cyan); font-size:10px;">Status: ${escapeHtml(found.stage)}</div>` : ''}
+          `;
+        } else {
+          tooltip.style.display = 'none';
+        }
+      }
+    });
+
+    window.addEventListener('mouseup', () => {
+      isMouseDown = false;
+      draggedNode = null;
+      isDraggingCanvas = false;
+    });
+
+    /* Screen to World Coordinates */
+    function screenToWorld(sx, sy) {
+      return {
+        x: (sx - camera.x) / camera.zoom,
+        y: (sy - camera.y) / camera.zoom
+      };
+    }
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 0.89;
+      const mouseWorld = screenToWorld(e.clientX, e.clientY);
+
+      camera.zoom = Math.max(0.18, Math.min(4.5, camera.zoom * zoomFactor));
+      camera.x = e.clientX - mouseWorld.x * camera.zoom;
+      camera.y = e.clientY - mouseWorld.y * camera.zoom;
+    }, { passive: false });
+
+    /* Zoom Controls */
+    function zoomView(factor) {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight / 2;
+      const centerWorld = screenToWorld(cx, cy);
+
+      camera.zoom = Math.max(0.18, Math.min(4.5, camera.zoom * factor));
+      camera.x = cx - centerWorld.x * camera.zoom;
+      camera.y = cy - centerWorld.y * camera.zoom;
+      playSynapticTone(factor > 1 ? 640 : 480, 'sine', 0.06, 0.02);
+    }
+
+    function resetView() {
+      camera.zoom = 0.52;
+      camera.x = window.innerWidth / 2;
+      camera.y = window.innerHeight / 2;
+      rotX = -0.18;
+      rotY = 0;
+      rotSpeedX = 0;
+      rotSpeedY = 0;
+      selectedNode = null;
+      closeInspector();
+      const holoTitle = document.getElementById('holo-title');
+      const holoType = document.getElementById('holo-type');
+      const holoCard = document.getElementById('hologram-card');
+      if (holoTitle) holoTitle.innerText = 'TIMEOUT: Apex Analytix';
+      if (holoType) holoType.innerText = 'EXECUTIONRESULT';
+      if (holoCard) {
+        holoCard.style.borderColor = '#00f0ff';
+        holoCard.style.boxShadow = '0 0 28px rgba(0, 240, 255, 0.55), inset 0 0 16px rgba(0, 240, 255, 0.18)';
+      }
+      playSynapticTone(520, 'sine', 0.08, 0.03);
+    }
+
+    /* Node Inspector Panel */
+    function selectNode(n) {
+      selectedNode = n;
+      const holoTitle = document.getElementById('holo-title');
+      const holoType = document.getElementById('holo-type');
+      const holoCard = document.getElementById('hologram-card');
+      if (holoTitle) holoTitle.innerText = n.label;
+      if (holoType) holoType.innerText = (n.type || 'Entity').toUpperCase();
+      if (holoCard) {
+        holoCard.style.borderColor = n.color || '#00f0ff';
+        holoCard.style.boxShadow = `0 0 28px ${n.color || '#00f0ff'}77, inset 0 0 16px ${n.color || '#00f0ff'}22`;
+      }
+      const insp = document.getElementById('node-inspector');
+      insp.classList.add('open');
+
+      document.getElementById('insp-type').innerText = n.type || 'Entity';
+      document.getElementById('insp-type').style.color = n.color;
+      document.getElementById('insp-title').innerText = n.label;
+
+      const body = document.getElementById('insp-body');
+      body.innerHTML = '';
+
+      const details = [
+        { k: 'ENTITY ID', v: n.id },
+        { k: 'TYPE', v: n.type },
+        { k: 'COMPANY', v: n.company || n.firm },
+        { k: 'ROLE / TITLE', v: n.role },
+        { k: 'STAGE / STATUS', v: n.stage || n.status },
+        { k: 'WARMTH SCORE', v: n.warmth_score !== undefined ? `${n.warmth_score}/100` : null },
+        { k: 'PITCH NOTE', v: n.pitch || n.note || n.hook },
+        { k: 'VERIFIED ANSWER', v: n.answer },
+        { k: 'QUESTION / REGEX', v: n.question },
+        { k: 'VALIDATION SOURCE', v: n.source },
+        { k: 'FIT SCORE', v: n.fit_score },
+        { k: 'PROFILE URL', v: n.url }
+      ];
+
+      details.forEach(d => {
+        if (d.v) {
+          const card = document.createElement('div');
+          card.className = 'detail-card';
+          card.innerHTML = `<span class="detail-k">${d.k}</span><span class="detail-v">${escapeHtml(String(d.v))}</span>`;
+          body.appendChild(card);
+        }
+      });
+
+      // Connected Synapse Neighbors
+      const neighbors = adjacency.get(n.id) || new Set();
+      if (neighbors.size > 0) {
+        const neighborSection = document.createElement('div');
+        neighborSection.innerHTML = `<div class="detail-k" style="margin-bottom:6px;">CONNECTED SYNAPSES (${neighbors.size})</div>`;
+        const list = document.createElement('div');
+        list.className = 'connected-list';
+
+        Array.from(neighbors).slice(0, 20).forEach(nid => {
+          const neighborNode = nodeIndex.get(nid);
+          if (neighborNode) {
+            const item = document.createElement('div');
+            item.className = 'connected-item';
+            item.innerHTML = `
+              <span style="color:${neighborNode.color}; font-weight:600;">● ${escapeHtml(neighborNode.label)}</span>
+              <span style="font-size:9px; color:#64748b;">${escapeHtml(neighborNode.type)}</span>
+            `;
+            item.onclick = () => {
+              focusNode(neighborNode);
+              selectNode(neighborNode);
+              neighborNode.flashAlpha = 1.0;
+              playSynapticTone(600, 'triangle', 0.08, 0.04);
+            };
+            list.appendChild(item);
+          }
+        });
+        neighborSection.appendChild(list);
+        body.appendChild(neighborSection);
+      }
+    }
+
+    function closeInspector() {
+      document.getElementById('node-inspector').classList.remove('open');
+      selectedNode = null;
+    }
+
+    function focusNode(n) {
+      camera.zoom = 1.35;
+      if (viewMode === '3D') {
+        if (n.baseX3D !== undefined && (n.baseX3D !== 0 || n.baseZ3D !== 0)) {
+          rotY = -Math.atan2(n.baseX3D, n.baseZ3D);
+        }
+        camera.x = window.innerWidth / 2;
+        camera.y = window.innerHeight / 2;
+      } else {
+        camera.x = window.innerWidth / 2 - n.x * camera.zoom;
+        camera.y = window.innerHeight / 2 - n.y * camera.zoom;
+      }
+    }
+
+    /* Search & Target Focus */
+    function handleSearch(query) {
+      if (!query || !query.trim()) return;
+      const q = query.toLowerCase().trim();
+      for (const n of fullGraph.nodes) {
+        if (n.label.toLowerCase().includes(q) || (n.company && n.company.toLowerCase().includes(q))) {
+          hoveredNode = n;
+          break;
+        }
+      }
+    }
+
+    function focusSearchTarget() {
+      const q = document.getElementById('neural-search').value.toLowerCase().trim();
+      if (!q) return;
+      for (const n of fullGraph.nodes) {
+        if (n.label.toLowerCase().includes(q) || (n.company && n.company.toLowerCase().includes(q))) {
+          focusNode(n);
+          selectNode(n);
+          n.flashAlpha = 1.0;
+          playSynapticTone(760, 'sine', 0.15, 0.05);
+          break;
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.innerText = text;
+      return div.innerHTML;
+    }
+
+    function toggleCinematicMode() {
+      document.body.classList.toggle('cinematic-mode');
+      const isCinema = document.body.classList.contains('cinematic-mode');
+      const btn = document.getElementById('btn-cinema');
+      if (btn) btn.classList.toggle('active', isCinema);
+      playSynapticTone(isCinema ? 780 : 520, 'sine', 0.08, 0.04);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+      if (e.key === 'h' || e.key === 'H') {
+        toggleCinematicMode();
+      }
+      if (e.key === 'Escape') {
+        document.body.classList.remove('cinematic-mode');
+        const btn = document.getElementById('btn-cinema');
+        if (btn) btn.classList.remove('active');
+        closeInspector();
+      }
+    });
+
+    // Launch Engine
+    fetchGraphData();
+  </script>
+</body>
+</html>

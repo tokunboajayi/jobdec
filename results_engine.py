@@ -298,8 +298,13 @@ LEDGER_COLS = ["date", "company", "role", "url", "ats", "category", "fit_score",
 def ledger_rows():
     if not LEDGER_FILE.exists():
         return []
-    with open(LEDGER_FILE, encoding="utf-8") as f:
-        return list(csv.DictReader(f))
+    try:
+        content = LEDGER_FILE.read_text(encoding="utf-8", errors="replace").replace("\x00", "")
+        import io
+        return list(csv.DictReader(io.StringIO(content)))
+    except Exception:
+        with open(LEDGER_FILE, encoding="utf-8", errors="replace") as f:
+            return list(csv.DictReader(f))
 
 
 def ledger_write(rows):

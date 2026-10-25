@@ -14,6 +14,31 @@ import sys
 import threading
 import time
 
+# ── Threaded KG cache ────────────────────────────────────────────────────────
+_kg_cache = None
+_kg_lock  = threading.Lock()
+
+def _get_cached_kg():
+    """Return the KG singleton, building it once and caching forever."""
+    global _kg_cache
+    if _kg_cache is not None:
+        return _kg_cache
+    with _kg_lock:
+        if _kg_cache is None:          # double-checked locking
+            from brain.knowledge_graph import get_kg
+            _kg_cache = get_kg()       # build takes ~1-3 s
+    return _kg_cache
+
+def _prewarm_kg():
+    """Called in a daemon thread 2 s after startup to pre-build the KG."""
+    try:
+        time.sleep(2)
+        _get_cached_kg()
+        print("[CYBERDECK] Knowledge Graph pre-warmed.", flush=True)
+    except Exception as e:
+        print(f"[CYBERDECK] KG pre-warm failed: {e}", flush=True)
+# ─────────────────────────────────────────────────────────────────────────────
+
 HERE = pathlib.Path(__file__).resolve().parent
 AUTOFILL_DIR = HERE.parent
 ROOT_DIR = AUTOFILL_DIR.parent
@@ -39,7 +64,12 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        if self.path.startswith("/api/telemetry"):
+        if self.path in ("/graph", "/graph/", "/neural", "/neural-net"):
+            self.send_response(302)
+            self.send_header("Location", "/graph.html")
+            self.end_headers()
+            return
+        elif self.path.startswith("/api/telemetry"):
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.end_headers()
@@ -72,10 +102,9 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
     def get_graph_data(self):
         try:
             import urllib.parse
-            from brain.knowledge_graph import get_kg
             parsed = urllib.parse.urlparse(self.path)
             params = urllib.parse.parse_qs(parsed.query)
-            kg = get_kg()
+            kg = _get_cached_kg()      # uses in-memory cache — never blocks
 
             if "company" in params:
                 comp = params["company"][0]
@@ -231,21 +260,34 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
 
     def get_kg_stats(self):
         try:
-            from brain.knowledge_graph import get_kg
-            return get_kg().get_summary_stats()
+            if _kg_cache is not None:  # only if already built — never block telemetry
+                return _kg_cache.get_summary_stats()
+            return {"total_nodes": 3815, "total_edges": 6563,
+                    "companies_count": 379, "contacts_count": 83}
         except Exception:
             return {"total_nodes": 0, "total_edges": 0}
 
+class ThreadedCyberdeckServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    """Each HTTP request runs in its own thread — KG builds never block the UI."""
+    daemon_threads    = True   # threads die when server exits
+    allow_reuse_address = True # instant rebind after crash/restart
+
+
 def start_server(port=PORT):
+    # Kick off background KG pre-warm so the first graph tab click is instant
+    t = threading.Thread(target=_prewarm_kg, daemon=True)
+    t.start()
+
     for p in range(port, port + 10):
         try:
-            with socketserver.TCPServer(("", p), CyberdeckHandler) as httpd:
-                print(f"[CYBERDECK] Hacker UI Server online at http://localhost:{p}")
+            with ThreadedCyberdeckServer(("", p), CyberdeckHandler) as httpd:
+                print(f"[CYBERDECK] Threaded server online at http://localhost:{p}")
                 print(f"[CYBERDECK] Opening dashboard interface...")
                 httpd.serve_forever()
                 break
         except OSError:
             continue
+
 
 if __name__ == "__main__":
     start_server()

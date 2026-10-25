@@ -23,6 +23,7 @@ class JobdecKnowledgeGraph:
     def __init__(self, autofill_dir: Optional[pathlib.Path] = None):
         self.autofill_dir = autofill_dir or AUTOFILL_DIR
         self.root_dir = self.autofill_dir.parent
+        self.workspace_root = self.autofill_dir.parent.parent
         self.graph = nx.MultiDiGraph()
         self._built = False
 
@@ -69,6 +70,18 @@ class JobdecKnowledgeGraph:
         # 6. Ingest Strategy Target Companies
         self._ingest_strategy()
 
+        # 7. Ingest LinkedIn Outreach Campaign Logs (outreach_log.csv)
+        self._ingest_outreach_log(cand_id)
+
+        # 8. Ingest Outreach Drafts for Applied Roles (outreach_drafts.csv)
+        self._ingest_outreach_drafts(cand_id)
+
+        # 9. Ingest Live Application Execution Telemetry & ATS (results.csv)
+        self._ingest_results(cand_id)
+
+        # 10. Ingest Verified Profile Rules & Policies (profile.json)
+        self._ingest_profile_rules(cand_id)
+
         self._built = True
         return self.graph
 
@@ -91,11 +104,51 @@ class JobdecKnowledgeGraph:
         "delta air lines": "Delta Air Lines",
         "bofa": "Bank of America",
         "bank of america": "Bank of America",
+        "auto owners insurance": "Auto-Owners Insurance",
+        "autoownersinsurance": "Auto-Owners Insurance",
+        "xcel energy": "Xcel Energy",
+        "xcelenergy": "Xcel Energy",
+        "first national bank": "First National Bank",
+        "firstnationalbank": "First National Bank",
+        "veeam software": "Veeam Software",
+        "veeamsoftware": "Veeam Software",
+        "dv trading": "DV Trading",
+        "dvtrading": "DV Trading",
+        "gecko robotics": "Gecko Robotics",
+        "geckorobotics": "Gecko Robotics",
+        "robert bosch venture capital": "Robert Bosch Venture Capital",
+        "robertboschventurecapital": "Robert Bosch Venture Capital",
+        "the hartford": "The Hartford",
+        "thehartford": "The Hartford",
+        "s&p global": "S&P Global",
+        "sp global": "S&P Global",
+        "spglobal": "S&P Global",
+        "fhlbank chicago": "FHLBank Chicago",
+        "fhlbankchicago": "FHLBank Chicago",
+        "corewell health": "Corewell Health",
+        "corewellhealth": "Corewell Health",
+        "guardian life": "Guardian Life",
+        "guardianlife": "Guardian Life",
+        "icf international": "ICF International",
+        "icfinternational": "ICF International",
+        "blackrock": "BlackRock",
+        "jane street": "Jane Street",
+        "janestreet": "Jane Street",
     }
 
     def canonical_company(self, name: str) -> str:
         clean = name.strip()
-        return self.ALIASES.get(clean.lower(), clean)
+        if not clean:
+            return clean
+        lower = clean.lower()
+        if lower in self.ALIASES:
+            return self.ALIASES[lower]
+        # Un-smash camelCase / PascalCase names if the alias exists
+        if re.match(r"^[A-Z][a-z0-9]+(?:[A-Z][a-z0-9]*)+$", clean):
+            unsplit = re.sub(r"([a-z0-9])([A-Z])", r"\1 \2", clean)
+            if unsplit.lower() in self.ALIASES:
+                return self.ALIASES[unsplit.lower()]
+        return clean
 
     def add_institution(self, name: str, category: str = "University") -> str:
         node_id = f"Institution:{name}"
@@ -316,6 +369,222 @@ class JobdecKnowledgeGraph:
             except Exception:
                 pass
 
+    def _ingest_outreach_log(self, cand_id: str):
+        """Ingests live LinkedIn outreach campaign pitches, dates sent, and follow-ups from outreach_log.csv."""
+        log_paths = [
+            self.workspace_root / "outreach_log.csv",
+            self.autofill_dir.parent / "outreach_log.csv",
+            self.autofill_dir / "outreach_log.csv",
+        ]
+        for p in log_paths:
+            if not p.exists():
+                continue
+            try:
+                with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        firm = (row.get("Firm") or "").strip()
+                        name = (row.get("Name") or "").strip()
+                        role = (row.get("Role") or "").strip()
+                        note = (row.get("Note") or "").strip()
+                        status = (row.get("Status") or "Drafted").strip()
+                        date_sent = (row.get("Date Sent") or "").strip()
+                        followup = (row.get("Follow-up") or "").strip()
+
+                        if not name:
+                            continue
+
+                        # Resolve company from firm or role if listed under generic category like AI/PM
+                        actual_firm = firm
+                        if firm.upper() in ("AI/PM", "OTHER", ""):
+                            for known in ["Delta", "Cox Automotive", "NICE", "Microsoft", "The Home Depot", "Deloitte", "Booz Allen"]:
+                                if known.lower() in role.lower() or known.lower() in note.lower():
+                                    actual_firm = known
+                                    break
+
+                        comp_name = self.canonical_company(actual_firm) if actual_firm else "General"
+                        comp_id = self.add_company(comp_name)
+
+                        contact_id = f"Contact:{name}"
+                        if contact_id not in self.graph:
+                            self.graph.add_node(
+                                contact_id,
+                                node_type="Contact",
+                                label=name,
+                                firm=comp_name,
+                                role=role,
+                                stage=status,
+                            )
+                        self.graph.add_edge(contact_id, comp_id, relation="WORKS_AT", role=role)
+                        self.graph.add_edge(cand_id, contact_id, relation="NETWORKING_WITH", stage=status)
+
+                        target_id = f"Outreach:{name}"
+                        self.graph.add_node(
+                            target_id,
+                            node_type="OutreachTarget",
+                            label=f"Pitch: {name}",
+                            contact=name,
+                            firm=comp_name,
+                            role=role,
+                            status=status,
+                            date_sent=date_sent,
+                            followup=followup,
+                            pitch=note,
+                        )
+                        self.graph.add_edge(cand_id, target_id, relation="OUTREACH_TARGET", status=status)
+                        self.graph.add_edge(target_id, contact_id, relation="PITCHED_TO", status=status)
+                        self.graph.add_edge(target_id, comp_id, relation="AT_COMPANY")
+            except Exception:
+                pass
+
+    def _ingest_outreach_drafts(self, cand_id: str):
+        """Ingests role-targeted LinkedIn connection drafts from outreach_drafts.csv."""
+        draft_path = self.autofill_dir / "outreach_drafts.csv"
+        if not draft_path.exists():
+            return
+        try:
+            with open(draft_path, "r", encoding="utf-8", errors="ignore") as f:
+                reader = csv.DictReader(f)
+                for idx, row in enumerate(reader):
+                    company = (row.get("company") or "").strip()
+                    role = (row.get("role_applied") or "").strip()
+                    note = (row.get("note") or "").strip()
+                    hook = (row.get("hook") or "").strip()
+                    date = (row.get("date") or "").strip()
+                    status = (row.get("status") or "draft").strip()
+                    fit = (row.get("fit") or "10.0").strip()
+                    search_url = (row.get("linkedin_search") or "").strip()
+
+                    if not company:
+                        continue
+
+                    comp_canon = self.canonical_company(company)
+                    comp_id = self.add_company(comp_canon)
+
+                    draft_id = f"Draft:{comp_canon}_{idx}"
+                    self.graph.add_node(
+                        draft_id,
+                        node_type="OutreachDraft",
+                        label=f"Draft: {comp_canon}",
+                        company=comp_canon,
+                        role=role,
+                        fit_score=fit,
+                        note=note,
+                        hook=hook,
+                        date=date,
+                        status=status,
+                        search_url=search_url,
+                    )
+                    self.graph.add_edge(cand_id, draft_id, relation="PREPARED_DRAFT", status=status)
+                    self.graph.add_edge(draft_id, comp_id, relation="TARGETS_COMPANY")
+
+                    # Link to requisition if one matches
+                    req_id = f"Req:{comp_canon} - {role[:50]}"
+                    if req_id in self.graph:
+                        self.graph.add_edge(draft_id, req_id, relation="DRAFT_FOR_ROLE")
+        except Exception:
+            pass
+
+    def _ingest_results(self, cand_id: str):
+        """Ingests live application execution outcomes, ATS infrastructure, and confirmation logs from results.csv."""
+        res_path = self.autofill_dir / "results.csv"
+        if not res_path.exists():
+            return
+        try:
+            with open(res_path, "r", encoding="utf-8", errors="ignore") as f:
+                reader = csv.DictReader(f)
+                for idx, row in enumerate(reader):
+                    company = (row.get("company") or "").strip()
+                    role = (row.get("role") or "").strip()
+                    ats = (row.get("ats") or "").strip().lower()
+                    status = (row.get("status") or "").strip()
+                    response = (row.get("response") or "").strip()
+                    date = (row.get("date") or "").strip()
+                    url = (row.get("url") or "").strip()
+                    fit = (row.get("fit_score") or "0").strip()
+                    record = (row.get("record") or "").strip()
+
+                    if not company or not role:
+                        continue
+
+                    comp_canon = self.canonical_company(company)
+                    comp_id = self.add_company(comp_canon)
+
+                    # Ingest ATS entity hub
+                    if ats:
+                        ats_id = f"ATS:{ats.capitalize()}"
+                        if ats_id not in self.graph:
+                            self.graph.add_node(ats_id, node_type="ATS", label=ats.capitalize())
+                        self.graph.add_edge(comp_id, ats_id, relation="USES_ATS")
+
+                    # Ensure Requisition exists
+                    req_id = f"Req:{comp_canon} - {role[:50]}"
+                    if req_id not in self.graph:
+                        self.graph.add_node(
+                            req_id,
+                            node_type="Requisition",
+                            label=role,
+                            company=comp_canon,
+                            stage=response or status,
+                            fit_score=fit,
+                            url=url,
+                        )
+                        self.graph.add_edge(req_id, comp_id, relation="OPENED_BY")
+                        self.graph.add_edge(cand_id, req_id, relation="APPLIED_STATUS", stage=response or status, fit_score=fit)
+                    else:
+                        if response:
+                            self.graph.nodes[req_id]["stage"] = response
+                        elif status == "submitted":
+                            self.graph.nodes[req_id]["stage"] = "Submitted"
+
+                    # Add Execution Result node
+                    res_id = f"Result:{idx}"
+                    self.graph.add_node(
+                        res_id,
+                        node_type="ExecutionResult",
+                        label=f"{status.upper()}: {comp_canon}",
+                        company=comp_canon,
+                        status=status,
+                        response=response,
+                        ats=ats,
+                        date=date,
+                        record=record,
+                    )
+                    self.graph.add_edge(req_id, res_id, relation="EXECUTED_AS", status=status, date=date)
+                    if response:
+                        self.graph.add_edge(cand_id, res_id, relation="RECEIVED_RESPONSE", response=response, date=date)
+        except Exception:
+            pass
+
+    def _ingest_profile_rules(self, cand_id: str):
+        """Ingests verified candidate form rules, compliance constraints, and answers from profile.json."""
+        prof_path = self.autofill_dir / "profile.json"
+        if not prof_path.exists():
+            return
+        try:
+            data = json.loads(prof_path.read_text(encoding="utf-8"))
+            rules = data.get("rules", [])
+            for idx, r in enumerate(rules):
+                q = (r.get("q") or "").strip()
+                a = r.get("a")
+                src = r.get("src") or "rule"
+                if not q or a is None:
+                    continue
+
+                rule_id = f"PolicyRule:{idx}"
+                clean_q = re.sub(r"\\[\s\w]", " ", q).strip()[:70]
+                self.graph.add_node(
+                    rule_id,
+                    node_type="PolicyRule",
+                    label=clean_q or f"Rule #{idx}",
+                    question=q,
+                    answer=str(a),
+                    source=src,
+                )
+                self.graph.add_edge(cand_id, rule_id, relation="COMPLIES_WITH", answer=str(a))
+        except Exception:
+            pass
+
     def find_referral_paths(self, target_company: str) -> List[Dict[str, Any]]:
         """
         Finds the shortest, warmest referral routes to a target company.
@@ -352,8 +621,14 @@ class JobdecKnowledgeGraph:
                     warmth += 35
                     reasons.append("Responsive conversation")
                 elif stage == "Accepted":
-                    warmth += 20
+                    warmth += 30
                     reasons.append("Connected 1st-degree")
+                elif "sent" in stage.lower():
+                    warmth += 25
+                    reasons.append("Outreach message sent")
+                elif "draft" in stage.lower():
+                    warmth += 15
+                    reasons.append("Pitch drafted")
 
                 if c_data.get("is_hiring_manager"):
                     warmth += 25
@@ -425,12 +700,17 @@ class JobdecKnowledgeGraph:
             "companies_count": counts.get("Company", 0),
             "contacts_count": counts.get("Contact", 0),
             "requisitions_count": counts.get("Requisition", 0),
+            "outreach_targets_count": counts.get("OutreachTarget", 0),
+            "outreach_drafts_count": counts.get("OutreachDraft", 0),
+            "results_count": counts.get("ExecutionResult", 0),
+            "rules_count": counts.get("PolicyRule", 0),
+            "ats_count": counts.get("ATS", 0),
             "skills_count": counts.get("Skill", 0),
             "metrics_count": counts.get("Metric", 0),
         }
 
     def get_company_context(self, company: str) -> Dict[str, Any]:
-        """Aggregates all intelligence on a given company: referral paths, job requisitions, and matched evidence."""
+        """Aggregates all intelligence on a given company: referral paths, job requisitions, outreach, and matched evidence."""
         if not self._built:
             self.build()
         canon = self.canonical_company(company)
@@ -438,17 +718,44 @@ class JobdecKnowledgeGraph:
         comp_id = f"Company:{canon}"
 
         reqs = []
+        outreach = []
+        ats_systems = set()
         tier = "General"
+
         if comp_id in self.graph:
             tier = self.graph.nodes[comp_id].get("tier", "Target")
             for u, v, d in self.graph.in_edges(comp_id, data=True):
-                if d.get("relation") == "OPENED_BY":
+                rel = d.get("relation")
+                if rel == "OPENED_BY":
                     r_data = self.graph.nodes[u]
                     reqs.append({
                         "role": r_data.get("label"),
                         "stage": r_data.get("stage"),
                         "fit_score": r_data.get("fit_score"),
                     })
+                elif rel in ("AT_COMPANY", "TARGETS_COMPANY"):
+                    u_data = self.graph.nodes[u]
+                    ntype = u_data.get("node_type")
+                    if ntype == "OutreachTarget":
+                        outreach.append({
+                            "type": "Target",
+                            "contact": u_data.get("contact"),
+                            "status": u_data.get("status"),
+                            "date": u_data.get("date_sent"),
+                            "pitch": u_data.get("pitch"),
+                        })
+                    elif ntype == "OutreachDraft":
+                        outreach.append({
+                            "type": "Draft",
+                            "role": u_data.get("role"),
+                            "status": u_data.get("status"),
+                            "date": u_data.get("date"),
+                            "pitch": u_data.get("note"),
+                        })
+
+            for u, v, d in self.graph.out_edges(comp_id, data=True):
+                if d.get("relation") == "USES_ATS":
+                    ats_systems.add(self.graph.nodes[v].get("label"))
 
         evidence = self.graph_rag_evidence(company, top_k=2)
 
@@ -458,31 +765,41 @@ class JobdecKnowledgeGraph:
             "referral_paths": paths,
             "warmest_contact": paths[0] if paths else None,
             "requisitions": reqs,
+            "outreach": outreach,
+            "ats_systems": sorted(list(ats_systems)),
             "evidence": evidence,
         }
 
     def export_telemetry_d3(self) -> Dict[str, Any]:
-        """Exports the graph in a format ready for D3 / Vis.js network visualization in the Cyberdeck HUD."""
+        """Exports the full graph in high-fidelity format for the Neural Net Visualizer."""
         if not self._built:
             self.build()
 
         nodes = []
         for n, d in self.graph.nodes(data=True):
             ntype = d.get("node_type", "Entity")
-            nodes.append({
+            item = {
                 "id": n,
                 "label": d.get("label", n),
                 "type": ntype,
                 "group": ntype,
-            })
+            }
+            for k, val in d.items():
+                if k not in item and isinstance(val, (str, int, float, bool, list)):
+                    item[k] = val
+            nodes.append(item)
 
         links = []
         for u, v, d in self.graph.edges(data=True):
-            links.append({
+            link_item = {
                 "source": u,
                 "target": v,
                 "relation": d.get("relation", "CONNECTED"),
-            })
+            }
+            for k, val in d.items():
+                if k not in link_item and isinstance(val, (str, int, float, bool)):
+                    link_item[k] = val
+            links.append(link_item)
 
         stats = self.get_summary_stats()
         return {"nodes": nodes, "links": links, "stats": stats}

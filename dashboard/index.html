@@ -5,11 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AJ // JOBDECK TERMINAL [AUTONOMOUS KERNEL]</title>
+  <!-- Fonts: async non-blocking — page renders immediately with system fallbacks -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Share+Tech+Mono&family=VT323&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Share+Tech+Mono&family=VT323&display=swap"></noscript>
   <style>
     :root {
       --bg-void: #030604;
@@ -29,8 +31,8 @@
       --glow-sm: 0 0 8px rgba(0, 255, 102, 0.4);
       --glow-md: 0 0 16px rgba(0, 255, 102, 0.6);
       --glow-lg: 0 0 28px rgba(0, 255, 102, 0.75);
-      --font-mono: 'Share Tech Mono', 'Fira Code', monospace;
-      --font-display: 'VT323', monospace;
+      --font-mono: 'Share Tech Mono', 'Fira Code', 'Courier New', 'Lucida Console', monospace;
+      --font-display: 'VT323', 'Courier New', 'Lucida Console', monospace;
     }
 
     * {
@@ -1017,19 +1019,19 @@
           <div id="view-graph" class="graph-deck" style="display: none; flex-direction: column; gap: 8px;">
             <div class="graph-stats-bar">
               <div class="graph-stat-card">
-                <div class="graph-stat-num" id="kg-stat-nodes">785</div>
+                <div class="graph-stat-num" id="kg-stat-nodes">3,815</div>
                 <div class="graph-stat-lbl">Entities</div>
               </div>
               <div class="graph-stat-card">
-                <div class="graph-stat-num" id="kg-stat-edges">1,077</div>
+                <div class="graph-stat-num" id="kg-stat-edges">6,563</div>
                 <div class="graph-stat-lbl">Relations</div>
               </div>
               <div class="graph-stat-card">
-                <div class="graph-stat-num" id="kg-stat-companies">283</div>
+                <div class="graph-stat-num" id="kg-stat-companies">379</div>
                 <div class="graph-stat-lbl">Firms</div>
               </div>
               <div class="graph-stat-card">
-                <div class="graph-stat-num" id="kg-stat-contacts">82</div>
+                <div class="graph-stat-num" id="kg-stat-contacts">83</div>
                 <div class="graph-stat-lbl">Contacts</div>
               </div>
             </div>
@@ -1037,9 +1039,32 @@
             <div class="graph-search-row">
               <input type="text" class="graph-input" id="kg-search-input" placeholder="Query target firm (e.g. American Express, Home Depot, Goldman Sachs)..." onkeydown="if(event.key==='Enter') queryGraph();">
               <button class="btn-cyber active" onclick="queryGraph()">SCAN</button>
+              <a href="/graph.html" target="_blank" class="btn-cyber" style="text-decoration:none; display:flex; align-items:center; gap:5px; border-color:var(--accent-cyan); color:var(--accent-cyan); font-weight:bold; background:rgba(0,229,255,0.1);">NEURAL NET VIEW ↗</a>
             </div>
 
-            <div id="kg-results-box" class="ledger-list" style="max-height: 250px; overflow-y: auto;">
+            <div class="filter-pills" style="margin-top: -2px; margin-bottom: 2px;">
+              <span class="pill active" onclick="scanPreset('American Express', this)">AMEX</span>
+              <span class="pill" onclick="scanPreset('BlackRock', this)">BLACKROCK</span>
+              <span class="pill" onclick="scanPreset('Jane Street', this)">JANE STREET</span>
+              <span class="pill" onclick="scanPreset('The Home Depot', this)">HOME DEPOT</span>
+              <span class="pill" onclick="scanPreset('Veeam Software', this)">VEEAM</span>
+            </div>
+
+            <!-- Interactive 2D Force-Directed Network Graph Visualizer -->
+            <div class="kg-canvas-container" style="position: relative; width: 100%; height: 260px; background: rgba(2, 8, 4, 0.95); border: 1px solid var(--border-glow); border-radius: 4px; overflow: hidden; box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.1);">
+              <canvas id="kg-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+              <div id="kg-tooltip" style="position: absolute; display: none; pointer-events: none; background: rgba(3, 14, 8, 0.95); border: 1px solid var(--border-glow); padding: 6px 10px; font-size: 10px; color: var(--text-bright); border-radius: 3px; box-shadow: 0 0 10px rgba(0,255,102,0.3); z-index: 10; max-width: 240px;"></div>
+              <div id="kg-legend" style="position: absolute; bottom: 6px; left: 8px; font-size: 9px; display: flex; gap: 8px; background: rgba(0, 0, 0, 0.75); padding: 3px 8px; border: 1px solid var(--border-dim); border-radius: 2px;">
+                <span><span style="color: #00ff66;">●</span> Candidate</span>
+                <span><span style="color: #ffb300;">●</span> Company</span>
+                <span><span style="color: #00e5ff;">●</span> Contact</span>
+                <span><span style="color: #ff3344;">●</span> Requisition</span>
+                <span><span style="color: #b388ff;">●</span> Outreach</span>
+              </div>
+              <div style="position: absolute; top: 6px; right: 8px; font-size: 9px; color: var(--text-dim); background: rgba(0,0,0,0.6); padding: 2px 6px; border: 1px solid var(--border-dim); border-radius: 2px;">DRAG NODES • HOVER DETAILS</div>
+            </div>
+
+            <div id="kg-results-box" class="ledger-list" style="max-height: 200px; overflow-y: auto;">
               <div class="ledger-item">
                 <div class="ledger-top">
                   <span class="ledger-company">KNOWLEDGE GRAPH READY</span>
@@ -1202,7 +1227,12 @@
       if (document.getElementById('view-brain')) document.getElementById('view-brain').style.display = tabId === 'brain' ? 'grid' : 'none';
       if (document.getElementById('view-graph')) {
         document.getElementById('view-graph').style.display = tabId === 'graph' ? 'flex' : 'none';
-        if (tabId === 'graph') queryGraph();
+        if (tabId === 'graph') {
+          setTimeout(() => {
+            initGraphCanvas();
+            queryGraph();
+          }, 40);
+        }
       }
       playKeySound();
     }
@@ -1379,11 +1409,11 @@
       // Knowledge Graph Telemetry
       if (data.knowledge_graph) {
         const kg = data.knowledge_graph;
-        if (document.getElementById('hud-kg-stats')) document.getElementById('hud-kg-stats').innerText = `${kg.total_nodes || 785} NODES`;
-        if (document.getElementById('kg-stat-nodes')) document.getElementById('kg-stat-nodes').innerText = kg.total_nodes || 785;
-        if (document.getElementById('kg-stat-edges')) document.getElementById('kg-stat-edges').innerText = (kg.total_edges || 1077).toLocaleString();
-        if (document.getElementById('kg-stat-companies')) document.getElementById('kg-stat-companies').innerText = kg.companies_count || 283;
-        if (document.getElementById('kg-stat-contacts')) document.getElementById('kg-stat-contacts').innerText = kg.contacts_count || 82;
+        if (document.getElementById('hud-kg-stats')) document.getElementById('hud-kg-stats').innerText = `${kg.total_nodes || 3815} NODES`;
+        if (document.getElementById('kg-stat-nodes')) document.getElementById('kg-stat-nodes').innerText = (kg.total_nodes || 3815).toLocaleString();
+        if (document.getElementById('kg-stat-edges')) document.getElementById('kg-stat-edges').innerText = (kg.total_edges || 6563).toLocaleString();
+        if (document.getElementById('kg-stat-companies')) document.getElementById('kg-stat-companies').innerText = kg.companies_count || 379;
+        if (document.getElementById('kg-stat-contacts')) document.getElementById('kg-stat-contacts').innerText = kg.contacts_count || 83;
       }
 
       // Recent Applications Ledger
@@ -1409,6 +1439,355 @@
       }
     }
 
+    /* =========================================================================
+       CYBERPUNK KNOWLEDGE GRAPH FORCE-DIRECTED VISUALIZER
+       ========================================================================= */
+    let kgSim = {
+      nodes: [],
+      links: [],
+      particles: [],
+      draggedNode: null,
+      hoveredNode: null,
+      animId: null,
+      width: 0,
+      height: 0
+    };
+
+    function scanPreset(comp, btn) {
+      if (btn) {
+        btn.parentElement.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+      }
+      const inp = document.getElementById('kg-search-input');
+      if (inp) inp.value = comp;
+      queryGraph(comp);
+    }
+
+    function initGraphCanvas() {
+      const canvas = document.getElementById('kg-canvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = (rect.width || 400) * dpr;
+      canvas.height = (rect.height || 260) * dpr;
+      kgSim.width = rect.width || 400;
+      kgSim.height = rect.height || 260;
+
+      const tooltip = document.getElementById('kg-tooltip');
+
+      canvas.onmousedown = (e) => {
+        const r = canvas.getBoundingClientRect();
+        const mx = e.clientX - r.left;
+        const my = e.clientY - r.top;
+        for (const n of kgSim.nodes) {
+          const dx = n.x - mx;
+          const dy = n.y - my;
+          if (Math.sqrt(dx * dx + dy * dy) < (n.radius + 8)) {
+            kgSim.draggedNode = n;
+            n.fx = mx;
+            n.fy = my;
+            break;
+          }
+        }
+      };
+
+      window.addEventListener('mousemove', (e) => {
+        if (!canvas) return;
+        const r = canvas.getBoundingClientRect();
+        const mx = e.clientX - r.left;
+        const my = e.clientY - r.top;
+
+        if (kgSim.draggedNode) {
+          kgSim.draggedNode.fx = mx;
+          kgSim.draggedNode.fy = my;
+          kgSim.draggedNode.x = mx;
+          kgSim.draggedNode.y = my;
+        } else if (mx >= 0 && mx <= r.width && my >= 0 && my <= r.height) {
+          let found = null;
+          for (const n of kgSim.nodes) {
+            const dx = n.x - mx;
+            const dy = n.y - my;
+            if (Math.sqrt(dx * dx + dy * dy) < (n.radius + 8)) {
+              found = n;
+              break;
+            }
+          }
+          kgSim.hoveredNode = found;
+          if (found && tooltip) {
+            tooltip.style.display = 'block';
+            tooltip.style.left = `${Math.min(mx + 15, kgSim.width - 200)}px`;
+            tooltip.style.top = `${Math.max(my - 25, 10)}px`;
+            tooltip.innerHTML = `
+              <div style="font-weight: bold; color: ${found.color};">${escapeHtml(found.label)}</div>
+              <div style="font-size: 9px; color: var(--text-bright);">${escapeHtml(found.type)}</div>
+              ${found.sub ? `<div style="font-size: 9px; color: var(--text-dim); margin-top: 2px;">${escapeHtml(found.sub)}</div>` : ''}
+              ${found.extra ? `<div style="font-size: 9px; color: var(--accent-cyan); margin-top: 2px;">${escapeHtml(found.extra)}</div>` : ''}
+            `;
+          } else if (tooltip) {
+            tooltip.style.display = 'none';
+          }
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (kgSim.draggedNode) {
+          kgSim.draggedNode.fx = null;
+          kgSim.draggedNode.fy = null;
+          kgSim.draggedNode = null;
+        }
+      });
+    }
+
+    function buildGraphModel(data) {
+      initGraphCanvas();
+      const nodes = [];
+      const links = [];
+      const cx = (kgSim.width || 400) / 2;
+      const cy = (kgSim.height || 260) / 2;
+
+      // 1. Company Center Hub
+      const compNode = {
+        id: 'comp',
+        label: data.company,
+        type: 'Target Company',
+        sub: `Tier: ${data.tier || 'Target'}`,
+        color: '#ffb300',
+        radius: 14,
+        x: cx + 25,
+        y: cy,
+        vx: 0,
+        vy: 0
+      };
+      nodes.push(compNode);
+
+      // 2. Candidate Root Hub
+      const candNode = {
+        id: 'cand',
+        label: (window.lastCandidate && window.lastCandidate.name) ? window.lastCandidate.name.split(' ')[0] : 'Tokunbo (AJ)',
+        type: 'Candidate (Root)',
+        sub: 'Georgia State / MLT CP27',
+        color: '#00ff66',
+        radius: 13,
+        x: cx - 110,
+        y: cy - 20,
+        vx: 0,
+        vy: 0
+      };
+      nodes.push(candNode);
+
+      // 3. Contacts
+      const paths = (data.referral_paths || []).slice(0, 8);
+      paths.forEach((p, idx) => {
+        const angle = (idx / Math.max(paths.length, 1)) * Math.PI * 1.5 - Math.PI * 0.75;
+        const dist = 85 + (idx % 2) * 25;
+        const cNode = {
+          id: `cont_${idx}`,
+          label: p.name.split(' ')[0] + ' ' + (p.name.split(' ')[1] ? p.name.split(' ')[1][0] + '.' : ''),
+          type: 'LinkedIn Contact',
+          sub: p.role ? p.role.substring(0, 32) : 'Contact',
+          extra: `Warmth: ${p.warmth_score}/100 • ${p.stage}`,
+          color: '#00e5ff',
+          radius: p.warmth_score >= 50 ? 10 : 7,
+          x: cx + Math.cos(angle) * dist,
+          y: cy + Math.sin(angle) * dist,
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2
+        };
+        nodes.push(cNode);
+        links.push({ source: cNode, target: compNode, color: 'rgba(0, 229, 255, 0.45)' });
+        links.push({ source: candNode, target: cNode, color: 'rgba(0, 255, 102, 0.45)' });
+      });
+
+      // 4. Outreach Pitches
+      const outreach = (data.outreach || []).slice(0, 4);
+      outreach.forEach((o, idx) => {
+        const oNode = {
+          id: `out_${idx}`,
+          label: `Pitch: ${o.contact ? o.contact.split(' ')[0] : 'Draft'}`,
+          type: 'Outreach Pitch',
+          sub: o.status || 'Drafted',
+          extra: o.pitch ? `"${o.pitch.substring(0, 40)}..."` : '',
+          color: '#b388ff',
+          radius: 7,
+          x: cx - 40 + (idx * 25),
+          y: cy + 70 + (idx % 2 * 15),
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2
+        };
+        nodes.push(oNode);
+        links.push({ source: candNode, target: oNode, color: 'rgba(179, 136, 255, 0.45)' });
+        links.push({ source: oNode, target: compNode, color: 'rgba(179, 136, 255, 0.35)' });
+      });
+
+      // 5. Requisitions
+      const reqs = (data.requisitions || []).slice(0, 5);
+      reqs.forEach((r, idx) => {
+        const rNode = {
+          id: `req_${idx}`,
+          label: r.role ? r.role.substring(0, 16) + '...' : 'Req',
+          type: 'Requisition',
+          sub: r.stage || 'Open',
+          extra: `Fit: ${r.fit_score || 'N/A'}/10`,
+          color: '#ff3344',
+          radius: 7,
+          x: cx + 70 + (idx * 15),
+          y: cy - 70 - (idx % 2 * 15),
+          vx: (Math.random() - 0.5) * 2,
+          vy: (Math.random() - 0.5) * 2
+        };
+        nodes.push(rNode);
+        links.push({ source: rNode, target: compNode, color: 'rgba(255, 51, 68, 0.45)' });
+      });
+
+      kgSim.nodes = nodes;
+      kgSim.links = links;
+
+      // Signals
+      kgSim.particles = [];
+      for (let i = 0; i < 14; i++) {
+        if (links.length > 0) {
+          const l = links[Math.floor(Math.random() * links.length)];
+          kgSim.particles.push({
+            link: l,
+            progress: Math.random(),
+            speed: 0.006 + Math.random() * 0.008
+          });
+        }
+      }
+
+      startGraphAnimation();
+    }
+
+    function startGraphAnimation() {
+      if (kgSim.animId) cancelAnimationFrame(kgSim.animId);
+
+      const canvas = document.getElementById('kg-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+
+      function step() {
+        const w = kgSim.width || 400;
+        const h = kgSim.height || 260;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        // Repulsion
+        for (let i = 0; i < kgSim.nodes.length; i++) {
+          for (let j = i + 1; j < kgSim.nodes.length; j++) {
+            const a = kgSim.nodes[i];
+            const b = kgSim.nodes[j];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            if (dist < 150) {
+              const f = (150 - dist) / 150 * 0.7;
+              const fx = (dx / dist) * f;
+              const fy = (dy / dist) * f;
+              if (a !== kgSim.draggedNode) { a.vx -= fx; a.vy -= fy; }
+              if (b !== kgSim.draggedNode) { b.vx += fx; b.vy += fy; }
+            }
+          }
+        }
+
+        // Springs
+        for (const l of kgSim.links) {
+          const a = l.source;
+          const b = l.target;
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const f = (dist - 75) * 0.02;
+          const fx = (dx / dist) * f;
+          const fy = (dy / dist) * f;
+          if (a !== kgSim.draggedNode) { a.vx += fx; a.vy += fy; }
+          if (b !== kgSim.draggedNode) { b.vx += fx; b.vy += fy; }
+        }
+
+        // Gravity & position
+        for (const n of kgSim.nodes) {
+          if (n !== kgSim.draggedNode) {
+            n.vx += (cx - n.x) * 0.005;
+            n.vy += (cy - n.y) * 0.005;
+            n.vx *= 0.88;
+            n.vy *= 0.88;
+            n.x += n.vx;
+            n.y += n.vy;
+
+            n.x = Math.max(n.radius + 12, Math.min(w - n.radius - 12, n.x));
+            n.y = Math.max(n.radius + 12, Math.min(h - n.radius - 12, n.y));
+          }
+        }
+
+        ctx.save();
+        ctx.scale(dpr, dpr);
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw Links
+        for (const l of kgSim.links) {
+          ctx.beginPath();
+          ctx.moveTo(l.source.x, l.source.y);
+          ctx.lineTo(l.target.x, l.target.y);
+          ctx.strokeStyle = l.color || 'rgba(0, 255, 102, 0.25)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        // Particles
+        for (const p of kgSim.particles) {
+          p.progress += p.speed;
+          if (p.progress > 1) p.progress = 0;
+          const sx = p.link.source.x;
+          const sy = p.link.source.y;
+          const tx = p.link.target.x;
+          const ty = p.link.target.y;
+          const px = sx + (tx - sx) * p.progress;
+          const py = sy + (ty - sy) * p.progress;
+
+          ctx.beginPath();
+          ctx.arc(px, py, 2.2, 0, Math.PI * 2);
+          ctx.fillStyle = '#00ff66';
+          ctx.shadowColor = '#00ff66';
+          ctx.shadowBlur = 6;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+
+        // Nodes
+        for (const n of kgSim.nodes) {
+          const isHovered = (n === kgSim.hoveredNode);
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.radius + (isHovered ? 4 : 2), 0, Math.PI * 2);
+          ctx.fillStyle = isHovered ? 'rgba(255, 255, 255, 0.35)' : 'rgba(0, 255, 102, 0.15)';
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+          ctx.fillStyle = n.color;
+          ctx.shadowColor = n.color;
+          ctx.shadowBlur = isHovered ? 15 : 8;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, n.radius * 0.45, 0, Math.PI * 2);
+          ctx.fillStyle = '#030604';
+          ctx.fill();
+
+          ctx.font = '9px "Share Tech Mono", monospace';
+          ctx.fillStyle = isHovered ? '#ffffff' : 'var(--text-bright)';
+          ctx.textAlign = 'center';
+          ctx.fillText(n.label, n.x, n.y + n.radius + 11);
+        }
+
+        ctx.restore();
+        kgSim.animId = requestAnimationFrame(step);
+      }
+
+      step();
+    }
+
     /* Knowledge Graph Interactive Query */
     function queryGraph(company) {
       const input = document.getElementById('kg-search-input');
@@ -1420,6 +1799,7 @@
       fetch(`/api/graph?company=${encodeURIComponent(q)}`)
         .then(r => r.json())
         .then(data => {
+          buildGraphModel(data);
           box.innerHTML = '';
           const paths = data.referral_paths || [];
           const reqs = data.requisitions || [];
@@ -1455,6 +1835,43 @@
             `;
             box.appendChild(item);
           });
+
+          // Active Outreach Pitches & Drafts
+          const outreach = data.outreach || [];
+          if (outreach.length > 0) {
+            outreach.forEach(o => {
+              const oItem = document.createElement('div');
+              oItem.className = 'ledger-item';
+              oItem.style.borderLeftColor = 'var(--accent-amber)';
+              oItem.innerHTML = `
+                <div class="ledger-top">
+                  <span class="ledger-company" style="font-size: 11px; color: var(--accent-amber);">OUTREACH: ${escapeHtml(o.contact || o.role || 'Direct Pitch')}</span>
+                  <span class="ledger-badge" style="border-color: var(--accent-amber); color: var(--accent-amber);">${escapeHtml(o.status || 'Drafted')}</span>
+                </div>
+                <div class="ledger-role" style="font-size: 11px; font-style: italic; color: var(--text-main); margin-top: 4px;">"${escapeHtml(o.pitch || '')}"</div>
+              `;
+              box.appendChild(oItem);
+            });
+          }
+
+          // Open Requisitions & Outcomes
+          if (reqs.length > 0) {
+            reqs.forEach(r => {
+              const rItem = document.createElement('div');
+              rItem.className = 'ledger-item';
+              rItem.style.borderLeftColor = 'var(--accent-cyan)';
+              rItem.innerHTML = `
+                <div class="ledger-top">
+                  <span class="ledger-company" style="font-size: 11px; color: var(--accent-cyan);">${escapeHtml(r.role)}</span>
+                  <span class="ledger-badge" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">${escapeHtml(r.stage || 'Tracked')}</span>
+                </div>
+                <div class="ledger-foot">
+                  <span>Fit Score: ${escapeHtml(r.fit_score || 'N/A')}/10</span>
+                </div>
+              `;
+              box.appendChild(rItem);
+            });
+          }
 
           // Graph-RAG Evidence
           if (evidence.length > 0) {
