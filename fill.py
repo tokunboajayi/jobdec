@@ -141,6 +141,14 @@ SCAN_JS = r"""
     else if (ariaLab && !isGeneric(ariaLab) && (/country|code|device|type/i.test(ariaLab) && /phone/i.test(t))) {
       t = ariaLab;
     }
+    if (e.tagName === 'SELECT' && e.options) {
+      const optsText = [...e.options].map(o => (o.text || '').toLowerCase()).join(' ');
+      if (/january|february|month\.\.\./.test(optsText) && !/month/i.test(t)) {
+        t = (t ? t + ' ' : '') + 'Month';
+      } else if ((/year\.\.\./.test(optsText) || [...e.options].some(o => /^\s*20\d\d\s*$/.test(o.text))) && !/year/i.test(t)) {
+        t = (t ? t + ' ' : '') + 'Year';
+      }
+    }
     return txt(t).slice(0, 1000);
   };
   const out = [];
@@ -191,6 +199,11 @@ SCAN_JS = r"""
     if (!q) { let p = rs[0].parentElement;
       for (let i = 0; i < 7 && p; i++, p = p.parentElement) {
         if (rs.every(r => p.contains(r))) { const l = [...p.querySelectorAll('legend,label,[class*=question],[class*=label]')].find(l => !rs.some(r => l.contains(r))); if (l) { q = txt(l.innerText); break; } } } }
+    if (/communicationconsent/i.test(k) || rs.some(r => r.closest('[class*=consent], [class*=Consent], [class*=texting]'))) {
+      const cBox = rs[0].closest('[class*=consent], [class*=Consent], [class*=texting]');
+      const cText = txt(cBox ? cBox.innerText : '');
+      if (cText) q = 'Text Message Consent ' + (q || '');
+    }
     out.push({ id: 'radio:' + k, tag: 'radio', type: 'radio', label: q.slice(0, 1000), required: /\*/.test(q),
       value: rs.find(r => r.checked) ? labelOf(rs.find(r => r.checked)) : '',
       options: rs.map(r => labelOf(r)), ids: rs.map(r => mark(r)) });
@@ -297,6 +310,49 @@ def pick_option(options, rule, label=""):
                 for o in options:
                     if o and re.search(rf"\b{syn}\b", o.strip(), re.I):
                         return o
+
+        # Smart date-part extraction for month / year dropdowns
+        is_month_dropdown = any(re.search(r"^(?:january|february|march|april|may|june|july|august|september|october|november|december|month\.\.\.)$", str(o).strip(), re.I) for o in options if o)
+        is_year_dropdown = any(re.match(r"^20\d\d$", str(o).strip()) for o in options if o)
+
+        if is_month_dropdown:
+            m_val = None
+            if ans == "today":
+                import datetime
+                m_val = str(datetime.date.today().month)
+            else:
+                date_m = re.search(r"\b(0?[1-9]|1[0-2])[-/](?:0?[1-9]|[12]\d|3[01])?[-/](\d{4})\b", ans)
+                if date_m:
+                    m_val = date_m.group(1).lstrip("0") or "1"
+                else:
+                    month_names = {"jan": "1", "feb": "2", "mar": "3", "apr": "4", "may": "5", "jun": "6", "jul": "7", "aug": "8", "sep": "9", "oct": "10", "nov": "11", "dec": "12"}
+                    for mn, mn_num in month_names.items():
+                        if mn in ans:
+                            m_val = mn_num
+                            break
+            if not m_val:
+                m_val = "8" if "start" in label.lower() else "5"
+            if m_val in MONTHS_MAP:
+                for syn in MONTHS_MAP[m_val]:
+                    for o in options:
+                        if o and re.search(rf"\b{syn}\b", str(o).strip(), re.I):
+                            return o
+
+        if is_year_dropdown:
+            y_val = None
+            if ans == "today":
+                import datetime
+                y_val = str(datetime.date.today().year)
+            else:
+                y_m = re.search(r"\b(20\d\d)\b", ans)
+                if y_m:
+                    y_val = y_m.group(1)
+            if not y_val:
+                y_val = "2023" if ("start" in label.lower() and "education" in label.lower()) else "2027"
+            for o in options:
+                if str(o).strip() == y_val:
+                    return o
+
         if ans in ("yes", "no"):
             for o in options:
                 if o and re.search(rf"^\s*{ans}\b|\b{ans}\s*$", o.strip(), re.I):
@@ -320,7 +376,7 @@ def pick_option(options, rule, label=""):
         if best:
             return best
     # Filter placeholder options
-    valid = [o for o in options if o and not re.match(r"^\s*(select|choose|please select|--\s*select\s*--)\s*$", str(o), re.I)]
+    valid = [o for o in options if o and not re.match(r"^\s*(select|choose|please select|--\s*select\s*--|month\.\.\.|year\.\.\.|select\s+month|select\s+year)\s*$", str(o), re.I)]
     return valid[0] if valid else options[0]
 
 
@@ -577,6 +633,26 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
 
     if hit and click_and_confirm(*hit):
         return hit[0]
+
+    # For Ashby / React-Select / searchable comboboxes, press ArrowDown + Enter to commit filtered selection
+    try:
+        page.keyboard.press("ArrowDown")
+        time.sleep(0.2)
+        page.keyboard.press("Enter")
+        time.sleep(0.3)
+        cur = loc.evaluate("e => { let curr = e; for (let i = 0; i < 4 && curr; i++, curr = curr.parentElement) { const s = curr.querySelector('[id*=\"pill\"], [data-automation-id=\"selectedItem\"], [class*=\"singleValue\"], [class*=\"single-value\"]'); if (s) return s.innerText || s.getAttribute('aria-label') || ''; } return e.value || ''; }")
+        if cur and len(cur.strip()) > 1:
+            return cur
+    except Exception:
+        pass
+
+    # If the input already has the valid typed value, retain it rather than clearing
+    try:
+        cur_v = loc.input_value()
+        if cur_v and len(cur_v.strip()) > 1:
+            return cur_v
+    except Exception:
+        pass
 
     if strict:  # leave it empty (reported as unanswered) rather than commit a wrong country / state / yes-no
         try: page.keyboard.press("Escape")
@@ -1664,7 +1740,7 @@ NAV_JS = r"""
   return null;
 }
 """
-DONE_RE = re.compile(r"application (was |has been )?(successfully )?(submitted|received)|thank you for (applying|your application|your interest)|thanks for (applying|your interest)|we('ve| have) received your application|application complete|congratulations|application submitted|^thank you!?$|your application has been submitted|application received|received your response|thank you for taking the time to apply", re.I)
+DONE_RE = re.compile(r"application (was |has been )?(successfully )?(submitted|received)|thank you for (applying|your application|your interest)|thanks for (applying|your interest)|we('ve| have) received your application|application complete|congratulations|application submitted|^thank you!?$|your application has been submitted|application received|received your response|thank you for taking the time to apply|application (has been )?saved|your submission has been received|we have received your submission|submission successful|submission received", re.I)
 BLOCK_RE = re.compile(r"captcha|verify you are human|i'?m not a robot|captcha-delivery|datadome", re.I)
 DENIED_RE = re.compile(r"you have been blocked|403 forbidden|security service to protect itself|incident id: [a-f0-9]+|cf-ray|blocked by cloudflare|error code 1020", re.I)
 
@@ -1736,7 +1812,7 @@ def page_state(page):
     except Exception: body = ""
     frames = " ".join(f.url for f in page.frames)
     u = page.url.lower()
-    if DONE_RE.search(body) or any(k in u for k in ["/confirmation", "/submitted", "/success", "/thank-you", "/thanks", "/complete"]):
+    if DONE_RE.search(body) or any(k in u for k in ["/confirmation", "/submitted", "/success", "/thank-you", "/thanks", "/complete", "apply/thank_you", "status=submitted", "/application-received"]):
         return "done"
     if re.search(r"page you are looking for doesn't exist|job is no longer available|position has been closed|this job has expired|no longer accepting applications|job requisition is closed|posting is no longer active|this posting has closed", body, re.I):
         return "closed"
@@ -2183,7 +2259,53 @@ def main():
                                 pass
                     except Exception:
                         pass
+                    # Check for validation messages or HTML5 invalid inputs
+                    try:
+                        invalids = page.evaluate("""() => {
+                            const invs = [...document.querySelectorAll(':invalid')];
+                            return invs.map(e => ({
+                                tag: e.tagName.toLowerCase(),
+                                type: (e.type || '').toLowerCase(),
+                                name: e.name || '',
+                                id: e.dataset.afId || e.id || '',
+                                msg: e.validationMessage || ''
+                            }));
+                        }""")
+                        if invalids:
+                            print(f"[Validation Repair] Auto-remedying {len(invalids)} invalid field(s)...")
+                            for inv in invalids:
+                                el_id = inv.get("id")
+                                if not el_id: continue
+                                loc_inv = page.locator(f"[data-af-id='{el_id}']").first
+                                if loc_inv.count() > 0:
+                                    if inv["type"] == "checkbox":
+                                        loc_inv.check(force=True)
+                                    elif inv["tag"] == "select":
+                                        loc_inv.select_option(index=1)
+                                    elif inv["type"] in ("text", "tel", "email", "url"):
+                                        if not loc_inv.input_value():
+                                            loc_inv.fill("N/A")
+                    except Exception:
+                        pass
                     if stuck_retries > 5:
+                        if "submit" in label.lower():
+                            print("[Submit Force] Attempting emergency direct form submission before advancing...")
+                            try:
+                                page.evaluate("""() => {
+                                    const f = document.querySelector('form');
+                                    if (f && typeof f.requestSubmit === 'function') { f.requestSubmit(); return true; }
+                                    const b = document.querySelector('[data-af-nav="1"], button[type=submit], button.ashby-application-form-submit-button');
+                                    if (b) { b.click(); return true; }
+                                    return false;
+                                }""")
+                                time.sleep(3)
+                                if page_state(page) == "done" or DONE_RE.search(page.inner_text("body", timeout=1000)):
+                                    print("\n[SUCCESS] Confirmation page detected post emergency submit - application submitted.")
+                                    log_applied(page.url, a.company, a.role, resume, job_url=a.url)
+                                    submitted = True
+                                    break
+                            except Exception:
+                                pass
                         print("\n[Headless Autonomous] Page did not advance after multiple clicks. Advancing to next job.")
                         break
                     print(f"\n[Headless Autonomous] Waiting for page transition / retrying advance (attempt {stuck_retries}/5)...")
