@@ -1760,3 +1760,11 @@ Honeywell Embedded Engineer Intern [United States; 5d old]   https://ibqbjb.fa.o
 Amd ASIC Package Engineering Intern Co-op [6 locations  Secaucus, NJ Austin, TX Longmont, CO Fishkill, NY Fort Collins, CO Boxborough, MA; 5d old]   https://careers.amd.com/jobs/91466?icims=1&utm_source=Simplify&ref=Simplify
 MsaSafety Software Engineer Intern - Product Development - Summer 2027 [Cranberry Township, PA; 6d old]   https://careers.msasafety.com/jobs/9993?icims=1&utm_source=Simplify&ref=Simplify
 Garmin Software Engineer Intern [Olathe, KS; 6d old]   https://careers.garmin.com/jobs/19693?icims=1&utm_source=Simplify&ref=Simplify
+
+# ---- added by agents/job_sources.py (multi-source, <= 14 days old)
+Rtx Software Engineer Intern [Aurora, CO; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CO-AURORA-S77--16470-E-Hughes-Dr--BLDG-S77/Software-Engineering--Intern--Summer-2027-_01881520?utm_source=Simplify&ref=Simplify
+Rtx Software Engineering Co-op [Cedar Rapids, IA; 4d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IA-CEDAR-RAPIDS-130--5350-C-Ave-NE--BLDG-130/Software-Engineering-Co-op--Summer-Fall-2027-_01882137?utm_source=Simplify&ref=Simplify
+Marvell Silicon Validation Intern [Santa Clara, CA; 4d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers/job/Santa-Clara-CA/Silicon-Validation-Intern--BS---Summer-2027_2603850-1?utm_source=Simplify&ref=Simplify
+Tiktok Product Manager Intern - Pgc [San Jose, CA; 5d old]   https://lifeattiktok.com/search/7673365923163638069?utm_source=Simplify&ref=Simplify
+Bny Data Science Intern - Engineering [Jersey City, NJ; 6d old]   https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/81238?utm_source=Simplify&ref=Simplify
+Honeywell Embedded Engineer Intern [United States; 5d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155562?utm_source=Simplify&ref=Simplify
