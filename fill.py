@@ -1551,7 +1551,14 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
             from contextlib import nullcontext
             u_lock = nullcontext()
         with u_lock:
-            data = json.loads(p.read_text(encoding="utf-8")) if p.exists() else []
+            data = []
+            if p.exists() and p.stat().st_size > 0:
+                try:
+                    data = json.loads(p.read_text(encoding="utf-8"))
+                    if not isinstance(data, list):
+                        data = []
+                except Exception:
+                    data = []
             data.append({"url": url, "when": datetime.datetime.now().isoformat(timespec="minutes"),
                          "questions": [{"label": f["label"], "options": f.get("options")} for f in unanswered + needs_you]})
             p.write_text(json.dumps(data, indent=2), encoding="utf-8")
