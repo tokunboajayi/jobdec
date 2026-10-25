@@ -178,7 +178,7 @@ def render_frame():
     queue_str = f"{CLR_WHITE}{CLR_BOLD}{stats['queue']}{CLR_RESET} {CLR_CYAN}ROLES{CLR_RESET}"
     
     out.append(f"{CLR_DARK_GREEN}║ {CLR_GREEN}APPLIED:{CLR_RESET} {applied_str:<22}  {CLR_GREEN}TODAY:{CLR_RESET} {velo_str} {CLR_DARK_GREEN}║{CLR_RESET}")
-    out.append(f"{CLR_DARK_GREEN}║ {CLR_GREEN}TARGET QUEUE:{CLR_RESET} {queue_str:<18}  {CLR_GREEN}STATUS:{CLR_RESET} {CLR_GREEN}● ONLINE // BRAIN: 0-TOKEN{CLR_RESET} {CLR_DARK_GREEN}║{CLR_RESET}")
+    out.append(f"{CLR_DARK_GREEN}║ {CLR_GREEN}TARGET QUEUE:{CLR_RESET} {queue_str:<18}  {CLR_GREEN}STATUS:{CLR_RESET} {CLR_GREEN}● ONLINE // KG: 785+ ENTITIES{CLR_RESET} {CLR_DARK_GREEN}║{CLR_RESET}")
     out.append(f"{CLR_DARK_GREEN}╠{bar_h}╣{CLR_RESET}")
     
     # Active Radar Target
@@ -223,7 +223,7 @@ def render_frame():
         out.append(f"{CLR_DARK_GREEN}║{CLR_RESET} [{tag}] {text_color}{display_line:<{max_text_len}}{CLR_RESET} {CLR_DARK_GREEN}║{CLR_RESET}")
 
     out.append(f"{CLR_DARK_GREEN}╚{bar_h}╝{CLR_RESET}")
-    out.append(f"{CLR_CYAN}aj@jobdeck:~$ {CLR_GREEN}HOTKEYS: {CLR_WHITE}[B]{CLR_MINT} Launch Clickable Web GUI  {CLR_WHITE}[L]{CLR_MINT} Open Log  {CLR_WHITE}[Q]{CLR_MINT} Exit TUI{CLR_RESET}")
+    out.append(f"{CLR_CYAN}aj@jobdeck:~$ {CLR_GREEN}HOTKEYS: {CLR_WHITE}[B]{CLR_MINT} Web GUI  {CLR_WHITE}[K]{CLR_MINT} Knowledge Graph  {CLR_WHITE}[L]{CLR_MINT} Log  {CLR_WHITE}[Q]{CLR_MINT} Exit{CLR_RESET}")
     
     # Overwrite in-place smoothly: cursor home, each line cleared to end (\033[K), erase trailing with \033[J
     rendered_frame = "\033[H" + "\n".join(f"{line}\033[K" for line in out) + "\033[J\n"

@@ -4,7 +4,7 @@ and says who to look for. DRAFTS ONLY - it never sends anything (LinkedIn restri
 send automated messages, and the playbook requires AJ's yes per send).
 Output: outreach_drafts.csv (one row per company), picked up by the daily briefing.
 """
-import csv, datetime, pathlib, re, urllib.parse
+import csv, datetime, os, pathlib, re, urllib.parse
 from typing import List
 from pydantic import BaseModel
 from . import llm, context, local
@@ -12,6 +12,8 @@ from . import llm, context, local
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
 DRAFTS = AUTOFILL / "outreach_drafts.csv"
 COLS = ["date", "company", "role_applied", "fit", "look_for", "linkedin_search", "note", "hook", "status", "followup"]
+
+_FIRST_NAME = os.getenv("CANDIDATE_FIRST_NAME", "Tokunbo")
 
 
 class Outreach(BaseModel):
@@ -26,7 +28,7 @@ SYSTEM = f"""You draft one LinkedIn connection note for the candidate after they
 {context.FACT_TEXT}
 
 # PLAYBOOK
-- The note is under 280 characters, ends with "- Tokunbo", uses contractions, sounds like a student, not a
+- The note is under 280 characters, ends with "- {_FIRST_NAME}", uses contractions, sounds like a student, not a
   template. One specific hook tied to the company or role. No stacked credentials (pick at most one).
 - Mention he just applied to the role. Never invent facts about him or the person.
 - Never use: leverage, passionate, delve, synergy, spearhead.
@@ -36,7 +38,8 @@ SYSTEM = f"""You draft one LinkedIn connection note for the candidate after they
 
 def _ok(o):
     n = o.note.strip()
-    return (len(n) <= 300 and n.endswith("- Tokunbo") and not context.BANNED.search(n)
+    ends_ok = n.endswith(f"- {_FIRST_NAME}") or n.endswith("- Tokunbo")
+    return (len(n) <= 300 and ends_ok and not context.BANNED.search(n)
             and not context.unsupported_numbers(n))
 
 
@@ -56,6 +59,20 @@ def draft(company, role, fit, url="", pre_apply=False):
         o = llm.ask("outreach_drafter", "writer", SYSTEM, f"Company: {company}\nRole he applied to: {role}", Outreach)
     if o is None or not _ok(o):
         return None
+
+    # Knowledge Graph Enhancement: Inject warm referral connections & alumni ties
+    try:
+        from brain.knowledge_graph import get_kg
+        kg = get_kg()
+        paths = kg.find_referral_paths(company)
+        if paths:
+            warm_contacts = [f"WARM: {p['name']} ({p['role']}, Warmth: {p['warmth_score']})" for p in paths[:2]]
+            o.look_for = warm_contacts + [x for x in o.look_for if not any(w in x for w in ("WARM:", "warmth"))]
+            if paths[0].get("hook"):
+                o.hook = f"Referral: {paths[0]['name']} - {paths[0]['hook']}"
+    except Exception:
+        pass
+
     q = urllib.parse.quote(f"{company} {o.search_keywords}")
     row = {"date": datetime.date.today().isoformat(), "company": company, "role_applied": role, "fit": fit,
            "look_for": "; ".join(o.look_for), "linkedin_search": f"https://www.linkedin.com/search/results/people/?keywords={q}",

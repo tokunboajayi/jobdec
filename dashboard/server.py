@@ -53,6 +53,13 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
             data = self.get_brain_stats()
             self.wfile.write(json.dumps(data).encode("utf-8"))
             return
+        elif self.path.startswith("/api/graph"):
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.end_headers()
+            data = self.get_graph_data()
+            self.wfile.write(json.dumps(data).encode("utf-8"))
+            return
         elif self.path.startswith("/api/log"):
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
@@ -61,6 +68,25 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(json.dumps({"lines": lines}).encode("utf-8"))
             return
         return super().do_GET()
+
+    def get_graph_data(self):
+        try:
+            import urllib.parse
+            from brain.knowledge_graph import get_kg
+            parsed = urllib.parse.urlparse(self.path)
+            params = urllib.parse.parse_qs(parsed.query)
+            kg = get_kg()
+
+            if "company" in params:
+                comp = params["company"][0]
+                return kg.get_company_context(comp)
+            elif "query" in params:
+                q = params["query"][0]
+                return {"query": q, "evidence": kg.graph_rag_evidence(q)}
+            else:
+                return kg.export_telemetry_d3()
+        except Exception as e:
+            return {"error": str(e), "nodes": [], "links": []}
 
     def get_brain_stats(self):
         try:
@@ -199,8 +225,16 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
                 "gpa": os.getenv("CANDIDATE_GPA", "3.8"),
                 "work_auth": "US Citizen (No Visa Sponsorship Required)" if os.getenv("CANDIDATE_US_CITIZEN", "true").lower() == "true" else "Authorized to Work",
                 "location": os.getenv("CANDIDATE_LOCATION_TEXT", f"{os.getenv('CANDIDATE_CITY', 'Atlanta')}, {os.getenv('CANDIDATE_STATE', 'GA')}")
-            }
+            },
+            "knowledge_graph": self.get_kg_stats()
         }
+
+    def get_kg_stats(self):
+        try:
+            from brain.knowledge_graph import get_kg
+            return get_kg().get_summary_stats()
+        except Exception:
+            return {"total_nodes": 0, "total_edges": 0}
 
 def start_server(port=PORT):
     for p in range(port, port + 10):

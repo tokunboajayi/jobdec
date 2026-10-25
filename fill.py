@@ -1915,6 +1915,15 @@ def main():
             except Exception: break
         page = ctx.pages[0] if ctx.pages else ctx.new_page()
         print(f"\n[AJ Pipeline] Opening URL (Headless: {headless_mode}): {a.url}")
+        if a.company:
+            try:
+                from brain.knowledge_graph import get_kg
+                kg_paths = get_kg().find_referral_paths(a.company)
+                if kg_paths:
+                    top_ref = kg_paths[0]
+                    print(f"[JOBDEC-KG] Warm referral route found at {a.company}: {top_ref['name']} ({top_ref['role']}, Warmth: {top_ref['warmth_score']}/100)")
+            except Exception:
+                pass
         try:
             page.goto(a.url, wait_until="domcontentloaded", timeout=30000)
             settle(page, 3)

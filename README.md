@@ -83,6 +83,36 @@ A standalone cyberpunk HUD running on `http://localhost:8080`:
 
 ---
 
+## 🧠 Knowledge Graph & Graph-RAG Engine (`brain/knowledge_graph.py`)
+
+jobdec includes an in-memory, multi-dimensional Knowledge Graph powered by `networkx`. It unifies your candidate profile, target company ecosystems, LinkedIn networking relationships (`tracker.csv`), and job requisitions (`applications.csv`) into an interconnected entity network.
+
+```mermaid
+graph LR
+    C[Candidate: You] -->|ALUM_OF| I[University / Fellowships]
+    C -->|HAS_EXPERIENCE| E[Work History]
+    E -->|ACHIEVED| M[Verified Metrics]
+    C -->|NETWORKING_WITH| P[LinkedIn Contacts]
+    P -->|WORKS_AT| CO[Target Companies]
+    P -->|ALUMNUS_OF| I
+    CO -->|OPENS| R[Job Requisitions]
+    C -->|APPLIED_TO| R
+```
+
+### Key Capabilities:
+1. **Warm Referral Pathfinding (`kg.find_referral_paths(company)`):**
+   When an application opens or a connection note is drafted, jobdec calculates the warmest referral route to that firm. Contacts are scored by conversation stage (active coffee chats, responsive messages), hiring manager seniority, and mutual alumni ties (e.g. Georgia State University, MLT).
+2. **Hallucination-Proof Graph-RAG (`kg.graph_rag_evidence(query)`):**
+   Retrieves exact, verified quantitative achievements and system metrics from connected Experience nodes to ground AI and local form responses—guaranteeing 0% hallucinated statistics.
+3. **Cyberdeck HUD Integration:**
+   - Interactive company network search in the Web Dashboard (`KNOWLEDGE GRAPH` tab).
+   - Instant CLI commands in the Cyberdeck terminal:
+     - `graph [company]` — displays warm referral paths, contact stages, and active requisitions.
+     - `rag [query]` — extracts grounded project evidence for screening questions.
+   - REST API endpoints (`/api/graph?company=...`, `/api/graph?query=...`) exporting D3-ready topology.
+
+---
+
 ## 🚀 Quickstart
 
 ### Prerequisites

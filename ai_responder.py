@@ -364,13 +364,34 @@ def generate_response(question_label, field_type="text", options=None, company="
             ans = os.getenv("CANDIDATE_PORTFOLIO_URL", os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com"))
         elif "github" in q:
             ans = os.getenv("CANDIDATE_GITHUB_URL", "https://github.com")
+        elif re.search(r"\b(?:referred by|employee referral|referral name|name of referrer|who referred you)\b", q):
+            if company:
+                try:
+                    from brain.knowledge_graph import get_kg
+                    paths = get_kg().find_referral_paths(company)
+                    if paths and paths[0].get("warmth_score", 0) >= 30:
+                        ans = paths[0]["name"]
+                except Exception:
+                    pass
+            if not ans:
+                ans = "N/A"
 
     # Try local LLM for open-ended questions if still unanswered (with short timeout)
     if not ans:
+        kg_evidence = []
+        try:
+            from brain.knowledge_graph import get_kg
+            ev_list = get_kg().graph_rag_evidence(clean_label, top_k=2)
+            kg_evidence = [f"- {e.get('text') or e.get('role')}" for e in ev_list]
+        except Exception:
+            pass
+
+        evidence_block = ("\nRelevant Verified Project Facts:\n" + "\n".join(kg_evidence) + "\n") if kg_evidence else ""
+
         prompt = (
             f"Job Application Question for {company or 'the company'} ({role or 'Internship'}):\n"
             f"\"{clean_label}\"\n\n"
-            f"Context from Candidate Profile:\n{CANDIDATE_PROFILE}\n\n"
+            f"Context from Candidate Profile:\n{CANDIDATE_PROFILE}{evidence_block}\n"
             f"Write a concise, natural, professional answer (2-3 sentences max):"
         )
         ans = call_local_llm(prompt, max_tokens=120, timeout=3)

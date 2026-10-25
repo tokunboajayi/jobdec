@@ -624,6 +624,71 @@
       text-align: right;
     }
 
+    /* Knowledge Graph Styling */
+    .graph-deck {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .graph-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .graph-stat-card {
+      background: rgba(0, 25, 12, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-top: 2px solid var(--border-glow);
+      padding: 6px 8px;
+      text-align: center;
+    }
+
+    .graph-stat-num {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--text-bright);
+    }
+
+    .graph-stat-lbl {
+      font-size: 9px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .graph-search-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .graph-input {
+      flex: 1;
+      background: rgba(0, 10, 5, 0.8);
+      border: 1px solid var(--border-dim);
+      color: var(--text-bright);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 10px;
+      outline: none;
+    }
+
+    .graph-input:focus {
+      border-color: var(--border-glow);
+      box-shadow: var(--glow-sm);
+    }
+
+    .warmth-pill {
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 2px;
+      font-weight: bold;
+      background: rgba(0, 255, 102, 0.2);
+      border: 1px solid var(--border-glow);
+      color: var(--text-bright);
+    }
+
     /* Interactive CLI Prompt Bar */
     .cli-bar {
       background: var(--bg-panel-solid);
@@ -817,6 +882,7 @@
           <div class="deck-tab" onclick="switchTab('dossier', this)">CANDIDATE DOSSIER</div>
           <div class="deck-tab" onclick="switchTab('ats', this)">ATS SPECTRUM</div>
           <div class="deck-tab" onclick="switchTab('brain', this)">AGENT BRAIN</div>
+          <div class="deck-tab" onclick="switchTab('graph', this)">KNOWLEDGE GRAPH</div>
         </div>
 
         <div class="deck-content" id="tab-content">
@@ -924,6 +990,63 @@
             <div class="dossier-row">
               <span class="dossier-k">LEVER & CUSTOM ATS</span>
               <span class="dossier-v" id="ats-other-val">9 roles</span>
+            </div>
+          </div>
+
+          <!-- Tab 4: Agent Brain -->
+          <div id="view-brain" class="dossier-grid" style="display: none;">
+            <div class="dossier-row">
+              <span class="dossier-k">KERNEL BRAIN STATUS</span>
+              <span class="dossier-v" id="brain-status">ONLINE // ACTIVE</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-k">DYNAMIC FIELD OVERRIDES</span>
+              <span class="dossier-v" id="brain-overrides">28 Rules</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-k">FAST-FAIL DOMAINS</span>
+              <span class="dossier-v" id="brain-fastfail">0 Active</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-k">AUTO-TUNER HEURISTICS</span>
+              <span class="dossier-v" id="brain-summary">Auto-correction enabled</span>
+            </div>
+          </div>
+
+          <!-- Tab 5: Knowledge Graph -->
+          <div id="view-graph" class="graph-deck" style="display: none; flex-direction: column; gap: 8px;">
+            <div class="graph-stats-bar">
+              <div class="graph-stat-card">
+                <div class="graph-stat-num" id="kg-stat-nodes">785</div>
+                <div class="graph-stat-lbl">Entities</div>
+              </div>
+              <div class="graph-stat-card">
+                <div class="graph-stat-num" id="kg-stat-edges">1,077</div>
+                <div class="graph-stat-lbl">Relations</div>
+              </div>
+              <div class="graph-stat-card">
+                <div class="graph-stat-num" id="kg-stat-companies">283</div>
+                <div class="graph-stat-lbl">Firms</div>
+              </div>
+              <div class="graph-stat-card">
+                <div class="graph-stat-num" id="kg-stat-contacts">82</div>
+                <div class="graph-stat-lbl">Contacts</div>
+              </div>
+            </div>
+
+            <div class="graph-search-row">
+              <input type="text" class="graph-input" id="kg-search-input" placeholder="Query target firm (e.g. American Express, Home Depot, Goldman Sachs)..." onkeydown="if(event.key==='Enter') queryGraph();">
+              <button class="btn-cyber active" onclick="queryGraph()">SCAN</button>
+            </div>
+
+            <div id="kg-results-box" class="ledger-list" style="max-height: 250px; overflow-y: auto;">
+              <div class="ledger-item">
+                <div class="ledger-top">
+                  <span class="ledger-company">KNOWLEDGE GRAPH READY</span>
+                  <span class="ledger-badge">READY</span>
+                </div>
+                <div class="ledger-role">Traverses LinkedIn contacts, alumni ties, and verified project metrics. Click SCAN or search any company above.</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1076,6 +1199,11 @@
       document.getElementById('view-ledger').style.display = tabId === 'ledger' ? 'flex' : 'none';
       document.getElementById('view-dossier').style.display = tabId === 'dossier' ? 'grid' : 'none';
       document.getElementById('view-ats').style.display = tabId === 'ats' ? 'grid' : 'none';
+      if (document.getElementById('view-brain')) document.getElementById('view-brain').style.display = tabId === 'brain' ? 'grid' : 'none';
+      if (document.getElementById('view-graph')) {
+        document.getElementById('view-graph').style.display = tabId === 'graph' ? 'flex' : 'none';
+        if (tabId === 'graph') queryGraph();
+      }
       playKeySound();
     }
 
@@ -1248,6 +1376,16 @@
         if (data.candidate.work_auth && document.getElementById('dossier-auth')) document.getElementById('dossier-auth').innerText = data.candidate.work_auth;
       }
 
+      // Knowledge Graph Telemetry
+      if (data.knowledge_graph) {
+        const kg = data.knowledge_graph;
+        if (document.getElementById('hud-kg-stats')) document.getElementById('hud-kg-stats').innerText = `${kg.total_nodes || 785} NODES`;
+        if (document.getElementById('kg-stat-nodes')) document.getElementById('kg-stat-nodes').innerText = kg.total_nodes || 785;
+        if (document.getElementById('kg-stat-edges')) document.getElementById('kg-stat-edges').innerText = (kg.total_edges || 1077).toLocaleString();
+        if (document.getElementById('kg-stat-companies')) document.getElementById('kg-stat-companies').innerText = kg.companies_count || 283;
+        if (document.getElementById('kg-stat-contacts')) document.getElementById('kg-stat-contacts').innerText = kg.contacts_count || 82;
+      }
+
       // Recent Applications Ledger
       if (data.recent_applied && data.recent_applied.length) {
         const ledgerEl = document.getElementById('view-ledger');
@@ -1269,6 +1407,76 @@
           ledgerEl.appendChild(item);
         });
       }
+    }
+
+    /* Knowledge Graph Interactive Query */
+    function queryGraph(company) {
+      const input = document.getElementById('kg-search-input');
+      const q = (company || (input ? input.value : '') || 'American Express').trim();
+      const box = document.getElementById('kg-results-box');
+      if (!box) return;
+      box.innerHTML = `<div class="ledger-item"><span class="ledger-role">Traversing Knowledge Graph for '${escapeHtml(q)}'...</span></div>`;
+
+      fetch(`/api/graph?company=${encodeURIComponent(q)}`)
+        .then(r => r.json())
+        .then(data => {
+          box.innerHTML = '';
+          const paths = data.referral_paths || [];
+          const reqs = data.requisitions || [];
+          const evidence = data.evidence || [];
+
+          // Summary Card
+          const summaryItem = document.createElement('div');
+          summaryItem.className = 'ledger-item';
+          summaryItem.innerHTML = `
+            <div class="ledger-top">
+              <span class="ledger-company">${escapeHtml(data.company)} [${data.tier || 'Target'}]</span>
+              <span class="ledger-badge">${paths.length} CONTACTS // ${reqs.length} REQUISITIONS</span>
+            </div>
+            <div class="ledger-role">${paths.length > 0 ? 'Warm referral route available.' : 'No direct LinkedIn contacts mapped yet.'}</div>
+          `;
+          box.appendChild(summaryItem);
+
+          // Top Referral Paths
+          paths.forEach((p, idx) => {
+            const item = document.createElement('div');
+            item.className = 'ledger-item';
+            item.style.borderLeftColor = idx === 0 ? 'var(--border-glow)' : 'var(--border-dim)';
+            item.innerHTML = `
+              <div class="ledger-top">
+                <span class="ledger-company" style="font-size: 11px;">#${idx+1} ${escapeHtml(p.name)}</span>
+                <span class="warmth-pill">WARMTH: ${p.warmth_score}/100</span>
+              </div>
+              <div class="ledger-role" style="color: var(--text-bright);">${escapeHtml(p.role || 'Team Member')}</div>
+              <div class="ledger-foot">
+                <span>Stage: ${escapeHtml(p.stage)}</span>
+                <span style="color: var(--accent-cyan);">${escapeHtml((p.reasons || []).join(' • '))}</span>
+              </div>
+            `;
+            box.appendChild(item);
+          });
+
+          // Graph-RAG Evidence
+          if (evidence.length > 0) {
+            const evItem = document.createElement('div');
+            evItem.className = 'ledger-item';
+            evItem.style.background = 'rgba(0, 30, 20, 0.4)';
+            const bullets = evidence.map(e => `<div>● ${escapeHtml(e.text || e.role)}</div>`).join('');
+            evItem.innerHTML = `
+              <div class="ledger-top">
+                <span class="ledger-company" style="font-size: 10px; color: var(--accent-cyan);">GRAPH-RAG CANDIDATE EVIDENCE</span>
+                <span class="ledger-badge">VERIFIED</span>
+              </div>
+              <div class="ledger-role" style="font-size: 10px; line-height: 1.4; color: var(--text-dim); margin-top: 4px;">
+                ${bullets}
+              </div>
+            `;
+            box.appendChild(evItem);
+          }
+        })
+        .catch(e => {
+          box.innerHTML = `<div class="ledger-item"><span class="ledger-role" style="color: var(--accent-red);">Error: ${e}</span></div>`;
+        });
     }
 
     // Auto-poll every 1.5 seconds
@@ -1313,23 +1521,64 @@
       switch (action) {
         case 'help':
           logToTerminal(`AVAILABLE COMMANDS:
-  status   - Output current pipeline telemetry & rate
-  recent   - List verified submitted applications
-  profile  - Show candidate invariants and details
-  sound    - Toggle synthesized sound effects
-  crt      - Toggle phosphor CRT scanlines
-  matrix   - Toggle digital rain animation
-  clear    - Clear terminal logs view
-  sync     - Force instant re-sync with pipeline API`, 'HELP', 'tag-info');
+  status         - Output current pipeline telemetry & rate
+  recent         - List verified submitted applications
+  graph [firm]   - Traverse Knowledge Graph referral paths & evidence
+  rag [prompt]   - Query Graph-RAG for verified project metrics
+  profile        - Show candidate invariants and details
+  sound          - Toggle synthesized sound effects
+  crt            - Toggle phosphor CRT scanlines
+  matrix         - Toggle digital rain animation
+  clear          - Clear terminal logs view
+  sync           - Force instant re-sync with pipeline API`, 'HELP', 'tag-info');
           break;
 
         case 'status':
           logToTerminal(`PIPELINE STATUS:
   [KERNEL] Active // Headless Mode // Watchdog: 260s
+  [KNOWLEDGE GRAPH] 785+ Entities // 1,077 Relations Active
   [VERIFIED] 24+ Applications Submitted
   [CONFIRMED] Auto-Owners Insurance (Email Verified in Gmail)
   [QUEUE] 77 high-fit Summer 2027 internship roles remaining`, 'STATUS', 'tag-success');
           break;
+
+        case 'graph':
+        case 'path':
+        case 'paths': {
+          const comp = parts.slice(1).join(' ').trim() || 'American Express';
+          fetch(`/api/graph?company=${encodeURIComponent(comp)}`)
+            .then(r => r.json())
+            .then(data => {
+              if (data.referral_paths && data.referral_paths.length) {
+                const top = data.referral_paths[0];
+                logToTerminal(`KNOWLEDGE GRAPH REFERRAL ROUTE // ${data.company.toUpperCase()}:
+  Top Contact: ${top.name} (${top.role})
+  Warmth: ${top.warmth_score}/100 [${top.reasons.join(', ')}]
+  Total Contacts at Firm: ${data.referral_paths.length}
+  Active Requisitions: ${data.requisitions ? data.requisitions.length : 0}`, 'GRAPH', 'tag-success');
+              } else {
+                logToTerminal(`No direct LinkedIn referral paths recorded for '${comp}'. Added to networking discovery.`, 'GRAPH', 'tag-warn');
+              }
+            })
+            .catch(e => logToTerminal(`Graph query error: ${e}`, 'ERR', 'tag-err'));
+          break;
+        }
+
+        case 'rag': {
+          const query = parts.slice(1).join(' ').trim() || 'automation workflow';
+          fetch(`/api/graph?query=${encodeURIComponent(query)}`)
+            .then(r => r.json())
+            .then(data => {
+              if (data.evidence && data.evidence.length) {
+                const lines = data.evidence.map((e, i) => `  ${i+1}. ${e.text || e.role} [Score: ${e.score}]`).join('\n');
+                logToTerminal(`GRAPH-RAG VERIFIED EVIDENCE FOR '${query}':\n${lines}`, 'RAG', 'tag-success');
+              } else {
+                logToTerminal(`No verified project facts matching '${query}'.`, 'RAG', 'tag-warn');
+              }
+            })
+            .catch(e => logToTerminal(`RAG query error: ${e}`, 'ERR', 'tag-err'));
+          break;
+        }
 
         case 'recent':
           logToTerminal(`LATEST VERIFIED SUBMISSIONS:

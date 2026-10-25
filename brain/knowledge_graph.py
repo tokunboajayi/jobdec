@@ -1,0 +1,517 @@
+"""
+JOBDEC KNOWLEDGE GRAPH // GRAPH-RAG & NETWORK REFERRAL ENGINE
+Graph intelligence combining Candidate Invariants, Company Ecosystems,
+Job Requisitions, LinkedIn Human Referral Networks, and Verified Facts.
+"""
+import csv
+import json
+import os
+import pathlib
+import re
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+import networkx as nx
+
+HERE = pathlib.Path(__file__).resolve().parent
+AUTOFILL_DIR = HERE.parent
+ROOT_DIR = AUTOFILL_DIR.parent
+
+
+class JobdecKnowledgeGraph:
+    """Enterprise Knowledge Graph for candidate facts, referral paths, and ATS intelligence."""
+
+    def __init__(self, autofill_dir: Optional[pathlib.Path] = None):
+        self.autofill_dir = autofill_dir or AUTOFILL_DIR
+        self.root_dir = self.autofill_dir.parent
+        self.graph = nx.MultiDiGraph()
+        self._built = False
+
+    def build(self) -> nx.MultiDiGraph:
+        """Constructs or refreshes the full Knowledge Graph from all project data sources."""
+        self.graph.clear()
+
+        # 1. Candidate Node & Core Facts
+        cand_id = "Candidate:You"
+        cand_name = os.getenv("CANDIDATE_FULL_NAME", "Alex Doe")
+        self.graph.add_node(
+            cand_id,
+            node_type="Candidate",
+            label=cand_name,
+            name=cand_name,
+            email=os.getenv("CANDIDATE_EMAIL", "candidate@example.com"),
+            phone=os.getenv("CANDIDATE_PHONE", "555-0199"),
+            location=os.getenv("CANDIDATE_LOCATION_TEXT", "Atlanta, GA"),
+            degree=os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE", "BS Computer Science")),
+            major=os.getenv("CANDIDATE_MAJOR", "Computer Science"),
+            gpa=os.getenv("CANDIDATE_GPA", "3.80"),
+            grad_date=os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2027"),
+            work_auth="US Citizen",
+        )
+
+        # 2. Academic & Fellowship Institutions
+        uni_name = os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University")
+        self.add_institution(uni_name, category="University")
+        self.graph.add_edge(cand_id, f"Institution:{uni_name}", relation="ALUMNUS_OR_STUDENT_AT")
+
+        mlt_org = "Management Leadership for Tomorrow (MLT)"
+        self.add_institution(mlt_org, category="Fellowship")
+        self.graph.add_edge(cand_id, f"Institution:{mlt_org}", relation="FELLOW_OF")
+
+        # 3. Candidate Experience & Skill Subgraph
+        self._ingest_candidate_experiences(cand_id)
+
+        # 4. Ingest LinkedIn Referral Network (tracker.csv)
+        self._ingest_tracker(cand_id, uni_name)
+
+        # 5. Ingest Job Applications & Requisitions (applications.csv)
+        self._ingest_applications(cand_id)
+
+        # 6. Ingest Strategy Target Companies
+        self._ingest_strategy()
+
+        self._built = True
+        return self.graph
+
+    ALIASES = {
+        "amex": "American Express",
+        "american express": "American Express",
+        "goldman": "Goldman Sachs",
+        "goldman sachs": "Goldman Sachs",
+        "gs": "Goldman Sachs",
+        "jpm": "JPMorgan Chase",
+        "jpmorgan": "JPMorgan Chase",
+        "jpmorgan chase": "JPMorgan Chase",
+        "home depot": "The Home Depot",
+        "the home depot": "The Home Depot",
+        "cfa": "Chick-fil-A",
+        "chick-fil-a": "Chick-fil-A",
+        "cox": "Cox Automotive",
+        "cox automotive": "Cox Automotive",
+        "delta": "Delta Air Lines",
+        "delta air lines": "Delta Air Lines",
+        "bofa": "Bank of America",
+        "bank of america": "Bank of America",
+    }
+
+    def canonical_company(self, name: str) -> str:
+        clean = name.strip()
+        return self.ALIASES.get(clean.lower(), clean)
+
+    def add_institution(self, name: str, category: str = "University") -> str:
+        node_id = f"Institution:{name}"
+        if node_id not in self.graph:
+            self.graph.add_node(node_id, node_type="Institution", label=name, category=category)
+        return node_id
+
+    def add_company(self, name: str, tier: str = "Target") -> str:
+        clean = self.canonical_company(name)
+        node_id = f"Company:{clean}"
+        if node_id not in self.graph:
+            self.graph.add_node(node_id, node_type="Company", label=clean, tier=tier)
+        return node_id
+
+    def _ingest_candidate_experiences(self, cand_id: str):
+        """Builds Experience -> Metric -> Skill hierarchy from context.MASTER or curated fallback."""
+        master_sections = []
+        try:
+            from agents import context
+            if hasattr(context, "MASTER") and isinstance(context.MASTER, dict):
+                master_sections = context.MASTER.get("sections", [])
+        except Exception:
+            master_sections = []
+
+        loaded_any = False
+        for sec in master_sections:
+            title = sec.get("title", "").upper()
+            if "EXPERIENCE" in title or "INITIATIVE" in title:
+                for idx, entry in enumerate(sec.get("entries", [])):
+                    org = entry.get("org", "").strip()
+                    if not org:
+                        continue
+                    role = entry.get("role", "")
+                    exp_id = f"Exp:{re.sub(r'[^a-zA-Z0-9]', '', org)}"
+                    bullets = entry.get("bullets", [])
+                    self.graph.add_node(exp_id, node_type="Experience", label=f"{org} ({role})", org=org, role=role)
+                    self.graph.add_edge(cand_id, exp_id, relation="HAS_EXPERIENCE")
+
+                    comp_id = self.add_company(org, tier="Former Employer")
+                    self.graph.add_edge(exp_id, comp_id, relation="AT_COMPANY")
+
+                    for b in bullets:
+                        m_id = f"Metric:{abs(hash(b))}"
+                        self.graph.add_node(m_id, node_type="Metric", label=b[:60] + "...", text=b)
+                        self.graph.add_edge(exp_id, m_id, relation="ACHIEVED")
+                    loaded_any = True
+
+            if "ADDITIONAL" in title or "SKILL" in title:
+                for item in sec.get("labeled", []):
+                    if len(item) == 2:
+                        cat, skills_str = item
+                        for s in [x.strip() for x in re.split(r"[,;]", skills_str) if x.strip()]:
+                            s_id = f"Skill:{s}"
+                            if s_id not in self.graph:
+                                self.graph.add_node(s_id, node_type="Skill", label=s, category=cat)
+                            self.graph.add_edge(cand_id, s_id, relation="POSSESSES_SKILL")
+
+        if not loaded_any:
+            # Fallback curated baseline
+            experiences = [
+                {
+                    "id": "Exp:DeltaAirLines",
+                    "org": "Delta Air Lines",
+                    "role": "Project Management Intern, Airport Customer Service",
+                    "metrics": [
+                        "Automated shift-selection workflows handling 50,000+ employee bids",
+                        "Reduced manual coordination by 150+ hours across frontline operations",
+                        "Built 6 Excel trackers across 8 workstreams for 20,000 workforce",
+                        "Cleaned 3,000+ workflow records remediating 2,500 exceptions",
+                    ],
+                    "skills": ["Python", "Process Automation", "Excel", "Data Cleaning", "Tableau", "Requirements Specs"],
+                },
+                {
+                    "id": "Exp:WAInvestments",
+                    "org": "W. A Investments & Development",
+                    "role": "AI Research & Acquisitions Analyst",
+                    "metrics": [
+                        "Evaluated rent payment SaaS and Stripe Connect architectures",
+                        "Benchmarked acquisition targets across real estate holding portfolios",
+                        "Built corporate website with modern full-stack architectures",
+                    ],
+                    "skills": ["Agentic AI", "Market Research", "Financial Benchmarking", "Python", "SQL", "Full Stack"],
+                },
+                {
+                    "id": "Exp:JPMorgan",
+                    "org": "JPMorgan Chase",
+                    "role": "Investment Banking Extern",
+                    "metrics": [
+                        "Built DCF valuation outputs and comparable-company tables",
+                        "Benchmarked EV/EBITDA, P/E, and revenue multiples across peer companies",
+                    ],
+                    "skills": ["DCF Modeling", "Valuation Analysis", "Financial Analysis", "Excel"],
+                },
+            ]
+            for exp in experiences:
+                self.graph.add_node(exp["id"], node_type="Experience", label=f"{exp['org']} ({exp['role']})", **exp)
+                self.graph.add_edge(cand_id, exp["id"], relation="HAS_EXPERIENCE")
+                comp_id = self.add_company(exp["org"], tier="Former Employer")
+                self.graph.add_edge(exp["id"], comp_id, relation="AT_COMPANY")
+                for m in exp["metrics"]:
+                    m_id = f"Metric:{abs(hash(m))}"
+                    self.graph.add_node(m_id, node_type="Metric", label=m, text=m)
+                    self.graph.add_edge(exp["id"], m_id, relation="ACHIEVED")
+                for s in exp["skills"]:
+                    s_id = f"Skill:{s}"
+                    if s_id not in self.graph:
+                        self.graph.add_node(s_id, node_type="Skill", label=s, name=s)
+                    self.graph.add_edge(exp["id"], s_id, relation="APPLIED_SKILL")
+                    self.graph.add_edge(cand_id, s_id, relation="POSSESSES_SKILL")
+
+    def _ingest_tracker(self, cand_id: str, uni_name: str):
+        """Ingests LinkedIn networking contacts, stages, and referral edges from tracker.csv."""
+        tracker_paths = [self.autofill_dir / "tracker.csv", self.autofill_dir.parent / "tracker.csv", self.autofill_dir.parent.parent / "tracker.csv"]
+        for p in tracker_paths:
+            if not p.exists():
+                continue
+            try:
+                with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        name = (row.get("Name") or "").strip()
+                        firm = (row.get("Firm") or "").strip()
+                        role = (row.get("Role") or "").strip()
+                        stage = (row.get("Stage") or "Queued").strip()
+                        hook = (row.get("Hook") or "").strip()
+                        url = (row.get("Profile URL") or "").strip()
+
+                        if not name or not firm:
+                            continue
+
+                        contact_id = f"Contact:{name}"
+                        comp_id = self.add_company(firm)
+
+                        # Determine tags/affiliations
+                        is_gsu = any(k in role.lower() or k in hook.lower() for k in ["robinson", "gsu", "georgia state"])
+                        is_mlt = "mlt" in role.lower() or "mlt" in hook.lower()
+                        is_hm = any(k in role.lower() for k in ["manager", "lead", "director", "head", "vp", "tpm"])
+
+                        self.graph.add_node(
+                            contact_id,
+                            node_type="Contact",
+                            label=name,
+                            firm=firm,
+                            role=role,
+                            stage=stage,
+                            hook=hook,
+                            url=url,
+                            is_hiring_manager=is_hm,
+                            is_gsu_alum=is_gsu,
+                            is_mlt_fellow=is_mlt,
+                        )
+
+                        self.graph.add_edge(contact_id, comp_id, relation="WORKS_AT", role=role)
+                        self.graph.add_edge(cand_id, contact_id, relation="NETWORKING_WITH", stage=stage)
+
+                        if is_gsu:
+                            self.graph.add_edge(contact_id, f"Institution:{uni_name}", relation="ALUMNUS_OF")
+                        if is_mlt:
+                            self.graph.add_edge(contact_id, "Institution:Management Leadership for Tomorrow (MLT)", relation="FELLOW_OF")
+            except Exception:
+                pass
+
+    def _ingest_applications(self, cand_id: str):
+        """Ingests jobs, ATS types, and application outcomes from applications.csv."""
+        app_paths = [self.autofill_dir / "applications.csv", self.autofill_dir.parent / "applications.csv", self.autofill_dir.parent.parent / "applications.csv"]
+        for p in app_paths:
+            if not p.exists():
+                continue
+            try:
+                with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                    reader = csv.DictReader(f)
+                    for row in reader:
+                        comp = (row.get("Company") or "").strip()
+                        role = (row.get("Role") or "").strip()
+                        stage = (row.get("Stage") or "Scored").strip()
+                        score = row.get("Fit Score (1-10)") or "0"
+                        url = (row.get("Job URL") or "").strip()
+                        contact = (row.get("Contact at Company") or "").strip()
+
+                        if not comp or not role:
+                            continue
+
+                        req_id = f"Req:{comp} - {role[:50]}"
+                        comp_id = self.add_company(comp)
+
+                        self.graph.add_node(
+                            req_id,
+                            node_type="Requisition",
+                            label=role,
+                            company=comp,
+                            stage=stage,
+                            fit_score=score,
+                            url=url,
+                        )
+
+                        self.graph.add_edge(req_id, comp_id, relation="OPENED_BY")
+                        self.graph.add_edge(cand_id, req_id, relation="APPLIED_STATUS", stage=stage, fit_score=score)
+
+                        # Link contact if mentioned
+                        if contact:
+                            for c_name in [c.strip() for c in contact.split(",")]:
+                                c_id = f"Contact:{c_name}"
+                                if c_id in self.graph:
+                                    self.graph.add_edge(c_id, req_id, relation="CAN_REFER_OR_LEADS")
+            except Exception:
+                pass
+
+    def _ingest_strategy(self):
+        """Ingests protected & target companies from strategy.json."""
+        strat_file = self.autofill_dir / "strategy.json"
+        if strat_file.exists():
+            try:
+                data = json.loads(strat_file.read_text(encoding="utf-8"))
+                for comp in data.get("target_companies", []):
+                    self.add_company(comp, tier="Target")
+                for comp in data.get("protected_companies", []):
+                    self.add_company(comp, tier="Protected")
+            except Exception:
+                pass
+
+    def find_referral_paths(self, target_company: str) -> List[Dict[str, Any]]:
+        """
+        Finds the shortest, warmest referral routes to a target company.
+        Ranks contacts by stage, alumni connection, and hiring manager authority.
+        """
+        if not self._built:
+            self.build()
+
+        target_norm = self.canonical_company(target_company).lower().strip()
+        matched_companies = [n for n, d in self.graph.nodes(data=True) if d.get("node_type") == "Company" and (target_norm in d.get("label", "").lower() or d.get("label", "").lower() in target_norm)]
+
+        if not matched_companies:
+            return []
+
+        comp_node = matched_companies[0]
+        comp_name = self.graph.nodes[comp_node]["label"]
+
+        # Find all contacts at this company
+        routes = []
+        for u, v, data in self.graph.in_edges(comp_node, data=True):
+            if data.get("relation") == "WORKS_AT":
+                contact_node = u
+                c_data = self.graph.nodes[contact_node]
+
+                # Calculate warmth score
+                warmth = 0
+                reasons = []
+
+                stage = c_data.get("stage", "Queued")
+                if stage in ("Chat Scheduled", "Chat Done"):
+                    warmth += 50
+                    reasons.append("Active coffee chat")
+                elif stage in ("Replied", "Thanked/Asked"):
+                    warmth += 35
+                    reasons.append("Responsive conversation")
+                elif stage == "Accepted":
+                    warmth += 20
+                    reasons.append("Connected 1st-degree")
+
+                if c_data.get("is_hiring_manager"):
+                    warmth += 25
+                    reasons.append("Hiring Manager / Team Lead")
+
+                if c_data.get("is_gsu_alum"):
+                    warmth += 20
+                    reasons.append("Georgia State / Robinson Alum")
+
+                if c_data.get("is_mlt_fellow"):
+                    warmth += 20
+                    reasons.append("MLT Fellow")
+
+                routes.append({
+                    "name": c_data.get("label"),
+                    "role": c_data.get("role"),
+                    "company": comp_name,
+                    "stage": stage,
+                    "warmth_score": warmth,
+                    "reasons": reasons,
+                    "hook": c_data.get("hook", ""),
+                    "profile_url": c_data.get("url", ""),
+                })
+
+        routes.sort(key=lambda r: r["warmth_score"], reverse=True)
+        return routes
+
+    def graph_rag_evidence(self, query: str, top_k: int = 3) -> List[Dict[str, Any]]:
+        """
+        Retrieves verified project metrics and facts from the Knowledge Graph
+        relevant to an ATS screening prompt.
+        """
+        if not self._built:
+            self.build()
+
+        tokens = set(re.findall(r"\w+", query.lower()))
+        results = []
+
+        # Search across Experience and Metric nodes
+        for node_id, data in self.graph.nodes(data=True):
+            ntype = data.get("node_type")
+            if ntype == "Metric":
+                text = data.get("text", "")
+                metric_tokens = set(re.findall(r"\w+", text.lower()))
+                overlap = len(tokens.intersection(metric_tokens))
+                if overlap > 0:
+                    results.append({"type": "Metric", "text": text, "score": overlap})
+            elif ntype == "Experience":
+                role = data.get("role", "")
+                org = data.get("org", "")
+                combo = f"{org} {role}".lower()
+                overlap = sum(1 for t in tokens if t in combo)
+                if overlap > 0:
+                    results.append({"type": "Experience", "org": org, "role": role, "score": overlap * 1.5})
+
+        results.sort(key=lambda x: x["score"], reverse=True)
+        return results[:top_k]
+
+    def get_summary_stats(self) -> Dict[str, Any]:
+        """Returns high-level graph metrics and entity distributions."""
+        if not self._built:
+            self.build()
+        from collections import Counter
+        counts = Counter(d.get("node_type", "Entity") for _, d in self.graph.nodes(data=True))
+        return {
+            "total_nodes": self.graph.number_of_nodes(),
+            "total_edges": self.graph.number_of_edges(),
+            "entity_breakdown": dict(counts),
+            "companies_count": counts.get("Company", 0),
+            "contacts_count": counts.get("Contact", 0),
+            "requisitions_count": counts.get("Requisition", 0),
+            "skills_count": counts.get("Skill", 0),
+            "metrics_count": counts.get("Metric", 0),
+        }
+
+    def get_company_context(self, company: str) -> Dict[str, Any]:
+        """Aggregates all intelligence on a given company: referral paths, job requisitions, and matched evidence."""
+        if not self._built:
+            self.build()
+        canon = self.canonical_company(company)
+        paths = self.find_referral_paths(canon)
+        comp_id = f"Company:{canon}"
+
+        reqs = []
+        tier = "General"
+        if comp_id in self.graph:
+            tier = self.graph.nodes[comp_id].get("tier", "Target")
+            for u, v, d in self.graph.in_edges(comp_id, data=True):
+                if d.get("relation") == "OPENED_BY":
+                    r_data = self.graph.nodes[u]
+                    reqs.append({
+                        "role": r_data.get("label"),
+                        "stage": r_data.get("stage"),
+                        "fit_score": r_data.get("fit_score"),
+                    })
+
+        evidence = self.graph_rag_evidence(company, top_k=2)
+
+        return {
+            "company": canon,
+            "tier": tier,
+            "referral_paths": paths,
+            "warmest_contact": paths[0] if paths else None,
+            "requisitions": reqs,
+            "evidence": evidence,
+        }
+
+    def export_telemetry_d3(self) -> Dict[str, Any]:
+        """Exports the graph in a format ready for D3 / Vis.js network visualization in the Cyberdeck HUD."""
+        if not self._built:
+            self.build()
+
+        nodes = []
+        for n, d in self.graph.nodes(data=True):
+            ntype = d.get("node_type", "Entity")
+            nodes.append({
+                "id": n,
+                "label": d.get("label", n),
+                "type": ntype,
+                "group": ntype,
+            })
+
+        links = []
+        for u, v, d in self.graph.edges(data=True):
+            links.append({
+                "source": u,
+                "target": v,
+                "relation": d.get("relation", "CONNECTED"),
+            })
+
+        stats = self.get_summary_stats()
+        return {"nodes": nodes, "links": links, "stats": stats}
+
+
+# Singleton instance
+_INSTANCE: Optional[JobdecKnowledgeGraph] = None
+
+
+def get_kg() -> JobdecKnowledgeGraph:
+    global _INSTANCE
+    if _INSTANCE is None:
+        _INSTANCE = JobdecKnowledgeGraph()
+        _INSTANCE.build()
+    return _INSTANCE
+
+
+if __name__ == "__main__":
+    kg = get_kg()
+    print(f"[KNOWLEDGE GRAPH] Built with {kg.graph.number_of_nodes()} nodes and {kg.graph.number_of_edges()} edges.")
+    
+    # Test referral lookup for American Express
+    amex_paths = kg.find_referral_paths("American Express")
+    print(f"\n[REFERRAL PATHS] Top paths for American Express ({len(amex_paths)} found):")
+    for p in amex_paths[:3]:
+        print(f" -> {p['name']} ({p['role']}) | Warmth: {p['warmth_score']} | {', '.join(p['reasons'])}")
+
+    # Test Graph-RAG evidence extraction
+    evidence = kg.graph_rag_evidence("automation workflow shift scheduling Python")
+    print(f"\n[GRAPH-RAG] Retrieved {len(evidence)} verified facts:")
+    for e in evidence:
+        print(f" -> {e.get('text') or e.get('role')}")
