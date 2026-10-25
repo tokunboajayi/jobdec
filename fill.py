@@ -266,32 +266,34 @@ def rule_for(label):
     return None
 
 
+MONTHS_MAP = {
+    "1": ("01", "1", "january", "jan"),
+    "01": ("01", "1", "january", "jan"),
+    "2": ("02", "2", "february", "feb"),
+    "02": ("02", "2", "february", "feb"),
+    "3": ("03", "3", "march", "mar"),
+    "03": ("03", "3", "march", "mar"),
+    "4": ("04", "4", "april", "apr"),
+    "04": ("04", "4", "april", "apr"),
+    "5": ("05", "5", "may"),
+    "05": ("05", "5", "may"),
+    "6": ("06", "6", "june", "jun"),
+    "06": ("06", "6", "june", "jun"),
+    "7": ("07", "7", "july", "jul"),
+    "07": ("07", "7", "july", "jul"),
+    "8": ("08", "8", "august", "aug"),
+    "08": ("08", "8", "august", "aug"),
+    "9": ("09", "9", "september", "sep", "sept"),
+    "09": ("09", "9", "september", "sep", "sept"),
+    "10": ("10", "october", "oct"),
+    "11": ("11", "november", "nov"),
+    "12": ("12", "december", "dec"),
+}
+
+
 def pick_option(options, rule, label=""):
     if not options:
         return None
-    MONTHS_MAP = {
-        "1": ("01", "1", "january", "jan"),
-        "01": ("01", "1", "january", "jan"),
-        "2": ("02", "2", "february", "feb"),
-        "02": ("02", "2", "february", "feb"),
-        "3": ("03", "3", "march", "mar"),
-        "03": ("03", "3", "march", "mar"),
-        "4": ("04", "4", "april", "apr"),
-        "04": ("04", "4", "april", "apr"),
-        "5": ("05", "5", "may"),
-        "05": ("05", "5", "may"),
-        "6": ("06", "6", "june", "jun"),
-        "06": ("06", "6", "june", "jun"),
-        "7": ("07", "7", "july", "jul"),
-        "07": ("07", "7", "july", "jul"),
-        "8": ("08", "8", "august", "aug"),
-        "08": ("08", "8", "august", "aug"),
-        "9": ("09", "9", "september", "sep", "sept"),
-        "09": ("09", "9", "september", "sep", "sept"),
-        "10": ("10", "october", "oct"),
-        "11": ("11", "november", "nov"),
-        "12": ("12", "december", "dec"),
-    }
     if rule and OPTS:
         hit = OPTS.resolve(label, rule.get("a"), options, rule.get("option"))
         if hit:
@@ -1468,6 +1470,32 @@ def fill_page(page, resume, overwrite, company="", role=""):
                             val = m_yr.group(1)
                         else:
                             val = "2027"
+                if is_date_field and not re.search(r"\b(day|month|year)\b", lab_low):
+                    ph = (f.get("placeholder") or "").lower()
+                    m_my = re.search(r"([A-Za-z]+)\s+(20\d\d)", val)
+                    m_slash = re.search(r"(\d{1,2})/(?:(\d{1,2})/)?(20\d\d)", val)
+                    m_num = None
+                    y_num = None
+                    d_num = "01"
+                    if m_my:
+                        m_str, y_num = m_my.group(1).lower(), m_my.group(2)
+                        for k_m, v_tuple in MONTHS_MAP.items():
+                            if m_str in v_tuple:
+                                m_num = int(k_m)
+                                break
+                    elif m_slash:
+                        m_num = int(m_slash.group(1))
+                        d_num = f"{int(m_slash.group(2)):02d}" if m_slash.group(2) else "01"
+                        y_num = m_slash.group(3)
+
+                    if m_num and y_num:
+                        if f.get("type") == "date":
+                            val = f"{y_num}-{m_num:02d}-{d_num}"
+                        elif ("mm/yy" in ph or "mm/yyyy" in ph) and "dd" not in ph:
+                            val = f"{m_num:02d}/{y_num}"
+                        elif "dd" in ph or "mm/dd/yyyy" in ph or re.search(r"date", lab_low):
+                            val = f"{m_num:02d}/{d_num}/{y_num}"
+
                 if re.search(r"\bend\s*date\b", lab_low) and val.lower() == "present":
                     ph = (f.get("placeholder") or "").lower()
                     if "yyyy" in ph or "mm/dd" in ph or f.get("type") == "date":
