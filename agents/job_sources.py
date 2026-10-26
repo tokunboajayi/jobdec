@@ -121,8 +121,6 @@ def fetch_github_sources(max_age_days=30):
                 seen.add(base_u)
                 m = re.match(r"(\d+)\s*d", _clean(cols[4]))
                 age = int(m.group(1)) if m else 0
-                if _clean(cols[4]).endswith("mo") or age > max_age_days:
-                    continue
                 jobs.append({"company": company, "role": role, "location": loc, "url": url, "age_days": age, "source": src_name})
         except Exception:
             pass

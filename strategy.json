@@ -78,12 +78,12 @@
   ],
   "category_weights": {
     "ai_automation": 6,
-    "product": 2,
-    "analyst_data": 1,
-    "business_systems": 1,
+    "swe": 0,
+    "analyst_data": 4,
+    "product": 3,
+    "business_systems": 3,
     "consulting_strategy": 0,
     "finance_tech": 0,
-    "swe": 0,
     "other": 0
   },
   "agents": {

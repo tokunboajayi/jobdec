@@ -81,6 +81,8 @@ def main():
                 skipped.append((f"fast_fail_domain ({dom})", tag)); continue
         except Exception:
             pass
+        run.append((score, RE.ats_priority(j["url"]), cat, ats, tag))
+
     if a.check_live and run:
         try:
             from agents import job_validator
