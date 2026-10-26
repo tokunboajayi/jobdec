@@ -27,10 +27,15 @@ try:
 except ImportError:
     fetch_verification_code, fetch_verification_data = None, None
 
+try:
+    from account_verifier import verify_account_and_proceed, is_verification_waiting_screen
+except ImportError:
+    verify_account_and_proceed, is_verification_waiting_screen = None, None
 
-def _activate_workday_from_gmail(page, wait_sec=0):
+
+def _activate_workday_from_gmail(page, wait_sec=0, job_url=""):
     """Open this tenant's 'Verify your candidate account' link (new, or left over from an earlier run), then return
-    to the page we were on. Workday rejects sign-in for an account that was never activated."""
+    to the page we were on or proceed directly into the application form. Workday rejects sign-in for an account that was never activated."""
     try:
         from gmail_auth import find_activation_link
         m = re.search(r"https?://([^./]+)\.wd\d*\.myworkdayjobs\.com", page.url) or re.search(r"https?://([^./]+)\.", page.url)
@@ -39,21 +44,23 @@ def _activate_workday_from_gmail(page, wait_sec=0):
         if not link:
             print(f"[Auth Manager] No activation email for '{tenant}' found.")
             return False
+        if verify_account_and_proceed:
+            return verify_account_and_proceed(page, link=link, tenant_hint=tenant, job_url=job_url or page.url)
         back = page.url
         print("[Auth Manager] Opening the account activation link...")
         page.goto(link, wait_until="domcontentloaded", timeout=30000)
         settle(page, 4)
-        page.goto(back, wait_until="domcontentloaded", timeout=30000)
+        if "/apply" in page.url.lower():
+            return True
+        if job_url:
+            page.goto(job_url, wait_until="domcontentloaded", timeout=25000)
+        else:
+            page.goto(back, wait_until="domcontentloaded", timeout=30000)
         settle(page, 3)
         return True
     except Exception as e:
         print(f"[Auth Manager] Activation attempt note: {e}")
         return False
-
-try:
-    from account_verifier import verify_account_and_proceed, is_verification_waiting_screen
-except ImportError:
-    verify_account_and_proceed, is_verification_waiting_screen = None, None
 
 
 def is_auth_screen(page):
@@ -178,7 +185,7 @@ def handle_workday_landing(page):
 
 
 
-def handle_verification_screen(page):
+def handle_verification_screen(page, job_url=""):
     """Detects and fills 6-digit email verification / security code screens or follows activation links."""
     try:
         tenant_kw = ""
@@ -209,7 +216,7 @@ def handle_verification_screen(page):
 
         print(f"\n[Auth Manager] >> Verification / Activation required by portal (tenant: '{tenant_kw or 'any'}').")
         if verify_account_and_proceed:
-            return verify_account_and_proceed(page, email=GMAIL_USER, password=PORTAL_PASSWORD, timeout_sec=60, tenant_hint=tenant_kw)
+            return verify_account_and_proceed(page, email=GMAIL_USER, password=PORTAL_PASSWORD, timeout_sec=60, tenant_hint=tenant_kw, job_url=job_url)
 
         code, link = None, None
         if fetch_verification_data:
@@ -266,7 +273,7 @@ def handle_verification_screen(page):
     return False
 
 
-def handle_workday_account_creation(page, email=GMAIL_USER, password=PORTAL_PASSWORD, allow_signin_retry=True):
+def handle_workday_account_creation(page, email=GMAIL_USER, password=PORTAL_PASSWORD, allow_signin_retry=True, job_url=""):
     """Fills Workday Create Account fields and submits."""
     try:
         email_inp = page.locator("input[data-automation-id='email']").first
@@ -320,7 +327,7 @@ def handle_workday_account_creation(page, email=GMAIL_USER, password=PORTAL_PASS
                     if sign_in_tab.is_visible():
                         sign_in_tab.click()
                         settle(page, 2)
-                    return handle_workday_sign_in(page, email, password, allow_create_retry=False)
+                    return handle_workday_sign_in(page, email, password, allow_create_retry=False, job_url=job_url)
 
                 # If verifyPassword field is gone, check if redirected to Sign In or into form
                 if page.locator("input[data-automation-id='verifyPassword']:visible").count() == 0 and page.locator("input[data-automation-id='createAccountCheckbox']:visible").count() == 0:
@@ -341,30 +348,30 @@ def handle_workday_account_creation(page, email=GMAIL_USER, password=PORTAL_PASS
 
                         print(f"[Auth Manager] Workday account submitted. Verification screen detected! Listening for activation link in Gmail (tenant: {tenant_kw or 'any'})...")
                         if verify_account_and_proceed:
-                            verified = verify_account_and_proceed(page, email=email, password=password, timeout_sec=40, tenant_hint=tenant_kw)
+                            verified = verify_account_and_proceed(page, email=email, password=password, timeout_sec=40, tenant_hint=tenant_kw, job_url=job_url)
                             if verified:
                                 print("[Auth Manager] Account verified via email. Checking if sign-in or form is active...")
                                 if page.locator("input[type=password]:visible").count() > 0 or "login" in page.url.lower():
-                                    return handle_workday_sign_in(page, email, password, allow_create_retry=False)
+                                    return handle_workday_sign_in(page, email, password, allow_create_retry=False, job_url=job_url)
                                 return True
 
                     pw_visible = page.locator("input[type=password]:visible").count()
                     if pw_visible == 1 or "login" in page.url.lower():
                         # Workday won't sign in a new account until its "Verify your candidate account" link is opened
                         print("[Auth Manager] Redirected to Sign In after registration. Activating the account from Gmail first...")
-                        _activate_workday_from_gmail(page, wait_sec=90)
-                        return handle_workday_sign_in(page, email, password, allow_create_retry=False)
+                        _activate_workday_from_gmail(page, wait_sec=90, job_url=job_url)
+                        return handle_workday_sign_in(page, email, password, allow_create_retry=False, job_url=job_url)
                     print("[Auth Manager] Workday account successfully created. Proceeding to form...")
                     return True
 
-            handle_verification_screen(page)
+            handle_verification_screen(page, job_url=job_url)
             return True
     except Exception as e:
         print(f"[Auth Manager] Error in Workday account creation: {e}")
     return False
 
 
-def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, allow_create_retry=True, _activated=False):
+def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, allow_create_retry=True, _activated=False, job_url=""):
     """Signs into Workday or switches to Create Account if not registered."""
     try:
         dismiss_cookie_banner(page)
@@ -429,8 +436,8 @@ def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, all
                 # Check for bad credentials / locked account / no account
                 if re.search(r"wrong email|wrong password|\baccount\s+is\s+locked\b|\baccount\s+might\s+be\s+locked\b", body, re.I):
                     # often an account created earlier but never activated: use its activation email, then retry once
-                    if not _activated and _activate_workday_from_gmail(page, wait_sec=0 if allow_create_retry else 60):
-                        return handle_workday_sign_in(page, email, password, allow_create_retry=allow_create_retry, _activated=True)
+                    if not _activated and _activate_workday_from_gmail(page, wait_sec=0 if allow_create_retry else 60, job_url=job_url):
+                        return handle_workday_sign_in(page, email, password, allow_create_retry=allow_create_retry, _activated=True, job_url=job_url)
                     if not allow_create_retry:
                         print("[Auth Manager] Portal login failed and Create Account already attempted.")
                         return False
@@ -439,7 +446,7 @@ def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, all
                         print("[Auth Manager] Sign in failed (unregistered or locked). Trying 'Create Account' first...")
                         create_tab.click(force=True)
                         settle(page, 3)
-                        return handle_workday_account_creation(page, email, password, allow_signin_retry=False)
+                        return handle_workday_account_creation(page, email, password, allow_signin_retry=False, job_url=job_url)
                     print("[Auth Manager] Portal login failed: wrong credentials or account locked on this site.")
                     return False
 
@@ -452,7 +459,7 @@ def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, all
                     if create_tab.is_visible():
                         create_tab.click(force=True)
                         settle(page, 3)
-                        return handle_workday_account_creation(page, email, password, allow_signin_retry=False)
+                        return handle_workday_account_creation(page, email, password, allow_signin_retry=False, job_url=job_url)
 
                 # Check for transient Workday error
                 if re.search(r"something went wrong|please refresh the page", body, re.I):
@@ -469,16 +476,20 @@ def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, all
                 has_form = page.locator("[data-automation-id='pageFooterNextButton']:visible, [data-automation-id*='legalName'], [data-automation-id='contactInformationPage'], input[type=file]:visible").count() > 0
                 if pw_gone and (has_form or re.search(r"step [2-9] of|my information|my experience", body, re.I) or "candidatehome" in page.url.lower()):
                     print("[Auth Manager] Workday sign in successful. Form loaded.")
-                    handle_verification_screen(page)
+                    if "candidatehome" in page.url.lower() and job_url:
+                        print(f"[Auth Manager] On candidatehome dashboard. Navigating directly to target job: {job_url}")
+                        page.goto(job_url, wait_until="domcontentloaded", timeout=25000)
+                        settle(page, 3)
+                    handle_verification_screen(page, job_url=job_url)
                     return True
 
-            handle_verification_screen(page)
+            handle_verification_screen(page, job_url=job_url)
             if page.locator("input[type=password]:visible").count() == 0:
                 return True
 
             if not allow_create_retry:
-                if not _activated and _activate_workday_from_gmail(page, wait_sec=60):
-                    return handle_workday_sign_in(page, email, password, allow_create_retry=False, _activated=True)
+                if not _activated and _activate_workday_from_gmail(page, wait_sec=60, job_url=job_url):
+                    return handle_workday_sign_in(page, email, password, allow_create_retry=False, _activated=True, job_url=job_url)
                 print("[Auth Manager] Password field still visible and Create Account already tried.")
                 return False
 
@@ -487,7 +498,7 @@ def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, all
                 print("[Auth Manager] Sign In did not advance. Switching to 'Create Account'...")
                 create_tab.click()
                 settle(page, 2.5)
-                return handle_workday_account_creation(page, email, password, allow_signin_retry=False)
+                return handle_workday_account_creation(page, email, password, allow_signin_retry=False, job_url=job_url)
 
             print("[Auth Manager] Password field still visible — sign in did not complete.")
             return False
@@ -496,7 +507,7 @@ def handle_workday_sign_in(page, email=GMAIL_USER, password=PORTAL_PASSWORD, all
     return False
 
 
-def handle_generic_auth(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
+def handle_generic_auth(page, email=GMAIL_USER, password=PORTAL_PASSWORD, job_url=""):
     """Handles generic candidate portal account creation and login."""
     try:
         pw_inputs = page.locator("input[type=password]:visible")
@@ -533,7 +544,7 @@ def handle_generic_auth(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
             else:
                 pw_inputs.nth(1).press("Enter")
             settle(page, 4)
-            handle_verification_screen(page)
+            handle_verification_screen(page, job_url=job_url)
             return True
 
         # If 1 password field -> Sign In form
@@ -560,10 +571,10 @@ def handle_generic_auth(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
                 if create_link.is_visible():
                     create_link.click()
                     settle(page, 3)
-                    return handle_generic_auth(page, email, password)
+                    return handle_generic_auth(page, email, password, job_url=job_url)
                 return False
 
-            handle_verification_screen(page)
+            handle_verification_screen(page, job_url=job_url)
             if page.locator("input[type=password]:visible").count() > 0:
                 print("[Auth Manager] Generic sign in did not complete (password field still visible).")
                 return False
@@ -574,7 +585,7 @@ def handle_generic_auth(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
     return False
 
 
-def run_auth_flow(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
+def run_auth_flow(page, email=GMAIL_USER, password=PORTAL_PASSWORD, job_url=""):
     """Main entrypoint: checks and resolves any authentication or account creation step."""
     if not password:
         print("[Auth Manager] PORTAL_PASSWORD is not set in .env - handing this screen to you.")
@@ -595,7 +606,7 @@ def run_auth_flow(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
         pass
 
     # 2. Check for verification code screen
-    if handle_verification_screen(page):
+    if handle_verification_screen(page, job_url=job_url):
         return True
 
     # 3. Check iCIMS email login in any frame
@@ -625,12 +636,12 @@ def run_auth_flow(page, email=GMAIL_USER, password=PORTAL_PASSWORD):
             except Exception:
                 pass
         if page.locator("button[data-automation-id='signInSubmitButton']:visible").count() > 0 or (page.locator("input[type=password]:visible").count() == 1 and page.locator("input[data-automation-id='verifyPassword']:visible").count() == 0):
-            return handle_workday_sign_in(page, email, password)
+            return handle_workday_sign_in(page, email, password, job_url=job_url)
         if page.locator("input[data-automation-id='verifyPassword']:visible, button[data-automation-id='createAccountSubmitButton']:visible").count() > 0:
-            return handle_workday_account_creation(page, email, password)
+            return handle_workday_account_creation(page, email, password, job_url=job_url)
 
     # 6. Generic ATS auth
     if page.locator("input[type=password]:visible").count() > 0:
-        return handle_generic_auth(page, email, password)
+        return handle_generic_auth(page, email, password, job_url=job_url)
 
     return False

@@ -75,6 +75,14 @@ def extract_body(msg):
     return body
 
 
+WORD_BLACKLIST = {
+    "valid", "hours", "please", "verify", "email", "address", "account",
+    "expires", "within", "click", "below", "button", "candidate", "application",
+    "identity", "thank", "regards", "access", "following", "security", "portal",
+    "password", "passcode", "minute", "minutes"
+}
+
+
 def extract_code(text):
     """Finds a verification/security code in email text. Bare 6-digit numbers count only
     when the email is clearly a verification email (avoids grabbing phone/req/zip numbers)."""
@@ -85,28 +93,42 @@ def extract_code(text):
     # Normalize spaced or hyphenated 6-digit codes (e.g. "123 456" or "123-456")
     text = re.sub(r'\b([0-9]{3})[\s\-]([0-9]{3})\b', r'\1\2', text)
 
-    patterns = [
-        r"(?:Copy and paste this code[^:]*:|security code field on your application:)\s*([a-zA-Z0-9]{6,10})",
-        r"(?:one-time\s*pass\s*code|one-time\s*passcode|pass\s*code|passcode)\s*:\s*([0-9]{4,8})",
-        r"(?:verification\s*code|security\s*code|confirmation\s*code)\s*:\s*([0-9a-zA-Z]{4,8})",
-        r"(?:verification code|security code|confirmation code|one-time\s*(?:pass\s*)?code|passcode|confirm\s*(?:your\s+)?identity|\bpin\b|\botp\b)[^0-9a-zA-Z]{0,60}?\b([a-zA-Z0-9]{8})\b",
-        r"(?:verification code|security code|confirmation code|one-time\s*(?:pass\s*)?code|passcode|confirm\s*(?:your\s+)?identity|\bpin\b|\botp\b)[^0-9]{0,60}?\b([0-9]{4,8})\b",
-        r"\bcode\s+is\s*:?\s*([0-9a-zA-Z]{4,8})\b",
-        r"\buse\s+([0-9a-zA-Z]{4,8})\s+to\s+verify\b",
+    # 1. High precision patterns targeting numeric codes
+    num_patterns = [
+        r"(?:one-time\s*(?:pass\s*)?code|pass\s*code|passcode|verification\s*code|security\s*code|confirmation\s*code)\s*(?:is|:)?\s*([0-9]{4,8})",
+        r"\bcode\s+is\s*:?\s*([0-9]{4,8})\b",
+        r"(?:use|enter)\s+(?:the\s+)?(?:following\s+)?(?:pass\s*code|code)?\s*:?\s*([0-9]{4,8})\b",
+        r"(?:verification code|security code|confirmation code|one-time\s*(?:pass\s*)?code|passcode|confirm\s*(?:your\s+)?identity|\bpin\b|\botp\b)[^0-9a-zA-Z]{0,60}?\b([0-9]{4,8})\b",
     ]
-    for pat in patterns:
+    for pat in num_patterns:
         m = re.search(pat, text, re.I)
         if m:
-            return m.group(1).strip()
-    if re.search(r"verif|security code|one-time|passcode|confirm\s*(?:your\s+)?identity", text, re.I):
+            val = m.group(1).strip()
+            if val.lower() not in WORD_BLACKLIST:
+                return val
+
+    # 2. Check for 6-digit candidate numbers in verification emails
+    if re.search(r"verif|security code|one-time|passcode|pass\s*code|confirm\s*(?:your\s+)?identity|pin\b|otp\b", text, re.I):
         nums = [n for n in re.findall(r"(?<![\d-])([0-9]{6})(?![\d-])", text) if not n.startswith(("202", "201"))]
-        if len(set(nums)) == 1:  # only trust it if there's exactly one candidate
+        if len(set(nums)) == 1:
             return nums[0]
         elif len(set(nums)) > 1:
-            # If multiple numbers exist, check if any follows 'code' or 'pin' or 'identity' closely
             for n in nums:
-                if re.search(r"(?:code|pin|passcode|pass\s*code|identity|otp)[^\d]{1,25}" + re.escape(n), text, re.I):
+                if re.search(r"(?:code|pin|passcode|pass\s*code|identity|otp)[^\d]{1,35}" + re.escape(n), text, re.I):
                     return n
+            return nums[0]
+
+    # 3. Alphanumeric patterns (checked against WORD_BLACKLIST and not pure alpha words)
+    alpha_patterns = [
+        r"(?:Copy and paste this code[^:]*:|security code field on your application:)\s*([a-zA-Z0-9]{6,10})",
+        r"(?:verification\s*code|security\s*code|confirmation\s*code)\s*:\s*([0-9a-zA-Z]{4,8})",
+    ]
+    for pat in alpha_patterns:
+        m = re.search(pat, text, re.I)
+        if m:
+            val = m.group(1).strip()
+            if val.lower() not in WORD_BLACKLIST and not val.isalpha():
+                return val
     return None
 
 
@@ -151,11 +173,13 @@ def mark_code_used(code):
 import html
 
 def clean_url(url):
-    """Unescapes HTML entities and strips trailing punctuation/whitespace from URL."""
+    """Unescapes HTML entities, strips trailing HTML tags, brackets, and punctuation from URL."""
     if not url:
         return ""
     url = html.unescape(url.strip())
-    # Strip quotes, angle brackets, whitespace
+    # Strip any trailing HTML tag fragments (e.g. <br>, </div>, </a>)
+    url = re.sub(r'</?(?:br|div|p|span|a)[^>]*>.*$', '', url, flags=re.I)
+    # Strip trailing quotes, angle brackets, whitespace
     url = re.sub(r'[\s\'"<>]+$', '', url)
     # Strip trailing punctuation that gets caught in plain text
     url = re.sub(r'[\.,;\)]+$', '', url)
@@ -165,7 +189,7 @@ def clean_url(url):
 def extract_verification_link(text):
     """
     Finds activation or verification links in email text or HTML, skipping previously used links.
-    Handles Workday, Greenhouse, SmartRecruiters, Taleo, iCIMS, and general ATS links.
+    Handles Workday, Greenhouse, SmartRecruiters, Taleo, iCIMS, Oracle Cloud, and general ATS links.
     """
     if not text:
         return None
@@ -179,32 +203,49 @@ def extract_verification_link(text):
         anchor_text = re.sub(r'<[^>]+>', ' ', m.group(2)).strip().lower()
         if not href.startswith("http"):
             continue
+        # Skip image assets or CDN image URLs
+        if re.search(r'\.(?:png|jpg|jpeg|gif|svg|webp)(?:\?|$)|wday/image|myworkdaycdn\.com', href, re.I):
+            continue
         # Check if anchor text indicates account activation or email verification
-        if re.search(r"activate|verify|confirm|complete\s*registration|validate|get\s*started|click\s*here", anchor_text, re.I):
+        if re.search(r"activate|verify|confirm|complete\s*(?:your\s+)?(?:registration|setup|application)|validate|get\s*started|click\s*here|access\s*(?:your\s+)?application|continue\s*(?:your\s+)?application", anchor_text, re.I):
             candidates.append(href)
-        elif re.search(r"activate|verify|confirm|token|action|auth", href, re.I):
+        elif re.search(r"/activate/|/verify|/confirm|token=|action=verify|email-universal", href, re.I):
             candidates.append(href)
 
-    # 2. Inspect raw URLs in plaintext / body
-    raw_urls = re.findall(r'https?://[^\s"\'<>]+(?:verify|confirm|activate|token)[^\s"\'<>]+', text, re.I)
-    for u in raw_urls:
-        candidates.append(clean_url(u))
-
-    # Also search for Workday activation endpoints specifically
+    # 2. Plaintext Workday activation endpoints
     wd_urls = re.findall(r'https?://[^\s"\'<>]*myworkdayjobs\.com[^\s"\'<>]+/activate/[^\s"\'<>]+', text, re.I)
     for u in wd_urls:
         candidates.append(clean_url(u))
 
-    # Exclude false positives: unsubscribe, privacy, terms, preferences, logo, help, promotional/financial spammers
+    # 3. URLs immediately following an activation/verification instruction
+    follow_urls = re.findall(r'(?:confirm|verify|activate|complete setup|click this link|click here)[^\n<]{0,100}?(?:<br\s*/?>|\n|\s)+(https?://[^\s"\'<>]+)', text, re.I)
+    for u in follow_urls:
+        candidates.append(clean_url(u))
+
+    # 4. Raw activation/verification URLs
+    raw_urls = re.findall(r'https?://[^\s"\'<>]+(?:/activate/[^\s"\'<>]*|/verify[^\s"\'<>]*|/confirm[^\s"\'<>]*|token=[^\s"\'<>]*|action=verify[^\s"\'<>]*)', text, re.I)
+    for u in raw_urls:
+        candidates.append(clean_url(u))
+
+    # Exclude false positives: unsubscribe, privacy, terms, marketing trackers
+    # Note: NEVER ignore known ATS domains, and DO NOT block employers like TransUnion!
     ignore_patterns = re.compile(
         r"unsubscribe|privacy|terms|opt-out|preferences|contact-us|cookie|support|help|"
-        r"careers/login|facebook|twitter|linkedin|instagram|lendingtree|creditkarma|"
-        r"experian|transunion|equifax|chase\.com|capitalone|discover\.com|promotions|newsletter",
+        r"careers/login|facebook\.com|twitter\.com|linkedin\.com|instagram\.com|lendingtree|creditkarma|"
+        r"experian\.com|equifax|chase\.com|capitalone|discover\.com|promotions|newsletter",
         re.I
     )
 
+    ats_domains = ("myworkdayjobs.com", "greenhouse.io", "lever.co", "smartrecruiters.com", "oraclecloud.com", "icims.com", "ashbyhq.com", "jobvite.com")
+
     for cand in candidates:
-        if not cand or ignore_patterns.search(cand):
+        if not cand:
+            continue
+        # Never select image URLs
+        if re.search(r'\.(?:png|jpg|jpeg|gif|svg|webp)(?:\?|$)|wday/image|myworkdaycdn\.com', cand, re.I):
+            continue
+        is_ats = any(d in cand.lower() for d in ats_domains)
+        if not is_ats and ignore_patterns.search(cand):
             continue
         if not is_link_used(cand):
             return cand
@@ -328,7 +369,6 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
                     if term_matched:
                         code, link = valid_code, valid_link
                         if code: mark_code_used(code)
-                        if link: mark_link_used(link)
                         print(f"[Gmail Auth] Matched verification email: '{subj[:45]}' (Code: {code}, Link: {bool(link)})")
                         break
                     elif valid_code and not search_term:
@@ -345,7 +385,6 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
                     fb_uid, fb_code, fb_link, fb_subj, _ = fallback_candidates[0]
                     code, link = fb_code, fb_link
                     if code: mark_code_used(code)
-                    if link: mark_link_used(link)
                     print(f"[Gmail Auth] Using fallback verification email: '{fb_subj[:45]}' (Code: {code}, Link: {bool(link)})")
                     break
 
@@ -367,9 +406,10 @@ def find_activation_link(tenant, max_age_days=7, wait_sec=0, poll_interval=5):
     """Newest unused account-activation link for one employer tenant (e.g. 'spgi' for spgi.wd5.myworkdayjobs.com).
     Unlike fetch_verification_data this also finds emails from earlier runs (accounts created but never
     activated), and searches All Mail so archived/categorised mail counts. Optionally waits for a new one."""
-    tenant = (tenant or "").lower()
+    tenant = (tenant or "").lower().strip()
     if not tenant:
         return None
+    tenant_words = [w for w in re.split(r'[\s\-_]+', tenant) if len(w) >= 3 and w not in ('careers', 'external', 'jobs', 'corp', 'inc')]
     since = time.strftime("%d-%b-%Y", time.gmtime(time.time() - max_age_days * 86400))
     end = time.time() + wait_sec
     while True:
@@ -386,14 +426,19 @@ def find_activation_link(tenant, max_age_days=7, wait_sec=0, poll_interval=5):
                         continue
                     msg = email.message_from_bytes(raw[0][1])
                     body = extract_body(msg)
-                    text = (decode_str(msg.get("Subject", "")) + " " + decode_str(msg.get("From", "")) + " " + body).lower()
-                    if tenant not in text:
+                    full_text = (decode_str(msg.get("Subject", "")) + " " + decode_str(msg.get("From", "")) + " " + body).lower()
+                    
+                    # Match tenant either as whole or by primary keyword
+                    matched = (tenant in full_text) or any(w in full_text for w in tenant_words)
+                    if not matched:
                         continue
                     link = extract_verification_link(body)
-                    if link and tenant in link.lower() and not is_link_used(link):
-                        mark_link_used(link)
-                        print(f"[Gmail Auth] Activation link found for '{tenant}': {decode_str(msg.get('Subject', ''))[:50]}")
-                        return link
+                    if link and not is_link_used(link):
+                        link_lower = link.lower()
+                        link_matched = (tenant in link_lower) or any(w in link_lower for w in tenant_words) or ("myworkdayjobs.com" in link_lower)
+                        if link_matched:
+                            print(f"[Gmail Auth] Activation link found for '{tenant}': {decode_str(msg.get('Subject', ''))[:50]}")
+                            return link
             except Exception as e:
                 print(f"[Gmail Auth] Activation search note: {e}")
             finally:

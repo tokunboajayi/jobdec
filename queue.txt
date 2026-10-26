@@ -1800,3 +1800,10 @@ Bny Data Science Intern - Engineering [NYC; 6d old]   https://eofe.fa.us2.oracle
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Rtx Software Engineer Intern [Cedar Rapids, IA; 3d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-IA-CEDAR-RAPIDS-107--400-Collins-Rd-NE--BLDG-107/Software-Engineering-Intern--Summer-2027-_01884054?utm_source=Simplify&ref=Simplify
 Bny Data Science Intern - Engineering [Lake Mary, FL; 6d old]   https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/81239?utm_source=Simplify&ref=Simplify
+
+# ---- added by agents/job_sources.py (multi-source, <= 60 days old)
+Intuit Software Engineer Intern - Full Stack [5 locations  Charlotte, NC NYC Mountain View, CA Atlanta, GA San Diego, CA; 1d old]   https://jobs.intuit.com/job/mountain-view/summer-2027-software-engineering-intern-full-stack/27595/99856180864?utm_source=Simplify&ref=Simplify
+Tesla Software Engineer Intern - Vehicle Software - Summer 2027 [Palo Alto, CA; 2d old]   https://www.tesla.com/careers/search/job/281097?utm_source=Simplify&ref=Simplify
+Honeywell Offering Management Intern [United States; 2d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155594?utm_source=Simplify&ref=Simplify
+Vertiv Power Management Intern - Summer 2027 [Delaware, OH; 3d old]   https://egup.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/20279233?utm_source=Simplify&ref=Simplify
+Csx Intermodal Intern - Summer 2027 - Paid [Jacksonville, FL; 2d old]   https://fa-eowa-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CSXCareers/job/54817?utm_source=Simplify&ref=Simplify

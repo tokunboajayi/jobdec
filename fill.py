@@ -2174,7 +2174,7 @@ def main():
                     auth_failed = True
                     break
                 print("\n[Auth] Account/Login screen detected. Handling automatically...")
-                handled = run_auth_flow(page)
+                handled = run_auth_flow(page, job_url=getattr(a, "url", ""))
                 if handled:
                     settle(page, 4)
                     steps += 1
@@ -2423,11 +2423,11 @@ def main():
                                         pass
                             else:
                                 sec_inputs.first.fill(code)
-                            try:
-                                sec_inputs.first.click()
-                                page.keyboard.type(code, delay=40)
-                            except Exception:
-                                pass
+                                try:
+                                    sec_inputs.first.click()
+                                    page.keyboard.type(code, delay=40)
+                                except Exception:
+                                    pass
                             time.sleep(1)
                             v_btn = page.locator("button:has-text('Verify'), input[type=submit], button:has-text('Submit'), [role=button]:has-text('Verify')").first
                             if v_btn.is_visible():
@@ -2446,11 +2446,11 @@ def main():
                 # Check if an email verification link was sent post-submit
                 try:
                     from account_verifier import is_verification_waiting_screen, verify_account_and_proceed, check_post_submit_verification
+                    clean_co = re.sub(r"\[.*?\]|\(.*?\)", "", getattr(a, "company", "")).split("-")[0].strip()
                     if is_verification_waiting_screen(page):
                         print("\n[Account Verification] Verification required post-submit! Listening to Gmail...")
-                        verify_account_and_proceed(page, timeout_sec=45)
+                        verify_account_and_proceed(page, timeout_sec=45, tenant_hint=clean_co, job_url=getattr(a, "url", ""))
                     else:
-                        clean_co = re.sub(r"\[.*?\]|\(.*?\)", "", getattr(a, "company", "")).split("-")[0].strip()
                         check_post_submit_verification(page, company=clean_co, timeout_sec=6)
                 except Exception as ex:
                     print(f"[Account Verification Post-Submit Check] {ex}")

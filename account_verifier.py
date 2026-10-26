@@ -97,7 +97,7 @@ def click_activation_triggers(v_page):
     return False
 
 
-def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, password=PORTAL_PASSWORD, timeout_sec=60, tenant_hint=""):
+def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, password=PORTAL_PASSWORD, timeout_sec=60, tenant_hint="", job_url=""):
     """
     Automates the entire email verification process:
     1. Fetches link or 6-digit code from Gmail via IMAP if not provided.
@@ -128,7 +128,7 @@ def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, pas
                     except Exception:
                         pass
                 time.sleep(0.8)
-                sub_btn = page.locator("button[data-automation-id='submitButton'], button:has-text('Submit'), button:has-text('Verify'), button:has-text('Continue')").first
+                sub_btn = page.locator("button[data-automation-id='submitButton'], button:has-text('Submit'), button:has-text('Verify'), button:has-text('Continue'), button:has-text('Sign In')").first
                 if sub_btn.is_visible():
                     sub_btn.click()
                 else:
@@ -136,14 +136,14 @@ def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, pas
                 settle(page, 4)
                 return True
 
-            code_input = page.locator("input[data-automation-id='verificationCode'], input[data-automation-id='securityCode'], input[autocomplete='one-time-code'], input[aria-label*='verification' i], input[aria-label*='security code' i], input[name*='code' i]").first
+            code_input = page.locator("input[data-automation-id='verificationCode'], input[data-automation-id='securityCode'], input[autocomplete='one-time-code'], input[aria-label*='verification' i], input[aria-label*='security code' i], input[name*='code' i], input[placeholder*='code' i]").first
             if not code_input.is_visible(timeout=1500):
                 code_input = page.locator("input[type=text]:visible, input[type=number]:visible").first
             if code_input.is_visible(timeout=1000):
                 print(f"[Account Verifier] Typing verification code into input...")
                 code_input.fill(code)
                 time.sleep(0.8)
-                sub_btn = page.locator("button[data-automation-id='submitButton'], button:has-text('Submit'), button:has-text('Verify'), button:has-text('Continue')").first
+                sub_btn = page.locator("button[data-automation-id='submitButton'], button:has-text('Submit'), button:has-text('Verify'), button:has-text('Continue'), button:has-text('Sign In')").first
                 if sub_btn.is_visible():
                     sub_btn.click()
                 else:
@@ -159,8 +159,6 @@ def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, pas
         return False
 
     print(f"[Account Verifier] >> Automating activation link: {link}")
-    if mark_link_used:
-        mark_link_used(link)
 
     # Use a new page in the SAME browser context so authentication cookies are shared
     v_page = None
@@ -206,23 +204,27 @@ def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, pas
         except Exception:
             pass
 
-        # 4. If opened in a new tab:
+        # 4. If opened in a new tab, transition back to the main application flow:
         if created_new_tab:
-            # Check if v_page itself navigated into the application form (e.g. Workday apply redirect)
             is_form_in_vpage = v_page.locator("[data-automation-id='pageFooterNextButton']:visible, [data-automation-id*='legalName']:visible, input[type=file]:visible").count() > 0
             if is_form_in_vpage or "/apply" in v_page.url.lower():
                 print(f"[Account Verifier] Activation redirected to application form ({v_page.url}). Navigating main page to form...")
                 page.goto(v_page.url, wait_until="domcontentloaded", timeout=25000)
+                settle(page, 3)
+            elif job_url and not any(k in page.url.lower() for k in ("/apply", "/jobs/")):
+                print(f"[Account Verifier] Account activated. Navigating main page to job application URL ({job_url})...")
+                page.goto(job_url, wait_until="domcontentloaded", timeout=25000)
                 settle(page, 3)
             else:
                 # Reload or advance main page to refresh authenticated session
                 print("[Account Verifier] Account activated. Refreshing main application page...")
                 page.bring_to_front()
                 try:
-                    # Check for 'I have verified' or 'Continue' buttons on main page
                     verified_btn = page.locator("button:has-text('I verified'), button:has-text('I have verified'), button:has-text('Continue'), button:has-text('Check Status')").first
                     if verified_btn.is_visible(timeout=1000):
                         verified_btn.click()
+                    elif job_url:
+                        page.goto(job_url, wait_until="domcontentloaded", timeout=25000)
                     else:
                         page.reload()
                 except Exception:
@@ -233,6 +235,15 @@ def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, pas
                 v_page.close()
             except Exception:
                 pass
+        else:
+            if job_url and "/apply" not in page.url.lower():
+                print(f"[Account Verifier] Account activated in-place. Navigating to job application URL ({job_url})...")
+                page.goto(job_url, wait_until="domcontentloaded", timeout=25000)
+                settle(page, 3)
+
+        # Mark link as used now that activation execution succeeded
+        if mark_link_used:
+            mark_link_used(link)
 
         return True
     except Exception as e:
