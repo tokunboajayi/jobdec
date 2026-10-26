@@ -86,36 +86,41 @@ def run_batch(workers: int, limit: int, target: int, queue_file: str = "queue_ra
 
 def main():
     parser = argparse.ArgumentParser(description="Autonomous Runner to reach application target milestone")
-    parser.add_argument("--target", type=int, default=300, help="Goal number of total submitted applications (default: 300)")
+    parser.add_argument("--target", type=int, default=None, help="Goal number of total submitted applications (default: 3000 or baseline + target_new)")
+    parser.add_argument("--target-new", type=int, default=300, help="Target number of NEW verified submissions in this session (default: 300)")
     parser.add_argument("--workers", type=int, default=3, help="Concurrent browser workers (default: 3)")
     parser.add_argument("--batch-size", type=int, default=150, help="Applications attempted per cycle (default: 150)")
     args = parser.parse_args()
 
     start_time = time.time()
     initial_count = get_applied_count()
+    effective_target = args.target if args.target is not None else (initial_count + args.target_new)
+    if effective_target <= initial_count:
+        effective_target = initial_count + (args.target_new or 300)
+
     print("================================================================")
     print("      AUTONOMOUS SCALE ENGINE: PARALLEL APPLICATOR RUNNER       ")
-    print(f"  Target Milestone: {args.target} verified submissions")
-    print(f"  Current baseline: {initial_count} submissions logged")
+    print(f"  Target Milestone: {effective_target} verified submissions (+{effective_target - initial_count} new)")
+    print(f"  Current Baseline: {initial_count} submissions logged in applications.csv")
     print(f"  Workers:          {args.workers} concurrent isolated instances")
     print("================================================================\n")
 
     cycle = 1
     while True:
         cur_count = get_applied_count()
-        remaining = args.target - cur_count
+        remaining = max(0, effective_target - cur_count)
         elapsed_min = (time.time() - start_time) / 60.0
         session_submitted = cur_count - initial_count
 
         print(f"\n========================================================")
         print(f"  CYCLE {cycle} STATUS REPORT")
-        print(f"  Total Applied: {cur_count} / {args.target} ({cur_count / args.target * 100:.1f}%)")
+        print(f"  Total Applied: {cur_count} / {effective_target} ({cur_count / effective_target * 100:.1f}%)")
         print(f"  Remaining: {remaining} needed")
         print(f"  Submitted This Session: +{session_submitted} (in {elapsed_min:.1f} min)")
         print(f"========================================================\n")
 
-        if cur_count >= args.target:
-            print(f"\n*** TARGET OF {args.target} APPLICATIONS ACHIEVED! ***")
+        if cur_count >= effective_target:
+            print(f"\n*** TARGET OF {effective_target} APPLICATIONS ACHIEVED! ***")
             print(f"Total time elapsed: {elapsed_min / 60.0:.2f} hours.")
             break
 
@@ -135,7 +140,7 @@ def main():
 
         batch_limit = args.batch_size
         try:
-            run_batch(workers=args.workers, limit=batch_limit, target=args.target, queue_file="queue_ranked.txt")
+            run_batch(workers=args.workers, limit=batch_limit, target=effective_target, queue_file="queue_ranked.txt")
         except KeyboardInterrupt:
             print("\n[Runner] Graceful exit requested. Saving state.")
             break

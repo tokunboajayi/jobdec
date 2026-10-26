@@ -208,8 +208,9 @@ def run_logged_worker(cmd: List[str], timeout: int | float, log_path: pathlib.Pa
 def main():
     parser = argparse.ArgumentParser(description="Parallel Multi-Worker Autonomous Application Runner")
     parser.add_argument("--workers", type=int, default=3, help="Number of concurrent worker instances (default: 3)")
-    parser.add_argument("--limit", type=int, default=300, help="Max applications to attempt in this run (default: 300)")
-    parser.add_argument("--target", type=int, default=300, help="Stop automatically when total verified submissions reach this target (default: 300)")
+    parser.add_argument("--limit", type=int, default=1000, help="Max applications to attempt in this run (default: 1000)")
+    parser.add_argument("--target", type=int, default=3000, help="Stop automatically when total verified submissions reach this target (default: 3000)")
+    parser.add_argument("--target-new", type=int, default=None, help="Stop automatically after this many NEW verified submissions in this session")
     parser.add_argument("--queue", default="queue_ranked.txt", help="Queue file to read from (default: queue_ranked.txt)")
     parser.add_argument("--resume", default="resumes/master_resume.pdf", help="Default resume to use")
     parser.add_argument("--use-tailored", action="store_true", default=True, help="Use tailored resume if specified in queue or tailor dynamically")
@@ -267,6 +268,8 @@ def main():
 
     applied_urls, applied_pairs = load_applied_signatures()
     initial_applied_count = get_applied_count()
+    if args.target_new is not None:
+        args.target = initial_applied_count + args.target_new
 
     num_workers = max(1, min(args.workers, 6))
     strat = RE.strategy() if RE else {}
