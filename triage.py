@@ -45,6 +45,7 @@ def main():
     ap.add_argument("--out", default="queue_ranked.txt")
     ap.add_argument("--min-score", type=float, default=None, help="default: strategy.json min_fit_score")
     ap.add_argument("--scout", action="store_true", help="Agent 1: read full job descriptions and score with AI (cached)")
+    ap.add_argument("--check-live", action="store_true", default=True, help="Pre-flight check: filter closed/expired job postings")
     a = ap.parse_args()
     min_score = a.min_score if a.min_score is not None else RE.strategy()["min_fit_score"]
 
@@ -80,7 +81,20 @@ def main():
                 skipped.append((f"fast_fail_domain ({dom})", tag)); continue
         except Exception:
             pass
-        run.append((score, RE.ats_priority(j["url"]), cat, ats, tag))
+    if a.check_live and run:
+        try:
+            from agents import job_validator
+            print(f"[Triage Validator] Pre-checking {len(run)} candidate postings for live status...")
+            jobs_to_check = [{"company": t.split()[0], "role": t.split()[1], "url": t.split()[-1]} for _, _, _, _, t in run]
+            active, closed = job_validator.filter_active_jobs(jobs_to_check, max_workers=10)
+            active_urls = {j["url"] for j in active}
+            new_run = [item for item in run if item[4].split()[-1] in active_urls]
+            for c_job, c_reason in closed:
+                skipped.append((f"closed_posting ({c_reason})", f"{c_job['company']} {c_job['role']}   {c_job['url']}"))
+            print(f"[Triage Validator] {len(new_run)} active jobs verified, {len(closed)} dead postings filtered.")
+            run = new_run
+        except Exception as e:
+            print(f"[Triage Validator] Warning: pre-check encountered {e}; proceeding without filter.")
 
     run.sort(key=lambda x: (-x[0], x[1]))
     out = [f"# Ranked by triage.py - {len(run)} to run (best fit first, easiest ATS first within a score).",

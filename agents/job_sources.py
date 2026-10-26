@@ -14,7 +14,10 @@ QUEUE = AUTOFILL / "queue.txt"
 
 GITHUB_SOURCES = [
     ("SimplifyJobs 2027", "https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/README.md"),
+    ("SimplifyJobs 2026", "https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/README.md"),
+    ("SimplifyJobs 2025", "https://raw.githubusercontent.com/SimplifyJobs/Summer2025-Internships/dev/README.md"),
     ("PittCSC 2026", "https://raw.githubusercontent.com/pittcsc/Summer2026-Internships/dev/README.md"),
+    ("PittCSC 2025", "https://raw.githubusercontent.com/pittcsc/Summer2025-Internships/dev/README.md"),
     ("SpeedyApply 2026", "https://raw.githubusercontent.com/SpeedyApply/2026-SWE-College-Jobs/main/README.md"),
 ]
 
