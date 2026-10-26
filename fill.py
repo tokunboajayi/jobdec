@@ -138,7 +138,13 @@ SCAN_JS = r"""
     const autoId = (e.getAttribute('data-automation-id') || '').trim();
     if (/countryphonecode|phonecountry/i.test(autoId)) t = 'Country Phone Code';
     else if (/phonedevicetype|devicetype/i.test(autoId)) t = 'Phone Device Type';
-    else if (ariaLab && !isGeneric(ariaLab) && (/country|code|device|type/i.test(ariaLab) && /phone/i.test(t))) {
+    else if (/datesectionmonth|month-input|\bmonth\b/i.test(autoId + ' ' + ariaLab) && !/month/i.test(t)) {
+      t = (t ? t + ' ' : '') + 'Month';
+    } else if (/datesectionday|day-input|\bday\b/i.test(autoId + ' ' + ariaLab) && !/day/i.test(t)) {
+      t = (t ? t + ' ' : '') + 'Day';
+    } else if (/datesectionyear|year-input|\byear\b/i.test(autoId + ' ' + ariaLab) && !/year/i.test(t)) {
+      t = (t ? t + ' ' : '') + 'Year';
+    } else if (ariaLab && !isGeneric(ariaLab) && (/country|code|device|type/i.test(ariaLab) && /phone/i.test(t))) {
       t = ariaLab;
     }
     if (e.tagName === 'SELECT' && e.options) {
@@ -625,11 +631,15 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
     # escalate = the site rejected our last answer here: any non-fact, non-sensitive field takes its best option.
     if not hit and escalate and OPTS and not OPTS.fact_category(label)[0] and not (RE and RE.should_block(label)):
         vis = [v for v in _visible_options(target) if not OPTS.PLACEHOLDER.match(v[0])]
+        if re.search(r"hear|source|referral", label, re.I):
+            vis = [v for v in vis if not re.search(r"\+\d+|country|phone|mobile|device", v[0], re.I)]
         if vis:
             print(f"  [Repair] '{label[:50]}': site rejected '{val[:30]}' - choosing '{vis[0][0][:30]}'")
             hit = vis[0]
     if not hit and rule.get("ai_gen") and not strict:
         vis = _visible_options(target)
+        if re.search(r"hear|source|referral", label, re.I):
+            vis = [v for v in vis if not re.search(r"\+\d+|country|phone|mobile|device", v[0], re.I)]
         if vis:
             hit = vis[0]
 
@@ -937,8 +947,9 @@ def fill_page(page, resume, overwrite, company="", role=""):
                 m_int = int(m_num) if m_num.isdigit() else now.month
                 m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
                 m_name = m_names[m_int - 1] if 1 <= m_int <= 12 else "October"
-                ans = m_name
-                rule = {**rule, "a": m_name, "option": rf"^{m_int}$|^{m_int:02d}$|^{m_name}\b"}
+                is_select_or_combo = f.get("type") in ("select", "listbox") or bool(f.get("combobox"))
+                ans = m_name if is_select_or_combo else f"{m_int:02d}"
+                rule = {**rule, "a": ans, "option": rf"^{m_int}$|^{m_int:02d}$|^{m_name}\b"}
             elif is_date_field and re.search(r"\byear\b", lab_low) and not re.search(r"month|years? of experience|how many years", lab_low):
                 if is_today_field or ans == "TODAY_YEAR":
                     y_val = str(now.year)
@@ -1444,7 +1455,7 @@ def fill_page(page, resume, overwrite, company="", role=""):
                 # Smart subfield value normalization for split date inputs (e.g. Workday * Month, * Day, * Year)
                 lab_low = label.lower()
                 now = datetime.datetime.now()
-                is_today_field = bool(re.search(r"today|signature|current\s*date|enter\s*today'?s\s*date", lab_low))
+                is_today_field = bool(re.search(r"today|signature|current\s*date|enter\s*today'?s\s*date|^date\b|^\*?\s*date\b", lab_low)) and not bool(re.search(r"birth|dob|graduat|start|end|from|to|prior|previous", lab_low))
                 is_date_field = bool(re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b|^(?:start|end|from|to)\b|(?:\bfrom|\bto)\s*(?:date|month|year|\*|:)?$", lab_low)) or is_today_field or f.get("type") == "date"
                 if re.search(r"^\s*today'?s\s*date|^\s*date\s*$", lab_low) or val == "TODAY":
                     val = now.strftime("%m/%d/%Y")
@@ -1457,10 +1468,19 @@ def fill_page(page, resume, overwrite, company="", role=""):
                     elif val.isdigit() and len(val) > 2:
                         val = "01"
                 elif is_date_field and re.search(r"\bmonth\b", lab_low) and not re.search(r"year|how many months|months of experience|per month|a month|hours per", lab_low):
-                    if is_today_field or val == "TODAY_MONTH":
+                    m_map = {"jan": "01", "feb": "02", "mar": "03", "apr": "04", "may": "05", "jun": "06", "jul": "07", "aug": "08", "sep": "09", "oct": "10", "nov": "11", "dec": "12"}
+                    converted_m = None
+                    for mn_prefix, mn_digit in m_map.items():
+                        if mn_prefix in val.lower():
+                            converted_m = mn_digit
+                            break
+                    if converted_m:
+                        val = converted_m
+                    elif is_today_field or val == "TODAY_MONTH":
                         val = f"{now.month:02d}"
                     elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", val):
                         val = val.split("/")[0]
+                        if len(val) == 1: val = f"0{val}"
                 elif is_date_field and re.search(r"\byear\b", lab_low) and not re.search(r"month|years? of experience|how many years", lab_low):
                     if is_today_field or val == "TODAY_YEAR":
                         val = str(now.year)
