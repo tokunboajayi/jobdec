@@ -451,17 +451,15 @@ def main():
                 print(f"[{w_prefix}]   URL:    {job['url']}")
                 print(f"[{w_prefix}]   Resume: {resume_to_use}")
 
-                # Pre-flight DNS/HTTP sanity
-                import urllib.request
+                # Pre-flight DNS/HTTP & Active Status check
                 try:
-                    req = urllib.request.Request(job["url"], headers={"User-Agent": "Mozilla/5.0"})
-                    with urllib.request.urlopen(req, timeout=4) as resp:
-                        pass
-                except Exception as e:
-                    err_str = str(e).lower()
-                    if "getaddrinfo failed" in err_str or "not known" in err_str or "404" in err_str:
-                        print(f"[{w_prefix}] Pre-flight skip: URL unreachable ({str(e)}). Advancing...")
+                    from agents import job_validator
+                    is_live, dead_reason = job_validator.is_job_active(job["url"], timeout=4)
+                    if not is_live:
+                        print(f"[{w_prefix}] Pre-flight skip: Job closed/inactive ({dead_reason}). Advancing...")
                         continue
+                except Exception:
+                    pass
 
                 cmd = [
                     sys.executable, "-u", str(HERE / "fill.py"), job["url"],

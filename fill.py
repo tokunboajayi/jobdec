@@ -1261,6 +1261,10 @@ def fill_page(page, resume, overwrite, company="", role=""):
                     for sel in ("[role='option']", "[data-automation-id='promptOption']", "[data-automation-id='menuItem']", "div[role='listbox'] div", "ul[role='listbox'] li"):
                         try:
                             candidate = root.locator(sel).filter(has_text=re.compile(rf"^\s*{ans}\s*$", re.I)).last
+                            if candidate.count() == 0 or not candidate.is_visible(timeout=200):
+                                candidate = page.locator(sel).filter(has_text=re.compile(rf"^\s*{ans}\s*$", re.I)).last
+                            if candidate.count() == 0 or not candidate.is_visible(timeout=200):
+                                candidate = page.locator(sel).filter(has_text=re.compile(rf"\b{ans}\b", re.I)).last
                             if candidate.count() > 0 and candidate.is_visible(timeout=400):
                                 candidate.click(force=True)
                                 clicked = True
