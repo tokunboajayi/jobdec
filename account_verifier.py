@@ -218,7 +218,7 @@ def verify_account_and_proceed(page, link=None, code=None, email=GMAIL_USER, pas
             else:
                 # Reload or advance main page to refresh authenticated session
                 print("[Account Verifier] Account activated. Refreshing main application page...")
-                page.bring_to_front()
+                # Do not steal OS window focus during background verification
                 try:
                     verified_btn = page.locator("button:has-text('I verified'), button:has-text('I have verified'), button:has-text('Continue'), button:has-text('Check Status')").first
                     if verified_btn.is_visible(timeout=1000):

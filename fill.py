@@ -2189,7 +2189,9 @@ def main():
         while steps < 40:
             page = ctx.pages[-1]
             try:
-                page.bring_to_front()
+                # Do not steal OS window focus during background/headless automation
+                if not headless_mode and getattr(a, "headful", False):
+                    page.bring_to_front()
                 page.evaluate("1")
             except Exception as ex:
                 if "crash" in str(ex).lower() or "closed" in str(ex).lower():
