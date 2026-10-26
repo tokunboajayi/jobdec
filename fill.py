@@ -16,7 +16,7 @@ What it does:
 import argparse, csv, datetime, difflib, json, os, pathlib, re, sys, time
 from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(line_buffering=True, encoding="utf-8", errors="replace")  # cp1252 pipes crashed on curly quotes
+    sys.stdout.reconfigure(line_buffering=True, encoding="utf-8", errors="replace")  # type: ignore # cp1252 pipes crashed on curly quotes
 from dotenv import load_dotenv
 
 try:
