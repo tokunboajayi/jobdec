@@ -1,0 +1,207 @@
+{
+  "$comment": "Stack profiles for /ship. Each env entry is an anyOf group: at least one name in the group must be set. Read by scripts/ship-preflight.js.",
+  "default": "next-supabase-vercel",
+  "stacks": {
+    "next-supabase-vercel": {
+      "label": "Next.js + Supabase (Postgres + Auth) + Vercel",
+      "bestFor": "SaaS, dashboards, anything with accounts and saved data",
+      "cli": [
+        [
+          "node"
+        ],
+        [
+          "npm"
+        ],
+        [
+          "git"
+        ]
+      ],
+      "env": [
+        [
+          "NEXT_PUBLIC_SUPABASE_URL"
+        ],
+        [
+          "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+          "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+        ],
+        [
+          "SUPABASE_SECRET_KEY",
+          "SUPABASE_SERVICE_ROLE_KEY"
+        ],
+        [
+          "SUPABASE_DB_URL"
+        ]
+      ],
+      "deploy": {
+        "cli": [],
+        "env": [
+          [
+            "VERCEL_TOKEN"
+          ]
+        ]
+      },
+      "features": [
+        "payments",
+        "email",
+        "ai"
+      ]
+    },
+    "next-fastapi": {
+      "label": "Next.js frontend (Vercel) + FastAPI backend (Fly.io) + Postgres",
+      "bestFor": "Python-heavy logic: trading, data, ML, agents",
+      "cli": [
+        [
+          "node"
+        ],
+        [
+          "npm"
+        ],
+        [
+          "git"
+        ],
+        [
+          "python3",
+          "python"
+        ],
+        [
+          "uv",
+          "pip3",
+          "pip"
+        ]
+      ],
+      "env": [
+        [
+          "DATABASE_URL"
+        ]
+      ],
+      "deploy": {
+        "cli": [
+          [
+            "flyctl",
+            "fly"
+          ]
+        ],
+        "env": [
+          [
+            "VERCEL_TOKEN"
+          ],
+          [
+            "FLY_API_TOKEN"
+          ]
+        ]
+      },
+      "features": [
+        "payments",
+        "email",
+        "ai"
+      ]
+    },
+    "next-lite-vercel": {
+      "label": "Next.js only, no accounts (optional Vercel Postgres) + Vercel",
+      "bestFor": "Fastest demo: tools, calculators, single-flow apps",
+      "cli": [
+        [
+          "node"
+        ],
+        [
+          "npm"
+        ],
+        [
+          "git"
+        ]
+      ],
+      "env": [],
+      "deploy": {
+        "cli": [],
+        "env": [
+          [
+            "VERCEL_TOKEN"
+          ]
+        ]
+      },
+      "features": [
+        "ai",
+        "email"
+      ]
+    },
+    "vite-static": {
+      "label": "Vite + React static site + Vercel",
+      "bestFor": "Landing pages, portfolios, client-only tools",
+      "cli": [
+        [
+          "node"
+        ],
+        [
+          "npm"
+        ],
+        [
+          "git"
+        ]
+      ],
+      "env": [],
+      "deploy": {
+        "cli": [],
+        "env": [
+          [
+            "VERCEL_TOKEN"
+          ]
+        ]
+      },
+      "features": []
+    }
+  },
+  "features": {
+    "payments": {
+      "label": "Stripe payments",
+      "env": [
+        [
+          "STRIPE_SECRET_KEY"
+        ],
+        [
+          "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
+        ]
+      ],
+      "optionalEnv": [
+        "STRIPE_WEBHOOK_SECRET"
+      ]
+    },
+    "email": {
+      "label": "Transactional email (Resend)",
+      "env": [
+        [
+          "RESEND_API_KEY"
+        ]
+      ],
+      "optionalEnv": [
+        "EMAIL_FROM"
+      ]
+    },
+    "ai": {
+      "label": "LLM calls",
+      "env": [
+        [
+          "ANTHROPIC_API_KEY",
+          "OPENAI_API_KEY"
+        ]
+      ],
+      "optionalEnv": []
+    }
+  },
+  "where": {
+    "NEXT_PUBLIC_SUPABASE_URL": "supabase.com > project > Project Settings > API (Project URL)",
+    "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY": "supabase.com > project > Project Settings > API Keys (publishable key)",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "supabase.com > project > Project Settings > API Keys (legacy anon key)",
+    "DATABASE_URL": "supabase.com or neon.tech > connection string (Postgres)",
+    "VERCEL_TOKEN": "vercel.com/account/tokens",
+    "FLY_API_TOKEN": "run: fly tokens create deploy",
+    "STRIPE_SECRET_KEY": "dashboard.stripe.com/test/apikeys (use sk_test_ for first ship)",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY": "dashboard.stripe.com/test/apikeys (pk_test_)",
+    "STRIPE_WEBHOOK_SECRET": "set after first deploy: Stripe dashboard > Webhooks > add <url>/api/stripe/webhook",
+    "RESEND_API_KEY": "resend.com/api-keys",
+    "ANTHROPIC_API_KEY": "console.anthropic.com > API keys",
+    "OPENAI_API_KEY": "platform.openai.com/api-keys",
+    "SUPABASE_SECRET_KEY": "supabase.com > project > Project Settings > API Keys (secret key; server + test setup only)",
+    "SUPABASE_SERVICE_ROLE_KEY": "supabase.com > project > Project Settings > API Keys (legacy service_role key)",
+    "SUPABASE_DB_URL": "supabase.com > project > Connect > connection string (session pooler, with password)"
+  }
+}
