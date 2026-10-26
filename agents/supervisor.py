@@ -263,6 +263,7 @@ def _dispatch_validation_error(diag):
                 pat = r"^date$|^today'?s? date$|^signature date$|^date of signature$"
             else:
                 pat = f"^{re.escape(field_clean[:50])}$"
+            rules = p_data.get("rules", [])
             if not any(r.get("q") == pat for r in rules):
                 rules.insert(0, {"q": pat, "a": ans, "src": "supervisor_validation", "added": datetime.date.today().isoformat()})
                 p_data["rules"] = rules

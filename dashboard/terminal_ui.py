@@ -11,9 +11,9 @@ import sys
 import time
 
 if hasattr(sys.stdout, "reconfigure"):
-    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
 if hasattr(sys.stderr, "reconfigure"):
-    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
 
 # Enable ANSI escape sequences & Disable QuickEdit Mode (prevents terminal freeze on mouse click)
 if sys.platform == "win32":

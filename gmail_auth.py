@@ -2,7 +2,9 @@
 Gmail Automated Verification Helper.
 Reads verification codes (6-digit PINs, OTPs) and confirmation links directly from Gmail via IMAP.
 """
+import datetime
 import email
+import email.utils
 from email.header import decode_header
 import imaplib
 import os
@@ -222,14 +224,15 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
     since = time.strftime("%d-%b-%Y", time.gmtime(start - 86400))
 
     mail, err = get_imap_client(retries=3)
-    if not mail:
+    if not mail or mail is None:
         print(f"[Gmail Auth] Note: {err}")
         return None, None
+    imap_session = mail
 
     def uids_since():
         try:
-            mail.select("INBOX")
-            _, data = mail.uid("search", None, f"(SINCE {since})")
+            imap_session.select("INBOX")
+            _, data = imap_session.uid("search", None, f"(SINCE {since})")  # type: ignore
             return set(data[0].split()) if data and data[0] else set()
         except Exception:
             return set()
@@ -258,7 +261,7 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
                     continue
                 checked_uids.add(uid)
                 try:
-                    _, raw = mail.uid("fetch", uid, "(BODY.PEEK[])")
+                    _, raw = imap_session.uid("fetch", uid, "(BODY.PEEK[])")
                 except Exception:
                     continue
                 if not raw or not raw[0] or not isinstance(raw[0], tuple):
@@ -271,9 +274,9 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
                 if date_hdr:
                     try:
                         msg_dt = email.utils.parsedate_to_datetime(date_hdr)
-                        now_utc = email.utils.datetime.datetime.now(email.utils.datetime.timezone.utc)
+                        now_utc = datetime.datetime.now(datetime.timezone.utc)
                         if msg_dt.tzinfo is None:
-                            msg_dt = msg_dt.replace(tzinfo=email.utils.datetime.timezone.utc)
+                            msg_dt = msg_dt.replace(tzinfo=datetime.timezone.utc)
                         msg_age_sec = (now_utc - msg_dt).total_seconds()
                         if msg_age_sec > 900:  # Older than 15 minutes
                             continue
@@ -376,7 +379,7 @@ def find_activation_link(tenant, max_age_days=7, wait_sec=0, poll_interval=5):
                 for box in ('"[Gmail]/All Mail"', "INBOX"):
                     if mail.select(box, readonly=True)[0] == "OK":
                         break
-                _, d = mail.uid("search", None, f'(SINCE {since} OR OR SUBJECT "verify" SUBJECT "activate" SUBJECT "candidate account")')
+                _, d = mail.uid("search", None, f'(SINCE {since} OR OR SUBJECT "verify" SUBJECT "activate" SUBJECT "candidate account")')  # type: ignore
                 for uid in sorted(d[0].split() if d and d[0] else [], key=int, reverse=True)[:40]:
                     _, raw = mail.uid("fetch", uid, "(BODY.PEEK[])")
                     if not raw or not raw[0] or not isinstance(raw[0], tuple):

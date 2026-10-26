@@ -9,7 +9,7 @@ def test_meaning_match_beats_unrelated_text():
     jd = "You will design agentic workflows and orchestrate LLM tools to automate business processes."
     good = semantic.fit_signal(jd, ["Built Claude API automations that streamlined team workflows."])
     bad = semantic.fit_signal(jd, ["Soldered printed circuit boards for a robotics club."])
-    assert good is not None and good > bad
+    assert good is not None and bad is not None and good > bad
 
 
 def test_entity_guard_rejects_different_country(monkeypatch):

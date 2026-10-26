@@ -4,7 +4,7 @@ from contextlib import redirect_stdout
 
 HERE = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(HERE / "dashboard"))
-import terminal_ui  # noqa: E402
+from dashboard import terminal_ui  # noqa: E402
 
 COLORS = {"30": "#0b0f0b", "31": "#ff5f5f", "32": "#39ff7a", "33": "#ffd75f", "34": "#5fafff", "35": "#d787ff",
           "36": "#5fffff", "37": "#e8ffe8", "90": "#4f7a5a", "92": "#7dffb0", "96": "#9ffff0", "97": "#ffffff"}

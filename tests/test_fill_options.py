@@ -15,7 +15,8 @@ def test_pick_option_prefers_whole_word():
 
 def test_best_option_prefers_whole_word():
     opts = [("Female", 1), ("Male (he/him)", 2)]
-    assert fill._best_option(opts, "Male", "Male")[0] == "Male (he/him)"
+    best = fill._best_option(opts, "Male", "Male")
+    assert best is not None and best[0] == "Male (he/him)"
 
 
 def test_live_form_gender_and_discipline_list():

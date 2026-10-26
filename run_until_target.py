@@ -17,9 +17,9 @@ import time
 if sys.platform == "win32":
     try:
         if hasattr(sys.stdout, "reconfigure"):
-            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
         if hasattr(sys.stderr, "reconfigure"):
-            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
     except Exception:
         pass
 

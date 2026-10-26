@@ -30,9 +30,9 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 if sys.platform == "win32":
     try:
         if hasattr(sys.stdout, "reconfigure"):
-            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
         if hasattr(sys.stderr, "reconfigure"):
-            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
     except Exception:
         pass
 
@@ -147,7 +147,7 @@ def parse_queue(queue_path: pathlib.Path) -> List[Dict[str, Any]]:
     return entries
 
 
-def run_logged_worker(cmd: List[str], timeout: int, log_path: pathlib.Path, prefix: str,
+def run_logged_worker(cmd: List[str], timeout: int | float, log_path: pathlib.Path, prefix: str,
                       active_pids: List[int], pids_lock: threading.Lock) -> int:
     """Executes fill.py in subprocess with streaming prefixed output and PID tracking."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -167,21 +167,22 @@ def run_logged_worker(cmd: List[str], timeout: int, log_path: pathlib.Path, pref
 
     with open(log_path, "w", encoding="utf-8", errors="ignore") as log:
         def pump():
-            for line in proc.stdout:
-                msg = f"[{prefix}] {line}"
-                try:
-                    print(msg, end="", flush=True)
-                except Exception:
+            if proc.stdout is not None:
+                for line in proc.stdout:
+                    msg = f"[{prefix}] {line}"
                     try:
-                        sys.stdout.buffer.write(msg.encode("utf-8", errors="replace"))
-                        sys.stdout.buffer.flush()
+                        print(msg, end="", flush=True)
+                    except Exception:
+                        try:
+                            sys.stdout.buffer.write(msg.encode("utf-8", errors="replace"))
+                            sys.stdout.buffer.flush()
+                        except Exception:
+                            pass
+                    try:
+                        log.write(line)
+                        log.flush()
                     except Exception:
                         pass
-                try:
-                    log.write(line)
-                    log.flush()
-                except Exception:
-                    pass
 
         t = threading.Thread(target=pump, daemon=True)
         t.start()
@@ -439,6 +440,7 @@ def main():
             job, idx, attempt_num, resume_to_use = item
             current_total = get_applied_count()
             c_norm = job["company"].strip().lower()
+            job_timeout: float = float(args.timeout)
 
             try:
                 print(f"\n[{w_prefix}][{idx}] Attempt {attempt_num}/{args.limit} | Overall: {current_total}/{args.target} ({current_total/args.target*100:.1f}%)")

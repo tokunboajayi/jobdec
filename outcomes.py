@@ -84,7 +84,7 @@ def scan_gmail(apps, since):
     if not mail:
         sys.exit(f"Gmail not available: {err}")
     mail.select("INBOX", readonly=True)
-    _, data = mail.uid("search", None, f"(SINCE {since.strftime('%d-%b-%Y')})")
+    _, data = mail.uid("search", None, f"(SINCE {since.strftime('%d-%b-%Y')})")  # type: ignore
     uids = data[0].split() if data and data[0] else []
     print(f"Scanning {len(uids)} emails since {since}...")
     index = [(k, company_tokens(a["company"])) for k, a in apps.items()]
@@ -110,7 +110,8 @@ def scan_gmail(apps, since):
             body_text = re.sub(r"<[^>]+>", " ", extract_body(msg))
             text = head + " " + body_text[:6000]
             try:
-                when = email.utils.parsedate_to_datetime(hdr.get("Date")).date().isoformat()
+                date_val = hdr.get("Date")
+                when = email.utils.parsedate_to_datetime(date_val).date().isoformat() if date_val else ""
             except Exception:
                 when = ""
             kind = None

@@ -12,7 +12,7 @@ Results engine - shared logic that makes the pipeline aim for interviews, not ju
 Settings: strategy.json (created with defaults on first use; edit it to change behavior).
 Used by triage.py, batch_apply.py, fill.py and outcomes.py.
 """
-import csv, datetime, json, pathlib, re
+import csv, datetime, json, pathlib, re, time
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent

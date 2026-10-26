@@ -53,7 +53,10 @@ def warm():
 
 @functools.lru_cache(maxsize=4096)
 def _embed_one(text):
-    return model().encode([text], normalize_embeddings=True, convert_to_numpy=True)[0]
+    m = model()
+    if m is None:
+        raise RuntimeError("SentenceTransformer model is not available")
+    return m.encode([text], normalize_embeddings=True, convert_to_numpy=True)[0]
 
 
 def embed(texts):

@@ -40,7 +40,7 @@ def test_core_question_finds_the_ask():
 ])
 def test_fact_questions_come_from_profile(label, cat, answer):
     c, r = O.fact_rule(label, fill.rule_for)
-    assert c == cat and r["a"] == answer
+    assert c == cat and r is not None and r["a"] == answer
 
 
 def test_profile_rules_have_no_backspaces():
@@ -56,7 +56,8 @@ def test_profile_rules_have_no_backspaces():
     ("Do you have relevant work experience?", "Yes"),
 ])
 def test_profile_rules_tell_the_truth(q, a):
-    assert fill.rule_for(q)["a"] == a
+    r = fill.rule_for(q)
+    assert r is not None and r["a"] == a
 
 
 def test_live_form_answers_fit():
@@ -116,7 +117,8 @@ def test_resource_is_not_a_referral_source():
     long = ("To provide you with the more efficient recruiting process, DIRECTV and its Human Resource suppliers "
             "may use artificial intelligence in the application screening process")
     assert ai_responder.pick_best_option(long, ["Yes", "No"]) != "LinkedIn"
-    assert fill.rule_for(long)["a"] == "Yes"
+    r = fill.rule_for(long)
+    assert r is not None and r["a"] == "Yes"
     assert ai_responder.pick_best_option("How did you hear about us?", ["Indeed", "LinkedIn"]) == "LinkedIn"
 
 
@@ -146,5 +148,7 @@ def test_workday_country_listbox_finds_option_past_100():
 def test_short_learned_labels_only_match_exactly():
     """Learned rules like q='Date' used to answer every question containing 'date'."""
     import datetime
-    assert fill.rule_for("Date")["a"] == datetime.date.today().strftime("%m/%d/%Y")
-    assert fill.rule_for("If yes, please provide your visa type and expiration date.")["a"] == "N/A"
+    r_date = fill.rule_for("Date")
+    r_visa = fill.rule_for("If yes, please provide your visa type and expiration date.")
+    assert r_date is not None and r_date["a"] == datetime.date.today().strftime("%m/%d/%Y")
+    assert r_visa is not None and r_visa["a"] == "N/A"

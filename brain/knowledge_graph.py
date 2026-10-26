@@ -727,7 +727,7 @@ class JobdecKnowledgeGraph:
             self.build()
 
         target_norm = self.canonical_company(target_company).lower().strip()
-        matched_companies = [n for n, d in self.graph.nodes(data=True) if d.get("node_type") == "Company" and (target_norm in d.get("label", "").lower() or d.get("label", "").lower() in target_norm)]
+        matched_companies = [n for n, d in self.graph.nodes(data=True) if (d or {}).get("node_type") == "Company" and (target_norm in (d or {}).get("label", "").lower() or (d or {}).get("label", "").lower() in target_norm)]
 
         if not matched_companies:
             return []
@@ -737,7 +737,9 @@ class JobdecKnowledgeGraph:
 
         # Find all contacts at this company
         routes = []
-        for u, v, data in self.graph.in_edges(comp_node, data=True):
+        for edge in self.graph.in_edges(comp_node, data=True):
+            u, v = edge[0], edge[1]
+            data = edge[2] if len(edge) > 2 and edge[2] is not None else {}
             if data.get("relation") == "WORKS_AT":
                 contact_node = u
                 c_data = self.graph.nodes[contact_node]
@@ -802,6 +804,7 @@ class JobdecKnowledgeGraph:
 
         # Search across Experience and Metric nodes
         for node_id, data in self.graph.nodes(data=True):
+            data = data or {}
             ntype = data.get("node_type")
             if ntype == "Metric":
                 text = data.get("text", "")
@@ -825,7 +828,7 @@ class JobdecKnowledgeGraph:
         if not self._built:
             self.build()
         from collections import Counter
-        counts = Counter(d.get("node_type", "Entity") for _, d in self.graph.nodes(data=True))
+        counts = Counter((d or {}).get("node_type", "Entity") for _, d in self.graph.nodes(data=True))
         return {
             "total_nodes": self.graph.number_of_nodes(),
             "total_edges": self.graph.number_of_edges(),
@@ -857,7 +860,9 @@ class JobdecKnowledgeGraph:
 
         if comp_id in self.graph:
             tier = self.graph.nodes[comp_id].get("tier", "Target")
-            for u, v, d in self.graph.in_edges(comp_id, data=True):
+            for edge in self.graph.in_edges(comp_id, data=True):
+                u, v = edge[0], edge[1]
+                d = edge[2] if len(edge) > 2 and edge[2] is not None else {}
                 rel = d.get("relation")
                 if rel == "OPENED_BY":
                     r_data = self.graph.nodes[u]
@@ -886,7 +891,9 @@ class JobdecKnowledgeGraph:
                             "pitch": u_data.get("note"),
                         })
 
-            for u, v, d in self.graph.out_edges(comp_id, data=True):
+            for edge in self.graph.out_edges(comp_id, data=True):
+                u, v = edge[0], edge[1]
+                d = edge[2] if len(edge) > 2 and edge[2] is not None else {}
                 if d.get("relation") == "USES_ATS":
                     ats_systems.add(self.graph.nodes[v].get("label"))
 
@@ -910,6 +917,7 @@ class JobdecKnowledgeGraph:
 
         nodes = []
         for n, d in self.graph.nodes(data=True):
+            d = d or {}
             ntype = d.get("node_type", "Entity")
             item = {
                 "id": n,
@@ -923,7 +931,9 @@ class JobdecKnowledgeGraph:
             nodes.append(item)
 
         links = []
-        for u, v, d in self.graph.edges(data=True):
+        for edge in self.graph.edges(data=True):
+            u, v = edge[0], edge[1]
+            d = edge[2] if len(edge) > 2 and edge[2] is not None else {}
             link_item = {
                 "source": u,
                 "target": v,

@@ -45,9 +45,10 @@ def resume_gen():
     for candidate_path in [RESUMES / "resume_gen.py", AUTOFILL / "resumes" / "resume_gen.py"]:
         if candidate_path.exists():
             spec = importlib.util.spec_from_file_location("resume_gen", candidate_path)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            return mod
+            if spec and spec.loader:
+                mod = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(mod)
+                return mod
     raise ImportError("resume_gen.py not found in resumes directory.")
 
 
