@@ -13,9 +13,9 @@ import time
 if sys.platform == "win32":
     try:
         if hasattr(sys.stdout, "reconfigure"):
-            sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
         if hasattr(sys.stderr, "reconfigure"):
-            sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+            sys.stderr.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
     except Exception:
         pass
 
@@ -43,21 +43,22 @@ def run_logged(cmd, timeout, stdin, log_path, prefix="", procs_list=None, procs_
             with procs_lock:
                 procs_list.append(proc)
         def pump():
-            for line in proc.stdout:
-                msg = f"[{prefix}] {line}" if prefix else line
-                try:
-                    print(msg, end="", flush=True)
-                except Exception:
+            if proc.stdout is not None:
+                for line in proc.stdout:
+                    msg = f"[{prefix}] {line}" if prefix else line
                     try:
-                        sys.stdout.buffer.write(msg.encode("utf-8", errors="replace"))
-                        sys.stdout.buffer.flush()
+                        print(msg, end="", flush=True)
+                    except Exception:
+                        try:
+                            sys.stdout.buffer.write(msg.encode("utf-8", errors="replace"))
+                            sys.stdout.buffer.flush()
+                        except Exception:
+                            pass
+                    try:
+                        log.write(line)
+                        log.flush()
                     except Exception:
                         pass
-                try:
-                    log.write(line)
-                    log.flush()
-                except Exception:
-                    pass
         t = threading.Thread(target=pump, daemon=True)
         t.start()
         try:
@@ -359,6 +360,7 @@ def main():
             else: cmd.append("--headless")
             if workers_count > 1: cmd.extend(["--worker-id", str(worker_id)])
 
+            t0 = time.time()
             try:
                 stdin_mode = None if args.headful else subprocess.DEVNULL
                 log_path = (RE.RECORDS_DIR / time.strftime("%Y-%m-%d") / f"{RE._slug(job['company'], job['role'])}.log") if RE else HERE / "last_job.log"
