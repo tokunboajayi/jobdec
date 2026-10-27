@@ -19,10 +19,10 @@ HERE = pathlib.Path(__file__).resolve().parent
 CACHE_FILE = HERE / "response_cache.json"
 
 _NAME = os.getenv("CANDIDATE_FULL_NAME", "Candidate")
-_UNI = os.getenv("CANDIDATE_UNIVERSITY", "State University")
-_DEG = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE", "BS Computer Science"))
-_GRAD = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2027")
-_GPA = os.getenv("CANDIDATE_GPA", "3.8")
+_UNI = os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University")
+_DEG = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE", "BBA Computer Information Systems (AI & Analytics)"))
+_GRAD = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2028")
+_GPA = os.getenv("CANDIDATE_GPA", "3.35")
 _LOC = os.getenv("CANDIDATE_LOCATION_TEXT", f"{os.getenv('CANDIDATE_CITY', 'Atlanta')}, {os.getenv('CANDIDATE_STATE', 'GA')}")
 _PITCH = os.getenv("CANDIDATE_ELEVATOR_PITCH", "Software engineer and automation builder specializing in agentic workflows, data pipelines, and full-stack systems.")
 _EXP = os.getenv("CANDIDATE_PROUDEST_ACHIEVEMENT", "Led the automation of enterprise coordination workflows handling 50,000+ records, cutting manual coordination overhead by 150+ hours.")

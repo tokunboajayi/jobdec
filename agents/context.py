@@ -13,9 +13,9 @@ DEFAULT_MASTER = {
     "contact": f"{os.getenv('CANDIDATE_LOCATION_TEXT', 'Atlanta, GA')} • {os.getenv('CANDIDATE_EMAIL', 'candidate@example.com')} • {os.getenv('CANDIDATE_PHONE', '555-0199')}",
     "sections": [
         {"title": "EDUCATION", "entries": [
-            {"org": os.getenv("CANDIDATE_UNIVERSITY", "State University"), "loc": os.getenv("CANDIDATE_CITY", "Atlanta"), "lines": [
-                f"{os.getenv('CANDIDATE_DEGREE', 'Bachelor of Science')}, {os.getenv('CANDIDATE_MAJOR', 'Computer Science')}; Expected Graduation: {os.getenv('CANDIDATE_EXPECTED_GRAD_DATE', 'May 2027')}",
-                f"Cumulative GPA: {os.getenv('CANDIDATE_GPA', '3.80')}"
+            {"org": os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University"), "loc": os.getenv("CANDIDATE_CITY", "Atlanta"), "lines": [
+                f"{os.getenv('CANDIDATE_DEGREE', 'Bachelor of Business Administration')}, {os.getenv('CANDIDATE_MAJOR', 'Computer Information Systems (AI & Analytics)')}; Expected Graduation: {os.getenv('CANDIDATE_EXPECTED_GRAD_DATE', 'May 2028')}",
+                f"Cumulative GPA: {os.getenv('CANDIDATE_GPA', '3.35')}"
             ]}
         ]},
         {"title": "TECHNICAL SKILLS", "labeled": [
