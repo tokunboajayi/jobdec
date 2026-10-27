@@ -2116,3 +2116,21 @@ NissanGlobal Market Intelligence (Customer Insights) Intern [Franklin, TN; 18d o
 FederalHomeLoanBankOfIndianapolis Model Risk Intern [Indianapolis, IN; 0d old]   https://fhlbi.wd1.myworkdayjobs.com/FHLBI_Careers/job/Indianapolis/Model-Risk-Intern_R636?utm_source=Simplify&ref=Simplify
 ParallelSystems Hardware Engineering Intern - Mechanical and Electrical [LA; 0d old]   https://boards.greenhouse.io/parallel/jobs/5275660007?utm_source=Simplify&ref=Simplify
 Marvell Signal and Power Integrity Intern [Santa Clara, CA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers/job/Santa-Clara-CA/Signal-and-Power-Integrity-Intern--MS---Summer-2027_2603858?utm_source=Simplify&ref=Simplify
+
+# ---- added by agents/job_sources.py (multi-source, <= 180 days old)
+NianticSpatial Software Engineer Intern - Native SDK & Mobile Platforms [SF; 1d old]   https://jobs.ashbyhq.com/niantic-spatial/ed68b062-4dcb-4deb-9cc0-ed38030f6e43/application?embed=true&utm_source=Simplify&ref=Simplify
+LawrenceLivermoreNationalLaboratoryLlnl Defense Science and Technology Intern [Livermore, CA; 28d old]   https://jobs.smartrecruiters.com/LLNL/3743990015740565?utm_source=Simplify&ref=Simplify
+EmersonElectric Software Engineer Co-op [Eden Prairie, MN; 0d old]   https://hdjq.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26010738?utm_source=Simplify&ref=Simplify
+IcfInternational Software Developer Intern [Reston, VA; 0d old]   https://icf.wd5.myworkdayjobs.com/icfexternal_career_site/job/Reston-VA/XMLNAME-2027-Summer-Intern--Software-Developer--Reston--VA-_R2603002?utm_source=Simplify&ref=Simplify
+Amd Compiler Engineer Intern/Co-op [5 locations  Austin, TX Longmont, CO Fishkill, NY Fort Collins, CO Boxborough, MA; 0d old]   https://careers.amd.com/jobs/91864?icims=1&utm_source=Simplify&ref=Simplify
+Chs Data Engineer Intern [Inver Grove Heights, MN; 0d old]   https://careers.chsinc.com/job/Inver-Grove-Heights-Data-Engineer-Intern-MN-55077-1721/1443601900/?ats=successfactors&utm_source=Simplify&ref=Simplify
+JmFamily Automation & Analytics Intern [Deerfield Beach, FL; 1d old]   https://jmfamily.wd1.myworkdayjobs.com/jmfamily_external/job/Florida---Deerfield-Beach/Automation---Analytics-Intern_JR105132?utm_source=Simplify&ref=Simplify
+NavyFederal Data Scientist Intern [Pensacola, FL Vienna, VA; 0d old]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32288?utm_source=Simplify&ref=Simplify
+ThermoFisherScientific Senior Operations Data Analytics Intern [United States; 0d old]   https://thermofisher.wd5.myworkdayjobs.com/ThermoFisherCareers/job/Ho-Chi-Minh-City-Vietnam/Sr-Operations-Data-Analytics-Intern_R-01366619?utm_source=Simplify&ref=Simplify
+Schonfeld Data Science Intern [NYC; 0d old]   https://job-boards.greenhouse.io/schonfeld/jobs/8171692?utm_source=Simplify&ref=Simplify
+Aarete Business Analytics Intern - Summer 2027 [Chicago, IL; 0d old]   https://jobs.jobvite.com/aarete/job/oBXLAfwD?nl=1&nl=1&fr=false&utm_source=Simplify&ref=Simplify
+Marvell Signal and Power Integrity Intern [Santa Clara, CA; 1d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Santa-Clara-CA/Signal-and-Power-Integrity-Intern--MS---Summer-2027_2603858-1?utm_source=Simplify&ref=Simplify
+Marvell Test Engineering Intern [Irvine, CA Santa Clara, CA Westlake Village, CA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Santa-Clara-CA/Test-Engineering-Intern--BS---Summer-2027_2604537?utm_source=Simplify&ref=Simplify
+Garmin Software Engineer Intern [Cary, NC; 0d old]   https://careers.garmin.com/jobs/20131?icims=1&utm_source=Simplify&ref=Simplify
+Marvell Design for Test Intern [4 locations  Morrisville, NC Santa Clara, CA Boise, ID Westborough, MA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers/job/Morrisville-NC/Design-for-Test-Intern--BS---Summer-2027_2604511?utm_source=Simplify&ref=Simplify
+Marvell Functional Validation Intern - BS [Santa Clara, CA Boise, ID Westborough, MA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Westborough-MA/Functional-Validation-Intern--BS---Summer-2027_2604514?utm_source=Simplify&ref=Simplify
