@@ -15,6 +15,7 @@ What it does:
 """
 import argparse, csv, datetime, difflib, json, os, pathlib, re, sys, time
 from pathlib import Path
+from types import SimpleNamespace
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(line_buffering=True, encoding="utf-8", errors="replace")  # type: ignore # cp1252 pipes crashed on curly quotes
 from dotenv import load_dotenv
@@ -36,6 +37,8 @@ try:
     from auth_manager import is_auth_screen, run_auth_flow, handle_workday_landing, dismiss_cookie_banner
 except ImportError:
     is_auth_screen, run_auth_flow, handle_workday_landing, dismiss_cookie_banner = lambda p: False, lambda p: False, lambda p: False, lambda p: None
+
+from tools.file_lock import FileLock
 
 try:
     from ai_responder import generate_response, pick_best_option
@@ -694,14 +697,983 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
     return None
 
 
+# answers that mean 'tick this checkbox' / 'untick it'
+CHECK_ANSWERS = ("yes", "true", "check", "uncheck", "no", "false", "i agree", "agree", "accept", "i accept", "acknowledge", "i acknowledge", "consent", "i consent")
+
+
+def _fill_file_field(c, st, resume, resume_fields):
+    """Upload the resume / cover letter / transcript into a file input."""
+    f, loc, label, filled = c.f, c.loc, c.label, c.filled
+    has_existing = False
+    try:
+        has_existing = bool(loc.evaluate("e => (e.files && e.files.length > 0) || !!e.closest('.file-upload, [data-automation-id*=\"file-upload\"], .field-wrapper, .field')?.querySelector('[data-automation-id*=\"file-upload-item\"], [data-automation-id*=\"delete-file\"], button[aria-label*=\"Remove\"], button[aria-label*=\"delete\" i]')"))
+    except Exception:
+        pass
+    # ONLY the real unofficial transcript downloaded from GSU (PAWS), saved under this exact name.
+    # The generated "Ajayi_Olatokunbo_Transcript.pdf" (transcript_gen.py) imitates a registrar
+    # document - never upload it. No real file -> transcript fields stay empty.
+    transcript_path = ROOT / "resumes" / "GSU_Unofficial_Transcript_REAL.pdf"
+    cover_path = ROOT / "resumes" / "Ajayi_Olatokunbo_Cover_Letter.pdf"  # resumes/cover_letter_gen.py
+    if re.search(r"cover\s*letter", label, re.I):
+        if not has_existing and cover_path.exists():
+            try:
+                loc.set_input_files(str(cover_path))
+                filled.append(f"[cover letter] {cover_path.name}")
+                time.sleep(1.2)
+            except Exception as e:
+                print(f"[Cover Letter Upload Error] {e}")
+        return
+    if re.search(r"transcript|academic record", label, re.I):
+        if not has_existing:
+            upload_doc = transcript_path if transcript_path.exists() else None
+            if upload_doc:
+                try:
+                    loc.set_input_files(str(upload_doc))
+                    filled.append(f"[transcript] {upload_doc.name}")
+                    time.sleep(1.2)
+                except Exception as e:
+                    print(f"[Transcript Upload Error] {e}")
+        return
+    if resume_fields and f not in resume_fields:
+        return  # e.g. Ashby's "autofill from resume" drop zone: uploading there crashed the tab
+    if resume and not st.resume_done and not has_existing:
+        if not re.search(r"cover\s*letter|portfolio|writing\s*sample", label, re.I):
+            try:
+                loc.set_input_files(str(resume))
+                st.resume_done = True
+                r_name = getattr(resume, "name", Path(resume).name)
+                filled.append(f"[resume] {r_name}")
+                time.sleep(1.2)
+            except Exception as e:
+                print(f"[File Upload Error] {e}")
+    elif (f.get("required") or ("*" in label and "optional" not in label.lower())) and not has_existing:
+        upload_doc = resume or (transcript_path if transcript_path.exists() else None)
+        if upload_doc:
+            try:
+                loc.set_input_files(str(upload_doc))
+                d_name = getattr(upload_doc, "name", Path(upload_doc).name)
+                filled.append(f"[doc] {d_name}")
+                time.sleep(1.2)
+            except Exception as e:
+                print(f"[Required Doc Upload Error] {e}")
+
+
+def _resolve_rule(c, st, sec_code_fields):
+    """Pick the answer rule for a field (security code, profile rule, brain, semantic, facts, guess). None = leave the field."""
+    f, loc, label, company, role, unanswered = c.f, c.loc, c.label, c.company, c.role, c.unanswered
+    is_sec_code = f in sec_code_fields
+    m_digit = re.search(r"digit\s*(\d)\s*of\s*(?:six|6)", label, re.I)
+    rule = None
+    if is_sec_code:
+        try:
+            cur_val = loc.evaluate("e => e.value") if loc else ""
+            if not cur_val and not st.last_verification_code and not st.otp_attempted:
+                st.otp_attempted = True
+                try:
+                    import importlib
+                    import gmail_auth
+                    importlib.reload(gmail_auth)
+                    fetch_code_fn = gmail_auth.fetch_verification_code
+                except Exception:
+                    from gmail_auth import fetch_verification_code as fetch_code_fn
+                print(f"\n[Security Code] Verification code field detected: '{label[:60]}'. Listening to Gmail...")
+                clean_search = re.sub(r"\[.*?\]|\(.*?\)", "", company).split("-")[0].strip()
+                code = fetch_code_fn(timeout_sec=45, poll_interval=3, search_term=clean_search or company)
+                if code:
+                    st.last_verification_code = code
+                    print(f"[Security Code] Successfully retrieved code from Gmail: {code}")
+            elif cur_val and not st.last_verification_code:
+                st.last_verification_code = cur_val
+            if st.last_verification_code:
+                if m_digit:
+                    d_idx = int(m_digit.group(1)) - 1
+                    ans_char = st.last_verification_code[d_idx] if d_idx < len(st.last_verification_code) else ""
+                    rule = {"q": re.escape(label), "a": ans_char, "ai_gen": True, "src": "code"}
+                elif len(sec_code_fields) > 1:
+                    d_idx = sec_code_fields.index(f)
+                    ans_char = st.last_verification_code[d_idx] if d_idx < len(st.last_verification_code) else ""
+                    rule = {"q": re.escape(label), "a": ans_char, "ai_gen": True, "src": "code"}
+                else:
+                    rule = {"q": re.escape(label), "a": st.last_verification_code, "ai_gen": True, "src": "code"}
+        except Exception as ex:
+            print(f"[Security Code] IMAP fetch error: {ex}")
+        if not st.last_verification_code:
+            unanswered.append({**f, "error": "verification code not received from email"})
+            return None
+    else:
+        rule = rule_for(label)
+        if rule is None and not is_sec_code:
+            try:
+                from brain.vault import get_vault
+                ov = get_vault().get_field_override(label)
+                if ov:
+                    rule = {"q": re.escape(label), "a": ov, "src": "brain_override"}
+            except Exception:
+                pass
+        if rule is None and not is_sec_code:
+            try:
+                from brain.resolver import FastResolver
+                fast_ans = FastResolver.resolve(label, options=f.get("options"))
+                if fast_ans is not None:
+                    rule = {"q": re.escape(label), "a": fast_ans, "src": "brain_resolver"}
+                    print(f"  [Brain Resolver] '{label[:50]}' -> {fast_ans}")
+            except Exception:
+                pass
+        if rule is None and f.get("required") and RE and not RE.SENSITIVE_RE.search(label):
+            try:  # new wording of a question a rule already answered (local neural match, >= 0.88)
+                from agents import semantic
+                if semantic.available():
+                    hit = semantic.known_answer(label)
+                    if hit:
+                        rule = {"q": re.escape(label), "a": hit[1], "src": "semantic"}
+                        print(f"  [Semantic] '{label[:50]}' ~ '{hit[0][:50]}' ({hit[2]}) -> {hit[1]}")
+            except Exception:
+                pass
+
+    if rule is None and OPTS and not is_sec_code:
+        cat, fr = OPTS.fact_rule(label, rule_for)
+        if fr:
+            rule = fr
+        elif cat:  # school / country / state / degree ... with no profile answer: leave it, never guess
+            unanswered.append({**f, "error": f"fact question ({cat}) - add a profile.json rule"})
+            return None
+
+    if rule is None:
+            # Guess answer for unmapped fields
+            ai_ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role)
+            if ai_ans:
+                rule = {"q": re.escape(label), "a": ai_ans, "ai_gen": True}
+            elif f.get("options"):
+                rule = {"q": re.escape(label), "a": pick_best_option(label, f["options"]), "ai_gen": True}
+            elif f["type"] == "checkbox" and f.get("required"):
+                rule = {"q": re.escape(label), "a": "check", "ai_gen": True}
+            elif f.get("required") or f["tag"] == "textarea":
+                rule = {"q": re.escape(label), "a": "N/A", "ai_gen": True}
+            else:
+                return None
+    return rule
+
+
+def _prepare_answer(c):
+    """Resolve SKIP/ASK, refuse sensitive guesses, and skip fields that already hold the answer. False = leave the field."""
+    f, label, company, role, rule = c.f, c.label, c.company, c.role, c.rule
+    unanswered, optional_skipped, overwrite = c.unanswered, c.optional_skipped, c.overwrite
+    if rule.get("only_combobox") and not f.get("combobox"):
+        return False
+    ans = rule.get("a")
+    if ans is SKIP:
+        if f.get("required") or ("*" in label and "optional" not in label.lower()):
+            if re.search(r"pronoun", label, re.I):
+                ans = "He/Him/His"
+            elif re.search(r"gender|sex\b", label, re.I):
+                ans = "Male"
+            elif re.search(r"race|ethnic", label, re.I):
+                ans = "Black or African American"
+            elif f.get("options"):
+                ans = f["options"][0]
+            else:
+                ans = "N/A"
+            rule = {**rule, "a": ans}
+        else:
+            if rule.get("eeo"): optional_skipped.append(label)
+            return False
+    if ans == ASK:
+        # "scrap 3 and guess": auto-resolve ASK fields instead of pausing
+        if f.get("options"):
+            ans = pick_best_option(label, f["options"]) or f["options"][0]
+        else:
+            ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role) or "Yes"
+        rule = {**rule, "a": ans, "ai_gen": True}
+    src = rule.get("src") or ("guess" if rule.get("ai_gen") else "rule")
+    if src == "guess" and RE and RE.should_block(label):
+        # legal / eligibility / EEO question with no rule: don't guess - the job is skipped and logged
+        RE.SENSITIVE_HITS.append(label[:120])
+        unanswered.append({**f, "error": "sensitive question - not guessing"})
+        return False
+    escalate = bool(FIX_HINTS) and _hinted(label)
+    has_val = f["value"] not in ("", "false", None) and not f["value"].lower().startswith(("please select", "select"))
+    if len(str(f["value"] or "").strip()) > 80 or str(f["value"] or "").count("+") > 2:
+        has_val = False
+    if has_val and not overwrite and not escalate:
+        val_matches = False
+        cur_v = str(f["value"]).strip().lower()
+        ans_v = str(ans).strip().lower()
+        if cur_v == ans_v or (len(ans_v) > 2 and cur_v.startswith(ans_v)):
+            val_matches = True
+        elif isinstance(rule.get("option"), str) and re.search(rule["option"], cur_v, re.I):
+            val_matches = True
+        if val_matches and f["type"] not in ("yesno", "radio"):
+            return False
+    c.rule, c.ans, c.src, c.escalate = rule, ans, src, escalate
+    return True
+
+
+def _normalize_date_answer(c):
+    """Turn today/day/month/year answers into the value a split date field expects."""
+    f, label, rule, ans = c.f, c.label, c.rule, c.ans
+    # Smart subfield value normalization for split date inputs (e.g. Workday * Month, * Day, * Year)
+    lab_low = label.lower()
+    now = datetime.datetime.now()
+    is_today_field = bool(re.search(r"today|signature|current\s*date|enter\s*today'?s\s*date|^date\b|^\*?\s*date\b", lab_low)) and not bool(re.search(r"birth|dob|graduat|start|end|from|to|prior|previous", lab_low))
+    is_date_field = bool(re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b|^(?:start|end|from|to)\b|(?:\bfrom|\bto)\s*(?:date|month|year|\*|:)?$", lab_low)) or is_today_field or f.get("type") == "date"
+    if is_date_field and re.search(r"\bday\b", lab_low) and not re.search(r"\b(birthday|workday|everyday|holiday)\b|day-to-day|day to day|per day|days of|days per|how many days", lab_low):
+        if is_today_field or ans == "TODAY_DAY":
+            d_val = f"{now.day:02d}"
+        elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", str(ans)):
+            parts = str(ans).split("/")
+            d_val = parts[1] if len(parts) > 1 else f"{now.day:02d}"
+        elif str(ans).isdigit() and 1 <= int(str(ans)) <= 31:
+            d_val = f"{int(str(ans)):02d}"
+        else:
+            d_val = f"{now.day:02d}" if is_today_field else "01"
+        ans = d_val
+        rule = {**rule, "a": d_val, "option": rf"^{int(d_val)}$|^{d_val}$"}
+    elif is_date_field and re.search(r"\bmonth\b", lab_low) and not re.search(r"year|how many months|months of experience|per month|a month|hours per", lab_low):
+        if is_today_field or ans == "TODAY_MONTH":
+            m_num = f"{now.month:02d}"
+        elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", str(ans)):
+            m_num = str(ans).split("/")[0]
+        elif str(ans).isdigit() and 1 <= int(str(ans)) <= 12:
+            m_num = f"{int(str(ans)):02d}"
+        else:
+            m_num = f"{now.month:02d}" if is_today_field else "06"
+        m_int = int(m_num) if m_num.isdigit() else now.month
+        m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+        m_name = m_names[m_int - 1] if 1 <= m_int <= 12 else "October"
+        is_select_or_combo = f.get("type") in ("select", "listbox") or bool(f.get("combobox"))
+        ans = m_name if is_select_or_combo else f"{m_int:02d}"
+        rule = {**rule, "a": ans, "option": rf"^{m_int}$|^{m_int:02d}$|^{m_name}\b"}
+    elif is_date_field and re.search(r"\byear\b", lab_low) and not re.search(r"month|years? of experience|how many years", lab_low):
+        if is_today_field or ans == "TODAY_YEAR":
+            y_val = str(now.year)
+        else:
+            m_yr = re.search(r"\b(20\d\d)\b", str(ans))
+            y_val = m_yr.group(1) if m_yr else (str(now.year) if is_today_field else "2027")
+        ans = y_val
+        rule = {**rule, "a": y_val, "option": rf"^{y_val}$"}
+    c.rule, c.ans = rule, ans
+
+
+def _fill_checkbox(c):
+    """Tick / untick a checkbox (also Ashby yes/no button groups)."""
+    f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
+    company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
+    rule, ans, escalate = c.rule, c.ans, c.escalate
+    if f["type"] == "checkbox" and isinstance(ans, str) and ans.lower() not in CHECK_ANSWERS and not rule.get("ai_gen"):
+        # a text answer on a checkbox list ("Discipline(s) * Agriculture"): tick only the box that matches it
+        opt_text = " ".join(label.rsplit(" * ", 1)[-1].split()).lower()
+        a_text = " ".join(ans.split()).lower()
+        if len(opt_text) > 3 and (opt_text in a_text or a_text in opt_text) and f["value"] != "true":
+            try: loc.check(timeout=1200)
+            except Exception:
+                try: loc.click(force=True, timeout=1200)
+                except Exception: pass
+        else: return False
+    elif f["type"] == "checkbox":
+        # Ashby Yes/No button group support (<button data-option="yes"> / <button data-option="no">)
+        ashby_btn = loc.locator("xpath=./preceding-sibling::button[@data-option] | ./parent::*//button[@data-option]")
+        if ashby_btn.count() > 0:
+            try:
+                want_yes = (isinstance(ans, str) and ans.lower() in ("yes", "true", "check", "agree", "i agree", "accept", "1")) or (isinstance(ans, bool) and ans)
+                btn_sel = "./parent::*//button[@data-option='yes']" if want_yes else "./parent::*//button[@data-option='no']"
+                target_btn = loc.locator(f"xpath={btn_sel}").first
+                if target_btn.count() > 0:
+                    target_btn.click(force=True, timeout=800)
+                    filled.append(f"{label} = {'Yes' if want_yes else 'No'}")
+                    return False
+            except Exception:
+                pass
+        should_check = (ans == "check" or (f.get("required") and ans not in ("uncheck", "no", "false")) or
+                        (isinstance(ans, str) and ans.lower() in ("yes", "true", "check", "agree", "i agree", "accept", "i accept", "acknowledge", "i acknowledge", "consent", "i consent")) or
+                        re.search(r"undergraduate|bachelor|summer 2027|open to anything|applied ai|backend|fullstack|software|new york|san francisco|atlanta|agree|terms|consent|authorize|acknowledge|black or african american", label, re.I))
+        already_checked = False
+        try:
+            is_invalid = loc.get_attribute("aria-invalid") == "true"
+            already_checked = (loc.is_checked() or loc.get_attribute("aria-checked") == "true" or f.get("value") == "true") and not is_invalid
+        except Exception:
+            pass
+        if should_check and not already_checked:
+            checked_ok = False
+            # Visual label / container click FIRST (vital for Workday Canvas Kit, React-Select, and custom styled checkboxes)
+            try:
+                elem_id = loc.get_attribute("id")
+                if elem_id:
+                    lbl = target.locator(f"label[for='{elem_id}']").first
+                    if lbl.count() > 0 and lbl.is_visible(timeout=500):
+                        lbl.click(force=True, timeout=800)
+                        checked_ok = True
+            except Exception:
+                pass
+            if not checked_ok:
+                try:
+                    parent_el = loc.locator("xpath=./ancestor::label[1] | ./ancestor::div[@data-automation-id='checkboxPanel'][1] | ./following-sibling::label[1] | ./parent::*//label | ./ancestor::div[contains(@class, 'checkbox')][1]")
+                    if parent_el.count() > 0:
+                        parent_el.first.click(force=True, timeout=800)
+                        checked_ok = True
+                except Exception:
+                    pass
+            if not checked_ok:
+                try:
+                    loc.check(force=True, timeout=1000)
+                    checked_ok = True
+                except Exception:
+                    pass
+            if not checked_ok:
+                try: loc.click(force=True, timeout=1000)
+                except Exception: pass
+            # If native input is still not checked after click, apply prototype setter
+            try:
+                is_now_checked = loc.is_checked()
+            except Exception:
+                is_now_checked = False
+            if not is_now_checked:
+                try:
+                    loc.evaluate("""e => {
+                        if (e) {
+                            const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked')?.set;
+                            if (setter) { setter.call(e, true); }
+                            else { e.checked = true; }
+                            e.dispatchEvent(new Event('input', {bubbles: true}));
+                            e.dispatchEvent(new Event('change', {bubbles: true}));
+                        }
+                    }""")
+                except Exception:
+                    pass
+        elif ans in ("uncheck", "no", "false") and f["value"] == "true":
+            unchecked_ok = False
+            try:
+                loc.uncheck(timeout=1000)
+                unchecked_ok = True
+            except Exception:
+                pass
+            if not unchecked_ok:
+                try:
+                    parent_el = loc.locator("xpath=./ancestor::label[1] | ./ancestor::div[@data-automation-id='checkboxPanel'][1] | ./parent::*")
+                    if parent_el.count() > 0:
+                        parent_el.first.click(timeout=1000)
+                        unchecked_ok = True
+                except Exception:
+                    pass
+            if not unchecked_ok:
+                try: loc.click(force=True, timeout=1000)
+                except Exception: pass
+        else: return False
+    c.rule, c.ans = rule, ans
+    return True
+
+
+def _fill_select(c):
+    """Pick an option in a native <select>."""
+    f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
+    company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
+    rule, ans, escalate = c.rule, c.ans, c.escalate
+    opt = pick_option(f["options"], rule, label=label)
+    if not opt: unanswered.append(f); return False
+    try:
+        raw = target.evaluate('(id)=>{ const el = document.querySelector(`[data-af-id="${id}"]`); return el && el.options ? [...el.options].map(o=>o.text) : []; }', f["id"])
+    except Exception:
+        raw = []
+    matched = next((o for o in raw if " ".join(o.split()).lower() == opt.lower()), opt)
+    sel_done = False
+    try:
+        loc.select_option(label=matched, timeout=1200)
+        sel_done = True
+    except Exception:
+        pass
+    if not sel_done:
+        try:
+            loc.select_option(value=opt, timeout=1200)
+            sel_done = True
+        except Exception:
+            pass
+    if not sel_done:
+        try:
+            target.evaluate('''([id, opt]) => {
+                const el = document.querySelector(`[data-af-id="${id}"]`);
+                if (el) {
+                    const m = opt.toLowerCase();
+                    for (let i = 0; i < el.options.length; i++) {
+                        const t = el.options[i].text.toLowerCase();
+                        const v = el.options[i].value.toLowerCase();
+                        if (t === m || v === m || t.includes(m) || v.includes(m)) {
+                            el.selectedIndex = i;
+                            el.dispatchEvent(new Event("change", { bubbles: true }));
+                            el.dispatchEvent(new Event("input", { bubbles: true }));
+                            break;
+                        }
+                    }
+                }
+            }''', [f["id"], opt])
+        except Exception:
+            pass
+    c.rule, c.ans = rule, ans
+    return True
+
+
+def _fill_radio(c):
+    """Pick a radio button."""
+    f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
+    company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
+    rule, ans, escalate = c.rule, c.ans, c.escalate
+    opt = pick_option(f["options"], rule, label=label)
+    if not opt: unanswered.append(f); return False
+    idx = f["options"].index(opt)
+    r_id = f["ids"][idx]
+    try:
+        target.locator(f'[data-af-id="{r_id}"]').check(force=True, timeout=1200)
+    except Exception:
+        try:
+            target.locator(f'[data-af-id="{r_id}"]').click(force=True, timeout=1200)
+        except Exception:
+            try:
+                target.evaluate(f'(id) => {{ const el = document.querySelector(`[data-af-id="${{id}}"]`); if (el) {{ el.checked = true; el.dispatchEvent(new Event("change", {{ bubbles: true }})); el.dispatchEvent(new Event("input", {{ bubbles: true }})); }} }}', r_id)
+            except Exception:
+                pass
+    c.rule, c.ans = rule, ans
+    return True
+
+
+def _fill_yesno(c):
+    """Click the Yes / No button."""
+    f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
+    company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
+    rule, ans, escalate = c.rule, c.ans, c.escalate
+    opt = pick_option(f["options"], rule, label=label)
+    if not opt: unanswered.append(f); return False
+    yn_id = f["ids"][f["options"].index(opt)]
+    try:
+        target.locator(f'[data-af-id="{yn_id}"]').click(timeout=1200)
+    except Exception:
+        try:
+            target.locator(f'[data-af-id="{yn_id}"]').click(force=True, timeout=1200)
+        except Exception:
+            try:
+                target.evaluate(f'(id) => {{ const el = document.querySelector(`[data-af-id="${{id}}"]`); if (el) {{ el.click(); }} }}', yn_id)
+            except Exception:
+                pass
+    c.rule, c.ans = rule, ans
+    return True
+
+
+def _fill_listbox(c):
+    """Open a custom listbox / Workday dropdown and click the matching option."""
+    f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
+    company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
+    rule, ans, escalate = c.rule, c.ans, c.escalate
+    root = target.page if hasattr(target, "page") else target
+    # Wait for any closing popup from previous question to finish closing
+    try:
+        closing_lb = root.locator("div[visibility='closing'], [visibility='closing']")
+        if closing_lb.count() > 0:
+            closing_lb.first.wait_for(state="detached", timeout=800)
+    except Exception:
+        pass
+    try:
+        # Clean up any lingering closing popup divs from previous listbox selections
+        page.evaluate("() => document.querySelectorAll('[visibility=\"closing\"]').forEach(e => e.remove())")
+    except Exception:
+        pass
+    try:
+        loc.evaluate("e => e.scrollIntoView({ block: 'center' })")
+        time.sleep(0.3)
+    except Exception:
+        pass
+    opened = False
+    try:
+        is_btn = loc.evaluate("e => e.tagName === 'BUTTON' || e.getAttribute('role') === 'button' || e.hasAttribute('aria-haspopup')")
+        if is_btn and loc.is_visible():
+            loc.click(timeout=1500)
+            opened = True
+    except Exception:
+        pass
+    if not opened:
+        try:
+            wd_btn = loc.locator('xpath=./parent::*//button[@aria-haspopup="listbox"]').first
+            if wd_btn.count() > 0 and wd_btn.is_visible():
+                wd_btn.click(timeout=1500)
+                opened = True
+        except Exception:
+            pass
+    if not opened:
+        try:
+            loc.click(timeout=1500)
+            opened = True
+        except Exception:
+            pass
+    if not opened:
+        try:
+            box = loc.bounding_box()
+            if box:
+                page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+                opened = True
+        except Exception:
+            pass
+    if not opened:
+        try:
+            loc.evaluate("e => e.click()")
+        except Exception:
+            pass
+    time.sleep(0.4)
+    # If listbox didn't open from clicking button, try clicking the dropdown caret icon or keyboard
+    active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
+    try:
+        if active_lb.count() == 0 or not active_lb.is_visible(timeout=400):
+            caret = loc.locator('xpath=./following-sibling::span[contains(@class, "menu-icon")] | ./parent::*//span[contains(@class, "menu-icon")] | ./following-sibling::*//svg').first
+            if caret.count() > 0 and caret.is_visible():
+                caret.click(timeout=1000)
+                time.sleep(0.4)
+                active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
+    except Exception:
+        pass
+    try:
+        if active_lb.count() == 0 or not active_lb.is_visible(timeout=300):
+            loc.press("Space")
+            time.sleep(0.3)
+            active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
+    except Exception:
+        pass
+    try:
+        if active_lb.count() == 0 or not active_lb.is_visible(timeout=300):
+            loc.press("ArrowDown")
+            time.sleep(0.3)
+            active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
+    except Exception:
+        pass
+    opt_pat = str(rule["option"]) if isinstance(rule.get("option"), str) and rule["option"] else re.escape(str(ans))
+    # Search visible options across page, strictly excluding closing popups and already-selected item pills
+    try:
+        if active_lb.count() > 0 and active_lb.is_visible(timeout=800):
+            opts = active_lb.locator("[role='option']:not([aria-disabled='true']):not([id*='pill'])")
+        else:
+            opts = root.locator("[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']) [role='option']:not([aria-disabled='true']):not([visibility='closing'] *), [data-automation-id='menuItem']:not([data-automation-id*='selectedItem'] *):not([visibility='closing'] *), [data-automation-id='promptOption']:not([data-automation-id*='selectedItem'] *):not([id*='pill']):not([visibility='closing'] *), [role='option']:not([id*='pill']):not([data-automation-id*='selectedItem']):not([data-automation-id='selectedItemList'] *):not([visibility='closing'] *)")
+    except Exception:
+        opts = root.locator("[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']) [role='option']:not([aria-disabled='true']):not([visibility='closing'] *), [data-automation-id='menuItem']:not([data-automation-id*='selectedItem'] *):not([visibility='closing'] *), [data-automation-id='promptOption']:not([data-automation-id*='selectedItem'] *):not([id*='pill']):not([visibility='closing'] *), [role='option']:not([id*='pill']):not([data-automation-id*='selectedItem']):not([data-automation-id='selectedItemList'] *):not([visibility='closing'] *)")
+    try:
+        opts.first.wait_for(state="visible", timeout=1000)
+    except Exception:
+        pass
+    clicked = False
+    # Direct check on rule-specified option regex
+    if isinstance(rule.get("option"), str) and rule["option"]:
+        try:
+            pat_re = re.compile(rule["option"], re.I)
+            target_opt = opts.filter(has_text=pat_re).first
+            if target_opt.count() > 0:
+                try: target_opt.scroll_into_view_if_needed(timeout=600)
+                except Exception: pass
+                target_opt.click(force=True, timeout=1200)
+                clicked = True
+        except Exception:
+            pass
+    is_yesno = str(ans).strip().lower() in ("yes", "no")
+    if not clicked and is_yesno:
+        try:
+            target_opt = opts.filter(has_text=re.compile(rf"\b{ans}\b", re.I)).first
+            if target_opt.count() > 0:
+                try: target_opt.scroll_into_view_if_needed(timeout=600)
+                except Exception: pass
+                target_opt.click(force=True, timeout=1200)
+                clicked = True
+        except Exception:
+            pass
+    if not clicked and is_yesno and OPTS:
+        try:
+            yn_pat = OPTS.YES if str(ans).strip().lower() == "yes" else OPTS.NO
+            target_opt = opts.filter(has_text=yn_pat).first
+            if target_opt.count() > 0:
+                try: target_opt.scroll_into_view_if_needed(timeout=600)
+                except Exception: pass
+                target_opt.click(force=True, timeout=1200)
+                clicked = True
+        except Exception:
+            pass
+    if not clicked and is_yesno:
+        for sel in ("[role='option']", "[data-automation-id='promptOption']", "[data-automation-id='menuItem']", "div[role='listbox'] div", "ul[role='listbox'] li"):
+            try:
+                candidate = root.locator(sel).filter(has_text=re.compile(rf"^\s*{ans}\s*$", re.I)).last
+                if candidate.count() == 0 or not candidate.is_visible(timeout=200):
+                    candidate = page.locator(sel).filter(has_text=re.compile(rf"^\s*{ans}\s*$", re.I)).last
+                if candidate.count() == 0 or not candidate.is_visible(timeout=200):
+                    candidate = page.locator(sel).filter(has_text=re.compile(rf"\b{ans}\b", re.I)).last
+                if candidate.count() > 0 and candidate.is_visible(timeout=400):
+                    candidate.click(force=True)
+                    clicked = True
+                    break
+            except Exception:
+                pass
+    if not clicked and OPTS:
+        # read ALL options at once (Workday's country list has 250; the old loop saw only the first 100,
+        # missed "United States" and clicked "Aland Islands"), then type-ahead if still not found
+        for attempt in range(2):
+            try:
+                texts = [" ".join(t.split()) for t in opts.all_inner_texts()]
+                texts = [t for t in texts if t and not OPTS.PLACEHOLDER.search(t)]
+            except Exception:
+                texts = []
+            if not texts and attempt == 0:
+                time.sleep(0.4)
+                try:
+                    texts = [" ".join(t.split()) for t in opts.all_inner_texts()]
+                    texts = [t for t in texts if t and not OPTS.PLACEHOLDER.search(t)]
+                except Exception:
+                    texts = []
+            r = OPTS.resolve(label, ans, texts, rule.get("option")) if texts else None
+            if r:
+                # the same text can exist in hidden lists elsewhere on the page: click the visible copy
+                idxs = [k for k, t in enumerate(texts) if t == r]
+                o = next((opts.nth(k) for k in idxs if opts.nth(k).is_visible()), opts.nth(idxs[0]))
+                try: o.scroll_into_view_if_needed(timeout=2000)
+                except Exception: pass
+                try: o.click(timeout=2000)
+                except Exception: o.click(force=True)
+                clicked, ans = True, r
+                break
+            if attempt == 0 and not is_yesno:
+                cat, _ = OPTS.fact_category(label)
+                if cat in ("school", "country", "country_code", "state", "major", "degree") or re.search(r"country\s*code|phone\s*country", label, re.I):
+                    type_txt = "United States" if re.search(r"country\s*code|phone\s*country", label, re.I) else re.sub(r"\s*\(.*?\)", "", str(ans)).strip()[:30]
+                    page.keyboard.type(type_txt, delay=40)
+                    time.sleep(0.6)
+    for i in range(0 if clicked else min(opts.count(), 300)):
+        o = opts.nth(i)
+        try:
+            if o.is_visible():
+                txt = o.inner_text().strip()
+                if re.search(r"no\s+(?:results|options|matches|records)|loading\.*|searching\.*", txt, re.I):
+                    continue
+                if re.search(opt_pat, txt, re.I) or (str(ans).lower() in ("yes", "no") and (re.search(rf"^\s*{ans}\s*$", txt, re.I) or (OPTS and (OPTS.YES if str(ans).lower() == "yes" else OPTS.NO).search(txt)))):
+                    o.click(force=True)
+                    clicked = True
+                    break
+        except Exception:
+            pass
+    if not clicked and is_yesno:
+        # Final safety type-ahead for yes/no combobox
+        try:
+            prev_txt = loc.inner_text(timeout=400) if loc else ""
+            page.keyboard.type(str(ans).capitalize(), delay=30)
+            time.sleep(0.4)
+            page.keyboard.press("Enter")
+            time.sleep(0.3)
+            new_txt = loc.inner_text(timeout=400) if loc else ""
+            if new_txt and new_txt != prev_txt and not re.search(r"select|choose", new_txt, re.I):
+                clicked = True
+        except Exception:
+            pass
+    if not clicked and RE and RE.should_block(label):
+        # sensitive question and the rule's answer isn't offered: decline if possible, never guess
+        for i in range(min(opts.count(), 100)):
+            o = opts.nth(i)
+            try:
+                if o.is_visible() and RE.EEO_RE.search(label) and RE.DECLINE_RE.search(o.inner_text()):
+                    o.click(force=True); clicked = True; ans = o.inner_text().strip(); break
+            except Exception:
+                pass
+        if not clicked:
+            RE.SENSITIVE_HITS.append(label[:120])
+            page.keyboard.press("Escape")
+            unanswered.append({**f, "error": "sensitive question - not guessing"})
+            return False
+    if not clicked:
+        PICK_GUESSED.add(label)
+        # Smart option fallback for EEO/gender or non-empty options
+        for i in range(min(opts.count(), 100)):
+            o = opts.nth(i)
+            try:
+                if o.is_visible():
+                    txt = o.inner_text().strip()
+                    if re.search(r"decline|prefer not|choose not|not wish|don'?t wish", txt, re.I):
+                        o.click(force=True)
+                        clicked = True
+                        ans = txt
+                        break
+            except Exception:
+                pass
+    fact_like = bool(OPTS and OPTS.fact_category(label)[0]) or re.search(r"country|territory|phone code|state|province", label, re.I)
+    sensitive = bool(RE and (RE.should_block(label) or RE.EEO_RE.search(label)))
+    if not clicked and f.get("required") and not fact_like and not is_yesno and not sensitive:  # never click first option for sensitive/country/state/yes-no
+        for i in range(min(opts.count(), 100)):
+            o = opts.nth(i)
+            try:
+                if o.is_visible():
+                    txt = o.inner_text().strip()
+                    if txt and not re.search(r"select|choose|--|^please", txt, re.I):
+                        o.click(force=True)
+                        clicked = True
+                        ans = txt
+                        break
+            except Exception:
+                pass
+    if not clicked and is_yesno:
+        # Final direct locator fallback for Yes/No (prefer visible options over hidden ones from earlier questions)
+        try:
+            yn_pat = OPTS.YES if (OPTS and str(ans).strip().lower() == "yes") else (OPTS.NO if OPTS else re.compile(rf"^\s*{ans}\s*$", re.I))
+            yn_candidates = root.locator("[role='option'], [data-automation-id='promptOption'], button[role='radio']").filter(has_text=yn_pat)
+            for c_idx in range(min(yn_candidates.count(), 10)):
+                cand = yn_candidates.nth(c_idx)
+                try:
+                    if cand.is_visible():
+                        opt_txt = cand.inner_text().strip()
+                        if not re.search(r"no\s+(?:results|options|matches|records)", opt_txt, re.I):
+                            cand.click(force=True)
+                            clicked = True
+                            break
+                except Exception:
+                    pass
+        except Exception:
+            pass
+    if not clicked and is_yesno:
+        # Final keyboard selection for select/combobox buttons (e.g. Workday Canvas Kit)
+        try:
+            loc.focus()
+            time.sleep(0.1)
+            loc.press("Space")
+            time.sleep(0.25)
+            key_to_press = "y" if str(ans).strip().lower() == "yes" else "n"
+            page.keyboard.press(key_to_press)
+            time.sleep(0.2)
+            page.keyboard.press("Enter")
+            time.sleep(0.2)
+            btn_txt = loc.inner_text(timeout=300).strip()
+            if btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", btn_txt, re.I):
+                clicked = True
+        except Exception:
+            pass
+        if not clicked:
+            try:
+                loc.focus()
+                time.sleep(0.1)
+                loc.press("ArrowDown")
+                time.sleep(0.2)
+                if str(ans).strip().lower() == "no":
+                    loc.press("ArrowDown")
+                    time.sleep(0.15)
+                loc.press("Enter")
+                time.sleep(0.25)
+                btn_txt = loc.inner_text(timeout=300).strip()
+                if btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", btn_txt, re.I):
+                    clicked = True
+            except Exception:
+                pass
+    if not clicked and not is_yesno:
+        try:
+            clean_txt = re.sub(r"\s*\(.*?\)", "", str(ans)).strip()
+            loc.focus()
+            time.sleep(0.1)
+            loc.press("Space")
+            time.sleep(0.25)
+            page.keyboard.type(clean_txt, delay=35)
+            time.sleep(0.4)
+            page.keyboard.press("Enter")
+            time.sleep(0.4)
+            btn_txt = loc.inner_text(timeout=300).strip()
+            if btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", btn_txt, re.I):
+                clicked = True
+            else:
+                page.keyboard.press("Escape")
+        except Exception:
+            pass
+    if not clicked:
+        # Check if the button itself already displays the chosen answer or a non-placeholder value
+        try:
+            cur_btn_txt = loc.inner_text(timeout=300).strip()
+            if cur_btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", cur_btn_txt, re.I):
+                clicked = True
+        except Exception:
+            pass
+    if not clicked:
+        unanswered.append({**f, "error": "could not select listbox option"})
+        return False
+    c.rule, c.ans = rule, ans
+    return True
+
+
+def _fill_text(c):
+    """Type into a text-like input (dates, numbers, phone, URL) or a combobox."""
+    f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
+    company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
+    rule, ans, escalate = c.rule, c.ans, c.escalate
+    val = str(ans)
+    # Smart subfield value normalization for split date inputs (e.g. Workday * Month, * Day, * Year)
+    lab_low = label.lower()
+    now = datetime.datetime.now()
+    is_today_field = bool(re.search(r"today|signature|current\s*date|enter\s*today'?s\s*date|^date\b|^\*?\s*date\b", lab_low)) and not bool(re.search(r"birth|dob|graduat|start|end|from|to|prior|previous", lab_low))
+    is_date_field = bool(re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b|^(?:start|end|from|to)\b|(?:\bfrom|\bto)\s*(?:date|month|year|\*|:)?$", lab_low)) or is_today_field or f.get("type") == "date"
+    if re.search(r"^\s*today'?s\s*date|^\s*date\s*$", lab_low) or val == "TODAY":
+        val = now.strftime("%m/%d/%Y")
+    elif is_date_field and re.search(r"\bday\b", lab_low) and not re.search(r"\b(birthday|workday|everyday|holiday)\b|day-to-day|day to day|per day|days of|days per|how many days", lab_low):
+        if is_today_field or val == "TODAY_DAY":
+            val = f"{now.day:02d}"
+        elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", val):
+            parts = val.split("/")
+            val = parts[1] if len(parts) > 1 else "01"
+        elif val.isdigit() and len(val) > 2:
+            val = "01"
+    elif is_date_field and re.search(r"\bmonth\b", lab_low) and not re.search(r"year|how many months|months of experience|per month|a month|hours per", lab_low):
+        m_map = {"jan": "01", "feb": "02", "mar": "03", "apr": "04", "may": "05", "jun": "06", "jul": "07", "aug": "08", "sep": "09", "oct": "10", "nov": "11", "dec": "12"}
+        converted_m = None
+        for mn_prefix, mn_digit in m_map.items():
+            if mn_prefix in val.lower():
+                converted_m = mn_digit
+                break
+        if converted_m:
+            val = converted_m
+        elif is_today_field or val == "TODAY_MONTH":
+            val = f"{now.month:02d}"
+        elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", val):
+            val = val.split("/")[0]
+            if len(val) == 1: val = f"0{val}"
+    elif is_date_field and re.search(r"\byear\b", lab_low) and not re.search(r"month|years? of experience|how many years", lab_low):
+        if is_today_field or val == "TODAY_YEAR":
+            val = str(now.year)
+        else:
+            m_yr = re.search(r"\b(20\d\d)\b", val)
+            if m_yr:
+                val = m_yr.group(1)
+            else:
+                val = "2027"
+    if is_date_field and not re.search(r"\b(day|month|year)\b", lab_low):
+        ph = (f.get("placeholder") or "").lower()
+        m_my = re.search(r"([A-Za-z]+)\s+(20\d\d)", val)
+        m_slash = re.search(r"(\d{1,2})/(?:(\d{1,2})/)?(20\d\d)", val)
+        m_num = None
+        y_num = None
+        d_num = "01"
+        if m_my:
+            m_str, y_num = m_my.group(1).lower(), m_my.group(2)
+            for k_m, v_tuple in MONTHS_MAP.items():
+                if m_str in v_tuple:
+                    m_num = int(k_m)
+                    break
+        elif m_slash:
+            m_num = int(m_slash.group(1))
+            d_num = f"{int(m_slash.group(2)):02d}" if m_slash.group(2) else "01"
+            y_num = m_slash.group(3)
+
+        if m_num and y_num:
+            if f.get("type") == "date":
+                val = f"{y_num}-{m_num:02d}-{d_num}"
+            elif ("mm/yy" in ph or "mm/yyyy" in ph) and "dd" not in ph:
+                val = f"{m_num:02d}/{y_num}"
+            elif "dd" in ph or "mm/dd/yyyy" in ph or re.search(r"date", lab_low):
+                val = f"{m_num:02d}/{d_num}/{y_num}"
+
+    if re.search(r"\bend\s*date\b", lab_low) and val.lower() == "present":
+        ph = (f.get("placeholder") or "").lower()
+        if "yyyy" in ph or "mm/dd" in ph or f.get("type") == "date":
+            val = now.strftime("%m/%d/%Y" if "dd" in ph else "%m/%Y")
+    if re.search(r"salary|compensation|pay|rate", lab_low) and val.lower() == "open":
+        if f.get("type", "").lower() in ("number", "numeric") or "annual" in lab_low:
+            val = "60000"
+    if f.get("type", "").lower() in ("number", "numeric"):
+        if not val.strip().isdigit():
+            digits = re.findall(r"\d+", val)
+            if digits:
+                val = "10" if re.search(r"scale|rate|rating|1[\s\-–to]+10", lab_low) else digits[0]
+            else:
+                val = "10" if re.search(r"scale|rate|rating|1[\s\-–to]+10", lab_low) else "0"
+    if f.get("type", "").lower() == "url" or lab_low.strip() in ("link", "url", "website", "portfolio"):
+        if not val.startswith("http"):
+            val = os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com")
+    if re.search(r"phone|mobile|cell", lab_low) and not re.search(r"code|country|dial|device", lab_low):
+        ph = (f.get("placeholder") or "").lower()
+        raw_phone = re.sub(r"\D", "", os.getenv("CANDIDATE_PHONE", val))
+        if (escalate or "-" in ph or "(" in ph or "dash" in ph) and len(raw_phone) == 10:
+            val = f"{raw_phone[:3]}-{raw_phone[3:6]}-{raw_phone[6:]}"
+
+    if f["combobox"]:
+        if re.match(r"^\+?\d{7,15}$", val.strip()) and re.search(r"phone|country|device|dial", label, re.I):
+            val = "United States (+1)"
+            rule = {"a": "United States (+1)", "option": "^(?:United States|USA|US|\\+1)\\b"}
+        chosen = pick_prompt_option(page, target, loc, val, rule, label=label, escalate=escalate)
+        if not chosen and f.get("tag") in ("input", "textarea"):
+            # Fallback for datepicker / text input with aria-haspopup (e.g. calendar dialog)
+            is_date_field = "date" in lab_low or "date" in (f.get("placeholder") or "").lower() or f.get("type") == "date"
+            if is_date_field:
+                try:
+                    loc.click(timeout=800)
+                    loc.fill("", timeout=400)
+                    loc.press_sequentially(val, delay=25)
+                    loc.press("Tab")
+                    chosen = val
+                except Exception:
+                    pass
+            if not chosen:
+                try:
+                    loc.fill(val, timeout=1200)
+                    loc.dispatch_event("blur")
+                    chosen = val
+                except Exception:
+                    try:
+                        loc.click(timeout=800)
+                        loc.press_sequentially(val, delay=25)
+                        loc.press("Tab")
+                        chosen = val
+                    except Exception:
+                        try:
+                            loc.evaluate("""(e, v) => {
+                                e.removeAttribute('readonly');
+                                const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+                                if (setter) { setter.call(e, v); } else { e.value = v; }
+                                e.dispatchEvent(new Event('input', { bubbles: true }));
+                                e.dispatchEvent(new Event('change', { bubbles: true }));
+                                e.dispatchEvent(new Event('blur', { bubbles: true }));
+                            }""", val)
+                            chosen = val
+                        except Exception:
+                            pass
+        if not chosen:
+            unanswered.append({**f, "error": "could not select an option"}); return False
+        ans = chosen
+    else:
+        filled_ok = False
+        if re.search(r"\b(day|month|year)\b", lab_low):
+            try:
+                loc.click(timeout=1000)
+                try:
+                    loc.fill(val, timeout=800)
+                except Exception:
+                    loc.fill("", timeout=400)
+                    loc.press_sequentially(val, delay=30)
+                loc.press("Tab")
+                filled_ok = True
+            except Exception:
+                pass
+        if not filled_ok:
+            try:
+                loc.fill(val, timeout=1500)
+                filled_ok = True
+            except Exception:
+                try:
+                    loc.fill(val, force=True, timeout=1500)
+                    filled_ok = True
+                except Exception:
+                    pass
+        if not filled_ok:
+            try:
+                loc.evaluate("""(e, v) => {
+                    e.removeAttribute('readonly');
+                    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+                    if (setter) { setter.call(e, v); } else { e.value = v; }
+                    e.dispatchEvent(new Event('input', { bubbles: true }));
+                    e.dispatchEvent(new Event('change', { bubbles: true }));
+                    e.dispatchEvent(new Event('blur', { bubbles: true }));
+                }""", val)
+                filled_ok = True
+            except Exception:
+                pass
+        try: loc.dispatch_event("blur")
+        except Exception: pass
+    c.rule, c.ans = rule, ans
+    return True
+
+
 def fill_page(page, resume, overwrite, company="", role=""):
     target = find_form_target(page)
     fields = target.evaluate(SCAN_JS)
     print(f"[Fill] {len(fields)} fields on this page ({time.strftime('%H:%M:%S')})", flush=True)
     filled, unanswered, optional_skipped, needs_you = [], [], [], []
-    resume_done = False
-    last_verification_code = None
-    otp_attempted = False
+    st = SimpleNamespace(resume_done=False, last_verification_code=None, otp_attempted=False)
     t_prev = None
     resume_fields = [f for f in fields if f["type"] == "file" and re.search(r"resume|\bcv\b|curriculum", f["label"], re.I)]
     sec_code_fields = [
@@ -724,911 +1696,41 @@ def fill_page(page, resume, overwrite, company="", role=""):
             continue  # Workday chrome like 'utilityMenuButton', not a question
         target_el_id = f["ids"][0] if f.get("ids") else f.get("id", "")
         loc = target.locator(f'[data-af-id="{target_el_id}"]').first if target_el_id else target.locator("body")
+        c = SimpleNamespace(f=f, loc=loc, target=target, page=page, label=label, company=company, role=role,
+                            filled=filled, unanswered=unanswered, optional_skipped=optional_skipped,
+                            overwrite=overwrite, rule=None, ans=None, src=None, escalate=False)
         try:
             # ---- resume upload
             if f["type"] == "file":
-                has_existing = False
-                try:
-                    has_existing = bool(loc.evaluate("e => (e.files && e.files.length > 0) || !!e.closest('.file-upload, [data-automation-id*=\"file-upload\"], .field-wrapper, .field')?.querySelector('[data-automation-id*=\"file-upload-item\"], [data-automation-id*=\"delete-file\"], button[aria-label*=\"Remove\"], button[aria-label*=\"delete\" i]')"))
-                except Exception:
-                    pass
-                # ONLY the real unofficial transcript downloaded from GSU (PAWS), saved under this exact name.
-                # The generated "Ajayi_Olatokunbo_Transcript.pdf" (transcript_gen.py) imitates a registrar
-                # document - never upload it. No real file -> transcript fields stay empty.
-                transcript_path = ROOT / "resumes" / "GSU_Unofficial_Transcript_REAL.pdf"
-                cover_path = ROOT / "resumes" / "Ajayi_Olatokunbo_Cover_Letter.pdf"  # resumes/cover_letter_gen.py
-                if re.search(r"cover\s*letter", label, re.I):
-                    if not has_existing and cover_path.exists():
-                        try:
-                            loc.set_input_files(str(cover_path))
-                            filled.append(f"[cover letter] {cover_path.name}")
-                            time.sleep(1.2)
-                        except Exception as e:
-                            print(f"[Cover Letter Upload Error] {e}")
-                    continue
-                if re.search(r"transcript|academic record", label, re.I):
-                    if not has_existing:
-                        upload_doc = transcript_path if transcript_path.exists() else None
-                        if upload_doc:
-                            try:
-                                loc.set_input_files(str(upload_doc))
-                                filled.append(f"[transcript] {upload_doc.name}")
-                                time.sleep(1.2)
-                            except Exception as e:
-                                print(f"[Transcript Upload Error] {e}")
-                    continue
-                if resume_fields and f not in resume_fields:
-                    continue  # e.g. Ashby's "autofill from resume" drop zone: uploading there crashed the tab
-                if resume and not resume_done and not has_existing:
-                    if not re.search(r"cover\s*letter|portfolio|writing\s*sample", label, re.I):
-                        try:
-                            loc.set_input_files(str(resume))
-                            resume_done = True
-                            r_name = getattr(resume, "name", Path(resume).name)
-                            filled.append(f"[resume] {r_name}")
-                            time.sleep(1.2)
-                        except Exception as e:
-                            print(f"[File Upload Error] {e}")
-                elif (f.get("required") or ("*" in label and "optional" not in label.lower())) and not has_existing:
-                    upload_doc = resume or (transcript_path if transcript_path.exists() else None)
-                    if upload_doc:
-                        try:
-                            loc.set_input_files(str(upload_doc))
-                            d_name = getattr(upload_doc, "name", Path(upload_doc).name)
-                            filled.append(f"[doc] {d_name}")
-                            time.sleep(1.2)
-                        except Exception as e:
-                            print(f"[Required Doc Upload Error] {e}")
+                _fill_file_field(c, st, resume, resume_fields)
                 continue
             # Intercept email security / verification codes FIRST before any other rule (prevents e-mail rule from stealing code fields)
-            is_sec_code = f in sec_code_fields
-            m_digit = re.search(r"digit\s*(\d)\s*of\s*(?:six|6)", label, re.I)
-            rule = None
-            if is_sec_code:
-                try:
-                    cur_val = loc.evaluate("e => e.value") if loc else ""
-                    if not cur_val and not last_verification_code and not otp_attempted:
-                        otp_attempted = True
-                        try:
-                            import importlib
-                            import gmail_auth
-                            importlib.reload(gmail_auth)
-                            fetch_code_fn = gmail_auth.fetch_verification_code
-                        except Exception:
-                            from gmail_auth import fetch_verification_code as fetch_code_fn
-                        print(f"\n[Security Code] Verification code field detected: '{label[:60]}'. Listening to Gmail...")
-                        clean_search = re.sub(r"\[.*?\]|\(.*?\)", "", company).split("-")[0].strip()
-                        code = fetch_code_fn(timeout_sec=45, poll_interval=3, search_term=clean_search or company)
-                        if code:
-                            last_verification_code = code
-                            print(f"[Security Code] Successfully retrieved code from Gmail: {code}")
-                    elif cur_val and not last_verification_code:
-                        last_verification_code = cur_val
-                    if last_verification_code:
-                        if m_digit:
-                            d_idx = int(m_digit.group(1)) - 1
-                            ans_char = last_verification_code[d_idx] if d_idx < len(last_verification_code) else ""
-                            rule = {"q": re.escape(label), "a": ans_char, "ai_gen": True, "src": "code"}
-                        elif len(sec_code_fields) > 1:
-                            d_idx = sec_code_fields.index(f)
-                            ans_char = last_verification_code[d_idx] if d_idx < len(last_verification_code) else ""
-                            rule = {"q": re.escape(label), "a": ans_char, "ai_gen": True, "src": "code"}
-                        else:
-                            rule = {"q": re.escape(label), "a": last_verification_code, "ai_gen": True, "src": "code"}
-                except Exception as ex:
-                    print(f"[Security Code] IMAP fetch error: {ex}")
-                if not last_verification_code:
-                    unanswered.append({**f, "error": "verification code not received from email"})
-                    continue
-            else:
-                rule = rule_for(label)
-                if rule is None and not is_sec_code:
-                    try:
-                        from brain.vault import get_vault
-                        ov = get_vault().get_field_override(label)
-                        if ov:
-                            rule = {"q": re.escape(label), "a": ov, "src": "brain_override"}
-                    except Exception:
-                        pass
-                if rule is None and not is_sec_code:
-                    try:
-                        from brain.resolver import FastResolver
-                        fast_ans = FastResolver.resolve(label, options=f.get("options"))
-                        if fast_ans is not None:
-                            rule = {"q": re.escape(label), "a": fast_ans, "src": "brain_resolver"}
-                            print(f"  [Brain Resolver] '{label[:50]}' -> {fast_ans}")
-                    except Exception:
-                        pass
-                if rule is None and f.get("required") and RE and not RE.SENSITIVE_RE.search(label):
-                    try:  # new wording of a question a rule already answered (local neural match, >= 0.88)
-                        from agents import semantic
-                        if semantic.available():
-                            hit = semantic.known_answer(label)
-                            if hit:
-                                rule = {"q": re.escape(label), "a": hit[1], "src": "semantic"}
-                                print(f"  [Semantic] '{label[:50]}' ~ '{hit[0][:50]}' ({hit[2]}) -> {hit[1]}")
-                    except Exception:
-                        pass
-
-            if rule is None and OPTS and not is_sec_code:
-                cat, fr = OPTS.fact_rule(label, rule_for)
-                if fr:
-                    rule = fr
-                elif cat:  # school / country / state / degree ... with no profile answer: leave it, never guess
-                    unanswered.append({**f, "error": f"fact question ({cat}) - add a profile.json rule"})
-                    continue
-
-            if rule is None:
-                    # Guess answer for unmapped fields
-                    ai_ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role)
-                    if ai_ans:
-                        rule = {"q": re.escape(label), "a": ai_ans, "ai_gen": True}
-                    elif f.get("options"):
-                        rule = {"q": re.escape(label), "a": pick_best_option(label, f["options"]), "ai_gen": True}
-                    elif f["type"] == "checkbox" and f.get("required"):
-                        rule = {"q": re.escape(label), "a": "check", "ai_gen": True}
-                    elif f.get("required") or f["tag"] == "textarea":
-                        rule = {"q": re.escape(label), "a": "N/A", "ai_gen": True}
-                    else:
-                        continue
-            if rule.get("only_combobox") and not f.get("combobox"):
+            c.rule = _resolve_rule(c, st, sec_code_fields)
+            if c.rule is None:
                 continue
-            ans = rule.get("a")
-            if ans is SKIP:
-                if f.get("required") or ("*" in label and "optional" not in label.lower()):
-                    if re.search(r"pronoun", label, re.I):
-                        ans = "He/Him/His"
-                    elif re.search(r"gender|sex\b", label, re.I):
-                        ans = "Male"
-                    elif re.search(r"race|ethnic", label, re.I):
-                        ans = "Black or African American"
-                    elif f.get("options"):
-                        ans = f["options"][0]
-                    else:
-                        ans = "N/A"
-                    rule = {**rule, "a": ans}
-                else:
-                    if rule.get("eeo"): optional_skipped.append(label)
-                    continue
-            if ans == ASK:
-                # "scrap 3 and guess": auto-resolve ASK fields instead of pausing
-                if f.get("options"):
-                    ans = pick_best_option(label, f["options"]) or f["options"][0]
-                else:
-                    ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role) or "Yes"
-                rule = {**rule, "a": ans, "ai_gen": True}
-            src = rule.get("src") or ("guess" if rule.get("ai_gen") else "rule")
-            if src == "guess" and RE and RE.should_block(label):
-                # legal / eligibility / EEO question with no rule: don't guess - the job is skipped and logged
-                RE.SENSITIVE_HITS.append(label[:120])
-                unanswered.append({**f, "error": "sensitive question - not guessing"})
+            if not _prepare_answer(c):
                 continue
-            escalate = bool(FIX_HINTS) and _hinted(label)
-            has_val = f["value"] not in ("", "false", None) and not f["value"].lower().startswith(("please select", "select"))
-            if len(str(f["value"] or "").strip()) > 80 or str(f["value"] or "").count("+") > 2:
-                has_val = False
-            if has_val and not overwrite and not escalate:
-                val_matches = False
-                cur_v = str(f["value"]).strip().lower()
-                ans_v = str(ans).strip().lower()
-                if cur_v == ans_v or (len(ans_v) > 2 and cur_v.startswith(ans_v)):
-                    val_matches = True
-                elif isinstance(rule.get("option"), str) and re.search(rule["option"], cur_v, re.I):
-                    val_matches = True
-                if val_matches and f["type"] not in ("yesno", "radio"):
-                    continue
-
-            # Smart subfield value normalization for split date inputs (e.g. Workday * Month, * Day, * Year)
-            lab_low = label.lower()
-            now = datetime.datetime.now()
-            is_today_field = bool(re.search(r"today|signature|current\s*date|enter\s*today'?s\s*date|^date\b|^\*?\s*date\b", lab_low)) and not bool(re.search(r"birth|dob|graduat|start|end|from|to|prior|previous", lab_low))
-            is_date_field = bool(re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b|^(?:start|end|from|to)\b|(?:\bfrom|\bto)\s*(?:date|month|year|\*|:)?$", lab_low)) or is_today_field or f.get("type") == "date"
-            if is_date_field and re.search(r"\bday\b", lab_low) and not re.search(r"\b(birthday|workday|everyday|holiday)\b|day-to-day|day to day|per day|days of|days per|how many days", lab_low):
-                if is_today_field or ans == "TODAY_DAY":
-                    d_val = f"{now.day:02d}"
-                elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", str(ans)):
-                    parts = str(ans).split("/")
-                    d_val = parts[1] if len(parts) > 1 else f"{now.day:02d}"
-                elif str(ans).isdigit() and 1 <= int(str(ans)) <= 31:
-                    d_val = f"{int(str(ans)):02d}"
-                else:
-                    d_val = f"{now.day:02d}" if is_today_field else "01"
-                ans = d_val
-                rule = {**rule, "a": d_val, "option": rf"^{int(d_val)}$|^{d_val}$"}
-            elif is_date_field and re.search(r"\bmonth\b", lab_low) and not re.search(r"year|how many months|months of experience|per month|a month|hours per", lab_low):
-                if is_today_field or ans == "TODAY_MONTH":
-                    m_num = f"{now.month:02d}"
-                elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", str(ans)):
-                    m_num = str(ans).split("/")[0]
-                elif str(ans).isdigit() and 1 <= int(str(ans)) <= 12:
-                    m_num = f"{int(str(ans)):02d}"
-                else:
-                    m_num = f"{now.month:02d}" if is_today_field else "06"
-                m_int = int(m_num) if m_num.isdigit() else now.month
-                m_names = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-                m_name = m_names[m_int - 1] if 1 <= m_int <= 12 else "October"
-                is_select_or_combo = f.get("type") in ("select", "listbox") or bool(f.get("combobox"))
-                ans = m_name if is_select_or_combo else f"{m_int:02d}"
-                rule = {**rule, "a": ans, "option": rf"^{m_int}$|^{m_int:02d}$|^{m_name}\b"}
-            elif is_date_field and re.search(r"\byear\b", lab_low) and not re.search(r"month|years? of experience|how many years", lab_low):
-                if is_today_field or ans == "TODAY_YEAR":
-                    y_val = str(now.year)
-                else:
-                    m_yr = re.search(r"\b(20\d\d)\b", str(ans))
-                    y_val = m_yr.group(1) if m_yr else (str(now.year) if is_today_field else "2027")
-                ans = y_val
-                rule = {**rule, "a": y_val, "option": rf"^{y_val}$"}
+            _normalize_date_answer(c)
 
             # ---- by kind
-            CHECK_ANSWERS = ("yes", "true", "check", "uncheck", "no", "false", "i agree", "agree", "accept", "i accept", "acknowledge", "i acknowledge", "consent", "i consent")
-            if f["type"] == "checkbox" and isinstance(ans, str) and ans.lower() not in CHECK_ANSWERS and not rule.get("ai_gen"):
-                # a text answer on a checkbox list ("Discipline(s) * Agriculture"): tick only the box that matches it
-                opt_text = " ".join(label.rsplit(" * ", 1)[-1].split()).lower()
-                a_text = " ".join(ans.split()).lower()
-                if len(opt_text) > 3 and (opt_text in a_text or a_text in opt_text) and f["value"] != "true":
-                    try: loc.check(timeout=1200)
-                    except Exception:
-                        try: loc.click(force=True, timeout=1200)
-                        except Exception: pass
-                else: continue
-            elif f["type"] == "checkbox":
-                # Ashby Yes/No button group support (<button data-option="yes"> / <button data-option="no">)
-                ashby_btn = loc.locator("xpath=./preceding-sibling::button[@data-option] | ./parent::*//button[@data-option]")
-                if ashby_btn.count() > 0:
-                    try:
-                        want_yes = (isinstance(ans, str) and ans.lower() in ("yes", "true", "check", "agree", "i agree", "accept", "1")) or (isinstance(ans, bool) and ans)
-                        btn_sel = "./parent::*//button[@data-option='yes']" if want_yes else "./parent::*//button[@data-option='no']"
-                        target_btn = loc.locator(f"xpath={btn_sel}").first
-                        if target_btn.count() > 0:
-                            target_btn.click(force=True, timeout=800)
-                            filled.append(f"{label} = {'Yes' if want_yes else 'No'}")
-                            continue
-                    except Exception:
-                        pass
-                should_check = (ans == "check" or (f.get("required") and ans not in ("uncheck", "no", "false")) or
-                                (isinstance(ans, str) and ans.lower() in ("yes", "true", "check", "agree", "i agree", "accept", "i accept", "acknowledge", "i acknowledge", "consent", "i consent")) or
-                                re.search(r"undergraduate|bachelor|summer 2027|open to anything|applied ai|backend|fullstack|software|new york|san francisco|atlanta|agree|terms|consent|authorize|acknowledge|black or african american", label, re.I))
-                already_checked = False
-                try:
-                    is_invalid = loc.get_attribute("aria-invalid") == "true"
-                    already_checked = (loc.is_checked() or loc.get_attribute("aria-checked") == "true" or f.get("value") == "true") and not is_invalid
-                except Exception:
-                    pass
-                if should_check and not already_checked:
-                    checked_ok = False
-                    # Visual label / container click FIRST (vital for Workday Canvas Kit, React-Select, and custom styled checkboxes)
-                    try:
-                        elem_id = loc.get_attribute("id")
-                        if elem_id:
-                            lbl = target.locator(f"label[for='{elem_id}']").first
-                            if lbl.count() > 0 and lbl.is_visible(timeout=500):
-                                lbl.click(force=True, timeout=800)
-                                checked_ok = True
-                    except Exception:
-                        pass
-                    if not checked_ok:
-                        try:
-                            parent_el = loc.locator("xpath=./ancestor::label[1] | ./ancestor::div[@data-automation-id='checkboxPanel'][1] | ./following-sibling::label[1] | ./parent::*//label | ./ancestor::div[contains(@class, 'checkbox')][1]")
-                            if parent_el.count() > 0:
-                                parent_el.first.click(force=True, timeout=800)
-                                checked_ok = True
-                        except Exception:
-                            pass
-                    if not checked_ok:
-                        try:
-                            loc.check(force=True, timeout=1000)
-                            checked_ok = True
-                        except Exception:
-                            pass
-                    if not checked_ok:
-                        try: loc.click(force=True, timeout=1000)
-                        except Exception: pass
-                    # If native input is still not checked after click, apply prototype setter
-                    try:
-                        is_now_checked = loc.is_checked()
-                    except Exception:
-                        is_now_checked = False
-                    if not is_now_checked:
-                        try:
-                            loc.evaluate("""e => {
-                                if (e) {
-                                    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'checked')?.set;
-                                    if (setter) { setter.call(e, true); }
-                                    else { e.checked = true; }
-                                    e.dispatchEvent(new Event('input', {bubbles: true}));
-                                    e.dispatchEvent(new Event('change', {bubbles: true}));
-                                }
-                            }""")
-                        except Exception:
-                            pass
-                elif ans in ("uncheck", "no", "false") and f["value"] == "true":
-                    unchecked_ok = False
-                    try:
-                        loc.uncheck(timeout=1000)
-                        unchecked_ok = True
-                    except Exception:
-                        pass
-                    if not unchecked_ok:
-                        try:
-                            parent_el = loc.locator("xpath=./ancestor::label[1] | ./ancestor::div[@data-automation-id='checkboxPanel'][1] | ./parent::*")
-                            if parent_el.count() > 0:
-                                parent_el.first.click(timeout=1000)
-                                unchecked_ok = True
-                        except Exception:
-                            pass
-                    if not unchecked_ok:
-                        try: loc.click(force=True, timeout=1000)
-                        except Exception: pass
-                else: continue
+            if f["type"] == "checkbox":
+                ok = _fill_checkbox(c)
             elif f["tag"] == "select":
-                opt = pick_option(f["options"], rule, label=label)
-                if not opt: unanswered.append(f); continue
-                try:
-                    raw = target.evaluate('(id)=>{ const el = document.querySelector(`[data-af-id="${id}"]`); return el && el.options ? [...el.options].map(o=>o.text) : []; }', f["id"])
-                except Exception:
-                    raw = []
-                matched = next((o for o in raw if " ".join(o.split()).lower() == opt.lower()), opt)
-                sel_done = False
-                try:
-                    loc.select_option(label=matched, timeout=1200)
-                    sel_done = True
-                except Exception:
-                    pass
-                if not sel_done:
-                    try:
-                        loc.select_option(value=opt, timeout=1200)
-                        sel_done = True
-                    except Exception:
-                        pass
-                if not sel_done:
-                    try:
-                        target.evaluate('''([id, opt]) => {
-                            const el = document.querySelector(`[data-af-id="${id}"]`);
-                            if (el) {
-                                const m = opt.toLowerCase();
-                                for (let i = 0; i < el.options.length; i++) {
-                                    const t = el.options[i].text.toLowerCase();
-                                    const v = el.options[i].value.toLowerCase();
-                                    if (t === m || v === m || t.includes(m) || v.includes(m)) {
-                                        el.selectedIndex = i;
-                                        el.dispatchEvent(new Event("change", { bubbles: true }));
-                                        el.dispatchEvent(new Event("input", { bubbles: true }));
-                                        break;
-                                    }
-                                }
-                            }
-                        }''', [f["id"], opt])
-                    except Exception:
-                        pass
+                ok = _fill_select(c)
             elif f["type"] == "radio":
-                opt = pick_option(f["options"], rule, label=label)
-                if not opt: unanswered.append(f); continue
-                idx = f["options"].index(opt)
-                r_id = f["ids"][idx]
-                try:
-                    target.locator(f'[data-af-id="{r_id}"]').check(force=True, timeout=1200)
-                except Exception:
-                    try:
-                        target.locator(f'[data-af-id="{r_id}"]').click(force=True, timeout=1200)
-                    except Exception:
-                        try:
-                            target.evaluate(f'(id) => {{ const el = document.querySelector(`[data-af-id="${{id}}"]`); if (el) {{ el.checked = true; el.dispatchEvent(new Event("change", {{ bubbles: true }})); el.dispatchEvent(new Event("input", {{ bubbles: true }})); }} }}', r_id)
-                        except Exception:
-                            pass
+                ok = _fill_radio(c)
             elif f["type"] == "yesno":
-                opt = pick_option(f["options"], rule, label=label)
-                if not opt: unanswered.append(f); continue
-                yn_id = f["ids"][f["options"].index(opt)]
-                try:
-                    target.locator(f'[data-af-id="{yn_id}"]').click(timeout=1200)
-                except Exception:
-                    try:
-                        target.locator(f'[data-af-id="{yn_id}"]').click(force=True, timeout=1200)
-                    except Exception:
-                        try:
-                            target.evaluate(f'(id) => {{ const el = document.querySelector(`[data-af-id="${{id}}"]`); if (el) {{ el.click(); }} }}', yn_id)
-                        except Exception:
-                            pass
+                ok = _fill_yesno(c)
             elif f["type"] == "listbox":
-                root = target.page if hasattr(target, "page") else target
-                # Wait for any closing popup from previous question to finish closing
-                try:
-                    closing_lb = root.locator("div[visibility='closing'], [visibility='closing']")
-                    if closing_lb.count() > 0:
-                        closing_lb.first.wait_for(state="detached", timeout=800)
-                except Exception:
-                    pass
-                try:
-                    # Clean up any lingering closing popup divs from previous listbox selections
-                    page.evaluate("() => document.querySelectorAll('[visibility=\"closing\"]').forEach(e => e.remove())")
-                except Exception:
-                    pass
-                try:
-                    loc.evaluate("e => e.scrollIntoView({ block: 'center' })")
-                    time.sleep(0.3)
-                except Exception:
-                    pass
-                opened = False
-                try:
-                    is_btn = loc.evaluate("e => e.tagName === 'BUTTON' || e.getAttribute('role') === 'button' || e.hasAttribute('aria-haspopup')")
-                    if is_btn and loc.is_visible():
-                        loc.click(timeout=1500)
-                        opened = True
-                except Exception:
-                    pass
-                if not opened:
-                    try:
-                        wd_btn = loc.locator('xpath=./parent::*//button[@aria-haspopup="listbox"]').first
-                        if wd_btn.count() > 0 and wd_btn.is_visible():
-                            wd_btn.click(timeout=1500)
-                            opened = True
-                    except Exception:
-                        pass
-                if not opened:
-                    try:
-                        loc.click(timeout=1500)
-                        opened = True
-                    except Exception:
-                        pass
-                if not opened:
-                    try:
-                        box = loc.bounding_box()
-                        if box:
-                            page.mouse.click(box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
-                            opened = True
-                    except Exception:
-                        pass
-                if not opened:
-                    try:
-                        loc.evaluate("e => e.click()")
-                    except Exception:
-                        pass
-                time.sleep(0.4)
-                # If listbox didn't open from clicking button, try clicking the dropdown caret icon or keyboard
-                active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
-                try:
-                    if active_lb.count() == 0 or not active_lb.is_visible(timeout=400):
-                        caret = loc.locator('xpath=./following-sibling::span[contains(@class, "menu-icon")] | ./parent::*//span[contains(@class, "menu-icon")] | ./following-sibling::*//svg').first
-                        if caret.count() > 0 and caret.is_visible():
-                            caret.click(timeout=1000)
-                            time.sleep(0.4)
-                            active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
-                except Exception:
-                    pass
-                try:
-                    if active_lb.count() == 0 or not active_lb.is_visible(timeout=300):
-                        loc.press("Space")
-                        time.sleep(0.3)
-                        active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
-                except Exception:
-                    pass
-                try:
-                    if active_lb.count() == 0 or not active_lb.is_visible(timeout=300):
-                        loc.press("ArrowDown")
-                        time.sleep(0.3)
-                        active_lb = root.locator("div:not([visibility='closing']) > ul[role='listbox']:not([data-automation-id='selectedItemList']), div[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']), [role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing'])").last
-                except Exception:
-                    pass
-                opt_pat = str(rule["option"]) if isinstance(rule.get("option"), str) and rule["option"] else re.escape(str(ans))
-                # Search visible options across page, strictly excluding closing popups and already-selected item pills
-                try:
-                    if active_lb.count() > 0 and active_lb.is_visible(timeout=800):
-                        opts = active_lb.locator("[role='option']:not([aria-disabled='true']):not([id*='pill'])")
-                    else:
-                        opts = root.locator("[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']) [role='option']:not([aria-disabled='true']):not([visibility='closing'] *), [data-automation-id='menuItem']:not([data-automation-id*='selectedItem'] *):not([visibility='closing'] *), [data-automation-id='promptOption']:not([data-automation-id*='selectedItem'] *):not([id*='pill']):not([visibility='closing'] *), [role='option']:not([id*='pill']):not([data-automation-id*='selectedItem']):not([data-automation-id='selectedItemList'] *):not([visibility='closing'] *)")
-                except Exception:
-                    opts = root.locator("[role='listbox']:not([data-automation-id='selectedItemList']):not([visibility='closing']) [role='option']:not([aria-disabled='true']):not([visibility='closing'] *), [data-automation-id='menuItem']:not([data-automation-id*='selectedItem'] *):not([visibility='closing'] *), [data-automation-id='promptOption']:not([data-automation-id*='selectedItem'] *):not([id*='pill']):not([visibility='closing'] *), [role='option']:not([id*='pill']):not([data-automation-id*='selectedItem']):not([data-automation-id='selectedItemList'] *):not([visibility='closing'] *)")
-                try:
-                    opts.first.wait_for(state="visible", timeout=1000)
-                except Exception:
-                    pass
-                clicked = False
-                # Direct check on rule-specified option regex
-                if isinstance(rule.get("option"), str) and rule["option"]:
-                    try:
-                        pat_re = re.compile(rule["option"], re.I)
-                        target_opt = opts.filter(has_text=pat_re).first
-                        if target_opt.count() > 0:
-                            try: target_opt.scroll_into_view_if_needed(timeout=600)
-                            except Exception: pass
-                            target_opt.click(force=True, timeout=1200)
-                            clicked = True
-                    except Exception:
-                        pass
-                is_yesno = str(ans).strip().lower() in ("yes", "no")
-                if not clicked and is_yesno:
-                    try:
-                        target_opt = opts.filter(has_text=re.compile(rf"\b{ans}\b", re.I)).first
-                        if target_opt.count() > 0:
-                            try: target_opt.scroll_into_view_if_needed(timeout=600)
-                            except Exception: pass
-                            target_opt.click(force=True, timeout=1200)
-                            clicked = True
-                    except Exception:
-                        pass
-                if not clicked and is_yesno and OPTS:
-                    try:
-                        yn_pat = OPTS.YES if str(ans).strip().lower() == "yes" else OPTS.NO
-                        target_opt = opts.filter(has_text=yn_pat).first
-                        if target_opt.count() > 0:
-                            try: target_opt.scroll_into_view_if_needed(timeout=600)
-                            except Exception: pass
-                            target_opt.click(force=True, timeout=1200)
-                            clicked = True
-                    except Exception:
-                        pass
-                if not clicked and is_yesno:
-                    for sel in ("[role='option']", "[data-automation-id='promptOption']", "[data-automation-id='menuItem']", "div[role='listbox'] div", "ul[role='listbox'] li"):
-                        try:
-                            candidate = root.locator(sel).filter(has_text=re.compile(rf"^\s*{ans}\s*$", re.I)).last
-                            if candidate.count() == 0 or not candidate.is_visible(timeout=200):
-                                candidate = page.locator(sel).filter(has_text=re.compile(rf"^\s*{ans}\s*$", re.I)).last
-                            if candidate.count() == 0 or not candidate.is_visible(timeout=200):
-                                candidate = page.locator(sel).filter(has_text=re.compile(rf"\b{ans}\b", re.I)).last
-                            if candidate.count() > 0 and candidate.is_visible(timeout=400):
-                                candidate.click(force=True)
-                                clicked = True
-                                break
-                        except Exception:
-                            pass
-                if not clicked and OPTS:
-                    # read ALL options at once (Workday's country list has 250; the old loop saw only the first 100,
-                    # missed "United States" and clicked "Aland Islands"), then type-ahead if still not found
-                    for attempt in range(2):
-                        try:
-                            texts = [" ".join(t.split()) for t in opts.all_inner_texts()]
-                            texts = [t for t in texts if t and not OPTS.PLACEHOLDER.search(t)]
-                        except Exception:
-                            texts = []
-                        if not texts and attempt == 0:
-                            time.sleep(0.4)
-                            try:
-                                texts = [" ".join(t.split()) for t in opts.all_inner_texts()]
-                                texts = [t for t in texts if t and not OPTS.PLACEHOLDER.search(t)]
-                            except Exception:
-                                texts = []
-                        r = OPTS.resolve(label, ans, texts, rule.get("option")) if texts else None
-                        if r:
-                            # the same text can exist in hidden lists elsewhere on the page: click the visible copy
-                            idxs = [k for k, t in enumerate(texts) if t == r]
-                            o = next((opts.nth(k) for k in idxs if opts.nth(k).is_visible()), opts.nth(idxs[0]))
-                            try: o.scroll_into_view_if_needed(timeout=2000)
-                            except Exception: pass
-                            try: o.click(timeout=2000)
-                            except Exception: o.click(force=True)
-                            clicked, ans = True, r
-                            break
-                        if attempt == 0 and not is_yesno:
-                            cat, _ = OPTS.fact_category(label)
-                            if cat in ("school", "country", "country_code", "state", "major", "degree") or re.search(r"country\s*code|phone\s*country", label, re.I):
-                                type_txt = "United States" if re.search(r"country\s*code|phone\s*country", label, re.I) else re.sub(r"\s*\(.*?\)", "", str(ans)).strip()[:30]
-                                page.keyboard.type(type_txt, delay=40)
-                                time.sleep(0.6)
-                for i in range(0 if clicked else min(opts.count(), 300)):
-                    o = opts.nth(i)
-                    try:
-                        if o.is_visible():
-                            txt = o.inner_text().strip()
-                            if re.search(r"no\s+(?:results|options|matches|records)|loading\.*|searching\.*", txt, re.I):
-                                continue
-                            if re.search(opt_pat, txt, re.I) or (str(ans).lower() in ("yes", "no") and (re.search(rf"^\s*{ans}\s*$", txt, re.I) or (OPTS and (OPTS.YES if str(ans).lower() == "yes" else OPTS.NO).search(txt)))):
-                                o.click(force=True)
-                                clicked = True
-                                break
-                    except Exception:
-                        pass
-                if not clicked and is_yesno:
-                    # Final safety type-ahead for yes/no combobox
-                    try:
-                        prev_txt = loc.inner_text(timeout=400) if loc else ""
-                        page.keyboard.type(str(ans).capitalize(), delay=30)
-                        time.sleep(0.4)
-                        page.keyboard.press("Enter")
-                        time.sleep(0.3)
-                        new_txt = loc.inner_text(timeout=400) if loc else ""
-                        if new_txt and new_txt != prev_txt and not re.search(r"select|choose", new_txt, re.I):
-                            clicked = True
-                    except Exception:
-                        pass
-                if not clicked and RE and RE.should_block(label):
-                    # sensitive question and the rule's answer isn't offered: decline if possible, never guess
-                    for i in range(min(opts.count(), 100)):
-                        o = opts.nth(i)
-                        try:
-                            if o.is_visible() and RE.EEO_RE.search(label) and RE.DECLINE_RE.search(o.inner_text()):
-                                o.click(force=True); clicked = True; ans = o.inner_text().strip(); break
-                        except Exception:
-                            pass
-                    if not clicked:
-                        RE.SENSITIVE_HITS.append(label[:120])
-                        page.keyboard.press("Escape")
-                        unanswered.append({**f, "error": "sensitive question - not guessing"})
-                        continue
-                if not clicked:
-                    PICK_GUESSED.add(label)
-                    # Smart option fallback for EEO/gender or non-empty options
-                    for i in range(min(opts.count(), 100)):
-                        o = opts.nth(i)
-                        try:
-                            if o.is_visible():
-                                txt = o.inner_text().strip()
-                                if re.search(r"decline|prefer not|choose not|not wish|don'?t wish", txt, re.I):
-                                    o.click(force=True)
-                                    clicked = True
-                                    ans = txt
-                                    break
-                        except Exception:
-                            pass
-                fact_like = bool(OPTS and OPTS.fact_category(label)[0]) or re.search(r"country|territory|phone code|state|province", label, re.I)
-                sensitive = bool(RE and (RE.should_block(label) or RE.EEO_RE.search(label)))
-                if not clicked and f.get("required") and not fact_like and not is_yesno and not sensitive:  # never click first option for sensitive/country/state/yes-no
-                    for i in range(min(opts.count(), 100)):
-                        o = opts.nth(i)
-                        try:
-                            if o.is_visible():
-                                txt = o.inner_text().strip()
-                                if txt and not re.search(r"select|choose|--|^please", txt, re.I):
-                                    o.click(force=True)
-                                    clicked = True
-                                    ans = txt
-                                    break
-                        except Exception:
-                            pass
-                if not clicked and is_yesno:
-                    # Final direct locator fallback for Yes/No (prefer visible options over hidden ones from earlier questions)
-                    try:
-                        yn_pat = OPTS.YES if (OPTS and str(ans).strip().lower() == "yes") else (OPTS.NO if OPTS else re.compile(rf"^\s*{ans}\s*$", re.I))
-                        yn_candidates = root.locator("[role='option'], [data-automation-id='promptOption'], button[role='radio']").filter(has_text=yn_pat)
-                        for c_idx in range(min(yn_candidates.count(), 10)):
-                            cand = yn_candidates.nth(c_idx)
-                            try:
-                                if cand.is_visible():
-                                    opt_txt = cand.inner_text().strip()
-                                    if not re.search(r"no\s+(?:results|options|matches|records)", opt_txt, re.I):
-                                        cand.click(force=True)
-                                        clicked = True
-                                        break
-                            except Exception:
-                                pass
-                    except Exception:
-                        pass
-                if not clicked and is_yesno:
-                    # Final keyboard selection for select/combobox buttons (e.g. Workday Canvas Kit)
-                    try:
-                        loc.focus()
-                        time.sleep(0.1)
-                        loc.press("Space")
-                        time.sleep(0.25)
-                        key_to_press = "y" if str(ans).strip().lower() == "yes" else "n"
-                        page.keyboard.press(key_to_press)
-                        time.sleep(0.2)
-                        page.keyboard.press("Enter")
-                        time.sleep(0.2)
-                        btn_txt = loc.inner_text(timeout=300).strip()
-                        if btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", btn_txt, re.I):
-                            clicked = True
-                    except Exception:
-                        pass
-                    if not clicked:
-                        try:
-                            loc.focus()
-                            time.sleep(0.1)
-                            loc.press("ArrowDown")
-                            time.sleep(0.2)
-                            if str(ans).strip().lower() == "no":
-                                loc.press("ArrowDown")
-                                time.sleep(0.15)
-                            loc.press("Enter")
-                            time.sleep(0.25)
-                            btn_txt = loc.inner_text(timeout=300).strip()
-                            if btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", btn_txt, re.I):
-                                clicked = True
-                        except Exception:
-                            pass
-                if not clicked and not is_yesno:
-                    try:
-                        clean_txt = re.sub(r"\s*\(.*?\)", "", str(ans)).strip()
-                        loc.focus()
-                        time.sleep(0.1)
-                        loc.press("Space")
-                        time.sleep(0.25)
-                        page.keyboard.type(clean_txt, delay=35)
-                        time.sleep(0.4)
-                        page.keyboard.press("Enter")
-                        time.sleep(0.4)
-                        btn_txt = loc.inner_text(timeout=300).strip()
-                        if btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", btn_txt, re.I):
-                            clicked = True
-                        else:
-                            page.keyboard.press("Escape")
-                    except Exception:
-                        pass
-                if not clicked:
-                    # Check if the button itself already displays the chosen answer or a non-placeholder value
-                    try:
-                        cur_btn_txt = loc.inner_text(timeout=300).strip()
-                        if cur_btn_txt and not re.search(r"^\s*(?:select|choose|--|please)\b", cur_btn_txt, re.I):
-                            clicked = True
-                    except Exception:
-                        pass
-                if not clicked:
-                    unanswered.append({**f, "error": "could not select listbox option"})
-                    continue
+                ok = _fill_listbox(c)
             else:
-                val = str(ans)
-                # Smart subfield value normalization for split date inputs (e.g. Workday * Month, * Day, * Year)
-                lab_low = label.lower()
-                now = datetime.datetime.now()
-                is_today_field = bool(re.search(r"today|signature|current\s*date|enter\s*today'?s\s*date|^date\b|^\*?\s*date\b", lab_low)) and not bool(re.search(r"birth|dob|graduat|start|end|from|to|prior|previous", lab_low))
-                is_date_field = bool(re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b|^(?:start|end|from|to)\b|(?:\bfrom|\bto)\s*(?:date|month|year|\*|:)?$", lab_low)) or is_today_field or f.get("type") == "date"
-                if re.search(r"^\s*today'?s\s*date|^\s*date\s*$", lab_low) or val == "TODAY":
-                    val = now.strftime("%m/%d/%Y")
-                elif is_date_field and re.search(r"\bday\b", lab_low) and not re.search(r"\b(birthday|workday|everyday|holiday)\b|day-to-day|day to day|per day|days of|days per|how many days", lab_low):
-                    if is_today_field or val == "TODAY_DAY":
-                        val = f"{now.day:02d}"
-                    elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", val):
-                        parts = val.split("/")
-                        val = parts[1] if len(parts) > 1 else "01"
-                    elif val.isdigit() and len(val) > 2:
-                        val = "01"
-                elif is_date_field and re.search(r"\bmonth\b", lab_low) and not re.search(r"year|how many months|months of experience|per month|a month|hours per", lab_low):
-                    m_map = {"jan": "01", "feb": "02", "mar": "03", "apr": "04", "may": "05", "jun": "06", "jul": "07", "aug": "08", "sep": "09", "oct": "10", "nov": "11", "dec": "12"}
-                    converted_m = None
-                    for mn_prefix, mn_digit in m_map.items():
-                        if mn_prefix in val.lower():
-                            converted_m = mn_digit
-                            break
-                    if converted_m:
-                        val = converted_m
-                    elif is_today_field or val == "TODAY_MONTH":
-                        val = f"{now.month:02d}"
-                    elif re.search(r"\d{1,2}/\d{1,2}/\d{4}", val):
-                        val = val.split("/")[0]
-                        if len(val) == 1: val = f"0{val}"
-                elif is_date_field and re.search(r"\byear\b", lab_low) and not re.search(r"month|years? of experience|how many years", lab_low):
-                    if is_today_field or val == "TODAY_YEAR":
-                        val = str(now.year)
-                    else:
-                        m_yr = re.search(r"\b(20\d\d)\b", val)
-                        if m_yr:
-                            val = m_yr.group(1)
-                        else:
-                            val = "2027"
-                if is_date_field and not re.search(r"\b(day|month|year)\b", lab_low):
-                    ph = (f.get("placeholder") or "").lower()
-                    m_my = re.search(r"([A-Za-z]+)\s+(20\d\d)", val)
-                    m_slash = re.search(r"(\d{1,2})/(?:(\d{1,2})/)?(20\d\d)", val)
-                    m_num = None
-                    y_num = None
-                    d_num = "01"
-                    if m_my:
-                        m_str, y_num = m_my.group(1).lower(), m_my.group(2)
-                        for k_m, v_tuple in MONTHS_MAP.items():
-                            if m_str in v_tuple:
-                                m_num = int(k_m)
-                                break
-                    elif m_slash:
-                        m_num = int(m_slash.group(1))
-                        d_num = f"{int(m_slash.group(2)):02d}" if m_slash.group(2) else "01"
-                        y_num = m_slash.group(3)
-
-                    if m_num and y_num:
-                        if f.get("type") == "date":
-                            val = f"{y_num}-{m_num:02d}-{d_num}"
-                        elif ("mm/yy" in ph or "mm/yyyy" in ph) and "dd" not in ph:
-                            val = f"{m_num:02d}/{y_num}"
-                        elif "dd" in ph or "mm/dd/yyyy" in ph or re.search(r"date", lab_low):
-                            val = f"{m_num:02d}/{d_num}/{y_num}"
-
-                if re.search(r"\bend\s*date\b", lab_low) and val.lower() == "present":
-                    ph = (f.get("placeholder") or "").lower()
-                    if "yyyy" in ph or "mm/dd" in ph or f.get("type") == "date":
-                        val = now.strftime("%m/%d/%Y" if "dd" in ph else "%m/%Y")
-                if re.search(r"salary|compensation|pay|rate", lab_low) and val.lower() == "open":
-                    if f.get("type", "").lower() in ("number", "numeric") or "annual" in lab_low:
-                        val = "60000"
-                if f.get("type", "").lower() in ("number", "numeric"):
-                    if not val.strip().isdigit():
-                        digits = re.findall(r"\d+", val)
-                        if digits:
-                            val = "10" if re.search(r"scale|rate|rating|1[\s\-–to]+10", lab_low) else digits[0]
-                        else:
-                            val = "10" if re.search(r"scale|rate|rating|1[\s\-–to]+10", lab_low) else "0"
-                if f.get("type", "").lower() == "url" or lab_low.strip() in ("link", "url", "website", "portfolio"):
-                    if not val.startswith("http"):
-                        val = os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com")
-                if re.search(r"phone|mobile|cell", lab_low) and not re.search(r"code|country|dial|device", lab_low):
-                    ph = (f.get("placeholder") or "").lower()
-                    raw_phone = re.sub(r"\D", "", os.getenv("CANDIDATE_PHONE", val))
-                    if (escalate or "-" in ph or "(" in ph or "dash" in ph) and len(raw_phone) == 10:
-                        val = f"{raw_phone[:3]}-{raw_phone[3:6]}-{raw_phone[6:]}"
-
-                if f["combobox"]:
-                    if re.match(r"^\+?\d{7,15}$", val.strip()) and re.search(r"phone|country|device|dial", label, re.I):
-                        val = "United States (+1)"
-                        rule = {"a": "United States (+1)", "option": "^(?:United States|USA|US|\\+1)\\b"}
-                    chosen = pick_prompt_option(page, target, loc, val, rule, label=label, escalate=escalate)
-                    if not chosen and f.get("tag") in ("input", "textarea"):
-                        # Fallback for datepicker / text input with aria-haspopup (e.g. calendar dialog)
-                        is_date_field = "date" in lab_low or "date" in (f.get("placeholder") or "").lower() or f.get("type") == "date"
-                        if is_date_field:
-                            try:
-                                loc.click(timeout=800)
-                                loc.fill("", timeout=400)
-                                loc.press_sequentially(val, delay=25)
-                                loc.press("Tab")
-                                chosen = val
-                            except Exception:
-                                pass
-                        if not chosen:
-                            try:
-                                loc.fill(val, timeout=1200)
-                                loc.dispatch_event("blur")
-                                chosen = val
-                            except Exception:
-                                try:
-                                    loc.click(timeout=800)
-                                    loc.press_sequentially(val, delay=25)
-                                    loc.press("Tab")
-                                    chosen = val
-                                except Exception:
-                                    try:
-                                        loc.evaluate("""(e, v) => {
-                                            e.removeAttribute('readonly');
-                                            const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-                                            if (setter) { setter.call(e, v); } else { e.value = v; }
-                                            e.dispatchEvent(new Event('input', { bubbles: true }));
-                                            e.dispatchEvent(new Event('change', { bubbles: true }));
-                                            e.dispatchEvent(new Event('blur', { bubbles: true }));
-                                        }""", val)
-                                        chosen = val
-                                    except Exception:
-                                        pass
-                    if not chosen:
-                        unanswered.append({**f, "error": "could not select an option"}); continue
-                    ans = chosen
-                else:
-                    filled_ok = False
-                    if re.search(r"\b(day|month|year)\b", lab_low):
-                        try:
-                            loc.click(timeout=1000)
-                            try:
-                                loc.fill(val, timeout=800)
-                            except Exception:
-                                loc.fill("", timeout=400)
-                                loc.press_sequentially(val, delay=30)
-                            loc.press("Tab")
-                            filled_ok = True
-                        except Exception:
-                            pass
-                    if not filled_ok:
-                        try:
-                            loc.fill(val, timeout=1500)
-                            filled_ok = True
-                        except Exception:
-                            try:
-                                loc.fill(val, force=True, timeout=1500)
-                                filled_ok = True
-                            except Exception:
-                                pass
-                    if not filled_ok:
-                        try:
-                            loc.evaluate("""(e, v) => {
-                                e.removeAttribute('readonly');
-                                const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-                                if (setter) { setter.call(e, v); } else { e.value = v; }
-                                e.dispatchEvent(new Event('input', { bubbles: true }));
-                                e.dispatchEvent(new Event('change', { bubbles: true }));
-                                e.dispatchEvent(new Event('blur', { bubbles: true }));
-                            }""", val)
-                            filled_ok = True
-                        except Exception:
-                            pass
-                    try: loc.dispatch_event("blur")
-                    except Exception: pass
+                ok = _fill_text(c)
+            if not ok:
+                continue
+            ans = c.ans
             filled.append(f"{label[:60]} = {ans}")
             if RE:
-                RE.record_answer(label, ans, "guess" if (src == "rule" and label in PICK_GUESSED) else src)
+                RE.record_answer(label, ans, "guess" if (c.src == "rule" and label in PICK_GUESSED) else c.src)
             time.sleep(0.15)
         except Exception as e:  # keep going; report
             unanswered.append({**f, "error": str(e)[:120]})
@@ -1673,13 +1775,7 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
         print("\n(Voluntary EEO questions left for you: " + "; ".join(s[:40] for s in optional_skipped) + ")")
     if unanswered or needs_you:
         p = HERE / "unanswered.json"
-        try:
-            from tools.file_lock import FileLock
-            u_lock = FileLock(p)
-        except Exception:
-            from contextlib import nullcontext
-            u_lock = nullcontext()
-        with u_lock:
+        with FileLock(p):
             data = []
             if p.exists() and p.stat().st_size > 0:
                 try:
@@ -1697,75 +1793,81 @@ def log_applied(url, company, role, resume, job_url=None):
     target_url = job_url or url
     path = ROOT / "applications.csv"
     try:
-        from tools.file_lock import FileLock
-        csv_lock = FileLock(path)
-    except Exception:
-        from contextlib import nullcontext
-        csv_lock = nullcontext()
-
-    with csv_lock:
-        try:
-            raw_rows = list(csv.DictReader(open(path, encoding="utf-8-sig")))
-            cols = [c.lstrip("\ufeff") for c in raw_rows[0].keys()] if raw_rows else []
-            rows = [{k.lstrip("\ufeff"): v for k, v in r.items()} for r in raw_rows]
-            today = datetime.date.today().isoformat()
-            host = re.sub(r"^https?://", "", target_url).split("?")[0][:60]
-            hit = None
-            for r in rows:
-                same_co = bool(company and r.get("Company", "").strip().lower() == company.strip().lower())
-                url_matches = False
-                r_u = ""
-                t_u = ""
-                if r.get("Job URL") and target_url:
-                    r_u = re.sub(r"^https?://", "", r["Job URL"]).split("?")[0].strip().rstrip("/")
-                    t_u = re.sub(r"^https?://", "", target_url).split("?")[0].strip().rstrip("/")
-                    if r_u and t_u and (r_u == t_u or r_u in t_u or t_u in r_u):
-                        if "completed" not in r_u.lower() and "jobtasks" not in r_u.lower():
-                            url_matches = True
-
-                role_matches = False
-                if role and r.get("Role"):
-                    r_role = r["Role"].strip().lower()
-                    t_role = role.strip().lower()
-                    r_clean = re.sub(r"\[.*?\]|\(.*?\)", "", r_role).strip()
-                    t_clean = re.sub(r"\[.*?\]|\(.*?\)", "", t_role).strip()
-                    role_matches = (r_clean == t_clean) or (r_clean in t_clean and abs(len(r_clean) - len(t_clean)) < 8)
-
-                if url_matches:
-                    hit = r
-                    break
-                if same_co and role_matches:
-                    # If both have URLs that clearly point to different job postings, do not treat as same role
-                    if not (r_u and t_u and r_u != t_u and len(r_u) > 15 and len(t_u) > 15):
-                        hit = r
-                        break
-
-            if hit is None:
-                hit = {c: "" for c in cols}
-                hit["ID"] = str(len(rows) + 1)
-                hit["Company"] = company or host.split("/")[0]
-                hit["Role"] = role or ""
-                rows.append(hit)
-            applied_url = target_url if target_url and "completed" not in target_url.lower() else (hit["Job URL"] or target_url)
-            hit.update({"Stage": "Applied", "Date Applied": today, "Job URL": applied_url,
-                        "Resume Version": resume.name if resume else hit.get("Resume Version", ""),
-                        "Next Action": "Watch email for confirmation; find 1-2 contacts", "Next Action Date": today})
-            for attempt in range(10):
-                try:
-                    w = csv.DictWriter(open(path, "w", newline="", encoding="utf-8"), fieldnames=cols, extrasaction="ignore")
-                    w.writeheader()
-                    w.writerows(rows)
-                    break
-                except OSError:
-                    time.sleep(0.05 * (attempt + 1))
-            print(f"Logged as Applied in applications.csv: {hit['Company']} - {hit['Role']}")
-        except Exception as e:
-            print(f"[Log Applied Error] {e}")
+        with FileLock(path):
+            _upsert_applied_row(path, target_url, company, role, resume)
+    except Exception as e:  # the submission already happened: never lose the results.csv row below
+        print(f"[Log Applied Error] {e}")
     if RE:
         try:
             RE.ledger_add(company or "Unknown", role or "Unknown", target_url, "submitted")
         except Exception:
             pass
+
+
+def _upsert_applied_row(path, target_url, company, role, resume):
+    with open(path, encoding="utf-8-sig") as rf:
+        reader = csv.DictReader(rf)
+        raw_rows = list(reader)
+        cols = [c.lstrip("\ufeff") for c in (reader.fieldnames or [])]
+    if not cols:
+        raise RuntimeError("applications.csv has no header; refusing to overwrite it")
+    rows = [{k.lstrip("\ufeff"): v for k, v in r.items()} for r in raw_rows]
+    today = datetime.date.today().isoformat()
+    host = re.sub(r"^https?://", "", target_url).split("?")[0][:60]
+    hit = None
+    for r in rows:
+        same_co = bool(company and r.get("Company", "").strip().lower() == company.strip().lower())
+        url_matches = False
+        r_u = ""
+        t_u = ""
+        if r.get("Job URL") and target_url:
+            r_u = re.sub(r"^https?://", "", r["Job URL"]).split("?")[0].strip().rstrip("/")
+            t_u = re.sub(r"^https?://", "", target_url).split("?")[0].strip().rstrip("/")
+            if r_u and t_u and (r_u == t_u or r_u in t_u or t_u in r_u):
+                if "completed" not in r_u.lower() and "jobtasks" not in r_u.lower():
+                    url_matches = True
+
+        role_matches = False
+        if role and r.get("Role"):
+            r_role = r["Role"].strip().lower()
+            t_role = role.strip().lower()
+            r_clean = re.sub(r"\[.*?\]|\(.*?\)", "", r_role).strip()
+            t_clean = re.sub(r"\[.*?\]|\(.*?\)", "", t_role).strip()
+            role_matches = (r_clean == t_clean) or (r_clean in t_clean and abs(len(r_clean) - len(t_clean)) < 8)
+
+        if url_matches:
+            hit = r
+            break
+        if same_co and role_matches:
+            # If both have URLs that clearly point to different job postings, do not treat as same role
+            if not (r_u and t_u and r_u != t_u and len(r_u) > 15 and len(t_u) > 15):
+                hit = r
+                break
+
+    if hit is None:
+        hit = {c: "" for c in cols}
+        hit["ID"] = str(len(rows) + 1)
+        hit["Company"] = company or host.split("/")[0]
+        hit["Role"] = role or ""
+        rows.append(hit)
+    applied_url = target_url if target_url and "completed" not in target_url.lower() else (hit["Job URL"] or target_url)
+    hit.update({"Stage": "Applied", "Date Applied": today, "Job URL": applied_url,
+                "Resume Version": resume.name if resume else hit.get("Resume Version", ""),
+                "Next Action": "Watch email for confirmation; find 1-2 contacts", "Next Action Date": today})
+    tmp = path.with_name(path.name + ".tmp")
+    for attempt in range(10):
+        try:
+            with open(tmp, "w", newline="", encoding="utf-8") as wf:
+                w = csv.DictWriter(wf, fieldnames=cols, extrasaction="ignore")
+                w.writeheader()
+                w.writerows(rows)
+            os.replace(tmp, path)
+            break
+        except OSError:
+            time.sleep(0.05 * (attempt + 1))
+    else:
+        raise OSError(f"could not write {path.name}")
+    print(f"Logged as Applied in applications.csv: {hit['Company']} - {hit['Role']}")
 
 
 NAV_JS = r"""

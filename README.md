@@ -171,7 +171,7 @@ Open `.env` and fill in your candidate details (`CANDIDATE_FULL_NAME`, `CANDIDAT
 
 ```
 ├── fill.py, auth_manager.py, waits.py     Browser automation & adaptive waits
-├── batch_apply.py, daily_run.py            Pipeline orchestration runners
+├── batch_apply_parallel.py, daily_run.py         Pipeline orchestration runners
 ├── results_engine.py, strategy.json        Fit scoring, thresholds & safety gates
 ├── profile.example.json                    Template for 440+ canonical ATS regex rules
 ├── outcomes.py, account_verifier.py        Inbox reading & dynamic OTP verification

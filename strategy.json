@@ -1,7 +1,15 @@
 {
   "min_fit_score": 4.0,
   "daily_cap": 3000,
-  "ats_timeouts": {"workday": 480, "successfactors": 420, "icims": 360, "taleo": 420, "greenhouse": 300, "ashby": 300, "smartrecruiters": 300},
+  "ats_timeouts": {
+    "workday": 480,
+    "successfactors": 420,
+    "icims": 360,
+    "taleo": 420,
+    "greenhouse": 300,
+    "ashby": 300,
+    "smartrecruiters": 300
+  },
   "block_sensitive_guesses": true,
   "max_auth_failures_per_site": 1,
   "max_failures_per_site_per_run": 5,
@@ -21,7 +29,6 @@
     "American Express",
     "Jane Street",
     "Goldman Sachs",
-    "Delta",
     "Cox",
     "Invesco",
     "Home Depot",
@@ -105,5 +112,10 @@
     "daily_budget_usd": 3.0,
     "scout_limit_per_run": 150
   },
-  "ai_bonus": 2
+  "ai_bonus": 2,
+  "excluded_companies": [
+    "Delta Air Lines",
+    "Delta Airlines",
+    "Delta Air"
+  ]
 }

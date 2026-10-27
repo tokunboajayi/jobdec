@@ -13,7 +13,7 @@ def test_compiles_without_control_chars(path):
     assert chr(8) not in path.read_text(encoding="utf-8", errors="ignore"), "backspace from a non-raw \\b"
 
 
-@pytest.mark.parametrize("mod", ["results_engine", "waits", "fill", "auth_manager", "batch_apply", "batch_apply_parallel",
+@pytest.mark.parametrize("mod", ["results_engine", "waits", "fill", "auth_manager", "batch_apply_parallel",
                                  "triage", "daily_run", "outcomes", "ai_responder", "agents.llm", "agents.context", "agents.local",
                                  "agents.smarts", "agents.job_scout", "agents.resume_tailor", "agents.form_answerer",
                                  "agents.outreach_drafter", "agents.inbox_analyst", "agents.site_fixer",

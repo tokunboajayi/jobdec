@@ -4,7 +4,7 @@ Orchestrates:
   1. Real-time submission tracking against applications.csv.
   2. Dynamic multi-source job ingestion (GitHub intern repos + ATS APIs).
   3. Triage & Fit scoring into queue_ranked.txt.
-  4. Parallel multi-worker execution via batch_apply.py (--workers N).
+  4. Parallel multi-worker execution via batch_apply_parallel.py (--workers N).
   5. Continuous self-healing & brain auto-tuning.
 """
 import argparse

@@ -56,15 +56,12 @@ class FileLock:
 
                 elapsed = time.time() - start
                 if elapsed >= self.timeout:
-                    # Timeout reached; break and proceed with caution rather than hard-locking
-                    break
+                    raise TimeoutError(f"could not lock {self.lock_path} within {self.timeout}s")
 
                 attempt += 1
                 # Small jittered backoff: 0.02s to 0.1s
                 sleep_time = min(self.delay * (1.2 ** min(attempt, 8)), 0.2)
                 time.sleep(sleep_time)
-
-        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self._fd:

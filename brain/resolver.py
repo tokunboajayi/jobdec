@@ -132,10 +132,10 @@ CANONICAL_RULES: List[Tuple[str, str]] = [
     (r"(?i)how\s+did\s+you\s+(hear|find|learn)", "LinkedIn"),
 
     # Academic & Location Defaults
-    (r"(?i)(name\s+of\s+(?:school|university|institution|college)|^(?:school|university|institution|college)\b|current\s+(?:school|university|institution|college)|what\s+(?:school|university|college))", os.getenv("CANDIDATE_UNIVERSITY", "State University")),
-    (r"(?i)(major|field\s+of\s+study)", os.getenv("CANDIDATE_MAJOR", "Computer Science")),
+    (r"(?i)(name\s+of\s+(?:school|university|institution|college)|^(?:school|university|institution|college)\b|current\s+(?:school|university|institution|college)|what\s+(?:school|university|college))", os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University")),
+    (r"(?i)(major|field\s+of\s+study)", os.getenv("CANDIDATE_MAJOR", "Computer Information Systems")),
     (r"(?i)degree\s+level", os.getenv("CANDIDATE_DEGREE", "Bachelor's")),
-    (r"(?i)(expected\s+)?graduation\s+(date|year)", os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2027")),
+    (r"(?i)(expected\s+)?graduation\s+(date|year)", os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2028")),
     (r"(?i)graduation\s+month", os.getenv("CANDIDATE_EXPECTED_GRAD_MONTH", "May")),
     (r"(?i)desired\s+start\s+date", os.getenv("CANDIDATE_AVAILABLE_START_DATE", "06/01/2027")),
     (r"(?i)start\s+month", "June"),

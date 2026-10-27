@@ -10,9 +10,11 @@ Results engine - shared logic that makes the pipeline aim for interviews, not ju
   5. RESULTS     ledger_add()     results.csv: one row per attempt, used by outcomes.py
 
 Settings: strategy.json (created with defaults on first use; edit it to change behavior).
-Used by triage.py, batch_apply.py, fill.py and outcomes.py.
+Used by triage.py, batch_apply_parallel.py, fill.py and outcomes.py.
 """
-import csv, datetime, json, pathlib, re, time
+import csv, datetime, io, json, os, pathlib, re, time
+
+from tools.file_lock import FileLock
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -118,9 +120,17 @@ def is_protected(company):
     return any(norm(p) and (norm(p) in c or c in norm(p)) for p in strategy()["protected_companies"] if len(norm(p)) > 2)
 
 
+def is_excluded(company, role="", url=""):
+    """AJ 2026-10-26: never apply to / target these companies (hard block)."""
+    text = norm(f"{company} {role} {url}")
+    return any(norm(x) and norm(x) in text for x in strategy().get("excluded_companies", []))
+
+
 def score_job(company, role, url=""):
     """Returns (score 0-10, category, reasons). Score < min_fit_score = skip."""
     s = strategy()
+    if is_excluded(company, role, url):
+        return 0, "ineligible", ["excluded company (AJ)"]
     category, why_out = classify_role(role, url, company)
     if category == "ineligible":
         return 0, category, [why_out]
@@ -270,14 +280,7 @@ def auth_blocked(url):
 
 
 def record_auth(url, ok, note=""):
-    try:
-        from tools.file_lock import FileLock
-        lock_ctx = FileLock(AUTH_STATE_FILE)
-    except Exception:
-        from contextlib import nullcontext
-        lock_ctx = nullcontext()
-
-    with lock_ctx:
+    with FileLock(AUTH_STATE_FILE):
         data = _auth_state()
         st = data.setdefault(site_key(url), {"failures": 0, "successes": 0})
         if ok:
@@ -287,7 +290,7 @@ def record_auth(url, ok, note=""):
             st["failures"] = st.get("failures", 0) + 1
             st["note"] = note or "sign-in failed - sign in by hand / reset password, then delete this entry"
         st["last"] = datetime.datetime.now().isoformat(timespec="seconds")
-        AUTH_STATE_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+        _atomic_write(AUTH_STATE_FILE, lambda f: f.write(json.dumps(data, indent=2)))
 
 
 # ---------------------------------------------------------------- 5. results ledger
@@ -295,37 +298,39 @@ LEDGER_COLS = ["date", "company", "role", "url", "ats", "category", "fit_score",
                "response", "response_date", "record"]
 
 
+def _atomic_write(path, write):
+    """Write to a temp file, then swap it in: readers never see a half-written file."""
+    tmp = path.with_name(path.name + ".tmp")
+    for attempt in range(10):
+        try:
+            with open(tmp, "w", newline="", encoding="utf-8") as f:
+                write(f)
+            os.replace(tmp, path)
+            return
+        except OSError:
+            time.sleep(0.05 * (attempt + 1))
+    raise OSError(f"could not write {path.name}")
+
+
 def ledger_rows():
     if not LEDGER_FILE.exists():
         return []
-    try:
-        content = LEDGER_FILE.read_text(encoding="utf-8", errors="replace").replace("\x00", "")
-        import io
-        return list(csv.DictReader(io.StringIO(content)))
-    except Exception:
-        with open(LEDGER_FILE, encoding="utf-8", errors="replace") as f:
-            return list(csv.DictReader(f))
+    content = LEDGER_FILE.read_text(encoding="utf-8", errors="replace").replace("\x00", "")
+    return list(csv.DictReader(io.StringIO(content)))
 
 
-def ledger_write(rows):
-    import time
-    try:
-        from tools.file_lock import FileLock
-        lock_ctx = FileLock(LEDGER_FILE)
-    except Exception:
-        from contextlib import nullcontext
-        lock_ctx = nullcontext()
+def ledger_update(change):
+    """Read, change and rewrite the ledger under one lock, so rows added meanwhile are not lost.
+    `change(rows)` edits the row list in place."""
+    with FileLock(LEDGER_FILE):
+        rows = ledger_rows()
+        change(rows)
 
-    with lock_ctx:
-        for attempt in range(10):
-            try:
-                with open(LEDGER_FILE, "w", newline="", encoding="utf-8") as f:
-                    w = csv.DictWriter(f, fieldnames=LEDGER_COLS, extrasaction="ignore")
-                    w.writeheader()
-                    w.writerows(rows)
-                return
-            except (IOError, PermissionError):
-                time.sleep(0.05 * (attempt + 1))
+        def write(f):
+            w = csv.DictWriter(f, fieldnames=LEDGER_COLS, extrasaction="ignore")
+            w.writeheader()
+            w.writerows(rows)
+        _atomic_write(LEDGER_FILE, write)
 
 
 def ledger_add(company, role, url, status, channel="auto"):
@@ -344,14 +349,7 @@ def ledger_add(company, role, url, status, channel="auto"):
         "response_date": "",
         "record": f"records/{datetime.date.today().isoformat()}/{_slug(company, role)}.json"
     }
-    try:
-        from tools.file_lock import FileLock
-        lock_ctx = FileLock(LEDGER_FILE)
-    except Exception:
-        from contextlib import nullcontext
-        lock_ctx = nullcontext()
-
-    with lock_ctx:
+    with FileLock(LEDGER_FILE):
         write_header = not LEDGER_FILE.exists() or LEDGER_FILE.stat().st_size == 0
         for attempt in range(10):
             try:
@@ -360,14 +358,15 @@ def ledger_add(company, role, url, status, channel="auto"):
                     if write_header:
                         w.writeheader()
                     w.writerow(new_row)
-                break
-            except (IOError, PermissionError):
+                return
+            except OSError:
                 time.sleep(0.05 * (attempt + 1))
+    raise OSError(f"could not append to {LEDGER_FILE.name}")
 
 
 def submitted_today():
     today = datetime.date.today().isoformat()
-    # distinct jobs: a submission can be written to the ledger twice (fill.py + batch_apply), which hit the cap at 51 real
+    # distinct jobs: a submission can be written to the ledger twice (fill.py + batch_apply_parallel), which hit the cap at 51 real
     return len({job_key(r["company"], r["role"], r["url"]) for r in ledger_rows() if r["date"] == today and r["status"] == "submitted"})
 
 

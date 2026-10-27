@@ -15,12 +15,10 @@ Key Features:
 import argparse
 import atexit
 import csv
-import datetime
 import json
 import os
 import pathlib
 import random
-import re
 import subprocess
 import sys
 import threading
@@ -40,18 +38,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 CSV_FILE = ROOT / "applications.csv"
 
-try:
-    import results_engine as RE
-except ImportError:
-    RE = None
-
-try:
-    from tools.file_lock import FileLock
-except ImportError:
-    from contextlib import nullcontext
-    FileLock = lambda p: nullcontext()
-
-HOLD_RE = re.compile(r"\((?=[^)]*(?<![A-Za-z])(?:AJ|first|confirm|OK)(?![A-Za-z]))[^)]*\)", re.I)
+import results_engine as RE
 
 
 def get_applied_count() -> int:
@@ -89,71 +76,38 @@ def load_applied_signatures() -> Tuple[Set[str], Set[Tuple[str, str]]]:
         except Exception:
             pass
 
-    if RE:
-        try:
-            for r in RE.ledger_rows():
-                if r.get("status") == "submitted":
-                    u = (r.get("url") or "").strip()
-                    if u:
-                        applied_urls.add(u)
-                    c = (r.get("company") or "").strip().lower()
-                    ro = (r.get("role") or "").strip().lower()
-                    if c and ro:
-                        applied_pairs.add((c, ro))
-        except Exception:
-            pass
+    for r in RE.ledger_rows():
+        if r.get("status") == "submitted":
+            u = (r.get("url") or "").strip()
+            if u:
+                applied_urls.add(u)
+            c = (r.get("company") or "").strip().lower()
+            ro = (r.get("role") or "").strip().lower()
+            if c and ro:
+                applied_pairs.add((c, ro))
 
     return applied_urls, applied_pairs
 
 
 def parse_queue(queue_path: pathlib.Path) -> List[Dict[str, Any]]:
-    """Parses raw queue file into structured job entries."""
+    """Queue file -> job entries; a resume named on the line is kept only if the file exists."""
     if not queue_path.exists():
         return []
-
-    entries = []
-    lines = queue_path.read_text(encoding="utf-8", errors="ignore").splitlines()
-    for raw in lines:
-        line_clean = raw.strip()
-        if not line_clean or line_clean.startswith("#"):
-            continue
-
-        m = re.search(r'(https?://[^\s]+)', line_clean)
-        if not m:
-            continue
-
-        url = m.group(1)
-        prefix = line_clean[:m.start()].strip()
-        suffix = line_clean[m.end():].strip()
-
-        hold = HOLD_RE.search(prefix)
-        prefix = HOLD_RE.sub("", prefix).strip()
-
-        tokens = prefix.split()
-        company = tokens[0] if tokens else ""
-        role = " ".join(tokens[1:]) if len(tokens) > 1 else ""
-
-        resume = suffix if suffix and (ROOT / suffix).exists() else None
-
-        entries.append({
-            "raw": line_clean,
-            "company": company,
-            "role": role,
-            "url": url,
-            "resume": resume,
-            "hold": hold.group(0) if hold else None,
-        })
-
-    return entries
+    jobs = RE.parse_queue_file(queue_path)
+    for j in jobs:
+        if j["resume"] and not (ROOT / j["resume"]).exists():
+            j["resume"] = None
+    return jobs
 
 
 def run_logged_worker(cmd: List[str], timeout: int | float, log_path: pathlib.Path, prefix: str,
-                      active_pids: List[int], pids_lock: threading.Lock) -> int:
+                      active_pids: List[int], pids_lock: threading.Lock, env: Optional[Dict[str, str]] = None) -> int:
     """Executes fill.py in subprocess with streaming prefixed output and PID tracking."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
     proc = subprocess.Popen(
         cmd,
         cwd=str(HERE),
+        env=env,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
@@ -218,6 +172,8 @@ def main():
     parser.add_argument("--headful", action="store_true", help="Force visible browser window (default: False)")
     parser.add_argument("--no-block-assets", action="store_true", help="Disable asset blocking")
     parser.add_argument("--no-triage", action="store_true", help="Bypass fit score checks and company filters")
+    parser.add_argument("--include-held", action="store_true", help="Also run queue lines that have a pending-decision note")
+    parser.add_argument("--daily-cap", type=int, default=None, help="Max submissions per day (default: strategy.json daily_cap)")
     parser.add_argument("--delay", type=float, default=2.0, help="Jitter delay between tasks per worker (default: 2.0s)")
     args = parser.parse_args()
 
@@ -244,23 +200,14 @@ def main():
 
     # Check for healed retries
     retry_file = HERE / "queue_retry.txt"
-    if retry_file.exists():
-        try:
-            r_lines = [l.strip() for l in retry_file.read_text(encoding="utf-8").splitlines() if l.strip()]
-            if r_lines:
-                print(f"[Parallel Runner] Prioritizing {len(r_lines)} healed jobs from queue_retry.txt!")
-                retry_entries = []
-                for raw in r_lines:
-                    m = re.search(r'(https?://[^\s]+)', raw)
-                    if m:
-                        url = m.group(1)
-                        pfx = raw[:m.start()].strip()
-                        c = pfx.split()[0] if pfx else ""
-                        ro = " ".join(pfx.split()[1:]) if len(pfx.split()) > 1 else ""
-                        retry_entries.append({"raw": raw, "company": c, "role": ro, "url": url, "resume": None, "hold": None, "is_retry": True})
-                jobs = retry_entries + jobs
-        except Exception:
-            pass
+    retries = parse_queue(retry_file)
+    if retries:
+        print(f"[Parallel Runner] Prioritizing {len(retries)} healed jobs from queue_retry.txt!")
+        jobs = retries + jobs
+
+    # A queue line with a note like "(AJ: pick ...)" is waiting on a decision: held unless --include-held.
+    if not args.include_held:
+        jobs = [j for j in jobs if not j["hold"]]
 
     if not jobs:
         print(f"[Parallel Runner] No jobs found in {queue_file.name}.")
@@ -272,8 +219,8 @@ def main():
         args.target = initial_applied_count + args.target_new
 
     num_workers = max(1, min(args.workers, 6))
-    strat = RE.strategy() if RE else {}
-    daily_cap = strat.get("daily_cap", 3000)
+    strat = RE.strategy()
+    daily_cap = args.daily_cap if args.daily_cap is not None else strat.get("daily_cap", 3000)
 
     print("\n" + "=" * 68)
     print("      AJ AUTONOMOUS HIGH-THROUGHPUT PARALLEL APPLICATOR FRAMEWORK")
@@ -333,7 +280,7 @@ def main():
                 stop_flag = True
                 return None
 
-            if RE and not args.no_triage:
+            if not args.no_triage:
                 if RE.submitted_today() >= daily_cap:
                     print(f"[{w_tag}] Daily cap of {daily_cap} reached for today. Stopping.")
                     stop_flag = True
@@ -355,7 +302,7 @@ def main():
                 if c_norm and c_norm in active_companies:
                     continue
 
-                if RE and not args.no_triage:
+                if not args.no_triage:
                     score, cat, why = RE.score_job(candidate["company"], candidate["role"], candidate["url"])
                     if RE.is_protected(candidate["company"]):
                         print(f"[{w_tag}][{scan_idx+1}] PROTECTED: {candidate['company']} requires manual handling. Skipping.")
@@ -373,8 +320,8 @@ def main():
                             print(f"[{w_tag}][{scan_idx+1}] [Brain Fast-Fail] {dom} impassable barrier. Skipping.")
                             claimed_indices.add(scan_idx)
                             continue
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        print(f"[{w_tag}] [Brain Fast-Fail] check failed, not applied: {e}")
 
                     sk = RE.site_key(candidate["url"])
                     if sk in strat.get("skip_sites", []):
@@ -390,8 +337,12 @@ def main():
                         if not ok:
                             claimed_indices.add(scan_idx)
                             continue
-                    except Exception:
-                        pass
+                        if score >= 9:
+                            from agents import outreach_drafter
+                            if outreach_drafter.draft(candidate["company"], candidate["role"], score, candidate["url"], pre_apply=True):
+                                print(f"[{w_tag}]      [Outreach] referral note drafted (see outreach_drafts.csv)")
+                    except Exception as e:
+                        print(f"[{w_tag}] [smarts] check failed, not applied: {e}")
 
                 chosen_idx = scan_idx
                 break
@@ -421,8 +372,8 @@ def main():
                 try:
                     from agents import resume_tailor
                     resume_to_use = resume_tailor.tailor(job["company"], job["role"], job["url"], resume_to_use)
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"[{w_tag}]      [Resume Tailor] skipped, using untailored resume: {e}")
 
             attempts += 1
             return (job, chosen_idx + 1, attempts, resume_to_use)
@@ -444,6 +395,7 @@ def main():
             current_total = get_applied_count()
             c_norm = job["company"].strip().lower()
             job_timeout: float = float(args.timeout)
+            t0 = time.time()
 
             try:
                 print(f"\n[{w_prefix}][{idx}] Attempt {attempt_num}/{args.limit} | Overall: {current_total}/{args.target} ({current_total/args.target*100:.1f}%)")
@@ -458,8 +410,17 @@ def main():
                     if not is_live:
                         print(f"[{w_prefix}] Pre-flight skip: Job closed/inactive ({dead_reason}). Advancing...")
                         continue
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"[{w_prefix}] Pre-flight validator failed, continuing: {e}")
+
+                try:
+                    from agents.supervisor import pre_submit_check
+                    guard_fail = pre_submit_check(job["url"], job["company"], str(resume_to_use) if resume_to_use else "")
+                    if guard_fail:
+                        print(f"[{w_prefix}] [Pre-Submit Guard] {guard_fail}. Skipping.")
+                        continue
+                except Exception as e:
+                    print(f"[{w_prefix}] Pre-submit guard failed, continuing: {e}")
 
                 cmd = [
                     sys.executable, "-u", str(HERE / "fill.py"), job["url"],
@@ -480,17 +441,25 @@ def main():
                 else:
                     cmd.append("--block-assets")
 
-                log_path = (RE.RECORDS_DIR / time.strftime("%Y-%m-%d") / f"{RE._slug(job['company'], job['role'])}.log") if RE else (HERE / f"last_job_w{worker_id}.log")
-                job_timeout = max(args.timeout, strat.get("ats_timeouts", {}).get(RE.ats_of(job["url"])[0], 0)) if RE else args.timeout
+                log_path = RE.RECORDS_DIR / time.strftime("%Y-%m-%d") / f"{RE._slug(job['company'], job['role'])}.log"
+                job_timeout = max(args.timeout, strat.get("ats_timeouts", {}).get(RE.ats_of(job["url"])[0], 0))
                 try:
                     from agents import smarts
                     job_timeout = smarts.site_timeout(job["url"], job_timeout)
-                except Exception:
-                    pass
+                except Exception as e:
+                    smarts = None
+                    print(f"[{w_prefix}] site timeout lookup failed: {e}")
 
                 t0 = time.time()
-                ret = run_logged_worker(cmd, job_timeout, log_path, prefix=w_prefix, active_pids=active_pids, pids_lock=pids_lock)
+                env = {**os.environ, "AF_DEADLINE": str(job_timeout)}
+                ret = run_logged_worker(cmd, job_timeout, log_path, prefix=w_prefix, active_pids=active_pids,
+                                        pids_lock=pids_lock, env=env)
                 dur = round(time.time() - t0, 1)
+
+                status = "submitted" if ret == 0 else "not_submitted"
+                if smarts:
+                    smarts.site_record(job["url"], status, dur)
+                RE.ledger_add(job["company"], job["role"], job["url"], status)
 
                 if ret == 0:
                     with state_lock:
@@ -512,28 +481,59 @@ def main():
                         from brain.vault import get_vault
                         dom = urllib.parse.urlparse(job["url"]).netloc.lower()
                         get_vault().record_success(dom, answers_count=12, duration_sec=dur)
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        print(f"[{w_prefix}] brain success feedback failed: {e}")
                 else:
-                    sk = RE.site_key(job["url"]) if RE else "other"
+                    sk = RE.site_key(job["url"])
                     with state_lock:
                         site_failures[sk] = site_failures.get(sk, 0) + 1
                     status_lbl = "SKIPPED (blocked/unanswerable)" if ret == 2 else f"EXIT_{ret}"
                     print(f"[{w_prefix}] {status_lbl}: {job['company']} failed after {dur}s.")
 
-                    # Supervisor heal callback
+                    # Supervisor heal callback (prefers the record fill.py wrote for this job)
                     try:
                         from agents.supervisor import on_job_complete
                         heal_rec = {"company": job["company"], "role": job["role"], "url": job["url"], "status": "not_submitted"}
+                        rec_path = log_path.with_suffix(".json")
+                        if rec_path.exists():
+                            heal_rec = json.loads(rec_path.read_text(encoding="utf-8"))
                         heal_msg = on_job_complete(heal_rec, log_path)
                         if heal_msg:
                             print(f"[{w_prefix}]   [Supervisor] {heal_msg}")
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        print(f"[{w_prefix}]   [Supervisor] heal callback error: {e}")
+
+                    # Brain failure feedback
+                    try:
+                        import urllib.parse
+                        from brain.vault import get_vault
+                        get_vault().record_error(
+                            ats=RE.ats_of(job["url"])[0], domain=urllib.parse.urlparse(job["url"]).netloc.lower(),
+                            url=job["url"], step=0, selector="", label=f"{job['company']} - {job['role']}",
+                            error_type=f"exit_code_{ret}", details=f"Job exited with code {ret} after {dur}s")
+                    except Exception as e:
+                        print(f"[{w_prefix}] brain failure feedback failed: {e}")
+
+                # Periodic brain auto-tune, as the single-worker runner did
+                with state_lock:
+                    if ret == 0 and completed_this_session % 5 == 0:
+                        try:
+                            from brain.auto_tuner import AutoTuner
+                            tuned = AutoTuner().tune_all()
+                            if tuned.get("patches_applied"):
+                                print(f"[{w_prefix}]   [Agent Brain] Auto-tuned: {len(tuned['patches_applied'])} patches applied.")
+                        except Exception as e:
+                            print(f"[{w_prefix}] auto-tune failed: {e}")
 
             except subprocess.TimeoutExpired:
                 print(f"[{w_prefix}] WATCHDOG TIMEOUT: {job['company']} exceeded {job_timeout}s. Terminating worker child process.")
-                sk = RE.site_key(job["url"]) if RE else "other"
+                sk = RE.site_key(job["url"])
+                try:
+                    from agents import smarts
+                    smarts.site_record(job["url"], "timeout", time.time() - t0)
+                except Exception as e:
+                    print(f"[{w_prefix}] site_record failed: {e}")
+                RE.ledger_add(job["company"], job["role"], job["url"], "timeout")
                 with state_lock:
                     site_failures[sk] = site_failures.get(sk, 0) + 1
             except Exception as ex:

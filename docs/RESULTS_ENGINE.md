@@ -21,14 +21,14 @@ how forms get filled.
 Hooks added to existing files (all marked with `RE.` / `results_engine`):
 - `fill.py`: records every answer; refuses to *guess* on sensitive questions (skips the job instead);
   account guard before sign-in; writes the record at the end of each run.
-- `batch_apply.py`: `--queue`, `--daily-cap`, `--no-triage`; skips protected companies and low-fit roles;
+- `batch_apply_parallel.py`: `--queue`, `--daily-cap`, `--no-triage`; skips protected companies and low-fit roles;
   stops retrying a site after repeated failures in a run; writes `results.csv`.
 
 ## Daily workflow
 
 ```
 python triage.py                                   # queue.txt -> queue_ranked.txt
-python batch_apply.py --queue queue_ranked.txt     # stops at daily_cap (25)
+python batch_apply_parallel.py --queue queue_ranked.txt     # stops at daily_cap (25)
 python outcomes.py                                 # weekly: what's getting responses?
 ```
 

@@ -53,15 +53,8 @@ class CyberdeckHandler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(HERE), **kwargs)
 
     def end_headers(self):
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         super().end_headers()
-
-    def do_OPTIONS(self):
-        self.send_response(200)
-        self.end_headers()
 
     def do_GET(self):
         if self.path in ("/graph", "/graph/", "/neural", "/neural-net"):
@@ -280,7 +273,7 @@ def start_server(port=PORT):
 
     for p in range(port, port + 10):
         try:
-            with ThreadedCyberdeckServer(("", p), CyberdeckHandler) as httpd:
+            with ThreadedCyberdeckServer(("127.0.0.1", p), CyberdeckHandler) as httpd:
                 print(f"[CYBERDECK] Threaded server online at http://localhost:{p}")
                 print(f"[CYBERDECK] Opening dashboard interface...")
                 httpd.serve_forever()

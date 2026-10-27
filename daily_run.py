@@ -64,7 +64,7 @@ def main():
     step("2 sources", lambda: job_sources.add_new(a.max_age), report)
     step("3 triage", lambda: run_py(["triage.py", "--scout"]), report)
     if not a.no_apply:
-        step("4 apply", lambda: run_py(["batch_apply.py", "--queue", "queue_ranked.txt"]), report)
+        step("4 apply", lambda: run_py(["batch_apply_parallel.py", "--workers", "1", "--queue", "queue_ranked.txt"]), report)
     step("5 site fixer", lambda: site_fixer.run(), report)
     step("6 outreach", lambda: outreach_drafter.run_for_today(), report)
     step("6b follow-ups", lambda: outreach_drafter.followups(), report)

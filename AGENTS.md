@@ -1,7 +1,7 @@
 # AI Agents - handoff (2026-10-14)
 
 Seven agents built on the Claude API, layered on top of the results engine (`docs/RESULTS_ENGINE.md`).
-**Agents decide, code acts:** agents return validated structured data; `fill.py` / `batch_apply.py` still do
+**Agents decide, code acts:** agents return validated structured data; `fill.py` / `batch_apply_parallel.py` still do
 all the browser work. Everything runs with no human approval, except LinkedIn messages, which are drafted, never sent.
 
 ## Two engines - no API key required

@@ -165,13 +165,12 @@ def report(apps):
 
 
 def update_ledger(apps):
-    rows = RE.ledger_rows()
-    for r in rows:
-        a = apps.get(RE.job_key(r["company"], r["role"], r["url"]))
-        if a and a["stage"] != "submitted":
-            r["response"], r["response_date"] = a["stage"], a["stage_date"]
-    if rows:
-        RE.ledger_write(rows)
+    def mark(rows):
+        for r in rows:
+            a = apps.get(RE.job_key(r["company"], r["role"], r["url"]))
+            if a and a["stage"] != "submitted":
+                r["response"], r["response_date"] = a["stage"], a["stage_date"]
+    RE.ledger_update(mark)
 
 
 def main():

@@ -5,7 +5,7 @@ route protected companies to manual, and order the rest best-first (fit, then AT
     python triage.py                       # queue.txt -> queue_ranked.txt (queue.txt is not touched)
     python triage.py --in queue_phase2.txt --out queue_ranked.txt --min-score 6
 
-Then run:  python batch_apply.py --queue queue_ranked.txt
+Then run:  python batch_apply_parallel.py --queue queue_ranked.txt
 Thresholds and company lists live in strategy.json.
 """
 import argparse, collections, pathlib
