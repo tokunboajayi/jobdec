@@ -324,7 +324,7 @@ def main():
                         print(f"[{w_tag}] [Brain Fast-Fail] check failed, not applied: {e}")
 
                     sk = RE.site_key(candidate["url"])
-                    if sk in strat.get("skip_sites", []):
+                    if sk in strat.get("skip_sites", []) or RE.ats_of(candidate["url"])[0] in strat.get("skip_ats", []):
                         claimed_indices.add(scan_idx)
                         continue
                     if site_failures.get(sk, 0) >= strat.get("max_failures_per_site_per_run", 5):

@@ -298,6 +298,8 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
             # Candidates: strictly new UIDs first, followed by recent_check fallback
             candidates = sorted(new_uids, key=int, reverse=True) + sorted(recent_check, key=int, reverse=True)
             for uid in candidates:
+                if time.time() - start > timeout_sec:
+                    break  # fetching up to 60 full emails ignored the limit: a "6s" check ran for minutes
                 if uid in checked_uids:
                     continue
                 checked_uids.add(uid)

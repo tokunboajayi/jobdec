@@ -50,3 +50,4 @@ brain/*.json
 .browser-profile*/
 .used_auth_codes.txt
 resumes/
+logs/

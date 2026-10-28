@@ -739,7 +739,7 @@ def _fill_file_field(c, st, resume, resume_fields):
     if resume and not st.resume_done and not has_existing:
         if not re.search(r"cover\s*letter|portfolio|writing\s*sample", label, re.I):
             try:
-                loc.set_input_files(str(resume))
+                loc.set_input_files(str(resume), timeout=15000)
                 st.resume_done = True
                 r_name = getattr(resume, "name", Path(resume).name)
                 filled.append(f"[resume] {r_name}")
@@ -2137,10 +2137,13 @@ def main():
                     route.abort()
                     return
                 u_low = req.url.lower()
-                if any(trk in u_low for trk in TRACKERS):
-                    route.abort()
-                    return
-                route.continue_()
+                try:  # requests still in flight while the browser closes raised CancelledError tracebacks
+                    if any(trk in u_low for trk in TRACKERS):
+                        route.abort()
+                    else:
+                        route.continue_()
+                except Exception:
+                    pass
 
             try:
                 ctx.route("**/*", _route_filter)

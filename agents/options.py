@@ -101,6 +101,11 @@ def resolve(label, want, options, pattern=None, semantic_ok=True):
     w = norm(want)
     if not w:
         return None
+    # dial-code list answered with a phone number ("Phone Number" label on both fields): pick US +1, never the first code
+    dial = [o for o in opts if re.search(r"\+\s?\d{1,4}\b", str(o))]
+    if len(dial) >= 0.6 * len(opts) and re.fullmatch(r"[\d\s()+.-]{7,}", w):
+        us = [o for o in dial if re.search(r"united states|\busa?\b", str(o), re.I) and re.search(r"\+\s?1\b", str(o))]
+        return us[0] if us else next((o for o in dial if re.search(r"\+\s?1\)?\s*$", str(o))), None)
     # 1. exact, then whole-word ("Male" never matches "Female"), then the rule's own option pattern
     for o in opts:
         if norm(o) == w:

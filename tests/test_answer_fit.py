@@ -152,3 +152,8 @@ def test_short_learned_labels_only_match_exactly():
     r_visa = fill.rule_for("If yes, please provide your visa type and expiration date.")
     assert r_date is not None and r_date["a"] == datetime.date.today().strftime("%m/%d/%Y")
     assert r_visa is not None and r_visa["a"] == "N/A"
+
+
+def test_dial_code_list_gets_us_not_first_country():
+    """Live failure: 'Phone Number' code dropdown got +355 / +358, site refused SMS."""
+    assert O.resolve("Phone Number", "470-564-0910", ["Albania (+355)", "Aland Islands (+358)", "United States (+1)"]) == "United States (+1)"

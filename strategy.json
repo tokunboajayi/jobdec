@@ -1,6 +1,7 @@
 {
   "min_fit_score": 4.0,
   "daily_cap": 3000,
+  "skip_ats": ["oracle"],
   "ats_timeouts": {
     "workday": 480,
     "successfactors": 420,
