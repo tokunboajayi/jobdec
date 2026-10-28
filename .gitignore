@@ -51,3 +51,5 @@ brain/*.json
 .used_auth_codes.txt
 resumes/
 logs/
+profile.backup_*.json
+queue_replenished.txt
