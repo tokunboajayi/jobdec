@@ -204,6 +204,8 @@ def main():
     if retries:
         print(f"[Parallel Runner] Prioritizing {len(retries)} healed jobs from queue_retry.txt!")
         jobs = retries + jobs
+        # one pass per heal: never drained, the same 227 retries took every batch's 150 attempts (2026-10-28)
+        retry_file.unlink(missing_ok=True)
 
     # A queue line with a note like "(AJ: pick ...)" is waiting on a decision: held unless --include-held.
     if not args.include_held:
@@ -287,7 +289,7 @@ def main():
                     return None
 
             chosen_idx = None
-            for scan_idx in range(job_cursor, min(job_cursor + 80, len(jobs))):
+            for scan_idx in range(job_cursor, len(jobs)):
                 if scan_idx in claimed_indices:
                     continue
                 candidate = jobs[scan_idx]
@@ -452,6 +454,13 @@ def main():
 
                 t0 = time.time()
                 env = {**os.environ, "AF_DEADLINE": str(job_timeout)}
+                try:
+                    from agents import cover_letter
+                    cover = cover_letter.build(job["company"], job["role"], job["url"])
+                    if cover:
+                        env["AF_COVER"] = cover
+                except Exception as e:
+                    print(f"[{w_prefix}]      [Cover Letter] skipped, using the generic letter: {e}")
                 ret = run_logged_worker(cmd, job_timeout, log_path, prefix=w_prefix, active_pids=active_pids,
                                         pids_lock=pids_lock, env=env)
                 dur = round(time.time() - t0, 1)

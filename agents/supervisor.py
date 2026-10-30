@@ -171,27 +171,6 @@ def _dispatch_stealth(diag):
         return False, str(e)
 
 
-def _dispatch_fast_fail(diag):
-    """Add domain to fast-fail list so future attempts skip instantly."""
-    try:
-        import urllib.parse
-        from brain.vault import get_vault
-        dom = urllib.parse.urlparse(diag.url).netloc.lower()
-        PROTECTED_ATS = ("jobs.ashbyhq.com", "boards.greenhouse.io", "jobs.lever.co", "jobs.smartrecruiters.com", "apply.workable.com")
-        if dom in PROTECTED_ATS:
-            _log_heal("fast_fail", dom, "skipped", f"Cannot fast-fail protected major ATS platform: {dom}")
-            return False, f"Protected ATS platform {dom} cannot be globally fast-failed"
-        vault = get_vault()
-        if not vault.is_fast_fail(dom):
-            vault.save_rule("fast_fail_domains", dom, True)
-            _log_heal("fast_fail", dom, "added", diag.detail)
-            return True, f"Added {dom} to fast-fail"
-        return False, "Already on fast-fail list"
-    except Exception as e:
-        _log_heal("fast_fail", diag.slug, "error", str(e))
-        return False, str(e)
-
-
 
 RETRY_QUEUE = AUTOFILL / "queue_retry.txt"
 
@@ -254,22 +233,9 @@ def _dispatch_validation_error(diag):
         field_clean = re.sub(r"\s+(?:is required and must have a value|is required|must be filled).*", "", field, flags=re.I).strip()
         ans = fast_resolve(field_clean)
         if ans:
-            vault = get_vault()
-            vault.save_rule("field_overrides", field_clean.lower(), ans)
-            # Also append to profile.json if not present
-            p_file = AUTOFILL / "profile.json"
-            p_data = _load_json(p_file)
-            if field_clean.lower() in ("date", "today's date", "signature date"):
-                pat = r"^date$|^today'?s? date$|^signature date$|^date of signature$"
-            else:
-                pat = f"^{re.escape(field_clean[:50])}$"
-            rules = p_data.get("rules", [])
-            if not any(r.get("q") == pat for r in rules):
-                rules.insert(0, {"q": pat, "a": ans, "src": "supervisor_validation", "added": datetime.date.today().isoformat()})
-                p_data["rules"] = rules
-                _save_json(p_file, p_data)
-            _log_heal("validation_override", diag.slug, "success", f"'{field_clean}' -> '{ans}'")
-            return True, f"Auto-healed validation field '{field_clean}' -> '{ans}'"
+            # suggestion only: saved guesses answered a securities-order question with "Georgia" (2026-10-28)
+            _log_heal("validation_override", diag.slug, "suggested", f"'{field_clean}' -> '{ans}' (not saved)")
+            return False, f"Suggested '{ans}' for '{field_clean}' (not saved; add a profile.json rule if right)"
         else:
             _log_heal("validation_override", diag.slug, "unresolved", field_clean)
             return False, f"Could not resolve validation field '{field_clean}'"
@@ -317,8 +283,9 @@ DISPATCH = {
     "stuck_page":       _dispatch_stuck_page,
     "timeout":          _dispatch_timeout,
     "anti_bot":         _dispatch_stealth,
-    "auth_wall":        _dispatch_fast_fail,
-    "site_dead":        _dispatch_fast_fail,
+    # a login wall or one closed posting is per job, not per site: fast-failing the domain blocked 191 sites (2026-10-28)
+    "auth_wall":        lambda d: (_log_heal("auth_wall", d.slug, "skipped", d.detail), (False, "Per-job auth wall"))[1],
+    "site_dead":        lambda d: (_log_heal("site_dead", d.slug, "skipped", d.detail), (False, "Per-job dead posting"))[1],
     "crash":            _dispatch_code_fix,
     "unknown":          lambda d: (_log_heal("unknown", d.slug, "skipped", d.detail), (False, "Unknown category"))[1],
 }

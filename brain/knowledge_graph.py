@@ -56,8 +56,9 @@ class JobdecKnowledgeGraph:
         cand_email = os.getenv("CANDIDATE_EMAIL") or _get_prof_fact([r"\be[- ]?mail\b"], "")
         cand_phone = os.getenv("CANDIDATE_PHONE") or _get_prof_fact([r"\bphone\b|\bmobile\b"], "")
         cand_loc = os.getenv("CANDIDATE_LOCATION_TEXT") or _get_prof_fact([r"\bcity\b|\blocation\b|\baddress\b"], "")
-        cand_degree = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE")) or _get_prof_fact([r"\bdegree\b"], "Bachelors")
-        cand_major = os.getenv("CANDIDATE_MAJOR") or _get_prof_fact([r"\bmajor\b|\bfield of study\b"], "Computer Science")
+        # facts default to empty, never a guess (the old defaults said "Computer Science"; AJ studies CIS)
+        cand_degree = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE")) or _get_prof_fact([r"\bdegree\b"], "")
+        cand_major = os.getenv("CANDIDATE_MAJOR") or _get_prof_fact([r"\bmajor\b|\bfield of study\b"], "")
         cand_gpa = os.getenv("CANDIDATE_GPA") or _get_prof_fact([r"\bgpa\b"], "")
         cand_grad = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE") or _get_prof_fact([r"graduat.*date"], "")
 
@@ -73,7 +74,7 @@ class JobdecKnowledgeGraph:
             major=cand_major,
             gpa=cand_gpa,
             grad_date=cand_grad,
-            work_auth="Authorized",
+            work_auth=_get_prof_fact([r"authori[sz]ed to work"], ""),
         )
 
         # 2. Academic & Fellowship Institutions (derived dynamically)
@@ -209,7 +210,7 @@ class JobdecKnowledgeGraph:
         loaded_any = False
         for sec in master_sections:
             title = sec.get("title", "").upper()
-            if "EXPERIENCE" in title or "INITIATIVE" in title:
+            if any(k in title for k in ("EXPERIENCE", "INITIATIVE", "PROJECT", "FELLOWSHIP", "LEADERSHIP")):
                 for idx, entry in enumerate(sec.get("entries", [])):
                     org = entry.get("org", "").strip()
                     if not org:
@@ -223,8 +224,8 @@ class JobdecKnowledgeGraph:
                     comp_id = self.add_company(org, tier="Former Employer")
                     self.graph.add_edge(exp_id, comp_id, relation="AT_COMPANY")
 
-                    for b in bullets:
-                        m_id = f"Metric:{abs(hash(b))}"
+                    for bi, b in enumerate(bullets):
+                        m_id = f"Metric:{exp_id[4:]}:{bi}"  # stable across runs (hash() is salted per process)
                         self.graph.add_node(m_id, node_type="Metric", label=b[:60] + "...", text=b)
                         self.graph.add_edge(exp_id, m_id, relation="ACHIEVED")
                     loaded_any = True
@@ -749,7 +750,10 @@ class JobdecKnowledgeGraph:
                 reasons = []
 
                 stage = c_data.get("stage", "Queued")
-                if stage in ("Chat Scheduled", "Chat Done"):
+                if stage.lower() == "referred":
+                    warmth += 100
+                    reasons.append("Agreed to refer")
+                elif stage in ("Chat Scheduled", "Chat Done"):
                     warmth += 50
                     reasons.append("Active coffee chat")
                 elif stage in ("Replied", "Thanked/Asked"):
@@ -799,29 +803,40 @@ class JobdecKnowledgeGraph:
         if not self._built:
             self.build()
 
-        tokens = set(re.findall(r"\w+", query.lower()))
-        results = []
-
-        # Search across Experience and Metric nodes
-        for node_id, data in self.graph.nodes(data=True):
+        items = []
+        for _, data in self.graph.nodes(data=True):
             data = data or {}
-            ntype = data.get("node_type")
-            if ntype == "Metric":
-                text = data.get("text", "")
-                metric_tokens = set(re.findall(r"\w+", text.lower()))
-                overlap = len(tokens.intersection(metric_tokens))
-                if overlap > 0:
-                    results.append({"type": "Metric", "text": text, "score": overlap})
-            elif ntype == "Experience":
-                role = data.get("role", "")
-                org = data.get("org", "")
-                combo = f"{org} {role}".lower()
-                overlap = sum(1 for t in tokens if t in combo)
-                if overlap > 0:
-                    results.append({"type": "Experience", "org": org, "role": role, "score": overlap * 1.5})
+            if data.get("node_type") == "Metric":
+                items.append({"type": "Metric", "text": data.get("text", "")})
+            elif data.get("node_type") == "Experience":
+                org, role = data.get("org", ""), data.get("role", "")
+                items.append({"type": "Experience", "org": org, "role": role, "text": f"{org} {role}"})
+        if not items:
+            return []
 
+        # meaning match first: "SQL and data analysis" should find the data bullets, not any bullet sharing "and"
+        try:
+            from agents import semantic
+            if semantic.available():
+                sims = semantic.embed([i["text"] for i in items]) @ semantic.embed([query])[0]
+                ranked = sorted(zip(sims.tolist(), items), key=lambda x: -x[0])
+                return [{**i, "score": round(s, 3)} for s, i in ranked[:top_k] if s >= self.MIN_SIMILARITY]
+        except Exception:
+            pass
+
+        tokens = set(re.findall(r"[a-z0-9+#]+", query.lower())) - self.STOPWORDS
+        results = []
+        for i in items:
+            overlap = len(tokens & set(re.findall(r"[a-z0-9+#]+", i["text"].lower())))
+            if overlap:
+                results.append({**i, "score": overlap})
         results.sort(key=lambda x: x["score"], reverse=True)
         return results[:top_k]
+
+    MIN_SIMILARITY = 0.3
+    STOPWORDS = set("a an and are as at be by can describe do does experience for from have how i in is it me "
+                    "of on or our please tell that the this to us what when where which who why will with "
+                    "work you your".split())
 
     def get_summary_stats(self) -> Dict[str, Any]:
         """Returns high-level graph metrics and entity distributions."""

@@ -369,7 +369,8 @@ def generate_response(question_label, field_type="text", options=None, company="
                 try:
                     from brain.knowledge_graph import get_kg
                     paths = get_kg().find_referral_paths(company)
-                    if paths and paths[0].get("warmth_score", 0) >= 30:
+                    # only someone who agreed to refer (tracker Stage "Referred"); a connection is not a referral
+                    if paths and str(paths[0].get("stage", "")).lower() == "referred":
                         ans = paths[0]["name"]
                 except Exception:
                     pass
@@ -408,7 +409,11 @@ def generate_response(question_label, field_type="text", options=None, company="
         if any(lang in q for lang in LANGUAGES) and not any(k in q for k in ["programming", "scripting", "software", "code"]):
             ans = "None"
         elif re.search(r"^(are|do|have|will|can|is|did|should)\b|\b(yes|no)\b|select one", q):
-            ans = "Yes"
+            # a guessed Yes said AJ had applied / worked there before (2026-10-28): unknown yes/no stays unanswered
+            ans = ""
+        elif not re.search(r"\b(why|describe|tell us|explain|interest|motivat|cover letter|additional information|anything else|about yourself|what makes you)\b", q):
+            # the pitch went into "Reason for Leaving", "May We Contact for Reference?" ... only open questions get it
+            ans = ""
         else:
             ans = (
                 f"As a Computer Information Systems student at Georgia State University, "

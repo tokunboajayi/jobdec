@@ -46,6 +46,18 @@ def test_find_referral_paths_warmth_ranking(kg):
     assert top["warmth_score"] >= 20
 
 
+def test_referral_stage_outranks_connections(kg):
+    # only "Referred" earns the referral bonus; ai_responder names a referrer only for that stage
+    for p in kg.find_referral_paths("American Express"):
+        assert (p["warmth_score"] >= 100) == (p["stage"].lower() == "referred")
+
+
+def test_graph_rag_keyword_fallback_ignores_filler_words(kg, monkeypatch):
+    from agents import semantic
+    monkeypatch.setattr(semantic, "available", lambda: False)
+    assert kg.graph_rag_evidence("Why do you want to work with us? What is your plan?") == []
+
+
 def test_graph_rag_evidence_extraction(kg):
     evidence = kg.graph_rag_evidence("automation workflow scheduling Python")
     assert len(evidence) > 0
@@ -79,9 +91,12 @@ def test_export_telemetry_d3_format(kg):
 
 def test_ai_responder_referral_integration():
     import ai_responder
+    from brain.knowledge_graph import get_kg
+    paths = get_kg().find_referral_paths("American Express")
+    referred = paths and str(paths[0].get("stage", "")).lower() == "referred"
     ans = ai_responder.generate_response("Who referred you to this role?", company="American Express")
-    assert ans != ""
-    assert ans != "N/A"
+    # a connection is not a referral: only tracker Stage "Referred" names someone
+    assert ans == (paths[0]["name"] if referred else "N/A")
     # For a company with no contacts, should cleanly fallback to N/A
     fallback_ans = ai_responder.generate_response("Who referred you to this role?", company="FakeUnknownCorpXYZ")
     assert fallback_ans == "N/A"

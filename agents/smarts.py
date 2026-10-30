@@ -218,27 +218,24 @@ def ats_success():
     return {a: sub[a] / att[a] for a in att if att[a] >= 5}
 
 
-def _after_last_fix(row):
-    """A failure only counts if it happened after the filler / profile last changed: every fix earns a retry."""
+def _closed(row):
+    """The job's record says the posting is closed: no fix brings it back."""
     import results_engine as RE
-    ledger = getattr(RE, "LEDGER_FILE", AUTOFILL / "results.csv")
-    if ledger.parent != AUTOFILL:
-        return True
-    code = max((AUTOFILL / f).stat().st_mtime for f in ("fill.py", "auth_manager.py", "account_verifier.py", "gmail_auth.py", "profile.json", "agents/options.py", "agents/smarts.py")
-               if (AUTOFILL / f).exists())
-    rec = AUTOFILL / (row.get("record") or "")
-    if row.get("record") and rec.exists():
-        return rec.stat().st_mtime > code
-    # If no record file exists on disk, this was an unrecorded abort/timeout prior to the current fixes
-    return False
+    rec = RE.RECORDS_DIR.parent / (row.get("record") or "")
+    try:
+        return bool(row.get("record")) and json.loads(rec.read_text(encoding="utf-8")).get("status") == "closed"
+    except Exception:
+        return False
 
 
 def should_attempt(company, role, url):
-    """Skip jobs that already failed twice, unless a new rule now answers what blocked them."""
+    """Skip closed postings, and jobs that already failed twice unless a new rule now answers what blocked them.
+    Every failure counts: resetting counts on each edit of fill.py / profile.json retried one job 47 times (2026-10-29)."""
     import results_engine as RE
     k = RE.job_key(company, role, url)
-    fails = [r for r in RE.ledger_rows() if RE.job_key(r["company"], r["role"], r["url"]) == k and r["status"] != "submitted"
-             and _after_last_fix(r)]
+    fails = [r for r in RE.ledger_rows() if RE.job_key(r["company"], r["role"], r["url"]) == k and r["status"] != "submitted"]
+    if any(_closed(r) for r in fails):
+        return False, "posting closed"
     if len(fails) < 2:
         return True, ""
     retry = _load(llm.CACHE_DIR / "retry.json")

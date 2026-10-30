@@ -35,6 +35,18 @@ def test_should_attempt_skips_repeat_failures_until_retry(sandbox):
     assert not smarts.should_attempt("Acme", "AI Intern", url)[0]   # ...then skipped again
 
 
+def test_should_attempt_never_retries_closed_posting(sandbox):
+    import json
+    url = "https://acme.com/jobs/2"
+    RE.ledger_add("Acme", "Data Intern", url, "not_submitted")
+    rec = RE.RECORDS_DIR / datetime.date.today().isoformat() / f"{RE._slug('Acme', 'Data Intern')}.json"
+    rec.parent.mkdir(parents=True, exist_ok=True)
+    rec.write_text(json.dumps({"status": "closed"}), encoding="utf-8")
+    smarts._save(smarts.llm.CACHE_DIR / "retry.json", {RE.job_key("Acme", "Data Intern", url): "new rule"})
+    ok, why = smarts.should_attempt("Acme", "Data Intern", url)
+    assert not ok and why == "posting closed"
+
+
 def test_site_memory_only_lengthens_timeouts(sandbox):
     url = "https://slow.wd5.myworkdayjobs.com/job/1"
     assert smarts.site_timeout(url, 260) == 260

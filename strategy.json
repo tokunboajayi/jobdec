@@ -1,7 +1,9 @@
 {
   "min_fit_score": 4.0,
   "daily_cap": 3000,
-  "skip_ats": ["oracle"],
+  "skip_ats": [
+    "oracle"
+  ],
   "ats_timeouts": {
     "workday": 480,
     "successfactors": 420,
@@ -12,7 +14,7 @@
     "smartrecruiters": 300
   },
   "block_sensitive_guesses": true,
-  "max_auth_failures_per_site": 1,
+  "max_auth_failures_per_site": 3,
   "max_failures_per_site_per_run": 5,
   "protected_companies": [
     "BlackRock",
@@ -105,6 +107,7 @@
     "autonomy": {
       "job_scout": "auto",
       "resume_tailor": "auto",
+      "cover_letter": "auto",
       "form_answerer": "auto",
       "outreach_drafter": "auto",
       "inbox_analyst": "auto",

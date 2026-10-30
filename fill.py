@@ -650,7 +650,10 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
         return hit[0]
 
     # For Ashby / React-Select / searchable comboboxes, press ArrowDown + Enter to commit filtered selection
+    # never for state / country / yes-no: with nothing matching it committed the first option ("AK" on Paylocity, 2026-10-28)
     try:
+        if strict:
+            raise LookupError
         page.keyboard.press("ArrowDown")
         time.sleep(0.2)
         page.keyboard.press("Enter")
@@ -664,7 +667,7 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
     # If the input already has the valid typed value, retain it rather than clearing
     try:
         cur_v = loc.input_value()
-        if cur_v and len(cur_v.strip()) > 1:
+        if cur_v and len(cur_v.strip()) > 1 and (not strict or re.search(pat, cur_v, re.I)):
             return cur_v
     except Exception:
         pass
@@ -713,7 +716,8 @@ def _fill_file_field(c, st, resume, resume_fields):
     # The generated "Ajayi_Olatokunbo_Transcript.pdf" (transcript_gen.py) imitates a registrar
     # document - never upload it. No real file -> transcript fields stay empty.
     transcript_path = ROOT / "resumes" / "GSU_Unofficial_Transcript_REAL.pdf"
-    cover_path = ROOT / "resumes" / "Ajayi_Olatokunbo_Cover_Letter.pdf"  # resumes/cover_letter_gen.py
+    # per-job letter from agents/cover_letter.py when the batch made one, else the generic resumes/cover_letter_gen.py
+    cover_path = Path(os.getenv("AF_COVER") or ROOT / "resumes" / "Ajayi_Olatokunbo_Cover_Letter.pdf")
     if re.search(r"cover\s*letter", label, re.I):
         if not has_existing and cover_path.exists():
             try:
@@ -843,6 +847,10 @@ def _resolve_rule(c, st, sec_code_fields):
             ai_ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role)
             if ai_ans:
                 rule = {"q": re.escape(label), "a": ai_ans, "ai_gen": True}
+            elif f["type"] != "checkbox" and re.search(r"^\s*(are|do|have|will|can|is|did|should|were|has)\b", label, re.I):
+                # yes/no about AJ with no rule: a guess is a false statement, so leave it for the site fixer / needs_you
+                unanswered.append({**f, "error": "yes/no question with no rule - add a profile.json rule"})
+                return None
             elif f.get("options"):
                 rule = {"q": re.escape(label), "a": pick_best_option(label, f["options"]), "ai_gen": True}
             elif f["type"] == "checkbox" and f.get("required"):
@@ -2206,6 +2214,12 @@ def main():
                     if handle_workday_landing(page):
                         settle(page, 3)
                         continue
+                    elif steps >= 2:
+                        has_apply = page.locator("[data-automation-id*='apply' i], button:has-text('Apply'), a:has-text('Apply')").count() > 0
+                        if not has_apply:
+                            print("\n[CLOSED] Workday job posting has no Apply button (posting closed or expired). Advancing...")
+                            final_status = "closed"
+                            break
                 except Exception:
                     pass
 
@@ -2322,8 +2336,15 @@ def main():
                 if not auto:
                     pause_reason = "review mode"
                 elif req_open:
-                    print(f"\n[Autonomous Guess] Proceeding past {len(req_open)} question(s) using auto-filled answers...")
+                    print(f"\n[Needs Review] {len(req_open)} required question(s) unanswered: {[f['label'][:60] for f in req_open[:3]]}. "
+                          "Not submitting guessed answers - skipping this job.")
+                    final_status = "skipped_unanswered"
+                    break
 
+            if pause_reason and not auto and not (sys.stdin and getattr(sys.stdin, "isatty", lambda: False)()):
+                print(f"\n[Review] {pause_reason}, but no terminal to confirm on. Skipping this job (nothing submitted).")
+                final_status = "skipped_review_no_tty"
+                break
             if pause_reason:
                 if headless_mode and auto:
                     print(f"\n[Headless Autonomous Pause] {pause_reason}")

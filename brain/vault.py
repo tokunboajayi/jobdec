@@ -162,18 +162,25 @@ class ErrorVault:
         "job-boards.eu.greenhouse.io",
         "boards.greenhouse.io",
         "jobs.ashbyhq.com",
+        "greenhouse.io",
+        "ashbyhq.com",
+        "lever.co",
+        "smartrecruiters.com",
         "myworkdayjobs.com",
         "myworkdaysite.com",
         "icims.com",
         "workable.com",
     }
 
+    def _protected(self, domain: str) -> bool:
+        # whole ATS platforms host thousands of companies: one bad tenant must never block them all
+        d = (domain or "").lower()
+        return any(d == p or d.endswith("." + p) for p in self.PROTECTED_ATS_DOMAINS)
+
     def save_rule(self, category: str, key: str, value: Any):
         """Saves an auto-generated or self-healed rule."""
-        if category == "fast_fail_domains":
-            key_low = (key or "").lower()
-            if key_low in self.PROTECTED_ATS_DOMAINS or any(key_low.endswith("." + d) for d in ("greenhouse.io", "ashbyhq.com", "lever.co")):
-                return
+        if category == "fast_fail_domains" and self._protected(key):
+            return
         with _LOCK:
             rules = self._load_json(self.rules_file)
             cat = rules.setdefault(category, {})
@@ -190,12 +197,9 @@ class ErrorVault:
         return overrides.get(norm)
 
     def is_fast_fail(self, domain: str) -> bool:
-        dom_low = (domain or "").lower()
-        if dom_low in self.PROTECTED_ATS_DOMAINS or any(dom_low.endswith("." + d) for d in ("greenhouse.io", "ashbyhq.com")):
+        if self._protected(domain):
             return False
-        rules = self.get_rules()
-        ff = rules.get("fast_fail_domains", [])
-        return domain in ff
+        return (domain or "").lower() in self.get_rules().get("fast_fail_domains", [])
 
 
 _GLOBAL_VAULT = None

@@ -9,6 +9,7 @@ Orchestrates:
 """
 import argparse
 import csv
+import datetime
 import pathlib
 import subprocess
 import sys
@@ -106,7 +107,26 @@ def main():
     print("================================================================\n")
 
     cycle = 1
+    idle = 0
+    learned_on = None
     while True:
+        # once a day: read Gmail replies, retrain the outcome model that adjusts fit scores (daily_run.py isn't scheduled)
+        if learned_on != datetime.date.today():
+            learned_on = datetime.date.today()
+            since = (learned_on - datetime.timedelta(days=30)).isoformat()
+            subprocess.run([sys.executable, "outcomes.py", "--since", since], cwd=str(HERE))
+            try:
+                from agents import smarts
+                print(f"[Runner] {smarts.learner_train()}")
+            except Exception as e:
+                print(f"[Runner] learning skipped: {e}")
+            try:  # yesterday's failures -> profile.json rules + agents/needs_you.md (only daily_run.py called this)
+                from agents import site_fixer
+                fx = site_fixer.run((learned_on - datetime.timedelta(days=1)).isoformat())
+                print(f"[Runner] site fixer: {fx['failures']} failures, {len(fx['rules_added'])} rules added, "
+                      f"{len(fx['needs_you'])} new questions in agents/needs_you.md")
+            except Exception as e:
+                print(f"[Runner] site fixer skipped: {e}")
         cur_count = get_applied_count()
         remaining = max(0, effective_target - cur_count)
         elapsed_min = (time.time() - start_time) / 60.0
@@ -131,12 +151,9 @@ def main():
             ranked_count = len([l for l in ranked_file.read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")])
 
         print(f"[Runner] Current queue_ranked.txt has {ranked_count} jobs.")
-        if ranked_count < 100:
-            print("[Runner] Queue is low. Ingesting new roles...")
-            run_ingestion()
-            run_triage()
-        else:
-            print("[Runner] Ranked queue has ample supply. Proceeding to apply.")
+        # every cycle: gating on "fewer than 100 ranked" kept 1,400 stale jobs in front of 110 fresh postings (2026-10-29)
+        run_ingestion()
+        run_triage()
 
         batch_limit = args.batch_size
         try:
@@ -148,7 +165,14 @@ def main():
         # Refresh triage after each batch to re-rank fresh items
         run_triage()
         cycle += 1
-        time.sleep(5)
+        # nothing submittable left: wait for new postings instead of spinning (100 empty 1-min cycles on 2026-10-28)
+        after = get_applied_count()
+        idle = idle + 1 if after == cur_count else 0
+        if idle >= 5:
+            print(f"[Runner] {idle} cycles with 0 submissions - queue exhausted. Waiting 30 min for new postings.")
+            time.sleep(1800)
+        else:
+            time.sleep(5)
 
 
 if __name__ == "__main__":

@@ -32,7 +32,7 @@ MONTHS = ["january", "february", "march", "april", "may", "june", "july", "augus
           "november", "december"]
 ALIASES = [{"united states", "united states of america", "usa", "us", "u.s.", "u.s.a.", "america", "united states of america (+1)", "(+1) united states of america", "united states (+1)", "(+1) united states"},
            {"georgia", "ga"}, {"georgia state university", "georgia state", "gsu"},
-           {"bachelor's degree", "bachelors", "bachelor's", "bachelor", "undergraduate"},
+           {"bachelor's degree", "bachelors", "bachelor's", "bachelor", "undergraduate", "bachelor's (in progress)", "bachelor of business administration", "bba"},
            {"junior", "3rd year", "third year"},
            {"computer information systems", "information systems", "cis"}]
 YES = re.compile(r"^\s*(yes|y|true|i am|i do|i will|i have|i can|correct|i consent|consent|i agree|agree|accept)\b", re.I)
@@ -192,7 +192,7 @@ FACTS = [  # (category, question pattern on the core question, probe label that 
      "state/province"),
     ("city", r"\bcity\b.*\b(reside|live|located|based)\b|which city|current city|^city$", "city"),
     ("zip", r"\b(zip|postal)\b", "zip"),
-    ("degree", r"\bdegree\b.*\b(pursuing|pursue|type|level|currently|earning|seeking)\b|highest level of education|^degree$",
+    ("degree", r"\bdegree\b.*\b(pursuing|pursue|type|level|currently|earning|seeking|obtained|earned)\b|highest level of education|^\s*degree\b",
      "degree type"),
     ("major", r"\b(major|field of study|discipline|area of study|concentration)\b", "major"),
     ("graduation", r"\bgraduat", "expected graduation"),

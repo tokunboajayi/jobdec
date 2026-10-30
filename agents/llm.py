@@ -31,6 +31,7 @@ DEFAULTS = {
     "autonomy": {                     # auto = act without asking | off = use rule-based fallback
         "job_scout": "auto",
         "resume_tailor": "auto",
+        "cover_letter": "auto",       # per-job cover letter (same facts as the generic one)
         "form_answerer": "auto",
         "outreach_drafter": "auto",   # always drafts only - never sends
         "inbox_analyst": "auto",
