@@ -30,7 +30,20 @@ CSV_FILE = ROOT / "applications.csv"
 
 
 def get_applied_count() -> int:
-    """Counts verified applied submissions from applications.csv."""
+    """Counts verified applied submissions from results.csv and applications.csv."""
+    results_file = HERE / "results.csv"
+    if results_file.exists():
+        try:
+            count = 0
+            with open(results_file, encoding="utf-8", errors="ignore") as f:
+                for row in csv.DictReader(f):
+                    if row.get("status") == "submitted":
+                        count += 1
+            if count > 0:
+                return count
+        except Exception as e:
+            print(f"[Tracker] Error reading {results_file}: {e}")
+
     if not CSV_FILE.exists():
         return 0
     count = 0
