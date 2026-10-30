@@ -82,10 +82,9 @@ def facts_block():
              "", "# EXPLICIT ANSWERS SET BY THE CANDIDATE (question pattern -> answer)"]
     lines += [f"- /{q}/ -> {a}" for q, a in profile_answers()]
     lines += ["", "# STANDING FACTS",
-              "- US citizen; authorized to work in the US; never needs visa sponsorship.",
-              "- Undergraduate junior (class of May 2028), Georgia State University, BBA Computer Information Systems (AI & Analytics).",
-              "- Based in Atlanta, GA. Open to relocating for a summer internship.",
-              "- Previously employed by Delta Air Lines and W. A. Investments. Never previously worked, interned, or contracted for any other company or organization.",
+              "- Undergraduate senior (class of Dec 2026, accepted MS in Cybersecurity Spring 2027), Kennesaw State University, BS in Cybersecurity (Minor in IT).",
+              "- Based in Powder Springs / Atlanta, GA (30127). Open to remote, hybrid, and relocation.",
+              "- Previously worked at Wolters Kluwer (Professional Technical Support Intern) and Castles Technology (Deployment & Technical Support Specialist).",
               "- Over 18 years of age; legally an adult.",
               "- Able to provide official or unofficial academic transcripts upon request.",
               "- No non-compete agreements, non-solicitation, or restrictive covenants with current or former employers.",

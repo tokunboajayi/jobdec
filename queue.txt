@@ -2,7 +2,6 @@
 # PHASE 2 QUEUE: 550 HIGH-PRIORITY ATS ROLES
 # Prioritizing Greenhouse, Ashby, Lever, SmartRecruiters, Workday
 # ==================================================================
-
 VeeamSoftware Security  AI Engineer Intern   https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4952609101?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
 VeeamSoftware AI  Automation Engineering I   https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4955296101?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
 VeeamSoftware Customer Care AI Analyst Int   https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4972324101?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
@@ -554,7 +553,6 @@ AeroVironment Embedded Software Engineer I   https://avav.wd1.myworkdayjobs.com/
 Adobe Software Engineer Intern   https://adobe.wd5.myworkdayjobs.com/external_experienced/job/San-Jose/XMLNAME-2027-Intern---Software-Engineer_R171666?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
 AES Performance and Reliability   https://aes.wd1.myworkdayjobs.com/AES_US/job/US-Dayton-OH/T-D-Performance-and-Reliability-Engineering-Intern--Summer-2027-_R1064841?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
 SAP iXp Intern - Digital Value Advisory (Alpharetta, part-time)   https://careers.sap.com/job/Alpharetta-SAP-iXp-Intern-Digital-Value-Advisory-GA-30009/1389644833/   resumes/SAP_iXpDigitalValueAdvisoryIntern_2026-10-14.pdf
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 14 days old)
 Point72 Software Engineer Intern [NYC; 0d old]   https://boards.greenhouse.io/point72/jobs/8885733002?utm_source=Simplify&ref=Simplify
 Parsons Software Engineer Intern [Huntsville, AL; 0d old]   https://parsons.wd5.myworkdayjobs.com/en-US/search/job/US---AL-Huntsville/Software-Engineering-Intern--Summer-2027-_R187299?utm_source=Simplify&ref=Simplify
@@ -706,7 +704,6 @@ HighmarkHealth Market Analytics Graduate Intern [Pittsburgh, PA; 8d old]   https
 Vertiv Technical Innovation Intern [Westerville, OH; 8d old]   https://egup.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/20279287?utm_source=Simplify&ref=Simplify
 Corning Engineering Data Analyst Intern [Keller, TX; 8d old]   https://corningjobs.corning.com/job/Keller-Engineering-Data-Analyst-Intern-Summer-2027-TX-76248/1437049900/?ats=successfactors&utm_source=Simplify&ref=Simplify
 Atlassian Data Engineer Intern [Seattle, WA; 8d old]   https://campus-americas.icims.com/jobs/26272/data-engineer-intern%2c-2027-summer-u.s./job?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 14 days old)
 Rtx Software Engineer Intern [Fort Wayne, IN; 6d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IN-FT-WAYNE-150A--1010-Production-Rd--BLDG-150A/Software-Engineering-Intern--Summer-2027-_01881090?utm_source=Simplify&ref=Simplify
 GeneralMotors Autonomous Driving Software Engineer Intern [Sunnyvale, CA; 6d old]   https://generalmotors.wd5.myworkdayjobs.com/Careers_GM/job/Sunnyvale-California-United-States-of-America/XMLNAME-2027-Summer-Intern---Autonomous-Driving-Software-Engineer--Bachelor-s---Master-s-_JR-202622064?utm_source=Simplify&ref=Simplify
@@ -784,11 +781,9 @@ Rtx Embedded Software Engineer Intern [East Hartford, CT; 14d old]   https://glo
 Marvell Firmware Engineer Intern [Santa Clara, CA Westlake Village, CA; 14d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Santa-Clara-CA/Firmware-Engineer-Intern--BS---Summer-2027_2604461-1?utm_source=Simplify&ref=Simplify
 Draper Cable and Harnessing Intern [Cambridge, MA; 14d old]   https://draper.wd5.myworkdayjobs.com/Draper_Careers/job/Cambridge-MA/Cable-And-Harnessing-Intern--Summer-2027-_JR002963?utm_source=Simplify&ref=Simplify
 Amca Electrical Engineering Internship - Summer 2027 [El Segundo, CA; 14d old]   https://job-boards.greenhouse.io/amca/jobs/4396690009?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 14 days old)
 Rtx Software Engineer Intern [Sterling, VA; 6d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-VA-STERLING-291--22640-Davis-Dr--DAVIS/Software-Engineering-Intern--Summer-2027-_01877890?utm_source=Simplify&ref=Simplify
 ElectronicArts Software Engineer Intern [Austin, TX; 11d old]   https://jobs.ea.com/en_US/careers/JobDetail/Software-Engineer-Intern-Summer-2027/216239?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 14 days old)
 Abridge Member of Technical Staff Intern [SF; 0d old]   https://jobs.ashbyhq.com/abridge/aab11857-7ed3-4fc5-aab3-35256601117e/application?embed=true&utm_source=Simplify&ref=Simplify
 HealthpeakProperties Forward Deployed Software Engineer Intern [NYC; 0d old]   https://healthpeak.applytojob.com/apply/ss4v1Qi95q/Forward-Deployed-Software-Engineer-Internship?utm_source=Simplify&ref=Simplify
@@ -849,7 +844,6 @@ RockwellAutomation Hardware Development Engineer Co-op [Mayfield Heights, OH; 2d
 Caci Software Engineer Intern [Florham Park, NJ; 2d old]   https://caci.wd1.myworkdayjobs.com/external/job/Florham-Park-NJ-US/Software-Engineering-Intern---Summer-2027_332543?utm_source=Simplify&ref=Simplify
 KlaCorporation Research Scientist Intern - Plasma Light Source Characterization [Ann Arbor, MI; 3d old]   https://kla.wd1.myworkdayjobs.com/annarbor/job/Ann-Arbor-MI/Research-Scientist-Intern---Coating-Characterization_2642033-1?utm_source=Simplify&ref=Simplify
 Kla Research Scientist Intern - Plasma Light Source Characterization [Ann Arbor, MI; 3d old]   https://kla.wd1.myworkdayjobs.com/Search/job/Ann-Arbor-MI/Research-Scientist-Intern---Coating-Characterization_2642033-2?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 30 days old)
 ElectronicArts Software Engineer Intern [Orlando, FL; 15d old]   https://jobs.ea.com/en_US/careers/JobDetail/Software-Engineer-Intern/216263?utm_source=Simplify&ref=Simplify
 Cloudflare Software Engineer Intern [Austin, TX; 17d old]   https://boards.greenhouse.io/cloudflare/jobs/8199958?utm_source=Simplify&ref=Simplify
@@ -1001,16 +995,12 @@ Astranis RF Validation Intern - Summer 2027 [SF; 21d old]   https://job-boards.g
 Astranis Software Defined Radio Hardware Associate Intern [SF; 22d old]   https://job-boards.greenhouse.io/astranis/jobs/4715983006?utm_source=Simplify&ref=Simplify
 Astranis Software Defined Radio Hardware Intern - Summer 2027 [SF; 22d old]   https://job-boards.greenhouse.io/astranis/jobs/4716088006?utm_source=Simplify&ref=Simplify
 Astranis FPGA Intern - Summer 2027 [SF; 22d old]   https://job-boards.greenhouse.io/astranis/jobs/4704805006?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 14 days old)
 Rtx Software Engineer Intern [St. Petersburg, FL; 8d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-FL-ST-PETERSBURG-381BD--7401-22nd-Ave-N--BLDG-D/Software-Engineering-Intern--Summer-2027-_01874928?utm_source=Simplify&ref=Simplify
-
 # 2026-10-16 (Claude scout, score 7)
 BankOfAmerica Global Technology Summer Analyst 2027 - Business Analyst [Charlotte/Dallas/NY/etc; deadline 2026-11-07]   https://careers.bankofamerica.com/en-us/students/job-detail/14419/global-technology-summer-analyst-2027-business-analyst-multiple-locations   resume=resumes/BofA_GTBusinessAnalyst_2026-10-16.pdf
-
 # 2026-10-16 13:3x (Claude daily run, score 7) - CHECK GS 4-application cap before running
 GoldmanSachs 2027 Americas Dallas Engineering Summer Analyst [Dallas, TX]   https://hdpc.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/LateralHiring/job/171553/apply/email   resume=resumes/GoldmanSachs_EngSummerAnalyst_Dallas_2026-10-16.pdf
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 30 days old)
 ElectronicArts Software Engineer Intern [Orlando, FL; 17d old]   https://jobs.ea.com/en_US/careers/JobDetail/Software-Engineer-Intern/216241?utm_source=Simplify&ref=Simplify
 RockwellAutomation AI Software Engineer Intern [Mayfield Heights, OH Milwaukee, WI; 21d old]   https://rockwellautomation.wd1.myworkdayjobs.com/External_Rockwell_Automation/job/Mayfield-Heights-Ohio-United-States/Intern--AI-Software-Engineering--June-August-2027-_R26-6980-1?utm_source=Simplify&ref=Simplify
@@ -1043,12 +1033,10 @@ LunarOutpost Test Engineering Intern [Golden, CO; 30d old]   https://lunaroutpos
 LunarOutpost Embedded Software Engineer Intern - Summer 2027 [Golden, CO; 30d old]   https://lunaroutpost.bamboohr.com/careers/392/?utm_source=Simplify&ref=Simplify
 KeysightTechnologies ASIC Design-for-Test Engineer Intern - DFT [Colorado Springs, CO; 30d old]   https://jobs.keysight.com/jobs/54276?icims=1&utm_source=Simplify&ref=Simplify
 Onsemi Reliability Testing and Failure Analysis Intern [Hopewell Junction, NY; 30d old]   https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/2506613?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 30 days old)
 Marvell Analog Layout Intern - BS [Irvine, CA Santa Clara, CA; 24d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Santa-Clara-CA/Analog-Layout-Intern--BS---Summer-2027_2604735?utm_source=Simplify&ref=Simplify
 Marvell Electrical Validation Intern - BS [Santa Clara, CA; 24d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Santa-Clara-CA/Electrical-Validation-Intern--BS---Summer-2027_2603795?utm_source=Simplify&ref=Simplify
 Marvell Digital IC Design Intern - BS [5 locations  Hudson Valley, NY Austin, TX Irvine, CA Santa Clara, CA Boise, ID; 25d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Santa-Clara-CA/Digital-IC-Design-Intern--BS---Summer-2027_2604827?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 30 days old)
 ImpulseSpace Enterprise Software Engineer Intern [Redondo Beach, CA; 0d old]   https://impulsespace.pinpointhq.com/en/postings/66981a77-8e79-4050-9818-4ed4209c5579?ats=pinpointhq&utm_source=Simplify&ref=Simplify
 Ryan Application Development Intern [Plano, TX; 1d old]   https://ryan.wd1.myworkdayjobs.com/Students-Graduates/job/Plano/Summer-2027-Intern--Application-Development_R0020820?utm_source=Simplify&ref=Simplify
@@ -1074,11 +1062,9 @@ Doordash Electrical Engineer Intern - Labs [Oakland, CA; 0d old]   https://job-b
 Globalfoundries Foundation IP Design Verification Intern [Santa Clara, CA; 1d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---California---Santa-Clara/Foundation-IP-Design-Verification-Intern--Summer-2027-_JR-2604356?utm_source=Simplify&ref=Simplify
 SrcInc Engineering Technician Intern [Syracuse, NY; 30d old]   https://jobs.jobvite.com/src-inc/job/ow4GAfwA?nl=1&nl=1&fr=false&utm_source=Simplify&ref=Simplify
 SrcInc Engineering Intern [Syracuse, NY; 30d old]   https://jobs.jobvite.com/src-inc/job/on4GAfwr?nl=1&nl=1&fr=false&utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (SimplifyJobs, <= 30 days old)
 Ryan Software Engineer Intern [Plano, TX; 1d old]   https://ryan.wd1.myworkdayjobs.com/RyanCareers/job/Plano/Summer-2027-Intern--Software-Engineering_R0020843-1?utm_source=Simplify&ref=Simplify
 Onsemi Applications Intern [Scottsdale, AZ; 0d old]   https://hctz.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/2506972?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 30 days old)
 Figma Data Engineer Intern (2027) [San Francisco, CA • New York, NY; 1d old]   https://boards.greenhouse.io/figma/jobs/6178851004?gh_jid=6178851004
 Figma Data Science Intern (2027) [San Francisco, CA • New York, NY; 1d old]   https://boards.greenhouse.io/figma/jobs/6178857004?gh_jid=6178857004
@@ -1472,7 +1458,6 @@ Vertiv Thermal Engineer Intern - Summer 2027 [Westerville, OH; 20d old]   https:
 Spacex Silicon Engineer Intern/Co-op [Palo Alto, CA Irvine, CA Redmond, WA; 26d old]   https://boards.greenhouse.io/spacex/jobs/8621763002?utm_source=Simplify&ref=Simplify
 HprHyannisPortResearch FPGA Engineer Intern [Needham, MA; 28d old]   https://job-boards.greenhouse.io/hyannisportresearch/jobs/7822801003?utm_source=Simplify&ref=Simplify
 WesternDigital Hardware Engineering Intern [6 locations  Fremont, CA Rochester, MN San Jose, CA Irvine, CA Colorado Springs, CO Longmont, CO; 29d old]   https://jobs.smartrecruiters.com/WesternDigital/744000140949875?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Palantir Neurodivergent Fellowship [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/fd952b52-7b9c-4056-a3dd-0bc41fcfe603
 Palantir Software Engineer, Internship [New York, NY; 1d old]   https://jobs.lever.co/palantir/7d69cf8a-06fd-4f05-bd84-27149db29c4d
@@ -1486,52 +1471,40 @@ Amd Data Analyst Intern/Co-op [6 locations  Rochester, NY Austin, TX Longmont, C
 Tiktok Machine Learning Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667338938890930437?utm_source=Simplify&ref=Simplify
 Nvidia Hardware Engineering Intern [Santa Clara, CA; 11d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/NVIDIA-2027-Internships--Hardware-Engineering_JR2023508-1?utm_source=Simplify&ref=Simplify
 Nvidia Hardware Physical Design / VLSI Intern [Santa Clara, CA; 11d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/NVIDIA-2027-Internships--Hardware-Physical-Design---VLSI_JR2023501?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Palantir Software Engineer, Internship [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/bdcfb29f-4f27-42de-933f-7f83a359b9f0
 Tiktok Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7662700594251958581?utm_source=Simplify&ref=Simplify
 Tiktok Backend Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667934635573692725?utm_source=Simplify&ref=Simplify
 Tiktok Machine Learning Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667350291952765237?utm_source=Simplify&ref=Simplify
 Rtx Software Engineer Intern [Cedar Rapids, IA; 3d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-IA-CEDAR-RAPIDS-106--400-Collins-Rd-NE--BLDG-106/Software-Engineering-Intern-Summer-2027-_01870349-1?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Palantir Software Engineer, Internship [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/e27af7ab-41fc-40c9-b31d-02c6cb1c505c
 Tiktok Backend Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667933770819897605?utm_source=Simplify&ref=Simplify
 Tiktok Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667935738376227077?utm_source=Simplify&ref=Simplify
 Tiktok Machine Learning Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667346576033777925?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Tiktok Backend Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7667935739300317493?utm_source=Simplify&ref=Simplify
 Tiktok Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7668581636242016565?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Tiktok Software Engineer Intern [Seattle, WA; 27d old]   https://lifeattiktok.com/search/7668582086899763461?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Tiktok Software Engineer Intern [San Jose, CA; 27d old]   https://lifeattiktok.com/search/7668675500744837381?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Tiktok Machine Learning MLOps Intern - Global Site Reliability Engineering [San Jose, CA; 11d old]   https://lifeattiktok.com/search/7670875283026053381?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 JohnsonJohnson Quality Data Science Co-op [Cincinnati, OH; 0d old]   https://jj.wd5.myworkdayjobs.com/JJ/job/Cincinnati-Ohio-United-States-of-America/Quality-Data-Science-Co-Op---Summer-2027_R-103629?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Samsara Senior Early Talent & G&A Recruiter [Remote - UK; 1d old]   https://www.samsara.com/company/careers/roles/8300535?gh_jid=8300535
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 GmFinancial Portfolio Analytics Intern [Fort Worth, TX; 0d old]   https://fa-exvu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/260773?utm_source=Simplify&ref=Simplify
 JohnsHopkinsAppliedPhysicsLaboratory Electrical and Computer Engineer Intern [Laurel, MD; 0d old]   https://careers.jhuapl.edu/jobs/60390?icims=1&utm_source=Simplify&ref=Simplify
 RobertBoschVentureCapital Software Engineering Co-op [Fountain Inn, SC; 0d old]   https://jobs.smartrecruiters.com/BoschGroup/744000156311682?utm_source=Simplify&ref=Simplify
 Rtx Software Engineer Intern [Cedar Rapids, IA; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IA-CEDAR-RAPIDS-121--350-Collins-Rd-NE--BLDG-121/Software-Engineering-Intern--Summer-2027-_01880499?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 ExcellusBcbs College Operations Analyst Intern [6 locations  Rochester, NY De Witt, NY Utica, NY Albany, NY Binghamton, NY Buffalo, NY; 26d old]   https://lthc.wd1.myworkdayjobs.com/en-US/ExcellusBCBSCareers/job/Rochester/College-Intern---Summer-2027---Operations-Analyst_JR104058-2?utm_source=Simplify&ref=Simplify
 Leidos Electrical Hardware Design Engineer Intern [Huntsville, AL; 0d old]   https://leidos.wd5.myworkdayjobs.com/External/job/Huntsville-AL/Electrical-Hardware-Design-Engineering-Intern_R-00194798?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 ScaleAi Machine Learning Research Intern (Summer 2027) [New York, NY; San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4735665005
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 TylerTechnologies Software Developer Intern [Orono, ME; 0d old]   https://jobs.jobvite.com/tylertech/job/ouQXAfwB?nl=1&nl=1&fr=false&utm_source=Simplify&ref=Simplify
 Amplify Software Engineer Intern [Remote in USA; 0d old]   https://jobs.ashbyhq.com/amplify/855d22a3-f15e-49f6-854c-29e505653efa/application?embed=true&utm_source=Simplify&ref=Simplify
@@ -1549,7 +1522,6 @@ CreativeArtistsAgency Data Analytics Intern [Denver, CO; 0d old]   https://caa.w
 Point72 Quantitative Developer Intern [NYC; 0d old]   https://boards.greenhouse.io/point72/jobs/7609197002?utm_source=Simplify&ref=Simplify
 Globalfoundries AI/ML Systems Engineering Intern [Richardson, TX; 0d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---Texas---Richardson/AI-ML-Systems-Engineering-Intern--Summer-2027-_JR-2604051?utm_source=Simplify&ref=Simplify
 BadgerMeter Systems Integration Engineer Intern [Milwaukee, WI; 0d old]   https://badgermeter.wd5.myworkdayjobs.com/US_CareerSite/job/US---WI---Milwaukee-HQ/Systems-Integration---Engineering-Intern_4641?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Palantir Software Engineer, Internship - Query Engines [New York, NY; 1d old]   https://jobs.lever.co/palantir/da774f81-c98c-4dcf-9b9c-949fd7d90a13
 ElectronicArts Software Engineer Intern [Orlando, FL; 0d old]   https://jobs.ea.com/en_US/careers/JobDetail/Software-Engineer-Intern/216262?utm_source=Simplify&ref=Simplify
@@ -1564,50 +1536,40 @@ AssociatedBank Corporate Intern - Digital Delivery - Artificial Intelligence [Mi
 UrsaMajor Avionics Electrical Engineer Intern [Berthoud, CO; 0d old]   https://ursamajor.com/careers/?gh_jid=4745125005&utm_source=Simplify&ref=Simplify
 InversionSpace Vehicle Software Engineer Intern [Playa Vista, LA; 0d old]   https://job-boards.greenhouse.io/inversionspace/jobs/4745083005?utm_source=Simplify&ref=Simplify
 Rtx Software Engineering Co-op - Summer / Fall 2027 [Cedar Rapids, IA; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IA-CEDAR-RAPIDS-130--5350-C-Ave-NE--BLDG-130/Software-Engineering-Co-op--Summer---Fall-2027-_01881368?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 ElectronicArts Software Engineer Intern [Orlando, FL; 0d old]   https://jobs.ea.com/en_US/careers/JobDetail/Software-Engineer-Intern/216250?utm_source=Simplify&ref=Simplify
 Patreon Software Engineer Intern [SF NYC; 0d old]   https://jobs.ashbyhq.com/patreon/71f644bc-0873-4d62-a599-bd64405d6587/application?embed=true&utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 BostonScientific R&D Software Engineer Intern [Arden Hills, MN; 0d old]   https://bostonscientific.eightfold.ai/careers/job/563602813563514?utm_source=Simplify&ref=Simplify
 Paccar Dealer Development Marketing Data Analytics Intern [Kirkland, WA; 0d old]   https://jobs.paccar.com/job/Kirkland-Summer-2027-Dealer-Development-Marketing-Data-Analytics-Intern-WA-98033/1449209833/?ats=successfactors&utm_source=Simplify&ref=Simplify
 AssociatedBank Corporate Internship - Artificial Intelligence - Corp. & Commercial Banking [Minneapolis, MN; 1d old]   https://associatedbank.wd1.myworkdayjobs.com/en-US/external_careers/job/Minneapolis-80-8th-43rd-Floor/XMLNAME-2027-Corporate-Internship---Artificial-Intelligence--Corp---Commercial-Banking-_JR106672?utm_source=Simplify&ref=Simplify
 Rtx Electrical Engineer Intern [Windsor Locks, CT; 21d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CT-WINDSOR-LOCKS-B1--1-Hamilton-Rd--BLDG-1/Electrical-Design-Intern--Summer-2027-_01876761?utm_source=Simplify&ref=Simplify
 Rtx Electrical Design Engineer Intern [Windsor Locks, CT; 21d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CT-WINDSOR-LOCKS-B1--1-Hamilton-Rd--BLDG-1/Electrical-Design-Engineer-Intern--Summer-2027-_01877254?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Amd Software Engineer Intern/Co-op [6 locations  Rochester, NY Austin, TX Longmont, CO Fishkill, NY Fort Collins, CO Boxborough, MA; 9d old]   https://careers.amd.com/jobs/90947?icims=1&utm_source=Simplify&ref=Simplify
 Amd Machine Learning Intern/Co-op - Multiple Teams [6 locations  Rochester, NY Austin, TX Longmont, CO Fishkill, NY Fort Collins, CO Boxborough, MA; 9d old]   https://careers.amd.com/jobs/91170?icims=1&utm_source=Simplify&ref=Simplify
 Amd Machine Learning Intern/Co-op - Machine Learning - Artificial Intelligence [San Jose, CA Santa Clara, CA; 9d old]   https://careers.amd.com/jobs/90892?icims=1&utm_source=Simplify&ref=Simplify
 Amd Firmware Engineer Intern/Co-op [7 locations  Secaucus, NJ Rochester, NY Austin, TX Longmont, CO Fishkill, NY Fort Collins, CO Massachusetts; 9d old]   https://careers.amd.com/jobs/90801?icims=1&utm_source=Simplify&ref=Simplify
 Amd Firmware Engineering Intern Co-op - Undergrad [San Jose, CA Santa Clara, CA; 9d old]   https://careers.amd.com/jobs/90807?icims=1&utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 TheNewYorkTimes AI Initiatives Fellow [NYC; 0d old]   https://job-boards.greenhouse.io/thenewyorktimes/jobs/4740369005?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 VerizonCommunications Call Routing Optimization Engineer Intern [Basking Ridge, Bernards, NJ; 0d old]   https://verizon.wd12.myworkdayjobs.com/verizon-careers/job/Basking-Ridge-New-Jersey/Verizon-Consumer-Group--Call-Routing-Optimization-Engineering-Summer-2027-Internship_R-1102398?utm_source=Simplify&ref=Simplify
-
 # ---- added by daily routine 2026-10-20 (score >= 7, tailored)
 Salesforce Summer 2027 Intern - Product GTM Strategy [Not specified; score 8]   https://salesforce.wd12.myworkdayjobs.com/en-US/External_Career_Site/job/Summer-2027-Intern---Product-GTM-Strategy_JR362217-1   resumes/tailored/Salesforce_Product_GTM_Strategy_Intern_2027/Candidate_Resume.pdf
 AIG 2027 Early Careers: Summer Intern, Data Office [Atlanta, GA (also Charlotte/NJ/NY); score 7]   https://aig.wd1.myworkdayjobs.com/aig/job/GA-Atlanta/XMLNAME-2027-Early-Careers--Summer-Intern--Data-Office---United-States--Atlanta--GA--Charlotte--NC--Parsippany--NJ--Jersey-City--NJ---New-York--NY_JR2603655-1   resumes/tailored/AIG_Data_Office_Summer_Intern_2027_Atlanta/Candidate_Resume.pdf
 CarMax Business Analyst Intern - Atlanta, GA (JR-188143) [Kennesaw, GA (CarMax Auto Finance, onsite 4 days); score 7]   https://carmax.wd1.myworkdayjobs.com/external/job/Corporate---Atlanta/Business-Analyst-Intern---Atlanta--GA_JR-188143   resumes/tailored/CarMax_Business_Analyst_Intern_Kennesaw_GA/Candidate_Resume.pdf
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 VerizonCommunications Call Routing Optimization Engineering Intern [Basking Ridge, Bernards, NJ; 0d old]   https://verizon.wd12.myworkdayjobs.com/verizon-careers/job/Basking-Ridge-New-Jersey/Basking-Ridge--NJ--V-Teamer-for-a-Day--Verizon-Consumer-Group--Call-Routing-Optimization-Engineering-Summer-2027-Internship_R-1102394?utm_source=Simplify&ref=Simplify
 VerizonCommunications Data Science Intern [Basking Ridge, Bernards, NJ; 0d old]   https://verizon.wd12.myworkdayjobs.com/verizon-careers/job/Basking-Ridge-New-Jersey/Verizon-Consumer-Group--Data-Science-Summer-2027-Internship_R-1102419?utm_source=Simplify&ref=Simplify
 VerizonCommunications Data Science Intern [Basking Ridge, Bernards, NJ; 0d old]   https://verizon.wd12.myworkdayjobs.com/verizon-careers/job/Basking-Ridge-New-Jersey/Basking-Ridge--NJ--VTeamer-for-a-Day--Verizon-Consumer-Group--Data-Science-Summer-2027-Internship_R-1102417?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Allstate Software Engineer Intern [North Carolina; 0d old]   https://allstate.wd5.myworkdayjobs.com/sourcing_event/job/USA---NC-Remote/Arity---Software-Engineer-Intern_R36266?utm_source=Simplify&ref=Simplify
 SpaceDynamicsLaboratory AI-Enabled Requirements Engineering Intern [North Logan, UT; 0d old]   https://spacedynamicslaboratory.applytojob.com/apply/HgIOie6SBP/AIEnabled-Requirements-Engineering-Intern?utm_source=Simplify&ref=Simplify
 VertexPharmaceuticals Commercial Analytics Co-op - Commercial Analytics [Boston, MA; 0d old]   https://vrtx.wd501.myworkdayjobs.com/vertex_careers/job/Boston-MA/Spring-Co-Op-2027--Commercial-Analytics_REQ-31112-1?utm_source=Simplify&ref=Simplify
 CignaGroup Business Analytics Intern [Bloomfield, CT; 0d old]   https://cigna.wd5.myworkdayjobs.com/cignacareers/job/Bloomfield-CT/Business-Analytics-Intern_26012472?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Vertiv Product Marketing Intern [Delaware, OH; 9d old]   https://egup.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/20279046?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Drivewealth AI Consulting Associate Program Product Owner Intern [Chicago, IL NYC; 0d old]   https://boards.greenhouse.io/drivewealth/jobs/8038087003?utm_source=Simplify&ref=Simplify
 Drivewealth AI Consulting Associate Program – AI Engineer Intern [Chicago, IL NYC; 0d old]   https://boards.greenhouse.io/drivewealth/jobs/8039350003?utm_source=Simplify&ref=Simplify
@@ -1629,7 +1591,6 @@ Rtx Electrical Components Engineer Intern [Tucson, AZ; 0d old]   https://globalh
 Rtx Electrical Test Engineer Intern [Largo, FL; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-FL-LARGO-382SS--7887-Bryan-Dairy-Rd--BLDG-100/Electrical-Test-Engineering-Intern--Summer-2027-_01881562?utm_source=Simplify&ref=Simplify
 RockwellAutomation Hardware Development Engineer Intern [Mayfield Heights, OH; 0d old]   https://rockwellautomation.wd1.myworkdayjobs.com/External-Rockwell-Automation-Early-Careers/job/Mayfield-Heights-Ohio-United-States/Intern--Hardware-Development-Engineer--May---Aug-2027-_R26-6892-2?utm_source=Simplify&ref=Simplify
 Caci Electrical Test Engineer Intern [Danbury, CT; 0d old]   https://caci.wd1.myworkdayjobs.com/external/job/Danbury-CT-US/Electrical-Test-Engineering-Intern---Summer-2027_333809?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 14 days old)
 Palantir American Tech Fellowship [North America; 1d old]   https://jobs.lever.co/palantir/0ccbe620-a3ef-41d1-a5c4-68e56b3c91d0
 Samsara Account Development Representative Intern - Phoenix [Phoenix, Arizona, United States; 1d old]   https://www.samsara.com/company/careers/roles/8319784?gh_jid=8319784
@@ -1760,7 +1721,6 @@ Honeywell Embedded Engineer Intern [United States; 5d old]   https://ibqbjb.fa.o
 Amd ASIC Package Engineering Intern Co-op [6 locations  Secaucus, NJ Austin, TX Longmont, CO Fishkill, NY Fort Collins, CO Boxborough, MA; 5d old]   https://careers.amd.com/jobs/91466?icims=1&utm_source=Simplify&ref=Simplify
 MsaSafety Software Engineer Intern - Product Development - Summer 2027 [Cranberry Township, PA; 6d old]   https://careers.msasafety.com/jobs/9993?icims=1&utm_source=Simplify&ref=Simplify
 Garmin Software Engineer Intern [Olathe, KS; 6d old]   https://careers.garmin.com/jobs/19693?icims=1&utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 14 days old)
 Rtx Software Engineer Intern [Aurora, CO; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CO-AURORA-S77--16470-E-Hughes-Dr--BLDG-S77/Software-Engineering--Intern--Summer-2027-_01881520?utm_source=Simplify&ref=Simplify
 Rtx Software Engineering Co-op [Cedar Rapids, IA; 4d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IA-CEDAR-RAPIDS-130--5350-C-Ave-NE--BLDG-130/Software-Engineering-Co-op--Summer-Fall-2027-_01882137?utm_source=Simplify&ref=Simplify
@@ -1768,10 +1728,488 @@ Marvell Silicon Validation Intern [Santa Clara, CA; 4d old]   https://marvell.wd
 Tiktok Product Manager Intern - Pgc [San Jose, CA; 5d old]   https://lifeattiktok.com/search/7673365923163638069?utm_source=Simplify&ref=Simplify
 Bny Data Science Intern - Engineering [Jersey City, NJ; 6d old]   https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/81238?utm_source=Simplify&ref=Simplify
 Honeywell Embedded Engineer Intern [United States; 5d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155562?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Rtx Software Engineer Intern [Tewksbury, MA; 5d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MA-TEWKSBURY-TB3--50-Apple-Hill-Dr--CONCORD-BLDG-Tewksbury-Tb3-300-Concord/Software-Engineer-Intern--Summer-2027-_01880127?utm_source=Simplify&ref=Simplify
 Moog Software Engineer Intern [Mineral Wells, TX; 18d old]   https://moog.wd5.myworkdayjobs.com/moog_external_career_site/job/Mineral-Wells-TX/Intern--Software-Engineering_R-26-19965?utm_source=Simplify&ref=Simplify
+# ---- added by agents/job_sources.py (multi-source, <= 30 days old)
+Figma Business Systems Analyst [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6215865004?gh_jid=6215865004
+Figma HRIS Analyst [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6201385004?gh_jid=6201385004
+Figma Manager, Security Operations [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6015609004?gh_jid=6015609004
+Figma Security Engineer [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/5829751004?gh_jid=5829751004
+Figma Security Scientist [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6180172004?gh_jid=6180172004
+Figma Senior Order Management Analyst  [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6217137004?gh_jid=6217137004
+Figma Support Engineer, AI Infrastructure & Tooling [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/5802956004?gh_jid=5802956004
+ScaleAi DevOps Engineer, Infrastructure & Security [Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4674863005
+ScaleAi National Security Hackathon 2026 - General Interest [San Francisco, CA; New York, NY; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4687588005
+ScaleAi Security Engineer, Infrastructure [New York, NY; San Francisco, CA; Seattle, WA; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4646888005
+ScaleAi Security Engineer, Product Security [New York, NY; San Francisco, CA; Seattle, WA; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4643029005
+ScaleAi Senior Data Analyst, Public Sector [Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4729899005
+ScaleAi Software Engineer - New Grad [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4730836005
+ScaleAi Software Engineer - New Grad [Doha, Qatar ; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4730851005
+ScaleAi Software Engineer, Public Sector - New Grad [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4736426005
+Ramp  Security Engineer, Cloud [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/34413f8d-26bf-4bbc-8ade-eb309a0e2245
+Ramp Credit Risk Associate [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/4745807e-82f4-4b1a-857c-dc8dadc73076
+Ramp Software Engineer, Security, Stablecoin [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/d1183b00-6590-4fe4-a585-28d84e578fe3
+Ramp Customer Experience Associate (Evening Shift) [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/40f43993-21e8-4db1-a9f4-7a3e6098a9ba
+Ramp Security Engineer, Product [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/7c26780b-7923-42d5-8111-9825ff996966
+Ramp Security Engineer, Privacy [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/95f450a1-0d38-4d58-9aac-9d7e655adc36
+Ramp Systems Engineer, Corporate Security [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/b3b0875d-cbf2-41ed-bda3-2714c82c4b57
+Ramp HRIS Analyst (Workday) [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/a11f7720-f3a8-4e86-9cc6-562bb11420b2
+Ramp Associate, Strategic Finance [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/606475af-b74f-42c4-978a-dde138a86ac7
+Ramp Senior Associate, Strategic Finance [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/5cc4e600-1b28-4083-8a70-90f790112f89
+Ramp Senior Analyst, Employee Lifecycle Data (Workday) [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/1c8e2b03-fcb3-4949-9113-07812f138eb6
+Ramp IT Site Specialist [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/ramp/4bc09b14-0389-40cd-9d5b-f5557f451d50
+Ramp Senior Analyst, Economic Research and Special Projects [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/7c027757-24d8-49f4-90c1-ca3696d244a5
+Ramp Customer Experience Associate [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/d64609dd-c391-45a2-bfdb-c1bb34e8f93c
+Ramp Product Operations Specialist | Juno [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/dba53e68-4c96-449d-af4d-27dc475b814c
+Ramp GTM Senior Business Systems Analyst, Marketing & Pre-Sales [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/aa433e44-f095-484b-a46a-a330583d84b0
+Ramp Associate GTM Recruiter [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/ramp/a85afad0-8051-4333-ae89-0f82321dea87
+Ramp Product Operations Specialist | Procurement [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/871d2fc8-def8-4837-a9b0-7cc4fe126c2b
+Ramp Physical Security Lead [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/331dbcfd-3faf-4357-a7d8-3acd854b4b42
+Ramp Analyst, Deal Operations [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/ramp/7e531974-caac-46a2-804e-c6c3140bfda4
+Palantir Commercial Contracts Specialist [New York, NY; 1d old]   https://jobs.lever.co/palantir/45241c61-11af-45b5-86a0-a5302c028d6d
+Palantir Compliance Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/4d3986f0-4c01-4327-a0e4-e7d9bc7bc0c3
+Palantir Defensive Security Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/bc803bd5-7793-452d-9ae5-9301ee24615a
+Palantir Deployment Strategist, New Grad - Commercial [Seoul, South Korea; 1d old]   https://jobs.lever.co/palantir/d5f11334-3a73-4094-b7e0-d05b54e475b8
+Palantir Deployment Strategist, New Grad - Intel, US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/5d8286d6-992a-404b-94af-99c173d40299
+Palantir Deployment Strategist, New Grad - Warp Speed [New York, NY; 1d old]   https://jobs.lever.co/palantir/37780e70-c7af-45e1-9be7-071df201c387
+Palantir Forward Deployed Security Engineer - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/22053072-4c22-49c4-8299-28e107ceeb98
+Palantir Industrial Security Specialist [New York, NY; 1d old]   https://jobs.lever.co/palantir/12d13a31-5764-4678-8835-809f0deae49b
+Palantir Information Security Engineer - Infrastructure Security [New York, NY; 1d old]   https://jobs.lever.co/palantir/1e77a5e8-9843-4516-a186-7c24f0ff07a0
+Palantir Information Security Engineer - Insider Risk [New York, NY; 1d old]   https://jobs.lever.co/palantir/2127f3af-1fb3-4aa3-9aa1-eb06967e0166
+Palantir Legal Operations Specialist [New York, NY; 1d old]   https://jobs.lever.co/palantir/18383723-04a2-44ae-ae58-1166a76f0859
+Palantir Mobility Tax Analyst [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/7dc7e7c3-39bf-4f4e-a8eb-e38a4a0af238
+Palantir Operations Analyst - US Government Security [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/5f3f9547-2aea-4ac2-995d-e8fa53b16e39
+Palantir People Relations Specialist [New York, NY; 1d old]   https://jobs.lever.co/palantir/4a245bf7-0467-4436-ac22-7bad194c1a12
+Palantir Physical Security Manager [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/0492e9c4-9ba9-4da0-896f-75be5151bae9
+Palantir Privacy & Civil Liberties Engineer - New Grad [New York, NY; 1d old]   https://jobs.lever.co/palantir/95e0d2b0-437a-4096-a5c6-0f247f426c90
+Palantir Procurement Operations Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/26032bad-d713-429d-8b04-2de7db93b5c3
+Palantir Product Designer, New Grad [New York, NY; 1d old]   https://jobs.lever.co/palantir/4c0fb3a1-8256-4d14-9a27-23727235752e
+Palantir Product Designer, New Grad - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/25378ba0-db78-4c70-8174-a05ce514fc65
+Palantir Risk and Compliance Specialist - Global Trade [New York, NY; 1d old]   https://jobs.lever.co/palantir/1b694ba4-dfda-46b3-ae07-6392bcabb75c
+Palantir Security Systems Engineer [Denver, CO; 1d old]   https://jobs.lever.co/palantir/8704b8c0-80b3-48b1-a82c-939994a0316c
+Palantir Senior Identity Security Engineer [New York, NY; 1d old]   https://jobs.lever.co/palantir/144f32bc-21e5-42bd-9710-7165a22d51e1
+Palantir Site Reliability Operations Analyst - Commercial [New York, NY; 1d old]   https://jobs.lever.co/palantir/5174e95b-2e0a-46f8-8db7-e2c837a0ac94
+Palantir Software Engineer, New Grad [New York, NY; 1d old]   https://jobs.lever.co/palantir/94984771-0704-446c-88c6-91ce748f6d92
+Palantir Software Engineer, New Grad - Defense [New York, NY; 1d old]   https://jobs.lever.co/palantir/0a838e66-1ab0-4fc4-b4d3-4671c0352278
+Palantir Software Engineer, New Grad - Infrastructure [New York, NY; 1d old]   https://jobs.lever.co/palantir/4abf26b4-795c-420a-bf22-1ab98db268b4
+Palantir Software Engineer, New Grad - Production Infrastructure [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/15844944-fb69-4b57-9531-e988650b20c6
+Palantir Software Engineer, New Grad - Query Engines [New York, NY; 1d old]   https://jobs.lever.co/palantir/90329118-d9b7-4b96-acdf-13377e3196ac
+Palantir Support Engineer [New York, NY; 1d old]   https://jobs.lever.co/palantir/838bce97-415d-4cdc-95ea-904005feb131
+Palantir Technical Program Manager - Security [New York, NY; 1d old]   https://jobs.lever.co/palantir/b5362bc1-8a07-44e2-9ddc-cb4236aa0f20
+Palantir Workplace Operations Analyst [Abu Dhabi, United Arab Emirates; 1d old]   https://jobs.lever.co/palantir/e6be4159-c8d1-481d-ad15-13274861b795
+Coinbase Analyst, Privacy (Privacy Assessments) [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8281622?gh_jid=8281622
+Coinbase Associate General Counsel, EU Legal [Hybrid - Luxembourg; 1d old]   https://www.coinbase.com/careers/positions/8265422?gh_jid=8265422
+Coinbase Associate General Counsel, Privacy [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8212923?gh_jid=8212923
+Coinbase Associate General Counsel, Privacy [Remote - Ireland; 1d old]   https://www.coinbase.com/careers/positions/8227393?gh_jid=8227393
+Coinbase Associate Manager, Internal Audit [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8154987?gh_jid=8154987
+Coinbase Broker Dealer Operations, Associate [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8248775?gh_jid=8248775
+Coinbase Broker Dealer Operations, Senior Associate [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8249920?gh_jid=8249920
+Coinbase Business Operations, Senior Associate [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/7980600?gh_jid=7980600
+Coinbase Complaints Analyst II [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/7724777?gh_jid=7724777
+Coinbase Complaints Analyst III [Hybrid - Luxembourg; 1d old]   https://www.coinbase.com/careers/positions/7182060?gh_jid=7182060
+Coinbase Complaints Analyst III [Remote - Australia; 1d old]   https://www.coinbase.com/careers/positions/7254275?gh_jid=7254275
+Coinbase Compliance, International Investigations Associate [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8224726?gh_jid=8224726
+Coinbase Compliance, Senior Associate [Remote - Canada; 1d old]   https://www.coinbase.com/careers/positions/8232451?gh_jid=8232451
+Coinbase Credit Risk Analyst [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8131356?gh_jid=8131356
+Coinbase Customer Support Specialist II [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8160097?gh_jid=8160097
+Coinbase Derivative Sales Analyst [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8097444?gh_jid=8097444
+Coinbase Enterprise Risk Management Analyst [Remote - Luxembourg; 1d old]   https://www.coinbase.com/careers/positions/8233945?gh_jid=8233945
+Coinbase Finance & Strategy Analyst, Product [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8250032?gh_jid=8250032
+Coinbase Internal Audit Senior Associate, Operations & Compliance [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8114684?gh_jid=8114684
+Coinbase Offensive Security Engineer, AI  [Remote - Canada; 1d old]   https://www.coinbase.com/careers/positions/8318599?gh_jid=8318599
+Coinbase Payments Risk Analyst II [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/7984814?gh_jid=7984814
+Coinbase Product Security Engineer [Remote - Canada; 1d old]   https://www.coinbase.com/careers/positions/8165389?gh_jid=8165389
+Coinbase Risk & Monitoring Analyst III [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8147696?gh_jid=8147696
+Coinbase Risk & Monitoring Analyst III [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8147699?gh_jid=8147699
+Coinbase Senior Analyst, Compliance Technology [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8221985?gh_jid=8221985
+Coinbase Senior Associate, Business Development [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8070386?gh_jid=8070386
+Coinbase Senior Associate, FCM [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8060577?gh_jid=8060577
+Coinbase Senior Compliance Associate [Hybrid - Luxembourg; 1d old]   https://www.coinbase.com/careers/positions/7611263?gh_jid=7611263
+Coinbase Senior Identity Risk & Scam Analyst  [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8260052?gh_jid=8260052
+Coinbase Senior Sourcing Analyst [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8017697?gh_jid=8017697
+Coinbase Software Engineer, Security Platform [Remote - India; 1d old]   https://www.coinbase.com/careers/positions/8165441?gh_jid=8165441
+Coinbase Specialist, CSIRT [Remote - India; 1d old]   https://www.coinbase.com/careers/positions/8122777?gh_jid=8122777
+Coinbase Specialist, Market Operations [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8222259?gh_jid=8222259
+Coinbase Specialist, Market Operations [Remote - UK; 1d old]   https://www.coinbase.com/careers/positions/8222267?gh_jid=8222267
+Coinbase Specialist, Market Operations [Remote - Singapore; 1d old]   https://www.coinbase.com/careers/positions/8222264?gh_jid=8222264
+Coinbase Sr. Systems Analyst, Finance, Enterprise Apps  [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8154856?gh_jid=8154856
+Coinbase Staff Software Engineer, Security Platform [Remote - India; 1d old]   https://www.coinbase.com/careers/positions/8167571?gh_jid=8167571
+Coinbase Strategic Senior Finance Analyst, Consumer [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/7993006?gh_jid=7993006
+Robinhood Account Servicing Associate [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8319304?t=gh_src=&gh_jid=8319304
+Robinhood Brokerage Communications Specialist [Chicago, IL; Denver, CO; Lake Mary, FL; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8174853?t=gh_src=&gh_jid=8174853
+Robinhood Cashiering Support Associate [Clearwater, FL; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8262110?t=gh_src=&gh_jid=8262110
+Robinhood Compliance Operations Specialist [Chicago, IL; Denver, CO; Lake Mary, FL; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8077864?t=gh_src=&gh_jid=8077864
+Robinhood Customer Experience Associate [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8304315?t=gh_src=&gh_jid=8304315
+Robinhood Customer Experience Associate, Resolutions Desk [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8268261?t=gh_src=&gh_jid=8268261
+Robinhood Customer Experience Associate, Trump Accounts Resolutions Desk [Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8168392?t=gh_src=&gh_jid=8168392
+Robinhood Data Solutions & Analytics Senior Analyst [Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8220699?t=gh_src=&gh_jid=8220699
+Robinhood Data Solutions & Validation Sr. Specialist [Denver, CO; New York, NY; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8120681?t=gh_src=&gh_jid=8120681
+Robinhood Finance & Strategy Senior Analyst [Chicago, IL; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8211233?t=gh_src=&gh_jid=8211233
+Robinhood Fraud Investigations Analyst [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8226972?t=gh_src=&gh_jid=8226972
+Robinhood Government Affairs Associate [Washington, DC; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8205083?t=gh_src=&gh_jid=8205083
+Robinhood Internal Audit Senior Associate [Ljubljana, Slovenia; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202146?t=gh_src=&gh_jid=8202146
+Robinhood Investment Analyst MBA Intern, Robinhood Ventures (Summer 2027) [Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8198187?t=gh_src=&gh_jid=8198187
+Robinhood Regulatory Reporting Compliance Associate [Chicago, IL; Denver, CO; Lake Mary, FL; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8274810?t=gh_src=&gh_jid=8274810
+Robinhood Senior Compensation Analyst [Chicago, IL; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8060703?t=gh_src=&gh_jid=8060703
+Robinhood Senior Offensive Security Engineer [Bellevue, WA; Denver, CO; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202858?t=gh_src=&gh_jid=8202858
+Robinhood Senior Physical Security Operations Manager [Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8259652?t=gh_src=&gh_jid=8259652
+Robinhood Senior Security Engineer, Detection & Response [Bellevue, WA; Denver, CO; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202863?t=gh_src=&gh_jid=8202863
+Robinhood Senior Underwriting Associate [Chicago, IL; Denver, CO; Lake Mary, FL; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/7979657?t=gh_src=&gh_jid=7979657
+Robinhood Short Term Planning Analyst [Chicago, IL; Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/7728367?t=gh_src=&gh_jid=7728367
+Robinhood Staff Offensive Security Engineer [Bellevue, WA; Denver, CO; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/7460167?t=gh_src=&gh_jid=7460167
+Robinhood Staff Software Engineer, AI Security [Bellevue, WA; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8214383?t=gh_src=&gh_jid=8214383
+Robinhood Staff Software Engineer, Security Platform [Bellevue, WA; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8167546?t=gh_src=&gh_jid=8167546
+Dropbox Senior Technical Solutions Specialist [Remote - Australia: Select locations; 1d old]   https://jobs.dropbox.com/listing/8285045?gh_jid=8285045
+Instacart Associate Manager, Influencer Marketing [United States - Remote; 1d old]   https://instacart.careers/job/?gh_jid=8304802
+Cloudflare AI Security Research & Red Team Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8097321?gh_jid=8097321
+Cloudflare Associate, Strategic Finance & Investor Relations [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8287256?gh_jid=8287256
+Cloudflare Customer Engineering Specialist - Network Services [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/7525971?gh_jid=7525971
+Cloudflare Customer Security Compliance Specialist [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8311164?gh_jid=8311164
+Cloudflare Data Analyst [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8109620?gh_jid=8109620
+Cloudflare Data Center Infrastructure Management (DCIM) Administrator - Infrastructure Operations [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/7736431?gh_jid=7736431
+Cloudflare DCSC Automation Specialist [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8163023?gh_jid=8163023
+Cloudflare Deal Intelligence Analyst [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8248907?gh_jid=8248907
+Cloudflare GTM Data Specialist, Consumption & Revenue Operations [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8301509?gh_jid=8301509
+Cloudflare IAM Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8157997?gh_jid=8157997
+Cloudflare Infrastructure Business Operations Associate  [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8278383?gh_jid=8278383
+Cloudflare Infrastructure Operations Analyst [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8245787?gh_jid=8245787
+Cloudflare IT Operations Specialist I [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8281074?gh_jid=8281074
+Cloudflare Logistics Operations Specialist [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8248563?gh_jid=8248563
+Cloudflare Network Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8081027?gh_jid=8081027
+Cloudflare People Operations Specialist, Singapore (6 Month Contract) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8258111?gh_jid=8258111
+Cloudflare Product Cost Analyst [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8305918?gh_jid=8305918
+Cloudflare Product Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8102768?gh_jid=8102768
+Cloudflare Sales Enablement Specialist - EMEA [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8222614?gh_jid=8222614
+Cloudflare Security Engineer, Applied Research & Labs [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8264695?gh_jid=8264695
+Cloudflare Security Engineer (IAM) [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8124227?gh_jid=8124227
+Cloudflare Senior Cloudflare One GTM Specialist [Distributed; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/7534033?gh_jid=7534033
+Cloudflare Senior Engineering Director, Security Products [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8195695?gh_jid=8195695
+Cloudflare Senior Lead Management Specialist [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8186255?gh_jid=8186255
+Cloudflare Senior Oracle EPM Specialist [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/7978887?gh_jid=7978887
+Cloudflare Senior Oracle Security and AI Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8221248?gh_jid=8221248
+Cloudflare Senior Product Manager, Email Security [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8173954?gh_jid=8173954
+Cloudflare Senior Product Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8079931?gh_jid=8079931
+Cloudflare Senior Revenue Operations Support Manager, Singapore [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8172873?gh_jid=8172873
+Cloudflare Senior Software Engineer - Security Platform [Distributed; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8243201?gh_jid=8243201
+Cloudflare Senior Software Engineer, Security Rules [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8184838?gh_jid=8184838
+Cloudflare Senior Specialist Solutions Engineer, Cloudflare One - Russian or Hebrew speaking [Distributed; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8264043?gh_jid=8264043
+Cloudflare Senior Systems Engineer - Application Security [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8222091?gh_jid=8222091
+Cloudflare Senior Zip System Specialist(Contract Role) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8159463?gh_jid=8159463
+Cloudflare Software Engineer, Security Rules [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8160660?gh_jid=8160660
+Cloudflare Staff/Principal Software Engineer - Security Platform [Distributed; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/7053411?gh_jid=7053411
+Cloudflare Systems Engineer - Data Security [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8257140?gh_jid=8257140
+Cloudflare Technical Accounting Analyst (Infrastructure) [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8161030?gh_jid=8161030
+Cloudflare Technical Support Engineer, Application Security [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8229993?gh_jid=8229993
+Cloudflare Technical Support Engineer - Developer Platform  [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8245501?gh_jid=8245501
+Cloudflare Technical Support Engineer, Zero Trust [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8229998?gh_jid=8229998
+Cloudflare Workday Analyst, People Operations [Hybrid; In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8204353?gh_jid=8204353
+Cloudflare Workday Integration Specialist  [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8158104?gh_jid=8158104
+Brex Data Analyst II [San Francisco, California, United States; 1d old]   https://www.brex.com/careers/8463696002?gh_jid=8463696002
+Brex Data Analyst II [New York, New York, United States; 1d old]   https://www.brex.com/careers/8463702002?gh_jid=8463702002
+Brex Finance Associate [New York, New York, United States; 1d old]   https://www.brex.com/careers/8606825002?gh_jid=8606825002
+Brex Finance Associate [San Francisco, California, United States; 1d old]   https://www.brex.com/careers/8606210002?gh_jid=8606210002
+Brex Fraud Strategy Associate [San Francisco, California, United States; 1d old]   https://www.brex.com/careers/8907563002?gh_jid=8907563002
+Brex Fraud Strategy Associate [New York, New York, United States; 1d old]   https://www.brex.com/careers/8907584002?gh_jid=8907584002
+Brex Fraud Strategy Associate [Salt Lake City, Utah, United States; 1d old]   https://www.brex.com/careers/8907553002?gh_jid=8907553002
+Brex Fraud Strategy Associate [Seattle, Washington, United States; 1d old]   https://www.brex.com/careers/8907623002?gh_jid=8907623002
+Brex Senior Security Operations Engineer  [San Francisco, California, United States; 1d old]   https://www.brex.com/careers/8339252002?gh_jid=8339252002
+Brex Senior Security Operations Engineer  [New York, New York, United States; 1d old]   https://www.brex.com/careers/8339277002?gh_jid=8339277002
+Brex Senior Security Operations Engineer  [Seattle, Washington, United States; 1d old]   https://www.brex.com/careers/8339283002?gh_jid=8339283002
+Brex Staff Application Security Engineer [United States; 1d old]   https://www.brex.com/careers/8584366002?gh_jid=8584366002
+Brex Startup Partnerships Associate [San Francisco, California, United States; 1d old]   https://www.brex.com/careers/8864643002?gh_jid=8864643002
+Brex Venture Partnerships Associate [San Francisco, California, United States; 1d old]   https://www.brex.com/careers/8864648002?gh_jid=8864648002
+Verkada Associate Solutions Engineer, San Mateo [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4135277007
+Verkada Data Trust Associate, Global Revenue Informatics [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5064464007
+Verkada Deputy / Associate General Counsel, Corporate [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5165396007
+Verkada Director of Global Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5155848007
+Verkada Embedded Linux Security Engineer [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4129347007
+Verkada Lead Product Manager, Security Trailers [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5255988007
+Verkada People Operations Associate [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5263704007
+Verkada Physical Security Associate, Events [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5262546007
+Verkada Product Marketing Manager, Privacy and Data Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5150337007
+Verkada Sales Strategy and Operations Associate [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4086576007
+Verkada Sales Strategy & Operations Renewals Associate (Sr) [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5158264007
+Verkada Sales Strategy & Operations (Sr.) Associate, Enterprise [New York City, NY United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5267870007
+Verkada Senior Associate, Pricing & Commercial Operations [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5265168007
+Verkada Senior Leave of Absence Associate [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5197220007
+Verkada Senior Leave of Absence Associate [Tempe, AZ United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5252650007
+Verkada Senior Leave of Absence Associate [Salt Lake City, UT United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5252651007
+Verkada Senior Product Manager, Perimeter & Intrusion Security  [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5205130007
+Verkada Senior Technical Support Engineer [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4997665007
+Verkada Solutions Engineering Manager, Associate Program [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5124829007
+Verkada Sr. Analyst Business Systems   [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5116424007
+Verkada (Sr) Associate / Manager, Strategic Finance & Business Operations [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5231662007
+Verkada Staff Backend Engineer - Device Security  [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5154370007
+Verkada Staff+ Security Engineer, Core Command  [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5167601007
+Verkada Staff+ Security Engineer, Developer Tools [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5167607007
+Verkada Staff+ Security Engineer, IT and Corporate Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5141647007
+Verkada Staff+ Software Engineer, Agentic Software Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5226046007
+Verkada Stock Administrator [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5140952007
+Verkada Supply Chain Specialist (Taiwan) [Taipei, Taiwan; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5267241007
+Verkada Technical Support Engineer [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5063200007
+Verkada Technical Support Engineering Manager [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5144834007
+Affirm Analyst, Early Career (Full Stack) [New York, New York, United States; San Francisco, California, United States; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8039471003
+Affirm Analyst II, Credit [Remote UK; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7832318003
+Affirm Contract Management Specialist II [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8037635003
+Affirm Director, Information Technology & Security [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7607567003
+Affirm Product Security Engineer II [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7796530003
+Affirm Product Support Specialist I (Merchant Care) [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8013700003
+Affirm Quantitative Analyst II (Capital Structuring & Analytics) [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7815954003
+Affirm Quantitative Analyst II (Capital Structuring & Analytics) [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7815952003
+Affirm Security Risk Management Lead [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7718808003
+Affirm Senior Analyst [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7804953003
+Affirm Senior Analyst [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7804955003
+Affirm Software Engineer I (New Grad 2027) - Instruments team [Remote UK; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8011718003
+Affirm Staff Security Engineer, Enterprise AI [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7994553003
+Affirm Staff Security Engineer, Enterprise AI [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7994555003
+Samsara Associate Creative Director, Digital Design [Remote - Canada; 1d old]   https://www.samsara.com/company/careers/roles/8250008?gh_jid=8250008
+Samsara Associate Creative Director, Digital Design [Remote - SF Bay Area; 1d old]   https://www.samsara.com/company/careers/roles/8205153?gh_jid=8205153
+Samsara Associate Sales Engineer, SE Desk (French Bilingual) [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7624120?gh_jid=7624120
+Samsara Associate Sales Engineer, SE Desk - Mid West [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7311761?gh_jid=7311761
+Samsara Associate Sales Engineer, SE Desk - Northeast [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7311741?gh_jid=7311741
+Samsara Associate Sales Engineer, SE Desk - Southeast [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7848351?gh_jid=7848351
+Samsara Associate Sales Engineer, SE Desk - TOLA [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7848363?gh_jid=7848363
+Samsara Contract and Billing Specialist [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8282082?gh_jid=8282082
+Samsara (New Grad) Account Development Representative II - Atlanta [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/8094373?gh_jid=8094373
+Samsara (New Grad) Account Development Representative II - Phoenix [Phoenix, Arizona, United States; 1d old]   https://www.samsara.com/company/careers/roles/8094371?gh_jid=8094371
+Samsara Product Support Engineer III [Bengaluru - BLR1; 1d old]   https://www.samsara.com/company/careers/roles/7960367?gh_jid=7960367
+Samsara Senior Financial Analyst [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8156715?gh_jid=8156715
+Samsara Senior Financial Analyst [Remote - Canada; 1d old]   https://www.samsara.com/company/careers/roles/8223744?gh_jid=8223744
+Samsara Senior Financial Analyst [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8209909?gh_jid=8209909
+Samsara Senior Financial Analyst [Remote - Canada; 1d old]   https://www.samsara.com/company/careers/roles/8187214?gh_jid=8187214
+Samsara Senior Legal Analyst & Litigation Project Manager [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8029100?gh_jid=8029100
+Samsara Senior Legal Operations Specialist (AI & Automation) [Remote - CA; 1d old]   https://www.samsara.com/company/careers/roles/8189002?gh_jid=8189002
+Samsara Senior Product Training Specialist [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8177633?gh_jid=8177633
+Samsara Senior Sales Operations Analyst [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8053880?gh_jid=8053880
+Samsara Senior Scaled Customer Education Specialist [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8177646?gh_jid=8177646
+Samsara Senior Security Engineer - Enterprise Security [London - UK2; Remote - London; 1d old]   https://www.samsara.com/company/careers/roles/8223369?gh_jid=8223369
+Samsara Senior Security Engineer - Threat Detection [Remote - CA; 1d old]   https://www.samsara.com/company/careers/roles/8212787?gh_jid=8212787
+Samsara Senior Security Engineer - Threat Detection [Remote - Dallas; 1d old]   https://www.samsara.com/company/careers/roles/8237426?gh_jid=8237426
+Samsara Senior Security Engineer - Threat Detection [Remote - Seattle; 1d old]   https://www.samsara.com/company/careers/roles/8237427?gh_jid=8237427
+Samsara Senior Security Operations Engineer [Remote - Seattle; 1d old]   https://www.samsara.com/company/careers/roles/8021105?gh_jid=8021105
+Samsara Senior Security Operations Engineer [Remote - CA; 1d old]   https://www.samsara.com/company/careers/roles/8223613?gh_jid=8223613
+Samsara Senior Security Operations Engineer [Remote - Poland; 1d old]   https://www.samsara.com/company/careers/roles/8281650?gh_jid=8281650
+Samsara Senior Security Operations Engineer [San Francisco, CA, United States; 1d old]   https://www.samsara.com/company/careers/roles/8204369?gh_jid=8204369
+Samsara Senior Security Operations Engineer [Remote - Netherlands; 1d old]   https://www.samsara.com/company/careers/roles/8281636?gh_jid=8281636
+Samsara Senior Security Operations Engineer [Remote - OR; 1d old]   https://www.samsara.com/company/careers/roles/8212286?gh_jid=8212286
+Samsara Senior Security Operations Engineer I [Remote - Vancouver; 1d old]   https://www.samsara.com/company/careers/roles/8027084?gh_jid=8027084
+Samsara Senior Training Specialist [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7822470?gh_jid=7822470
+Samsara Specialist Seller, Enterprise Core (AI Products) [Remote - Dallas; 1d old]   https://www.samsara.com/company/careers/roles/7982323?gh_jid=7982323
+Samsara Specialist Seller, Enterprise Core (AI Products) [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/7982346?gh_jid=7982346
+Samsara Specialist Seller, Enterprise Core (AI Products) [Remote - DC; 1d old]   https://www.samsara.com/company/careers/roles/7982336?gh_jid=7982336
+Samsara Specialist Seller, Enterprise Core (AI Products) [Remote - NY; 1d old]   https://www.samsara.com/company/careers/roles/7982331?gh_jid=7982331
+Samsara Specialist Seller, Enterprise Core (AI Products) [Remote - MA; 1d old]   https://www.samsara.com/company/careers/roles/7982328?gh_jid=7982328
+Samsara Specialist Seller, Enterprise Core (AI Products) [Remote - Chicago; 1d old]   https://www.samsara.com/company/careers/roles/7960413?gh_jid=7960413
+Samsara Specialist Seller, Enterprise Core (AI Products) [Remote - Houston; 1d old]   https://www.samsara.com/company/careers/roles/7982326?gh_jid=7982326
+Samsara Specialist Seller, Enterprise Core (Tracking Label) [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8202872?gh_jid=8202872
+Samsara Specialist Seller, Enterprise Select (AI Products [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7292081?gh_jid=7292081
+Samsara Specialist Seller - Tracking Label - Select Enterprise [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8202839?gh_jid=8202839
+Samsara Sr Customer Experience Specialist - Finance [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/8247289?gh_jid=8247289
+Samsara Sr Offensive AI Security Engineer II [Remote - MA; 1d old]   https://www.samsara.com/company/careers/roles/8264748?gh_jid=8264748
+Samsara Sr Offensive AI Security Engineer II [Remote - CA; 1d old]   https://www.samsara.com/company/careers/roles/8171920?gh_jid=8171920
+Samsara Sr Offensive AI Security Engineer II [Remote - Seattle; 1d old]   https://www.samsara.com/company/careers/roles/8247424?gh_jid=8247424
+Samsara Sr Offensive AI Security Engineer II [Remote - Dallas; 1d old]   https://www.samsara.com/company/careers/roles/8247429?gh_jid=8247429
+Samsara Sr Offensive AI Security Engineer II [Remote - Denver; 1d old]   https://www.samsara.com/company/careers/roles/8247432?gh_jid=8247432
+Samsara Staff Application Security Engineer [Remote - Seattle; 1d old]   https://www.samsara.com/company/careers/roles/8205118?gh_jid=8205118
+Samsara Staff Application Security Engineer [Remote - DC; 1d old]   https://www.samsara.com/company/careers/roles/8205139?gh_jid=8205139
+Samsara Staff Application Security Engineer [Remote - NYC; 1d old]   https://www.samsara.com/company/careers/roles/8205146?gh_jid=8205146
+Samsara Staff Application Security Engineer [Remote - Dallas; 1d old]   https://www.samsara.com/company/careers/roles/8205149?gh_jid=8205149
+Samsara Staff Application Security Engineer [San Francisco, CA, United States; 1d old]   https://www.samsara.com/company/careers/roles/7852183?gh_jid=7852183
+Samsara Technical Support Engineer II [Bengaluru - BLR1; 1d old]   https://www.samsara.com/company/careers/roles/8278293?gh_jid=8278293
+Samsara Technical Support Engineer I - Mexico [Remote - Mexico; 1d old]   https://www.samsara.com/company/careers/roles/8112694?gh_jid=8112694
+Reddit International Payroll Analyst [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8192369
+Reddit International Payroll Analyst [Remote - United Kingdom; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8234154
+Reddit Senior Business Analyst, Revenue Analytics [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8023563
+Reddit Senior Support Engineer, Snoo Operations & Support [New York City, NY; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8147802
+Reddit Staff Machine Learning Engineer, AI Security [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8203478
+Reddit Staff Product Security Engineer [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/7868511
+Reddit Staff Threat Analyst, Ads Fraud [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8189395
+Twitch Security Incident Response Engineer [Irvine, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8812423002
+Twitch Security Incident Response Engineer [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8812415002
+Twitch Security Incident Response Engineer [Seattle, WA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8812422002
+Twitch Senior Engineering Manager, Security Platform [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847075002
+Twitch Senior Engineering Manager, Security Platform [Irvine, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847084002
+Twitch Senior Engineering Manager, Security Platform [Seattle, WA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847085002
+Twitch Senior Engineering Manager, Security Platform [New York City; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847086002
+Twitch Software Development Engineer, Security Platform [Seattle, WA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8739185002
+Twitch Software Development Engineer, Security Platform [Irvine, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8739196002
+Twitch Software Development Engineer, Security Platform [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8739060002
+Discord Engineering Manager, Platform Security [Remote (West Coast); 1d old]   https://job-boards.greenhouse.io/discord/jobs/8649856002
+Discord Senior Platform Security Engineer  [San Francisco Bay Area ; 1d old]   https://job-boards.greenhouse.io/discord/jobs/8769799002
+Discord Senior Stock Administrator [San Francisco Bay Area or Remote (U.S.); 1d old]   https://job-boards.greenhouse.io/discord/jobs/8757366002
+Discord Staff Technical Program Manager, Security + IT [San Francisco Bay Area; 1d old]   https://job-boards.greenhouse.io/discord/jobs/8771034002
+Discord Strategic Finance Analyst [San Francisco Bay Area; 1d old]   https://job-boards.greenhouse.io/discord/jobs/8575166002
+Perplexity Associate Product Marketing Manager [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/08f1a218-bdff-4cdd-aefe-0d55529b1ece
+Perplexity Governance, Risk & Compliance Analyst  [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/977b626c-5546-42c6-95c8-4e2350ec41c9
+Perplexity Member of Technical Staff (Software Engineer, Security) [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/6c9b3c71-85ba-47db-bce5-44fd9fa95d03
+Perplexity Member of Technical Staff (Search Quality Analyst) [Belgrade; 1d old]   https://jobs.ashbyhq.com/perplexity/3b349a2f-360e-44e6-a57d-6a87bc3016a7
+Perplexity Member of Technical Staff (Offensive Security Engineer) [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/69fd6a56-0050-44f7-9ed2-2c3a7320908d
+Perplexity Enablement Specialist, Perplexity Computer [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/3163a2c9-f9d3-4596-bf88-0c55298bd027
+Perplexity Payroll Analyst [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/5080dab5-7eb7-4cb2-9e2c-c61531fd3ad1
+Perplexity Member of Technical Staff (New Grad) [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/5a4cec8b-5688-497c-a5ec-884f75d09511
+Perplexity Member of Technical Staff (Search Crawler Analyst) [Belgrade; 1d old]   https://jobs.ashbyhq.com/perplexity/c20486f5-1e9c-436c-ba67-dc69842c221c
+Perplexity Legal Response Specialist [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/ffa25e26-9675-4ab1-bc98-325675879e1d
+Harvey Senior Product Security Engineer [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/50a8df2a-c50e-4326-ae90-0c9f8ee0cf1d
+Harvey Deal Operations Analyst [Chicago; 1d old]   https://jobs.ashbyhq.com/harvey/16b67976-02a3-4179-9eca-afc86c551b8a
+Harvey Staff Product Security Engineer [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/d2aaaa58-eb59-42ba-9a62-ca6ce4cdf206
+Harvey Compliance Analyst [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/2f35e50f-2978-44c3-a495-7cbfc1f512d4
+Harvey Legal Engineer, Product Specialist Manager [New York; 1d old]   https://jobs.ashbyhq.com/harvey/377fcb88-cbf6-493f-8440-92708f4c9931
+Harvey CX Data Analyst [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/ecfc45be-fc15-4c16-a419-509c998b6c80
+Harvey Associate Commercial Counsel  [Munich; 1d old]   https://jobs.ashbyhq.com/harvey/95d7c087-8283-4e17-937d-2ee363ec95ef
+Harvey Staff Corporate Security Engineer [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/f30a1b59-279c-43cb-bf56-1745a84dfd82
+Harvey Software Engineer, New Grad (2027) [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/b0996df6-6b6e-42be-a4f9-0084536068f5
+Harvey GTM Systems Administrator, EMEA [Dublin; 1d old]   https://jobs.ashbyhq.com/harvey/953b710f-3c48-4409-ad30-6416da8ed043
+Harvey Senior Technical CX Specialist [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/b7842fd8-72b2-43ea-8b5e-57aa45d893c7
+Harvey Staff Security Software Engineer, IAM [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/d16bd223-cb68-46f3-8bf6-41267b9770cb
+Harvey Strategy Associate [New York; 1d old]   https://jobs.ashbyhq.com/harvey/23a93539-af9f-400d-9da6-dd9165364002
+Harvey Technical CX Specialist [Remote; 1d old]   https://jobs.ashbyhq.com/harvey/0a3c2861-e0e0-4c37-b3a8-9b72f24234e1
+Harvey Senior Analyst, Recruiting Operations [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/e0d05322-1dd6-4271-bd15-825108273807
+Harvey CX Specialist [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/ae15faa5-f306-4abd-a10a-4b1212c208d9
+Harvey Director of Product Security [New York; 1d old]   https://jobs.ashbyhq.com/harvey/0b11604a-3743-4202-85d2-260dee788611
+Harvey GTM Lead System Administrator [New York; 1d old]   https://jobs.ashbyhq.com/harvey/de0168ee-1abc-4f43-ad3b-e8d8bcba67e5
+Harvey Legal Engineer Manager, Product Specialist, Munich [Munich; 1d old]   https://jobs.ashbyhq.com/harvey/20716838-7013-42d7-b1d1-df8929dac347
+Harvey Senior Deal Desk Analyst, APAC [Sydney; 1d old]   https://jobs.ashbyhq.com/harvey/39d6ae01-e28c-441c-9593-5b1d2923b075
+Harvey CX Knowledge Specialist [New York; 1d old]   https://jobs.ashbyhq.com/harvey/7f8fd013-5d67-4029-88ac-23818c8b0675
+Harvey Technical CX Specialist, EMEA [Dublin; 1d old]   https://jobs.ashbyhq.com/harvey/21031616-e7b7-420a-a5b6-6c7006e55989
+Harvey Sales Compensation Analyst [Dublin; 1d old]   https://jobs.ashbyhq.com/harvey/817fb895-ce20-4711-afd5-aec1ed1edc6d
+Harvey Technical Specialist - Customer Experience [Bengaluru; 1d old]   https://jobs.ashbyhq.com/harvey/5d596cb2-2fc9-4862-9fe8-55362cad90a2
+Harvey Staff Infrastructure Security Engineer [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/694441dc-7637-43bb-81de-c3ac69fd8af0
+Writer Staff security engineer, application security [New York City, NY; 1d old]   https://jobs.ashbyhq.com/writer/36aef3b1-ded0-4aed-9943-01bbf6568fe4
+Writer Security engineer, detection and response [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/writer/55dc4451-a89c-46d3-b482-9d2b5e9879d3
+Sierra Security Engineer [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/bbef339c-3365-40df-804b-ece245386b43
+Sierra Software Engineer, Security [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/201c6046-acb5-4fd4-a685-e993f34ec0d1
+Sierra Security and Compliance Manager [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/687a56db-9f2a-42f9-94a0-fa06730c1e10
+Sierra Security Technical Program Manager [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/47fd7def-71fa-4585-a625-14e2f25f5058
+Sierra Software Engineer, Agent (New Grad 2027) [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/149f368c-52d5-408f-ba26-ad888f318a00
+Sierra IT Support Specialist [New York, NY; 1d old]   https://jobs.ashbyhq.com/sierra/ef6ee85e-597e-49cd-b2fb-c304b8f3cda7
+Sierra APX (New Grad 2027) [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/d9c445da-c7b4-43a3-8d71-d367681c3015
+Sierra Sales Compensation Analyst [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/1f8e393a-c50f-4616-b808-521e72d90139
+Sierra Associate Sales Engineer [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/cfecdf07-ee22-45a0-b472-5de10f167984
+Duolingo Product Manager, MBA Intern [Pittsburgh, PA; 1d old]   https://careers.duolingo.com/jobs/8888045002?gh_jid=8888045002
+Lyft Associate Counsel, Employment [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8779945002?gh_jid=8779945002
+Lyft Associate Counsel, Employment [Seattle, WA; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8908836002?gh_jid=8908836002
+Lyft Associate Counsel, Employment [Washington, DC; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8863276002?gh_jid=8863276002
+Lyft Associate Operations Manager [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8733655002?gh_jid=8733655002
+Lyft Associate Producer, Manifold [U.S. Anywhere; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8888978002?gh_jid=8888978002
+Lyft Data Analyst [New York, NY; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8896685002?gh_jid=8896685002
+Lyft Fleet Operations Associate [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8586330002?gh_jid=8586330002
+Lyft Fleet Operations Associate (Day Shift) [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8706916002?gh_jid=8706916002
+Lyft  Fleet Operations Associate (Overnight Shift) [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8706936002?gh_jid=8706936002
+Lyft Fleet Operations Associate (Swing Shift) [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8706924002?gh_jid=8706924002
+Lyft Investigator, Global Security [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8675426002?gh_jid=8675426002
+Lyft Legal Operations Specialist [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8792126002?gh_jid=8792126002
+Lyft Operations Associate [Cleveland, OH; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8780060002?gh_jid=8780060002
+Lyft Operations Associate - Flexdrive [Philadelphia, PA; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8880066002?gh_jid=8880066002
+Lyft Operations Specialist, Capital Bikeshare [Washington, DC; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8689228002?gh_jid=8689228002
+Lyft Risk Analyst [New York, NY; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8883423002?gh_jid=8883423002
+Lyft Risk Analyst [San Francisco, CA; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8883412002?gh_jid=8883412002
+Lyft Senior Payroll Analyst [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8908000002?gh_jid=8908000002
+Lyft Senior Security Assurance Analyst [New York, NY; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8662388002?gh_jid=8662388002
+Block Business Development Rep Associate [Scottsdale, AZ, United States of America; 1d old]   http://block.xyz/careers/jobs/5232002008?gh_jid=5232002008
+Block Business Development Rep Associate [Los Angeles, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5232001008?gh_jid=5232001008
+Block Business Development Rep Associate [Seattle, WA, United States of America; 1d old]   http://block.xyz/careers/jobs/5232005008?gh_jid=5232005008
+Block Business Development Rep Associate [Atlanta, GA, United States of America; 1d old]   http://block.xyz/careers/jobs/5231999008?gh_jid=5231999008
+Block Business Development Rep Associate [DC Metro, United States of America; 1d old]   http://block.xyz/careers/jobs/5232000008?gh_jid=5232000008
+Block Business Development Rep Associate [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5232007008?gh_jid=5232007008
+Block Business Development Rep Associate [Saint Louis, MO, United States of America; 1d old]   http://block.xyz/careers/jobs/5232006008?gh_jid=5232006008
+Block Business Development Rep Associate, New York City [New York, NY, United States of America; 1d old]   http://block.xyz/careers/jobs/5232008008?gh_jid=5232008008
+Block Business Intelligence Analyst [San Francisco, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5439140008?gh_jid=5439140008
+Block Business Systems Analyst, IT Vendor Operations [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5427849008?gh_jid=5427849008
+Block Implementation Specialist - Bilingual (Spanish) PST Timezone [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5448037008?gh_jid=5448037008
+Block People Analyst  [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5441183008?gh_jid=5441183008
+Block Principal Security Engineer [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5281304008?gh_jid=5281304008
+Block Product Specialist Manager, Square [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5417953008?gh_jid=5417953008
+Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5427789008?gh_jid=5427789008
+Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5427855008?gh_jid=5427855008
+Block Senior Analyst, Pricing & Monetization [New York, NY, United States of America; 1d old]   http://block.xyz/careers/jobs/5453346008?gh_jid=5453346008
+Block Senior Security Engineer, Detection & Response [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5425346008?gh_jid=5425346008
+Block Senior Security Engineer, Platform Security [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5231316008?gh_jid=5231316008
+Block SMB Business Development Rep Associate - AfterPay [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5452864008?gh_jid=5452864008
+Elastic Collections Associate [Costa Rica; 1d old]   https://jobs.elastic.co/jobs?gh_jid=8186429&gh_jid=8186429
+Datadog Accounts Payable Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8257324/?gh_jid=8257324
+Datadog Associate Customer Success Manager - Boston [Boston, Massachusetts, USA; 1d old]   https://careers.datadoghq.com/detail/8301102/?gh_jid=8301102
+Datadog Associate Customer Success Manager - Denver [Denver, Colorado, USA; 1d old]   https://careers.datadoghq.com/detail/8301113/?gh_jid=8301113
+Datadog Compensation Specialist [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8263113/?gh_jid=8263113
+Datadog Compensation Specialist, Executive [Boston, Massachusetts, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8238444/?gh_jid=8238444
+Datadog Content Optimization Specialist [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8246307/?gh_jid=8246307
+Datadog Director, Security Channels (North America) [Colorado, USA, Remote; Illinois, USA, Remote; New York, New York, USA; New York, USA, Remote; San Francisco, California, USA; Texas, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/7984985/?gh_jid=7984985
+Datadog Enterprise Security Sales Specialist [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/7129425/?gh_jid=7129425
+Datadog Enterprise Security Sales Specialist [San Francisco, California, USA; 1d old]   https://careers.datadoghq.com/detail/8243668/?gh_jid=8243668
+Datadog Enterprise Security Sales Specialist [District of Columbia, USA, Remote; North Carolina, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/7132132/?gh_jid=7132132
+Datadog Enterprise Security Sales Specialist [California, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/8256245/?gh_jid=8256245
+Datadog FP&A Analyst, Cloud Finance [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8267437/?gh_jid=8267437
+Datadog FP&A Analyst GTM [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8312438/?gh_jid=8312438
+Datadog FP&A Analyst R&D [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8204554/?gh_jid=8204554
+Datadog Group Product Manager - Code Security [Boston, Massachusetts, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8023763/?gh_jid=8023763
+Datadog Group Product Manager - Code Security [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8314006/?gh_jid=8314006
+Datadog GTM Strategy/Operations Associate [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8171303/?gh_jid=8171303
+Datadog GTM Strategy/Operations Associate - New York [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8179647/?gh_jid=8179647
+Datadog GTM Strategy & Operations Senior Associate [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8247250/?gh_jid=8247250
+Datadog Learning Technology Specialist [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8282537/?gh_jid=8282537
+Datadog Manager I, Technical Support Engineering [Seoul, South Korea; 1d old]   https://careers.datadoghq.com/detail/8014851/?gh_jid=8014851
+Datadog Principal CRO and Web Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8139161/?gh_jid=8139161
+Datadog Product Manager II, AI & Data Security [Boston, Massachusetts, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/7982288/?gh_jid=7982288
+Datadog Senior Accounts Receivable Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8143849/?gh_jid=8143849
+Datadog Senior Business Systems Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8231811/?gh_jid=8231811
+Datadog Senior Deal Desk Analyst [Denver, Colorado, USA; San Francisco, California, USA; 1d old]   https://careers.datadoghq.com/detail/8197674/?gh_jid=8197674
+Datadog Senior Enablement Program Associate - Technical Solutions Enablement [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8279776/?gh_jid=8279776
+Datadog Senior Enablement Program Manager, Support Engineering [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8128764/?gh_jid=8128764
+Datadog Senior Financial Systems Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8002771/?gh_jid=8002771
+Datadog Senior Manager, Product Design - Security [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8281102/?gh_jid=8281102
+Datadog Senior Procurement Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8244276/?gh_jid=8244276
+Datadog Senior Product Security Engineer - AI Agents [Atlanta, Georgia, USA; Connecticut, USA, Remote; Florida, USA, Remote; Massachusetts, USA, Remote; New York, New York, USA; New York, USA, Remote; Pennsylvania, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/7993198/?gh_jid=7993198
+Datadog Senior Security Engineer - Platform Trust & Safety [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8292699/?gh_jid=8292699
+Datadog Senior Security Engineer, Security Incident Response Team [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8286919/?gh_jid=8286919
+Datadog Senior Security Engineer, Vulnerability Management [Boston, Massachusetts, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8173840/?gh_jid=8173840
+Datadog Senior Security Sales Engineer [Illinois, USA, Remote; Texas, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/7554877/?gh_jid=7554877
+Datadog Senior Security Sales Engineer [California, USA, Remote; Colorado, USA, Remote; Washington, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/8141243/?gh_jid=8141243
+Datadog Senior Security Sales Engineer [Florida, USA, Remote; Georgia, USA, Remote; Massachusetts, USA, Remote; New York, USA, Remote; 1d old]   https://careers.datadoghq.com/detail/8141240/?gh_jid=8141240
+Datadog Senior Software Engineer - CI/CD Security [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8223819/?gh_jid=8223819
+Datadog Senior Talent Planning Analyst [Boston, Massachusetts, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8204629/?gh_jid=8204629
+Datadog Strategic Finance Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8257306/?gh_jid=8257306
+Datadog Technical Support Engineer 2, Premier - NYC (Japanese Speaking) [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8109441/?gh_jid=8109441
+Asana AI GTM Specialist [San Francisco; 1d old]   https://www.asana.com/jobs/apply/8194380?gh_jid=8194380
+Asana API Support Engineer [Warsaw; 1d old]   https://www.asana.com/jobs/apply/8221174?gh_jid=8221174
+Asana Designated Support Engineer [Dublin; 1d old]   https://www.asana.com/jobs/apply/8250168?gh_jid=8250168
+Asana IT Support Specialist [Dublin; 1d old]   https://www.asana.com/jobs/apply/8212344?gh_jid=8212344
+Asana Manager, Customer Product Support - EMEA [Dublin; 1d old]   https://www.asana.com/jobs/apply/8315854?gh_jid=8315854
+Asana Product Security Engineer [Warsaw; 1d old]   https://www.asana.com/jobs/apply/8244347?gh_jid=8244347
+Asana Security Compliance Lead, FedRAMP [San Francisco; 1d old]   https://www.asana.com/jobs/apply/7821582?gh_jid=7821582
+Asana Senior Security Engineer, Threat Response [Warsaw; 1d old]   https://www.asana.com/jobs/apply/7964484?gh_jid=7964484
+Asana Senior Security Technical Program Manager [San Francisco; 1d old]   https://www.asana.com/jobs/apply/7959069?gh_jid=7959069
+Toast Associate Counsel, Product and Marketing [Remote - US; 1d old]   https://careers.toasttab.com/jobs?gh_jid=8249029
+Chime Lead Analyst, Financial Crimes [Chicago, IL, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8779819002?gh_jid=8779819002
+Chime Manager, Product Security [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8526680002?gh_jid=8526680002
+Chime Regional Physical Security Lead [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8907828002?gh_jid=8907828002
+Chime Senior Application Security Engineer [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8575541002?gh_jid=8575541002
+Chime Senior Associate, Compliance Advisory [Chicago, IL, USA; New York, NY, USA; San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8786182002?gh_jid=8786182002
+Chime Senior Associate, Strategic Finance [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8801438002?gh_jid=8801438002
+Chime Senior Associate, Strategic Finance (Growth) [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8895833002?gh_jid=8895833002
+Chime Senior Business Analyst, TPRM [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8742766002?gh_jid=8742766002
+Sofi Associate Manager, Protect [United States; 1d old]   https://sofi.com/careers/job/8034909003?gh_jid=8034909003
+Sofi Crypto Core Operations Analyst [FL - Jacksonville; UT - Cottonwood Heights; 1d old]   https://sofi.com/careers/job/8012077003?gh_jid=8012077003
+Sofi Crypto Sanctions Compliance Senior Specialist [United States; 1d old]   https://sofi.com/careers/job/8008814003?gh_jid=8008814003
+Sofi Financial Intelligence Unit Senior Specialist - Crypto [United States; 1d old]   https://sofi.com/careers/job/8041546003?gh_jid=8041546003
+Sofi Financial Services Strategic Sourcing Analyst [United States; 1d old]   https://sofi.com/careers/job/7979520003?gh_jid=7979520003
+Sofi Offensive Security Lead [CA - San Francisco; WA - Seattle; NY - New York City; UT - Cottonwood Heights; TX - Frisco; MT - Helena; 1d old]   https://sofi.com/careers/job/7985585003?gh_jid=7985585003
+Sofi Payroll Specialist [United States; 1d old]   https://sofi.com/careers/job/8030940003?gh_jid=8030940003
+Sofi Risk Strategy Execution Analyst [UT - Cottonwood Heights, FL - Jacksonville; 1d old]   https://sofi.com/careers/job/7920073003?gh_jid=7920073003
+Sofi Senior Business Operations Analyst [UT - Cottonwood Heights; FL-Jacksonville; TX-Frisco; DE-Greenville; NY-New York; CA- San Francisco; WA-Seattle ; 1d old]   https://sofi.com/careers/job/8017312003?gh_jid=8017312003
+Sofi Senior Dialer Analyst [UT - Cottonwood Heights; 1d old]   https://sofi.com/careers/job/7920050003?gh_jid=7920050003
+Sofi Senior Operations & Supplier Testing Analyst [UT - Cottonwood Heights; FL-Jacksonville; 1d old]   https://sofi.com/careers/job/8017316003?gh_jid=8017316003
+Sofi Staff Backend Engineer, Custody Core (Crypto Security) [CA - San Francisco; WA - Seattle; NY - New York City; TX - Frisco; UT - Cottonwood Heights; MT - Helena; FL - Jacksonville; 1d old]   https://sofi.com/careers/job/7819801003?gh_jid=7819801003
+Sofi Staff Compensation Analyst [San Francisco, CA; 1d old]   https://sofi.com/careers/job/7819503003?gh_jid=7819503003
+Sofi Staff Enterprise Security Engineer [WA - Seattle; CA - San Francisco; UT - Cottonwood Heights; NY - New York City; TX - Frisco; 1d old]   https://sofi.com/careers/job/8017077003?gh_jid=8017077003
+Sofi Strategic Finance Analyst, Operations [United States; 1d old]   https://sofi.com/careers/job/7976546003?gh_jid=7976546003
+NissanGlobal Financial AI Engineer Intern [Franklin, TN; 14d old]   https://alliance.wd3.myworkdayjobs.com/en-US/nissanjobs/job/Franklin-Tennessee---United-States-of-America/Financial-AI-Engineering-Intern---Summer-2027---Franklin--TN_R00214241?utm_source=Simplify&ref=Simplify
+Elanco Pet Health Sales Excellence Intern - AI Innovation & Enablement [Indianapolis, IN; 17d old]   https://elanco.wd5.myworkdayjobs.com/en-US/External_Career/job/Indianapolis-IN/US-Pet-Health-Sales-Excellence-Intern---AI-Innovation---Enablement--Summer-2027-_R0027467?utm_source=Simplify&ref=Simplify
+NissanGlobal AI Agent Architect Intern [Farmington Hills, MI; 18d old]   https://alliance.wd3.myworkdayjobs.com/en-US/nissanjobs/job/Farmington-Hills-Michigan---United-States-of-America/AI-Agent-Architect---Summer-2027---Farmington-Hills--MI_R00214218?utm_source=Simplify&ref=Simplify
+DowJones Software Engineer Intern [NYC; 19d old]   https://dowjones.wd1.myworkdayjobs.com/en-US/Dow_Jones_Career/job/NYC---1211-Ave-of-the-Americas/Summer-2027-Internship-Program---Software-Engineering-Intern_Job_Req_55891?utm_source=Simplify&ref=Simplify
+Arc Software Engineer Intern [Torrance, CA; 23d old]   https://job-boards.greenhouse.io/arcboatcompany/jobs/5442881008?utm_source=Simplify&ref=Simplify
+Hntb AI Business Process Developer Intern [Austin, TX; 24d old]   https://hntb.wd5.myworkdayjobs.com/hntb_university_careers/job/Austin-TX/Intern---AI-Business-Process-Developer--Summer-2027-_R-31865?utm_source=Simplify&ref=Simplify
+TheFederalReserveSystem Computer Science and Software Engineering Intern [Chicago, IL; 25d old]   https://rb.wd5.myworkdayjobs.com/en-US/FRS/job/Chicago-IL/Summer-2027-Intern-Computer-Science-and-Software-Engineering_R-0000033637?utm_source=Simplify&ref=Simplify
+Enova Software Engineer Intern [Chicago, IL; 26d old]   https://job-boards.greenhouse.io/enova/jobs/8239619?utm_source=Simplify&ref=Simplify
 ElectronicArts Product Management Intern [Austin, TX; 19d old]   https://jobs.ea.com/en_US/careers/JobDetail/Product-Management-Intern-Fan-Care-Community-Care-Summer-2027/216182?utm_source=Simplify&ref=Simplify
 Assurant Manufactured Housing Product Analysis Intern [Miami, FL; 21d old]   https://assurant.wd1.myworkdayjobs.com/en-US/Assurant_Careers/job/Miami-FL/Summer-2027-Intern--Manufactured-Housing-Product-Analysis-Intern_R-115769?utm_source=Simplify&ref=Simplify
 Skydio Autonomy Engineer Intern - Deep Learning / Computer Vision [San Mateo, CA; 1d old]   https://jobs.ashbyhq.com/skydio/f1a72f5b-6157-47c1-8de9-379a32c7419f/application?embed=true&utm_source=Simplify&ref=Simplify
@@ -1796,27 +2234,22 @@ Globalfoundries Technology Architecture Engineer Intern [Malta, NY; 28d old]   h
 Globalfoundries Reliability Test Engineer Intern [Malta, NY; 28d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---New-York---Malta/Reliability-Test-Engineering-Intern--Summer-2027-_JR-2604361?utm_source=Simplify&ref=Simplify
 Globalfoundries Silicon Photonics Reliability Engineering Intern [Malta, NY; 28d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---New-York---Malta/Silicon-Photonics-Reliability-Engineering-Intern--Summer-2027-_JR-2604258?utm_source=Simplify&ref=Simplify
 Bny Data Science Intern - Engineering [NYC; 6d old]   https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/81240?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Rtx Software Engineer Intern [Cedar Rapids, IA; 3d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-IA-CEDAR-RAPIDS-107--400-Collins-Rd-NE--BLDG-107/Software-Engineering-Intern--Summer-2027-_01884054?utm_source=Simplify&ref=Simplify
 Bny Data Science Intern - Engineering [Lake Mary, FL; 6d old]   https://eofe.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/81239?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Intuit Software Engineer Intern - Full Stack [5 locations  Charlotte, NC NYC Mountain View, CA Atlanta, GA San Diego, CA; 1d old]   https://jobs.intuit.com/job/mountain-view/summer-2027-software-engineering-intern-full-stack/27595/99856180864?utm_source=Simplify&ref=Simplify
 Tesla Software Engineer Intern - Vehicle Software - Summer 2027 [Palo Alto, CA; 2d old]   https://www.tesla.com/careers/search/job/281097?utm_source=Simplify&ref=Simplify
 Honeywell Offering Management Intern [United States; 2d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155594?utm_source=Simplify&ref=Simplify
 Vertiv Power Management Intern - Summer 2027 [Delaware, OH; 3d old]   https://egup.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/20279233?utm_source=Simplify&ref=Simplify
 Csx Intermodal Intern - Summer 2027 - Paid [Jacksonville, FL; 2d old]   https://fa-eowa-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CSXCareers/job/54817?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Ptc Software Engineer Intern [Boston, MA; 0d old]   https://ptc.wd1.myworkdayjobs.com/ptc/job/Boston-MA-USA/Software-Engineer-Intern--Summer-2027-_JR112943?utm_source=Simplify&ref=Simplify
 CvsHealth Innovation & Technology Intern - Data Engineering [Irving, TX; 0d old]   https://cvshealth.wd1.myworkdayjobs.com/CVS_Health_Careers/job/TX---Irving/Innovation---Technology-Internship---Data-Engineering---Summer-2027--Undergraduate-_R1084831-1?utm_source=Simplify&ref=Simplify
 Leidos Electrical Design Engineer Intern [Huntsville, AL; 0d old]   https://leidos.wd5.myworkdayjobs.com/External/job/Huntsville-AL/Electrical-Design-Engineering-Intern_R-00195400?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 WellsFargo Technology Intern - Early Careers - Data Engineering [Iselin, Woodbridge Township, NJ Charlotte, NC Irving, TX; 0d old]   https://wd1.myworkdaysite.com/recruiting/wf/WellsFargoJobs/job/CHARLOTTE-NC/XMLNAME-2027-Technology-Summer-Internship---Early-Careers--Data-Engineering-_R-583066?utm_source=Simplify&ref=Simplify
 Jabil Validation Engineer Intern [Austin, TX; 0d old]   https://jabil.wd5.myworkdayjobs.com/Jabil_Careers/job/Austin-TX/Validation-Engineer-Intern_J2469310?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 30 days old)
 SynchronyFinancial Digital Technology Center Intern [Stamford, CT; 0d old]   https://synchronyfinancial.wd5.myworkdayjobs.com/University/job/Stamford-Hub/UConn-Stamford-Digital-Technology-Center-Intern---Summer-2027_2602661?utm_source=Simplify&ref=Simplify
 MacyS Summer Internship - Technology [Johns Creek, GA; 0d old]   https://ebwh.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/92293?utm_source=Simplify&ref=Simplify
@@ -2076,7 +2509,6 @@ Optiver Quantitative Intern [Austin, TX Chicago, IL; 0d old]   https://www.optiv
 Optiver FPGA Engineer Intern [Chicago, IL; 0d old]   https://www.optiver.com/join-us/jobs/8402114002/?gh_jid=8402114002&utm_source=Simplify&ref=Simplify
 Optiver FPGA Engineer Intern [Austin, TX; 0d old]   https://www.optiver.com/join-us/jobs/8641352002/?gh_jid=8641352002&utm_source=Simplify&ref=Simplify
 ImcTrading Hardware Engineer Intern [Chicago, IL; 0d old]   https://job-boards.eu.greenhouse.io/imc/jobs/4823945101?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Samsara Account Development Representative Intern - Atlanta [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/8325373?gh_jid=8325373
 Samsara Account Development Representative Intern - Atlanta [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/8325057?gh_jid=8325057
@@ -2116,7 +2548,6 @@ NissanGlobal Market Intelligence (Customer Insights) Intern [Franklin, TN; 18d o
 FederalHomeLoanBankOfIndianapolis Model Risk Intern [Indianapolis, IN; 0d old]   https://fhlbi.wd1.myworkdayjobs.com/FHLBI_Careers/job/Indianapolis/Model-Risk-Intern_R636?utm_source=Simplify&ref=Simplify
 ParallelSystems Hardware Engineering Intern - Mechanical and Electrical [LA; 0d old]   https://boards.greenhouse.io/parallel/jobs/5275660007?utm_source=Simplify&ref=Simplify
 Marvell Signal and Power Integrity Intern [Santa Clara, CA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers/job/Santa-Clara-CA/Signal-and-Power-Integrity-Intern--MS---Summer-2027_2603858?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 180 days old)
 NianticSpatial Software Engineer Intern - Native SDK & Mobile Platforms [SF; 1d old]   https://jobs.ashbyhq.com/niantic-spatial/ed68b062-4dcb-4deb-9cc0-ed38030f6e43/application?embed=true&utm_source=Simplify&ref=Simplify
 LawrenceLivermoreNationalLaboratoryLlnl Defense Science and Technology Intern [Livermore, CA; 28d old]   https://jobs.smartrecruiters.com/LLNL/3743990015740565?utm_source=Simplify&ref=Simplify
@@ -2134,7 +2565,6 @@ Marvell Test Engineering Intern [Irvine, CA Santa Clara, CA Westlake Village, CA
 Garmin Software Engineer Intern [Cary, NC; 0d old]   https://careers.garmin.com/jobs/20131?icims=1&utm_source=Simplify&ref=Simplify
 Marvell Design for Test Intern [4 locations  Morrisville, NC Santa Clara, CA Boise, ID Westborough, MA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers/job/Morrisville-NC/Design-for-Test-Intern--BS---Summer-2027_2604511?utm_source=Simplify&ref=Simplify
 Marvell Functional Validation Intern - BS [Santa Clara, CA Boise, ID Westborough, MA; 0d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Westborough-MA/Functional-Validation-Intern--BS---Summer-2027_2604514?utm_source=Simplify&ref=Simplify
-
 # ---- added by agents/job_sources.py (multi-source, <= 60 days old)
 Futo Software Engineer Intern [Austin, TX; 0d old]   https://jobs.lever.co/futo-org/7dd9877a-9009-408d-aa50-623cd5153f70/apply?utm_source=Simplify&ref=Simplify
 Paccar Application Developer Intern [Chillicothe, OH; 0d old]   https://jobs.paccar.com/job/Kirkland-Summer-2027-Application-Developer-Intern-(OH)-WA-98033/1451927133/?ats=successfactors&utm_source=Simplify&ref=Simplify
@@ -2195,3 +2625,66 @@ Rtx Secure Software Intern [Woburn, MA; 1d old]   https://globalhr.wd5.myworkday
 SkybandSystems Avionics Hardware & Test Engineer Intern [Kirkland, WA; 21d old]   https://jobs.ashbyhq.com/skyband%20systems/74d42f88-5265-4879-9c6d-61f532e89b20/application?embed=true&utm_source=Simplify&ref=Simplify
 SkybandSystems Software Engineer Intern [Kirkland, WA; 21d old]   https://jobs.ashbyhq.com/skyband%20systems/1e68c6d9-c810-418d-9171-f2a23f013d06/application?embed=true&utm_source=Simplify&ref=Simplify
 Garmin Software Engineer Intern [Chandler, AZ; 0d old]   https://careers.garmin.com/jobs/19858?icims=1&utm_source=Simplify&ref=Simplify
+# ---- added by agents/job_sources.py (multi-source, <= 14 days old)
+Harvey CX Data Analyst [Remote; 1d old]   https://jobs.ashbyhq.com/harvey/e69f2050-b4c0-4fbb-9852-2c60d2adbb45
+Harvey Strategy Associate [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/446091c7-8a78-4c1c-8de3-4a2289be6072
+Harvey Deal Operations Analyst [Dallas; 1d old]   https://jobs.ashbyhq.com/harvey/41e581a5-b5ee-47cb-94e5-6224f1559e4d
+Harvey CX Specialist [New York; 1d old]   https://jobs.ashbyhq.com/harvey/d6ba6f18-42c8-4bcd-88a7-f6145c472c78
+Harvey Software Engineer, New Grad (2027) [New York; 1d old]   https://jobs.ashbyhq.com/harvey/4d8dc9ba-eb86-4d88-af7d-65d2fdaf3fdc
+Harvey Director of Product Security [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/56483928-e6b1-4e30-b5fa-2539494fe620
+Harvey GTM Lead System Administrator [Remote; 1d old]   https://jobs.ashbyhq.com/harvey/4167f471-715b-413b-86c5-0596aae42eb8
+Harvey CX Knowledge Specialist [San Francisco; 1d old]   https://jobs.ashbyhq.com/harvey/a9ad715e-6724-4ab8-a739-2cec5cd0e61f
+ShieldAi Software Engineer 1 New Grad [Seattle, WA; 2d old]   https://jobs.lever.co/shieldai/633a3038-574c-45ff-babb-7e1b8b7c6196/apply?utm_source=Simplify&ref=Simplify
+Amazon Software Development Engineer 1 Early Career - Annapurna Labs [4 locations  Seattle, WA Austin, TX NYC Cupertino, CA; 2d old]   https://amazon.jobs/en/jobs/10558915/software-development-engineer-i-annapurna-labs-early-career-2027?utm_source=Simplify&ref=Simplify
+Rtx Engineer 1 - Software Engineer - Test Engineering [Burnsville, MN; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MN-BURNSVILLE-WEST--14300-Judicial-Rd--WEST-BLDG/Engineer-I--Software-Engineer---Test-Engineering--Onsite-_01883521?utm_source=Simplify&ref=Simplify
+Meijer Software Engineer 1, AI [Grand Rapids, MI; 3d old]   https://meijer.wd5.myworkdayjobs.com/en-US/Meijer/job/Grand-Rapids-MI/Software-Engineer_R000692154?utm_source=Simplify&ref=Simplify
+Citi Software Developer New Grad - Application Development [Jacksonville, FL; 3d old]   https://citi.wd5.myworkdayjobs.com/2/job/Jacksonville-Florida-United-States/Technology--Application-Development--Full-Time-Analyst--Jacksonville---USA--2027_261004412?utm_source=Simplify&ref=Simplify
+Citi Application Development Analyst New Grad [Jersey City, NJ NYC; 3d old]   https://citi.wd5.myworkdayjobs.com/2/job/Jersey-City-New-Jersey-United-States/Technology--Application-Development--Full-Time-Analyst--New-York-or-New-Jersey---USA--2027_261004399-1?utm_source=Simplify&ref=Simplify
+Amentum Software Engineer 1 [Hanover, MD; 3d old]   https://pae.wd1.myworkdayjobs.com/en-US/amentum_careers/job/US-MD-Hanover/Software-Engineer-1_R0173916?utm_source=Simplify&ref=Simplify
+Amazon Software Development Engineer 1 - AI/ML Network Infrastructure [Cupertino, CA; 3d old]   https://amazon.jobs/en/jobs/10490741/software-development-engineer-i-ai-ml-network-infrastructure-annapurna-labs?utm_source=Simplify&ref=Simplify
+TheAerospaceCorporation Junior Full Stack Engineer - Associate Member of Technical Staff - Software Architecture Engineering and Cloud Computing Architecture [Chantilly, VA; 4d old]   https://aero.wd5.myworkdayjobs.com/external/job/Chantilly-VA/Junior-Full-Stack-Engineer_R016972?utm_source=Simplify&ref=Simplify
+Twitch Software Engineer 1 [Seattle, WA; 4d old]   https://job-boards.greenhouse.io/twitch/jobs/8906750002?utm_source=Simplify&ref=Simplify
+AkamaiTechnologies Software Engineer 1 [United States; 4d old]   https://fa-extu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/4237?utm_source=Simplify&ref=Simplify
+CollierAerospace Software Engineer – Entry Level [Raleigh, NC Newport News, VA; 4d old]   https://ats.rippling.com/collieraerospace/jobs/a3ae57de-5925-4f55-a106-812b5069cd19?utm_source=Simplify&ref=Simplify
+BrainCo AI Product Engineer New Grad [SF; 5d old]   https://jobs.ashbyhq.com/brainco/c1788246-305f-4e4f-8b03-8444c76a466e/application?embed=true&utm_source=Simplify&ref=Simplify
+Rtx Software Engineer 1 [Fulton, MD; 5d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MD-FULTON-8170--8170-Maple-Lawn-Blvd--MAPLE-LAWN-Ste-190-200--300/Software-Engineer-I--Onsite-_01883899?utm_source=Simplify&ref=Simplify
+Quora Full Stack Software Engineer New Grad [Remote in USA Remote in Canada; 5d old]   https://jobs.ashbyhq.com/quora/5494e6a1-a973-46af-b9f3-57208eb91b52/application?embed=true&utm_source=Simplify&ref=Simplify
+ElectronicArts Software Engineer 1 [Orlando, FL; 6d old]   https://jobs.ea.com/en_US/careers/JobDetail/Software-Engineer-I/216357?utm_source=Simplify&ref=Simplify
+Amazon Software Engineer – Early Career [9 locations  Madison, WI Boston, MA Seattle, WA Austin, TX Detroit, MI Santa Clara, CA Arlington County, Arlington, VA Minneapolis, MN Denver, CO; 6d old]   https://amazon.jobs/en/jobs/10583340/software-development-engineer-early-career-2027-us?utm_source=Simplify&ref=Simplify
+JohnsHopkinsAppliedPhysicsLaboratory Cybersecurity Software Engineer New Grad - Cyber Concepts [Laurel, MD; 6d old]   https://careers.jhuapl.edu/jobs/60116?icims=1&utm_source=Simplify&ref=Simplify
+Kla Software Engineer 1 [NYC; 7d old]   https://kla.wd1.myworkdayjobs.com/UR/job/USA-NY-Remote-US03K/Engr--Software-1_2642693-3?utm_source=Simplify&ref=Simplify
+AppliedMaterials Software Engineer New Grad [Santa Clara, CA; 7d old]   https://amat.wd1.myworkdayjobs.com/External/job/Santa-ClaraCA/Software-Engineer--Bachelors-Degree--New-College-Grad--Santa-Clara-_R2630683?utm_source=Simplify&ref=Simplify
+Vtg Junior Software Engineer [Hanover, MD; 7d old]   https://careers.vtgdefense.com/jobs/9669?icims=1&utm_source=Simplify&ref=Simplify
+Planview Software Engineer 1 [United States; 9d old]   https://careers.planview.com/jobs/5080?icims=1&utm_source=Simplify&ref=Simplify
+Intuit Software Engineer 1 [5 locations  Charlotte, NC NYC Mountain View, CA Atlanta, GA San Diego, CA; 10d old]   https://jobs.intuit.com/job/mountain-view/software-engineer-1/27595/102012325536?utm_source=Simplify&ref=Simplify
+Affirm Software Engineer 1 - Fullstack - Search [Remote in Canada; 10d old]   https://job-boards.greenhouse.io/affirm/jobs/8017342003?utm_source=Simplify&ref=Simplify
+Affirm Software Engineer 1 - Fullstack - Search [Remote in USA; 10d old]   https://job-boards.greenhouse.io/affirm/jobs/8017340003?utm_source=Simplify&ref=Simplify
+Sirenopt Software Engineer - Early Career - C++ & Systems [San Leandro, CA; 11d old]   https://job-boards.greenhouse.io/sirenopt/jobs/4452002009?utm_source=Simplify&ref=Simplify
+Clear Software Development Engineer 1 [Austin, TX; 11d old]   https://job-boards.greenhouse.io/clear/jobs/8241829?utm_source=Simplify&ref=Simplify
+Rtx Software Engineer 1 - Next Gen Systems [Cedar Rapids, IA; 12d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-IA-CEDAR-RAPIDS-112--400-Collins-Rd-NE--BLDG-112/Software-Engineer-I---Next-Gen-Systems---Onsite_01881673?utm_source=Simplify&ref=Simplify
+Aerovironment Junior Software Engineer [Jessup, MD; 12d old]   https://avav.wd1.myworkdayjobs.com/en-US/avav/job/Jessup-MD/Jr-Software-Engineer_9123-1?utm_source=Simplify&ref=Simplify
+Nvidia SoC Software Engineer New Grad [Santa Clara, CA; 13d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/SoC-Software-Engineer---New-College-Grad-2027_JR2026744?utm_source=Simplify&ref=Simplify
+Nvidia SoC Software Engineer New Grad [Santa Clara, CA; 13d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/SoC-Software-Engineer---New-College-Graduate-2026_JR2027552-1?utm_source=Simplify&ref=Simplify
+WolverineTrading Early Career C++ Software Engineer [Chicago, IL; 13d old]   https://wolve.pinpointhq.com/en/postings/4b0e86a1-db36-4490-9a98-17782ffcc648?ats=pinpointhq&utm_source=Simplify&ref=Simplify
+Addepar Product Manager – Early Career - AI Platform [NYC; 2d old]   https://job-boards.greenhouse.io/addepar1/jobs/8910404002?utm_source=Simplify&ref=Simplify
+Hntb GIS Analyst 1 New Grad [Tallahassee, FL; 3d old]   https://hntb.wd5.myworkdayjobs.com/hntb_university_careers/job/Tallahassee-FL/New-Grad-GIS-Analyst-I_R-32164?utm_source=Simplify&ref=Simplify
+BrainCo Machine Learning Engineer New Grad [SF; 5d old]   https://jobs.ashbyhq.com/brainco/4c9f8f00-0caf-4927-80da-02a3e53cb0cd/application?embed=true&utm_source=Simplify&ref=Simplify
+Globalfoundries AI Software Engineer New Grad [Santa Clara, CA Richardson, TX; 5d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---California---Santa-Clara/AI-Software-Engineer--2027-New-College-Graduate-_JR-2604055?utm_source=Simplify&ref=Simplify
+NodeDigital Junior AI/ML Engineer [Herndon, VA; 6d old]   https://apply.workable.com/node/j/2E183FDDB9/apply?utm_source=Simplify&ref=Simplify
+OsfHealthcare Data Engineer 1 [Peoria, IL; 6d old]   https://www.osfcareers.org/jobs/112750?icims=1&utm_source=Simplify&ref=Simplify
+Globalfoundries AI/ML Systems Engineer New Grad [Richardson, TX; 7d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---Texas---Richardson/AI-ML-Systems-Engineer--2027-New-College-Graduate-_JR-2604163?utm_source=Simplify&ref=Simplify
+Quora Machine Learning Engineer New Grad [Remote in USA Remote in Canada; 10d old]   https://jobs.ashbyhq.com/quora/40659fe7-545e-4b08-b6d7-2567b18b9ed3/application?embed=true&utm_source=Simplify&ref=Simplify
+MoxxiDigital Junior Optimization Analyst [NYC; 12d old]   https://job-boards.greenhouse.io/moxxidigital/jobs/5451237008?utm_source=Simplify&ref=Simplify
+Medpace Junior Business Intelligence Analyst [Cincinnati, OH; 12d old]   https://careers.medpace.com/jobs/13058?icims=1&utm_source=Simplify&ref=Simplify
+Amazon ASIC Formal Verification Engineer 1 [Austin, TX Cupertino, CA; 2d old]   https://amazon.jobs/en/jobs/10586351/asic-formal-verification-engineer-i-annapurna-labs?utm_source=Simplify&ref=Simplify
+Amazon ASIC Engineer Early Career [Redmond, WA Cupertino, CA San Diego, CA; 2d old]   https://amazon.jobs/en/jobs/10576621/asic-engineer-early-career-2027-project-leo?utm_source=Simplify&ref=Simplify
+Nvidia Silicon Co-Design Engineer New Grad [United States; 4d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Silicon-Co-Design-Engineer---New-College-Grad-2026_JR2027335?utm_source=Simplify&ref=Simplify
+MicronTechnology DRAM Product Development Engineer New Grad [Boise, ID; 4d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/New-College-Grad---Engineer-DRAM-Product-Development-Engineer_JR114840?utm_source=Simplify&ref=Simplify
+HewlettPackardEnterprise Graduate Electrical Hardware Engineer 1 [Chippewa Falls, WI; 4d old]   https://hpe.wd5.myworkdayjobs.com/jobsathpe/job/Chippewa-Falls-Wisconsin-United-States-of-America/Graduate-Electrical-Hdwr-Engineer-I_1213433?utm_source=Simplify&ref=Simplify
+Rtx Electrical Engineer 1 - Computing Products [Cedar Rapids, IA; 5d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-IA-CEDAR-RAPIDS-131--5450-C-Ave-NE--BLDG-131/Electrical-Engineer-I---Computing-Products--Onsite-_01866307-2?utm_source=Simplify&ref=Simplify
+Rtx Product Development Electrical Engineer 1 [Tucson, AZ; 6d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AZ-TUCSON-M10--3360-E-Hemisphere-Loop--BLDG-M10/Product-Development-Electrical-Engineer-I--Onsite-_01880626?utm_source=Simplify&ref=Simplify
+Amazon Post-Silicon Systems Validation Engineer 1 [Austin, TX; 11d old]   https://amazon.jobs/en/jobs/10475661/post-silicon-systems-validation-engineer-i-annapurna-labs?utm_source=Simplify&ref=Simplify
+Meta ASIC Engineer New Grad - Performance Architecture and Modeling [Austin, TX Sunnyvale, CA; 12d old]   https://www.metacareers.com/jobs/4596319193960098?utm_source=Simplify&ref=Simplify
+SierraSpace Software Engineer 1 - Flight Software [Centennial, CO Louisville, CO; 13d old]   https://sierraspace.wd1.myworkdayjobs.com/en-US/Sierra_Space_External_Career_Site/job/Louisville-CO/Software-Engineer-I---Flight-Software_R26390-1?utm_source=Simplify&ref=Simplify
+Nvidia Low Power ASIC Engineer New Grad [Santa Clara, CA; 13d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Low-Power-ASIC-Engineer---New-College-Grad-2027_JR2027850?utm_source=Simplify&ref=Simplify
+Nvidia ASIC Verification Engineer New Grad [Santa Clara, CA; 13d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/ASIC-Verification-Engineer---New-College-Grad-2027_JR2027719?utm_source=Simplify&ref=Simplify

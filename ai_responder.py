@@ -18,6 +18,12 @@ except Exception:
 HERE = pathlib.Path(__file__).resolve().parent
 CACHE_FILE = HERE / "response_cache.json"
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(HERE / ".env")
+except Exception:
+    pass
+
 _NAME = os.getenv("CANDIDATE_FULL_NAME", "Candidate")
 _UNI = os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University")
 _DEG = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE", "BBA Computer Information Systems (AI & Analytics)"))
@@ -287,8 +293,10 @@ def generate_response(question_label, field_type="text", options=None, company="
     cache = load_cache()
 
     cache_key = f"{company.lower()}:{clean_label.lower()}"
+    is_referral_q = bool(re.search(r"\b(?:referred by|employee referral|referral name|name of referrer|who referred you)\b", clean_label, re.I))
     if cache_key in cache and cache[cache_key]:
-        return cache[cache_key]
+        if not (is_referral_q and cache[cache_key] == "N/A"):
+            return cache[cache_key]
 
     if (field_type in ("listbox", "select", "radio", "dropdown", "yesno") or options) and options:
         choice = pick_best_option(clean_label, options)
@@ -331,21 +339,27 @@ def generate_response(question_label, field_type="text", options=None, company="
             else:
                 ans = "Open / Negotiable"
         elif any(k in q for k in ["gpa", "grade point"]):
-            ans = "3.35"
+            ans = os.getenv("CANDIDATE_GPA", "3.50")
         elif any(k in q for k in ["graduat"]):
-            ans = "05/2028"
+            ans = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "12/2026")
         elif any(k in q for k in ["start date", "availability", "available"]):
-            ans = os.getenv("CANDIDATE_AVAILABLE_START_DATE", "06/01/2027")
+            ans = os.getenv("CANDIDATE_AVAILABLE_START_DATE", "05/15/2027")
         elif any(k in q for k in ["notice period", "notice required", "your notice"]):
             ans = "2 weeks"
+        elif any(k in q for k in ["year in school", "classification", "class standing", "academic year", "standing in school", "academic standing", "academic level"]):
+            ans = os.getenv("CANDIDATE_CURRENT_YEAR", "Senior")
+        elif any(k in q for k in ["major", "field of study", "degree program", "concentration"]):
+            ans = os.getenv("CANDIDATE_MAJOR", "Cybersecurity")
+        elif any(k in q for k in ["school", "university", "college", "institution"]):
+            ans = os.getenv("CANDIDATE_UNIVERSITY", "Kennesaw State University")
         elif "county" in q:
-            ans = os.getenv("CANDIDATE_COUNTY", "Fulton")
+            ans = os.getenv("CANDIDATE_COUNTY", "Cobb")
         elif "city" in q:
-            ans = os.getenv("CANDIDATE_CITY", "Atlanta")
+            ans = os.getenv("CANDIDATE_CITY", "Powder Springs")
         elif re.search(r"\bstate\b", q) or "province" in q:
             ans = os.getenv("CANDIDATE_STATE", "Georgia")
         elif any(k in q for k in ["zip", "postal"]):
-            ans = os.getenv("CANDIDATE_ZIP_CODE", "30303")
+            ans = os.getenv("CANDIDATE_ZIP_CODE", "30127")
         elif any(k in q for k in ["phone", "sms", "mobile", "cell"]):
             ans = re.sub(r"\D", "", os.getenv("CANDIDATE_PHONE", "5550199"))
         elif re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b", q) and re.search(r"\bday\b", q) and not re.search(r"day-to-day|day to day|everyday|workday|holiday", q):
@@ -415,15 +429,19 @@ def generate_response(question_label, field_type="text", options=None, company="
             # the pitch went into "Reason for Leaving", "May We Contact for Reference?" ... only open questions get it
             ans = ""
         else:
-            ans = (
-                f"As a Computer Information Systems student at Georgia State University, "
-                f"I have led process automation and data analysis projects at Delta Air Lines and W. A Investments. "
-                f"I am eager to contribute my technical and problem-solving skills to {company or 'this role'}."
-            )
+            pitch = os.getenv("CANDIDATE_ELEVATOR_PITCH")
+            if pitch:
+                ans = f"{pitch} I am eager to contribute my technical and problem-solving skills to {company or 'this role'}."
+            else:
+                ans = (
+                    f"As a Cybersecurity student at Kennesaw State University with hands-on experience in "
+                    f"identity and access management (IAM), technical support, Active Directory automation, and Azure Sentinel, "
+                    f"I am eager to contribute my technical skills and problem-solving mindset to {company or 'this role'}."
+                )
 
     # Clean up output
     ans = (ans or "").strip(' "\'\n\r')
-    if ans:
+    if ans and not (is_referral_q and ans == "N/A"):
         cache[cache_key] = ans
         save_cache(cache)
     return ans

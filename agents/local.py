@@ -22,18 +22,27 @@ def _resume_skills():
 
 
 RESUME_SKILLS = _resume_skills() | {
+    "cybersecurity", "active directory", "entra id", "azure ad", "group policy", "gpo", "user provisioning",
+    "access control", "least privilege", "azure sentinel", "siem", "wireshark", "packet analysis", "threat modeling",
+    "incident response", "mitre att&ck", "nist csf", "powershell", "python", "bash", "c++", "windows", "linux",
+    "vmware", "azure", "endpoint support", "pos terminal support", "technical support", "ticket documentation",
+    "sop documentation", "comptia security+", "security+", "information security", "network security",
     "process mapping", "requirements", "stakeholder", "product specs", "roadmap", "workflow", "automation",
-    "data validation", "dashboard", "excel", "sql", "python", "tableau", "power bi", "valuation", "dcf",
-    "financial analysis", "market research", "competitive analysis", "build-vs-buy", "api", "llm", "ai",
+    "data validation", "dashboard", "excel", "sql", "tableau", "power bi", "api", "llm", "ai",
     "machine learning", "prompt", "agentic", "project management", "training", "process improvement",
-    "real estate", "fintech", "payments", "stripe", "website", "astro", "git", "sharepoint", "microsoft 365",
+    "git", "sharepoint", "microsoft 365",
 }
 # skills a posting may require that the resume does NOT show (become "gaps")
-HARD_SKILLS = {"java", "c++", "c#", "javascript", "typescript", "react", "node", "go", "golang", "rust", "kotlin",
-               "swift", "aws", "azure", "gcp", "kubernetes", "docker", "spark", "hadoop", "scala", "r programming",
-               "sas", "matlab", "salesforce", "sap", "figma", "jira", "data structures", "algorithms", "linux",
+HARD_SKILLS = {"java", "c#", "javascript", "typescript", "react", "node", "go", "golang", "rust", "kotlin",
+               "swift", "aws", "gcp", "kubernetes", "docker", "spark", "hadoop", "scala", "r programming",
+               "sas", "matlab", "salesforce", "sap", "figma", "jira", "data structures", "algorithms",
                "cad", "solidworks", "verilog", "embedded", "computer vision", "deep learning"}
 CATEGORY_TERMS = {
+    "cybersecurity": ["cybersecurity", "cyber", "information security", "infosec", "soc", "siem", "sentinel", "iam",
+                      "identity", "access control", "threat", "incident response", "vulnerability", "wireshark",
+                      "nist", "mitre", "security+", "network defense", "compliance", "grc", "endpoint"],
+    "it_support": ["technical support", "it support", "help desk", "desktop support", "sysadmin", "systems administrator",
+                   "endpoint", "active directory", "hardware", "software configuration", "pos", "troubleshoot", "deployment"],
     "product": ["product manag", "product owner", "roadmap", "user research", "prd", "requirements", "product strategy",
                 "go-to-market", "feature", "customer needs", "prioritiz", "product spec", "process map", "stakeholder"],
     "analyst_data": ["analytics", "data analysis", "sql", "tableau", "power bi", "dashboard", "insights", "reporting",
@@ -42,7 +51,7 @@ CATEGORY_TERMS = {
                       "ai tools", "copilot", "agent", "chatgpt", "claude", "automat", "workflow"],
     "business_systems": ["business systems", "erp", "process improvement", "business process", "systems analyst",
                          "implementation", "enablement", "operations"],
-    "swe": ["software engineer", "data structures", "algorithms", "backend", "frontend", "full stack", "java", "c++",
+    "swe": ["software engineer", "data structures", "algorithms", "backend", "frontend", "full stack", "java",
             "distributed systems", "code review", "production code", "computer science degree", "unit test"],
 }
 
@@ -61,23 +70,12 @@ def jd_keywords(jd):
 def _eligibility(title, jd):
     t = _norm_text(jd)
     tt = _norm_text(title)
-    if re.search(r"(pursuing|enrolled in|candidate for) (a |an )?(master'?s|ph\.?d|mba|graduate degree)", t) and \
-            not re.search(r"bachelor'?s (or|and/or) (master|graduate)|undergraduate (or|and/or) graduate", t):
-        return "requires a graduate program"
-    years = []
-    for m in re.finditer(r"graduat\w*[^.]{0,90}", t):
-        years += [int(y) for y in re.findall(r"20(2\d)", m.group(0))]
-    years = [2000 + y for y in years if 24 <= y <= 31]
-    if years and max(years) < 2028:
-        return f"graduation window ends {max(years)} (AJ graduates May 2028)"
-    if years and min(years) > 2028:
-        return f"graduation window starts {min(years)}"
+    if re.search(r"\bph\.? ?d\b|doctoral|\bpostdoc\b", t) and not re.search(r"bachelor|undergraduate|master", t):
+        return "requires a PhD program"
     if re.search(r"(active|current) (secret|top secret|ts/sci)[^.]{0,30}clearance (is )?required|must (hold|have) an? active (secret|ts)", t):
         return "requires an active security clearance"
-    if "intern" not in tt and "co-op" not in tt and re.search(r"\bfull[- ]time (position|role|employee)|new grad", t + " " + tt):
-        return "full-time / new-grad role"
-    if re.search(r"\bco-?op\b[^.]{0,60}(semester|6 months|six months)", t):
-        return "co-op requires leaving school for a semester"
+    if re.search(r"\bsenior\b|\bsr\.?\b|\bstaff\b|\bprincipal\b|\bdirector\b|\bvp\b", tt):
+        return "senior/executive level"
     return ""
 
 
@@ -116,7 +114,7 @@ def scout(company, role, url, jd):
     ai_hits = hits["ai_automation"] + len(re.findall(r"\b(ai|genai|llm|machine learning|artificial intelligence)\b", t))
     if cat != "ai_automation" and (RE.AI_RE.search(title) or ai_hits >= 8):
         score += s.get("ai_bonus", 2)   # AI-focused product / analyst / ops role
-    if re.search(r"\b(fall|spring|winter) (20)?2[67]\b", _norm_text(title)) and "summer" not in _norm_text(title):
+    if re.search(r"\b(fall|spring|winter)\s*(?:20)?2[67]\b", _norm_text(title)) and "summer" not in _norm_text(title):
         why_out = why_out or "not a summer internship"
     try:
         from . import smarts
@@ -289,14 +287,14 @@ FACT_MAP = [  # (question regex, answer, option regex, fact it comes from)
     (r"u\.?s\.? citizen|citizen of the united states", "Yes", "^Yes", "US citizen"),
     (r"at least 18|18 years|over 18|age of 18", "Yes", "^Yes", "Undergraduate junior"),
     (r"willing to relocate|open to relocat|relocation", "Yes", "^Yes", "Open to relocating"),
-    (r"\b(major|field of study|area of study|concentration)\b", "Computer Information Systems",
-     "Computer Information Systems|Information Systems|Management Information", "Computer Information Systems"),
-    (r"(school|university|college|institution) (name|attending)|which (school|university)", "Georgia State University",
-     "Georgia State", "Georgia State University"),
+    (r"\b(major|field of study|area of study|concentration)\b", "Cybersecurity",
+     "Cybersecurity|Information Technology|Computer Science|Information Systems", "Cybersecurity"),
+    (r"(school|university|college|institution) (name|attending)|which (school|university)", "Kennesaw State University",
+     "Kennesaw State University|^Kennesaw\\b|Kennesaw", "Kennesaw State University"),
     (r"transcript|official or unofficial transcript|provide.*transcript", "Yes", "^Yes", "Able to provide official or unofficial academic transcripts upon request."),
     (r"documentation establishing.*(identity|right to work)|identity and right to work|right to work in the country", "Yes", "^Yes", "authorized to work in the US"),
     (r"current us status|select your current us status", "U.S. Citizen", "U\\.?S\\.? Citizen|Citizen", "US citizen"),
-    (r"current enrollment class status|enrollment.*class.*status|class status", "Junior", "Junior|Undergraduate", "Undergraduate junior"),
+    (r"current enrollment class status|enrollment.*class.*status|class status", "Senior", "Senior|Junior|Undergraduate", "Undergraduate senior"),
     (r"signed any agreement with a current or former employer|agreement.*not.*compete|restrictive covenant", "No", "^No", "No non-compete agreements"),
     (r"held an active u\\.?s\\.? security clearance|active.*clearance", "No", "^No", "Never held a U.S. security clearance"),
     (r"need.*sponsorship|immigration support|immigration filing", "No", "^No", "never needs visa sponsorship"),

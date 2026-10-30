@@ -10,10 +10,12 @@ Agent 6 - Site Fixer. Turns today's failed applications into fixes, with no huma
      replays worse. Accepted patches are committed (undo with `git revert`); rejected ones are rolled
      back and saved under agents/fixes/ for reference.
 """
-import datetime, json, pathlib, py_compile, re, subprocess
+import datetime, json, pathlib, py_compile, re, subprocess, sys
 from typing import List
 from pydantic import BaseModel
-from . import llm, context, replay, local
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+from agents import llm, context, replay, local
 
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
 FIX_DIR = pathlib.Path(__file__).resolve().parent / "fixes"
@@ -208,7 +210,10 @@ def run(day=None):
     if not failures:
         return summary
     added, open_q = fix_rules(failures)
-    from . import smarts
+    if __package__ is None or __package__ == "":
+        import agents.smarts as smarts
+    else:
+        from . import smarts
     summary["retries"] = smarts.mark_retries(added)
     summary["rules_added"] = [f"{r['q']} -> {r['a']}" for r in added]
     summary["needs_you"] = _needs_you(open_q)
@@ -219,3 +224,23 @@ def run(day=None):
         if res:
             summary["code_fixes"].append(res)
     return summary
+
+
+if __name__ == "__main__":
+    import sys
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    
+    summary = run()
+    failures_cnt = summary.get("failures", 0)
+    rules_cnt = len(summary.get("rules_added", []))
+    needs_cnt = len(summary.get("needs_you", []))
+    fixes_cnt = len(summary.get("code_fixes", []))
+
+    print("-" * 50)
+    print("  SITE FIXER STATUS")
+    print(f"  Failures Checked: {failures_cnt}")
+    print(f"  Rules Added:      {rules_cnt}")
+    print(f"  Needs Review:     {needs_cnt}")
+    print(f"  Code Fixes:       {fixes_cnt}")
+    print("-" * 50)
