@@ -76,15 +76,19 @@ def _url_words(url, company=""):
 
 
 # ---------------------------------------------------------------- 1. targeting
-CATEGORIES = [  # first match wins; SWE is checked before AI so "AI Software Engineer" counts as SWE
-    ("swe", r"software (engineer|developer|engineering)"),  # "Software Engineer Intern, Product" is still SWE
+CATEGORIES = [  # first match wins
+    ("fde", r"\b(fde|forward deployed|forward-deployed)\b"),
+    ("cybersecurity", r"cyber|security|soc\b|siem|iam\b|identity|access management|threat|vulnerability|infosec|incident response"),
+    ("it_support", r"it support|tech support|technical support|helpdesk|desktop support|systems? admin|service desk|it technician"),
+    ("early_career", r"\b(early career|early-career|early talent|emerging talent|campus|university grad|entry[- ]level|associate engineer|associate analyst)\b"),
+    ("swe", r"software (engineer|developer|engineering)"),
     ("ai_automation", r"\b(ai|ml|genai|gen ai|llm|machine learning)[ /-]+(engineer|engineering|developer|solutions|scientist|research)|"
                       r"applied (ai|ml|machine learning)|ai solutions|ai enablement|prompt engineer"),
     ("product", r"\bproduct\b|\bapm\b|\bpm\b|program manag"),
     ("ai_automation", r"\bai\b (business|process|enablement|solutions|product|strategy|analyst|agent)|automation analyst|"
                       r"business process"),
     ("swe", r"software|(web|app|mobile|game) developer|\bsde\b|embedded|firmware|front ?end|back ?end|full ?stack|"
-            r"devops|\bsre\b|hardware|mechanical|electrical|\bios\b|android|network engineer|security engineer|"
+            r"devops|\bsre\b|hardware|mechanical|electrical|\bios\b|android|network engineer|"
             r"infrastructure"),
     ("ai_automation", r"\bai\b|artificial intelligence|automation|gen ?ai|\bllm|prompt|machine learning|agent"),
     ("analyst_data", r"analyst|analytics|data|business intelligence|\bbi\b|insight|research"),
@@ -405,3 +409,37 @@ def parse_queue_file(path):
                     "url": m.group(1), "resume": raw[m.end():].strip() or None,
                     "hold": hold.group(0) if hold else None})
     return out
+
+
+if __name__ == "__main__":
+    import shutil
+    term_width = min(shutil.get_terminal_size((60, 20)).columns, 70)
+    sep = "=" * term_width
+    sub_sep = "-" * term_width
+
+    print(sep)
+    print("  JOB DECK - LIVE SUBMISSION METRICS".center(term_width))
+    print(sep)
+    
+    rows = ledger_rows()
+    submitted = [r for r in rows if r.get("status") == "submitted"]
+    today_count = submitted_today()
+
+    print(f"  Total Confirmed Submitted: {len(submitted)}")
+    print(f"  Submitted Today:           {today_count}")
+    print(f"  Target Goal:               300 applications")
+    print(sub_sep)
+    print("  Recent Submissions:")
+
+    for r in submitted[-8:]:
+        company = str(r.get("company", "")).strip()[:16]
+        raw_role = str(r.get("role", "")).split("[")[0].strip()
+        role = raw_role[:32]
+        date = str(r.get("date", "")).strip()
+        print(f"   * {company:16} | {role:32} | {date}")
+
+    print(sep)
+    print("  To run the autonomous loop, execute:")
+    print("  python run_until_target.py --target 300 --workers 3")
+    print(sep)
+

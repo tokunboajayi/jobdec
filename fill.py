@@ -1818,7 +1818,8 @@ def _upsert_applied_row(path, target_url, company, role, resume):
         raw_rows = list(reader)
         cols = [c.lstrip("\ufeff") for c in (reader.fieldnames or [])]
     if not cols:
-        raise RuntimeError("applications.csv has no header; refusing to overwrite it")
+        cols = ["ID", "Company", "Role", "Stage", "Date Applied", "Job URL", "Resume Version", "Next Action", "Next Action Date"]
+        raw_rows = []
     rows = [{k.lstrip("\ufeff"): v for k, v in r.items()} for r in raw_rows]
     today = datetime.date.today().isoformat()
     host = re.sub(r"^https?://", "", target_url).split("?")[0][:60]

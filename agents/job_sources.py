@@ -16,6 +16,7 @@ GITHUB_SOURCES = [
     ("SimplifyJobs 2027", "https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/README.md"),
     ("SimplifyJobs 2026", "https://raw.githubusercontent.com/SimplifyJobs/Summer2026-Internships/dev/README.md"),
     ("SimplifyJobs 2025", "https://raw.githubusercontent.com/SimplifyJobs/Summer2025-Internships/dev/README.md"),
+    ("SimplifyJobs New Grad", "https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/README.md"),
     ("PittCSC 2026", "https://raw.githubusercontent.com/pittcsc/Summer2026-Internships/dev/README.md"),
     ("PittCSC 2025", "https://raw.githubusercontent.com/pittcsc/Summer2025-Internships/dev/README.md"),
     ("SpeedyApply 2026", "https://raw.githubusercontent.com/SpeedyApply/2026-SWE-College-Jobs/main/README.md"),
@@ -82,8 +83,11 @@ NON_US = re.compile(
     re.I
 )
 
-INTERN_KEYWORDS = re.compile(r"\b(intern|internship|co-op|coop|fellow|fellowship|early talent|student|university)\b", re.I)
-GRAD_ONLY = re.compile(r"\b(phd|master'?s|mba|graduate student|postdoc)\b", re.I)
+INTERN_KEYWORDS = re.compile(
+    r"\b(intern|internship|co-op|coop|fellow|fellowship|early talent|early career|student|university|new grad|entry|associate|junior|fde|forward deployed|analyst|specialist|security|cyber|support|technician|administrator)\b",
+    re.I
+)
+GRAD_ONLY = re.compile(r"\b(phd|postdoc)\b", re.I)
 
 
 def _clean(s):
