@@ -2688,3 +2688,654 @@ Meta ASIC Engineer New Grad - Performance Architecture and Modeling [Austin, TX 
 SierraSpace Software Engineer 1 - Flight Software [Centennial, CO Louisville, CO; 13d old]   https://sierraspace.wd1.myworkdayjobs.com/en-US/Sierra_Space_External_Career_Site/job/Louisville-CO/Software-Engineer-I---Flight-Software_R26390-1?utm_source=Simplify&ref=Simplify
 Nvidia Low Power ASIC Engineer New Grad [Santa Clara, CA; 13d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/Low-Power-ASIC-Engineer---New-College-Grad-2027_JR2027850?utm_source=Simplify&ref=Simplify
 Nvidia ASIC Verification Engineer New Grad [Santa Clara, CA; 13d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/ASIC-Verification-Engineer---New-College-Grad-2027_JR2027719?utm_source=Simplify&ref=Simplify
+
+# ---- added by agents/job_sources.py (multi-source, <= 30 days old)
+Figma Early Career, Inside Sales Representative (2027) [San Francisco, CA • New York, NY; 1d old]   https://boards.greenhouse.io/figma/jobs/6174190004?gh_jid=6174190004
+Figma Early Career, Product Designer (2027) [San Francisco, CA • New York, NY; 1d old]   https://boards.greenhouse.io/figma/jobs/6180053004?gh_jid=6180053004
+Figma Forward Deployed Engineer [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6158162004?gh_jid=6158162004
+ScaleAi Forward Deployed Product Manager, Enterprise [New York, NY; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4673051005
+ScaleAi Forward Deployed Product Manager, Public Sector [New York, NY; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4713648005
+ScaleAi Forward Deployed Software Engineer, Public Sector [Austin, TX; Colorado Springs, CO; Honolulu, HI; Omaha, NE; St. Louis, MO; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4481921005
+ScaleAi Frontier Agents Engineer (Forward Deployed Engineering) [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4694861005
+ScaleAi Senior Frontier Agents Engineer (Forward Deployed Engineering) [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4694863005
+ScaleAi Senior Full-Stack Software Engineer, (Forward deployed), GPS [Riyadh, Saudi Arabia; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4732394005
+ScaleAi Staff Frontier Agents Engineer (Forward Deployed Engineering) [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4694865005
+ScaleAi Staff Full-Stack Software Engineer, (Forward Deployed), GPS [Riyadh, Saudi Arabia; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4732430005
+ScaleAi Staff FullStack Software Engineer, (Forward Deployed), GPS [Doha, Qatar ; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4673314005
+Ramp KYB/AML Analyst, Sweden [Remote (Sweden); 1d old]   https://jobs.ashbyhq.com/ramp/50770187-f226-468a-823e-fe193287c59f
+Ramp Software Engineer, Forward Deployed AI Solutions [New York, NY (HQ); 1d old]   https://jobs.ashbyhq.com/ramp/b614563f-3ce6-4dca-b5ba-0e5a6c8bda27
+Palantir Commercial Contracts Specialist [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/9675791e-59c3-4677-ac62-0c80c38da2eb
+Palantir Compliance Analyst [New York, NY; 1d old]   https://jobs.lever.co/palantir/c6f9eaaf-b397-476f-8b7d-c511cfb7e5c6
+Palantir Deployment Strategist - Germany Forward Deployed [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/6940fc9a-b79c-4935-a90f-1c6a02e54fb1
+Palantir Deployment Strategist - Japan Forward Deployed [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/fa93a1f8-dc95-40d0-b5ca-f2aebaab0806
+Palantir Deployment Strategist - Korea Forward Deployed [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/1a53939d-8ffa-4570-b31a-6d0bc53fdb59
+Palantir Finance Operator Intern [New York, NY; 1d old]   https://jobs.lever.co/palantir/bd7766c4-6aea-4b37-8d47-a8864bb9bd69
+Palantir Forward Deployed AI Engineer [New York, NY; 1d old]   https://jobs.lever.co/palantir/636fc05c-d348-4a06-be51-597cb9e07488
+Palantir Forward Deployed Enablement Engineer - Customer Success [New York, NY; 1d old]   https://jobs.lever.co/palantir/4cba9c95-d16f-440d-83e7-2352480f689f
+Palantir Forward Deployed Engineer - Mixed Reality [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/96a0ce26-cf84-4fa8-934b-acc4363620b2
+Palantir Forward Deployed Reliability Engineer [New York, NY; 1d old]   https://jobs.lever.co/palantir/689e6869-01bc-40f1-b580-adb33a020065
+Palantir Forward Deployed Site Reliability Engineer - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/a194220b-684a-4b4e-b918-1f70154b464c
+Palantir Legal Operations Specialist [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/3c0c9552-f4ae-4467-b032-5809d2d62724
+Palantir Procurement Operations Analyst [Denver, CO; 1d old]   https://jobs.lever.co/palantir/66955c3b-c530-4c4a-9d48-63b4aad61b9c
+Palantir Security Systems Engineer [Seattle, WA; 1d old]   https://jobs.lever.co/palantir/98c244fc-444b-43ba-b152-30227191170b
+Palantir Software Engineer, New Grad [Denver, CO; 1d old]   https://jobs.lever.co/palantir/c34b424e-caf2-455a-b104-ae1096ccca29
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337782?gh_jid=8337782
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8334281?gh_jid=8334281
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8334231?gh_jid=8334231
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8336564?gh_jid=8336564
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8334228?gh_jid=8334228
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8336586?gh_jid=8336586
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8334234?gh_jid=8334234
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337029?gh_jid=8337029
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337144?gh_jid=8337144
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337203?gh_jid=8337203
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337209?gh_jid=8337209
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337206?gh_jid=8337206
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8334290?gh_jid=8334290
+Coinbase Forward Deployed Engineer, Finance [Office of the CTO] [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8072932?gh_jid=8072932
+Coinbase Regional Security Manager, APAC [Remote - Singapore; 1d old]   https://www.coinbase.com/careers/positions/8312623?gh_jid=8312623
+Coinbase Security Engineer, Corporate Security [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8319444?gh_jid=8319444
+Coinbase Senior Sales Associate - CB Infrastructure [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8328079?gh_jid=8328079
+Coinbase Senior Security Engineer, Corporate Security [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8319448?gh_jid=8319448
+Robinhood Customer Experience Associate, Money [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8327450?t=gh_src=&gh_jid=8327450
+Robinhood Customer Experience Associate, Pathway [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8329280?t=gh_src=&gh_jid=8329280
+Robinhood Knowledge & Operational Readiness Specialist  [Denver, CO; Westlake, TX; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8289327?t=gh_src=&gh_jid=8289327
+Robinhood Senior Cloud Security Engineer [Bellevue, WA; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8077370?t=gh_src=&gh_jid=8077370
+Robinhood Senior Payroll Tax Specialist [Chicago, IL; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8324648?t=gh_src=&gh_jid=8324648
+Robinhood Senior Software Engineer, AI Security [Bellevue, WA; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8334429?t=gh_src=&gh_jid=8334429
+Robinhood Trading Specialist [Chicago, IL; Denver, CO; Lake Mary, FL; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8289855?t=gh_src=&gh_jid=8289855
+Cloudflare Forward Deployed Engineer (FDE) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/7572075?gh_jid=7572075
+Cloudflare Forward Deployed Engineer, Professional Services [Distributed; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8043339?gh_jid=8043339
+Cloudflare Forward Deployed Engineer, Professional Services [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8043287?gh_jid=8043287
+Cloudflare Forward Deployed Engineer, Professional Services [Distributed; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8043305?gh_jid=8043305
+Cloudflare Forward Deployed Engineer, Professional Services (Application Security) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330512?gh_jid=8330512
+Cloudflare Network Security Engineer  [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8159206?gh_jid=8159206
+Cloudflare Product Manager Intern (2027) - Austin, TX [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8274790?gh_jid=8274790
+Cloudflare Product Manager Intern (2027) - Lisbon, PT [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8332008?gh_jid=8332008
+Cloudflare Product Manager Intern (2027) - London, UK [In-Office; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8328914?gh_jid=8328914
+Cloudflare Security Research Analyst, WAF Managed Rules [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8317733?gh_jid=8317733
+Cloudflare Senior Forward Deployed Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8184169?gh_jid=8184169
+Cloudflare Senior Forward Deployed Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8206674?gh_jid=8206674
+Cloudflare Senior Forward Deployed Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8265704?gh_jid=8265704
+Cloudflare Senior Forward Deployed Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8160655?gh_jid=8160655
+Cloudflare Senior Forward Deployed Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8173707?gh_jid=8173707
+Cloudflare Senior Forward Deployed Infrastructure Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8256332?gh_jid=8256332
+Cloudflare Technical Support Engineer, Application Performance [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8164649?gh_jid=8164649
+Cloudflare Technical Support Engineer - Developer Platform [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330121?gh_jid=8330121
+Cloudflare Technical Support Engineer, Developer Platform [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8329741?gh_jid=8329741
+Cloudflare Technical Support Engineer, Zero Trust [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8329758?gh_jid=8329758
+Brex Analyst, Banking Operations (Domestic) [New York, New York, United States; 1d old]   https://www.brex.com/careers/8924533002?gh_jid=8924533002
+Brex Analyst, Banking Operations (Domestic) [Salt Lake City, Utah, United States; 1d old]   https://www.brex.com/careers/8923923002?gh_jid=8923923002
+Brex Partner Operations Program Manager, Associate [Salt Lake City, Utah, United States; 1d old]   https://www.brex.com/careers/8925893002?gh_jid=8925893002
+Verkada Senior Associate, Pricing & Commercial Operations [New York City, NY United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5274927007
+Affirm Compensation Analyst II (Programs & Partnerships) [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8048121003
+Affirm Compensation Analyst II (Programs & Partnerships) [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8048119003
+Affirm Customer Operations Associate I [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8040790003
+Affirm Implementation Specialist I [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8040794003
+Affirm Product Security Engineer II - IAM [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8016932003
+Affirm Security Risk Management Lead [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8036613003
+Affirm Senior Manager, Security Incident Response [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8045376003
+Affirm Senior Manager, Security Incident Response [Remote Canada; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8045378003
+Affirm Senior Product Security Engineer [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8042128003
+Affirm Software Engineer, Early Career (NYC) [New York, New York, United States; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8008649003
+Affirm Software Engineer, Early Career (SF) [San Francisco, California, United States; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8010617003
+Samsara Business Technology Operations Support Specialist [San Francisco, CA, United States; 1d old]   https://www.samsara.com/company/careers/roles/8337673?gh_jid=8337673
+Samsara (New Grad) Account Development Representative II - Atlanta [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/8325360?gh_jid=8325360
+Samsara (New Grad) Account Development Representative II - Atlanta [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/8325055?gh_jid=8325055
+Samsara (New Grad) Account Development Representative II - Phoenix [Remote - AZ; 1d old]   https://www.samsara.com/company/careers/roles/8325356?gh_jid=8325356
+Samsara (New Grad) Account Development Representative II - Phoenix [Phoenix, Arizona, United States; 1d old]   https://www.samsara.com/company/careers/roles/8325054?gh_jid=8325054
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - Chicago; 1d old]   https://www.samsara.com/company/careers/roles/7961462?gh_jid=7961462
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - SF Bay Area; 1d old]   https://www.samsara.com/company/careers/roles/7961464?gh_jid=7961464
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - LA; 1d old]   https://www.samsara.com/company/careers/roles/7961471?gh_jid=7961471
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - TX; 1d old]   https://www.samsara.com/company/careers/roles/7961459?gh_jid=7961459
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - NY; 1d old]   https://www.samsara.com/company/careers/roles/7961186?gh_jid=7961186
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - MA; 1d old]   https://www.samsara.com/company/careers/roles/7961449?gh_jid=7961449
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Remote - US; 1d old]   https://www.samsara.com/company/careers/roles/7922805?gh_jid=7922805
+Samsara Specialist Seller - Connected Maintenance - Public Sector [Atlanta, Georgia, United States; 1d old]   https://www.samsara.com/company/careers/roles/7961458?gh_jid=7961458
+Samsara Specialist Seller, Enterprise Core (Tracking Label) [Remote - AZ; Remote - NY; Remote - TX; 1d old]   https://www.samsara.com/company/careers/roles/8325407?gh_jid=8325407
+Samsara Specialist Seller, Enterprise Core (Tracking Label) [Remote - CA; Remote - NC; 1d old]   https://www.samsara.com/company/careers/roles/8325409?gh_jid=8325409
+Samsara Specialist Seller - Enterprise Select - (AI Products) [Remote - CA; Remote - NY; Remote - OH; Remote - TX; 1d old]   https://www.samsara.com/company/careers/roles/8325410?gh_jid=8325410
+Samsara Specialist Seller - Enterprise Select -(AI Products) [Remote - CA; Remote - NC; 1d old]   https://www.samsara.com/company/careers/roles/8325411?gh_jid=8325411
+Reddit Associate General Counsel, Ads Product [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8148089
+Reddit Lead Forward Deployed Engineer (AI Enablement) [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8301736
+Reddit Senior Forward Deployed Engineer (AI Enablement) [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/8301784
+Perplexity Member of Technical Staff, AI Products (Early Career - Industry) [San Francisco; 1d old]   https://jobs.ashbyhq.com/perplexity/daa9120e-94ff-46e0-b4bd-4d2d290cb409
+Harvey Legal Engineering Manager, Product Specialist [Dallas; 1d old]   https://jobs.ashbyhq.com/harvey/1b468ce7-37a6-4fd4-89a0-d706cc051190
+Harvey CX Data Analyst [New York; 1d old]   https://jobs.ashbyhq.com/harvey/f8857e81-4062-4669-a7e3-7b73b114979b
+Harvey Forward Deployed Finance Engineer, Private Credit [New York; 1d old]   https://jobs.ashbyhq.com/harvey/43c6e218-ea85-4519-b2fe-dd188ff3234f
+Harvey Workplace Specialist [New York; 1d old]   https://jobs.ashbyhq.com/harvey/26b1c092-b466-47b6-9493-402eed406b7a
+Harvey Senior People Systems Analyst [New York; 1d old]   https://jobs.ashbyhq.com/harvey/bbf25f2b-0652-4a14-aab2-5205aba53d30
+Harvey  CX Knowledge Specialist [Remote; 1d old]   https://jobs.ashbyhq.com/harvey/5ed49bc7-8cbe-46c3-8372-3db733ad02fb
+Sierra Research Intern [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/ef896ee9-e903-4a1f-84c2-537373cb9081
+Lyft Fleet Operations Associate [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8925465002?gh_jid=8925465002
+Lyft Fleet Operations Associate (Day Shift) [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8925486002?gh_jid=8925486002
+Lyft Fleet Operations Associate (Overnight Shift) [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8925493002?gh_jid=8925493002
+Lyft Fleet Operations Associate (Swing Shift) [Nashville, TN; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8925496002?gh_jid=8925496002
+Lyft Operations Associate, Flexdrive [Milwaukee, WI; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8919442002?gh_jid=8919442002
+Block Bilingual Implementation Specialist  [Los Angeles, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5466280008?gh_jid=5466280008
+Block Implementation Specialist  [Seattle, WA, United States of America; 1d old]   http://block.xyz/careers/jobs/5466269008?gh_jid=5466269008
+Block Implementation Specialist  [Bay Area, CA, United States of America; 1d old]   http://block.xyz/careers/jobs/5465286008?gh_jid=5465286008
+Datadog Customer Success Associate - Boston [Boston, Massachusetts, USA; 1d old]   https://careers.datadoghq.com/detail/7172466/?gh_jid=7172466
+Datadog Enterprise Security Sales Specialist [Chicago, Illinois, USA; 1d old]   https://careers.datadoghq.com/detail/8237332/?gh_jid=8237332
+Datadog Forward Deployed Engineering Manager - Datadog for Startups [New York, New York, USA; San Francisco, California, USA; 1d old]   https://careers.datadoghq.com/detail/8003181/?gh_jid=8003181
+Datadog Information Security Analyst II - Federal Programs [Boston, Massachusetts, USA; Denver, Colorado, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8319487/?gh_jid=8319487
+Datadog Manager I, Premier Support Engineering - Denver [Denver, Colorado, USA; 1d old]   https://careers.datadoghq.com/detail/8083563/?gh_jid=8083563
+Datadog Senior Strategic Sourcing Analyst [New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8314268/?gh_jid=8314268
+Asana Legal Operations Analyst [Chicago; 1d old]   https://www.asana.com/jobs/apply/8282518?gh_jid=8282518
+Chime Sr. Analyst, Identity & KYC [Chicago, IL, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8917560002?gh_jid=8917560002
+Sofi Corporate Development Analyst [United States; 1d old]   https://sofi.com/careers/job/7819518003?gh_jid=7819518003
+Sofi Investment Specialist II [Cottonwoods Heights - Utah; 1d old]   https://sofi.com/careers/job/8046555003?gh_jid=8046555003
+Sofi Sr Staff Forward Deployed Engineer, Enterprise AI [WA - Seattle; CA - San Francisco; UT - Cottonwood Heights; 1d old]   https://sofi.com/careers/job/7996286003?gh_jid=7996286003
+Sofi Staff Data Analyst (Contract) [CA - San Francisco HQ; NY - New York City ; 1d old]   https://sofi.com/careers/job/8044835003?gh_jid=8044835003
+Amazon Software Engineer Intern - Machine Learning/Automated Reasoning [9 locations  Boston, MA Seattle, WA Austin, TX Irvine, CA Arlington County, Arlington, VA NYC Bellevue, WA Sunnyvale, CA San Diego, CA; 1d old]   https://amazon.jobs/en/jobs/10593521/software-development-engineer-intern-machine-learning-automated-reasoning-summer-2027?utm_source=Simplify&ref=Simplify
+ObsidianEntertainment Gameplay Engineer Intern [Irvine, CA; 1d old]   https://obsidian.applytojob.com/apply/zxhj1ePGcR/Gameplay-Engineer-2027-Summer-Internship?utm_source=Simplify&ref=Simplify
+VspVision AI, Agentic & Machine Learning Development Intern - AI, Agentic & Machine Learning Development [Remote in USA; 2d old]   https://vsp.wd1.myworkdayjobs.com/vspvisioncareers/job/Remote-US/Internship--AI---Agentic---Machine-Learning-Development_R-10072?utm_source=Simplify&ref=Simplify
+DowJones Software Engineer Intern [NYC; 2d old]   https://dowjones.wd1.myworkdayjobs.com/en-US/Dow_Jones_Career/job/NYC---1211-Ave-of-the-Americas/Summer-2027-Internship-Program---Software-Engineering-Intern_Job_Req_55892?utm_source=Simplify&ref=Simplify
+OverlandAi Software Engineering Intern [Seattle, WA; 2d old]   https://ats.rippling.com/overland-ai/jobs/37dd9f44-cdb1-4e2e-98c5-800b9b8cb40e?utm_source=Simplify&ref=Simplify
+GoldenAnalytics Software Engineer Intern [Bellevue, WA; 2d old]   https://ats.rippling.com/golden/jobs/2ba326f7-9259-47df-9f54-bef4ce5c5fb5?utm_source=Simplify&ref=Simplify
+BostonScientific AI Solutions Engineering Intern [Arden Hills, MN; 3d old]   https://bostonscientific.eightfold.ai/careers/job/563602813547675?utm_source=Simplify&ref=Simplify
+Rtx Software Engineer Intern [Sterling, VA; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-VA-STERLING-291--22640-Davis-Dr--DAVIS/Software-Engineering-Intern--Summer-2027-_01885791?utm_source=Simplify&ref=Simplify
+Ptc Arena Engineering Intern [San Mateo, CA; 3d old]   https://ptc.wd1.myworkdayjobs.com/ptc/job/USA-San-Mateo-CA/Arena-Engineering-Intern_JR112955?utm_source=Simplify&ref=Simplify
+Nvidia AI Systems Software Engineer Intern [Austin, TX; 3d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-TX-Austin/AI-Systems-Software-Engineering-Intern---Summer-2027_JR2027170?utm_source=Simplify&ref=Simplify
+Nvidia Compiler Software Engineer Intern [Redmond, WA; 3d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-WA-Redmond/Compiler-Software-Engineering-Intern---Summer-2027_JR2028607?utm_source=Simplify&ref=Simplify
+Leidos Software Developer Intern [Annapolis Junction, MD; 3d old]   https://leidos.wd5.myworkdayjobs.com/External/job/Annapolis-Junction-MD/Software-Developer-Intern_R-00195829?utm_source=Simplify&ref=Simplify
+JmFamily Software Engineer Intern [Deerfield Beach, FL; 3d old]   https://jmfamily.wd1.myworkdayjobs.com/jmfamily_external/job/Florida---Deerfield-Beach/Software-Engineer-Intern_JR105158?utm_source=Simplify&ref=Simplify
+GreatAmericanInsuranceCompany DevOps Developer Intern [Cincinnati, OH; 3d old]   https://gaig.wd1.myworkdayjobs.com/GAIG_External/job/Cincinnati-OH-USA/DevOps-Developer-Intern---Summer-2027_R9826?utm_source=Simplify&ref=Simplify
+GreatAmericanInsuranceCompany Extreme Programming Engineer Intern [Cincinnati, OH; 3d old]   https://gaig.wd1.myworkdayjobs.com/GAIG_External/job/Cincinnati-OH-USA/Extreme-Programming-Engineer-Intern---Summer-2027_R9821?utm_source=Simplify&ref=Simplify
+GreatAmericanInsuranceCompany Content Publishing Developer Intern [Cincinnati, OH; 3d old]   https://gaig.wd1.myworkdayjobs.com/GAIG_External/job/Cincinnati-OH-USA/Content-Publishing-Developer-Intern---Summer-2027_R9813?utm_source=Simplify&ref=Simplify
+GeniusAi Engineering Intern [NYC; 3d old]   https://jobs.ashbyhq.com/geniusai/06198681-5c9d-40fa-aa68-ac92b65227c4/application?embed=true&utm_source=Simplify&ref=Simplify
+GeneralMotors AI/ML Engineer Intern - Autonomous Vehicles [Seattle, WA Sunnyvale, CA; 3d old]   https://generalmotors.wd5.myworkdayjobs.com/Careers_GM/job/Sunnyvale-California-United-States-of-America/XMLNAME-2027-Summer-Intern---AI-ML-Engineer---Autonomous-Vehicles_JR-202623439?utm_source=Simplify&ref=Simplify
+CleanHarbors Software & Field Technology Intern IS [Deer Park, TX; 3d old]   https://epyc.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1001/job/167672?utm_source=Simplify&ref=Simplify
+Linkedin Software Engineer Intern - First Play [Mountain View, CA; 3d old]   https://jobs.smartrecruiters.com/LinkedIn3/744000158394370?utm_source=Simplify&ref=Simplify
+GardaCapitalPartners Software Engineer Intern - C# [Wayzata, MN; 3d old]   https://job-boards.greenhouse.io/gardacp/jobs/6238021004?utm_source=Simplify&ref=Simplify
+Schonfeld AI Enablement Intern [NYC; 3d old]   https://job-boards.greenhouse.io/schonfeld/jobs/8171694?utm_source=Simplify&ref=Simplify
+Infleqtion Quantum Software Intern - Quantum Software [Chicago, IL; 3d old]   https://apply.workable.com/coldquanta/j/EB77DE8198/apply?utm_source=Simplify&ref=Simplify
+VspVision Software Engineer Intern [Remote in USA; 4d old]   https://vsp.wd1.myworkdayjobs.com/vspvisioncareers/job/Remote-US/Internship--Software-Engineer_R-10046?utm_source=Simplify&ref=Simplify
+VspVision Software Engineer Intern [Remote in USA; 4d old]   https://vsp.wd1.myworkdayjobs.com/vspvisioncareers/job/Remote-US/Internship--Software-Engineer_R-10071?utm_source=Simplify&ref=Simplify
+VspVision Software Engineer Intern - Technology Innovation [Remote in USA; 4d old]   https://vsp.wd1.myworkdayjobs.com/vspvisioncareers/job/Remote-US/Internship--Technology-Innovation_R-10020?utm_source=Simplify&ref=Simplify
+VspVision Software Engineer Intern [Remote in USA; 4d old]   https://vsp.wd1.myworkdayjobs.com/vspvisioncareers/job/Remote-US/Internship--Software-Engineer_R-10068?utm_source=Simplify&ref=Simplify
+TMobile Software Engineer Intern [Overland Park, KS; 4d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Software-Engineering-Internship_REQ380441?utm_source=Simplify&ref=Simplify
+Sonos Software Engineer Intern [Boston, MA; 4d old]   https://sonos.wd1.myworkdayjobs.com/Sonos/job/Boston-MA/Software-Engineering-Intern--Boston-_R2882-1?utm_source=Simplify&ref=Simplify
+Rtx Software Engineer Co-op [Marlborough, MA Tewksbury, MA; 4d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MA-MARLBOROUGH-MA2--1001-Boston-Post-Rd--BLDG-2/Software-Engineer-Co-op--January-2027-_01885371?utm_source=Simplify&ref=Simplify
+RegeneronPharmaceuticals IT and Systems Intern - Industrial Operations and Product Supply [Rensselaer, NY; 4d old]   https://regeneron.wd1.myworkdayjobs.com/en-US/Careers/job/RENSSELAER/XMLNAME-2027-Summer-Intern-IT---Systems--IOPS-_R51822?utm_source=Simplify&ref=Simplify
+HpInc Software Engineer Intern [SF; 4d old]   https://hp.wd5.myworkdayjobs.com/EXTEU-AC-CareerSite/job/San-Francisco-California-United-States-of-America/Software-Engineering-Intern---HP-IQ_UNI4806?utm_source=Simplify&ref=Simplify
+HpInc Software Systems Intern - IQ [SF; 4d old]   https://hp.wd5.myworkdayjobs.com/externalcareersite/job/San-Francisco-California-United-States-of-America/Software-Systems-Intern_UNI4801-1?utm_source=Simplify&ref=Simplify
+HpInc Software Quality Assurance Intern [SF; 4d old]   https://hp.wd5.myworkdayjobs.com/externalcareersite/job/San-Francisco-California-United-States-of-America/Software-Quality-Assurance-Intern_UNI4802-1?utm_source=Simplify&ref=Simplify
+AceHardware IT Associate Software Engineer Intern [Oak Brook, IL; 4d old]   https://acehardware.wd1.myworkdayjobs.com/External/job/IL---Oak-Brook/IT-Associate-Software-Engineer-2027-Summer-Internship--Full-Time-Paid-12-weeks-_REQ-34797?utm_source=Simplify&ref=Simplify
+Visa Software Engineer Intern [Austin, TX; 5d old]   https://visa.wd5.myworkdayjobs.com/Visa/job/US---Austin-TX/XMLNAME-2027-Sophomore-Internship-Program---Software-Engineer-Intern--Austin--TX---2027_REF089882W-1?utm_source=Simplify&ref=Simplify
+BurnsEngineering Software Engineer Intern [Pittsburgh, PA; 5d old]   https://www.burns-group.com/careers/current-openings/?gh_jid=4467848009&utm_source=Simplify&ref=Simplify
+QubeResearchTechnologies Technology Intern [Chicago, IL NYC; 5d old]   https://job-boards.greenhouse.io/quberesearchandtechnologies/jobs/8870423002?utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Integration Intern [Jacksonville, FL; 8d old]   https://ice.jibeapply.com/jobs/14071?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Software Engineer Intern [Jacksonville, FL; 8d old]   https://ice.jibeapply.com/jobs/14077?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Software Engineer Intern - Java [Jacksonville, FL; 8d old]   https://ice.jibeapply.com/jobs/14078?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Software Engineering Intern [Jacksonville, FL; 8d old]   https://ice.jibeapply.com/jobs/14075?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Trading System Development Intern [NYC; 8d old]   https://ice.jibeapply.com/jobs/14102?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Regulatory Products Intern [NYC; 8d old]   https://ice.jibeapply.com/jobs/14101?icims=1&utm_source=Simplify&ref=Simplify
+Philips AI & Analytics Analyst Intern [Nashville, TN; 10d old]   https://philips.wd3.myworkdayjobs.com/jobs-and-careers/job/Nashville-Tennessee-United-States/Intern---AI---Analytics-Analyst---Nashville--TN---Spring-2027_593012?utm_source=Simplify&ref=Simplify
+Oneethos Research and Development Intern [Remote in USA; 11d old]   https://job-boards.greenhouse.io/oneethos/jobs/4459193009?utm_source=Simplify&ref=Simplify
+Peraton Software Developer Intern [Topeka, KS; 23d old]   https://peraton.jibeapply.com/jobs/172061?icims=1&utm_source=Simplify&ref=Simplify
+Pretium AI, Data & Innovation Intern [NYC; 25d old]   https://job-boards.greenhouse.io/pretiuminternships2027/jobs/8868243002?utm_source=Simplify&ref=Simplify
+Peraton Software Engineering Co-op [San Diego, CA; 0d old]   https://peraton.jibeapply.com/jobs/171547?icims=1&utm_source=Simplify&ref=Simplify
+TylerTechnologies Software Development Intern [Troy, MI Overland Park, KS; 0d old]   https://jobs.jobvite.com/tylertech/job/oQFRAfwG?nl=1&nl=1&fr=false&utm_source=Simplify&ref=Simplify
+VoyagerTechnologies Software Engineer Intern [Long Beach, CA; 0d old]   https://job-boards.greenhouse.io/voyagertechnologiesinc/jobs/4423330009?utm_source=Simplify&ref=Simplify
+GeneralDynamicsInformationTechnology AI/ML Software Development and Engineering Intern [Bossier City, LA; 0d old]   https://gdit.wd5.myworkdayjobs.com/gdit_earlytalent/job/USA-LA-Bossier-City/GDIT-Summer-Internship-Program---Summer-2027-AI-ML-Software-Development-and-Engineering-Internship_RQ228939?utm_source=Simplify&ref=Simplify
+PacificLife Software Engineering Intern [Newport Beach, CA; 0d old]   https://pacificlife.wd1.myworkdayjobs.com/en-US/PacificLifeCareers/job/Newport-Beach-CA-700/Summer-2027-Software-Engineering-Internship_R17826?utm_source=Simplify&ref=Simplify
+GenesisMolecularAi Software Engineer Intern [San Mateo, CA NYC; 0d old]   https://jobs.ashbyhq.com/genesis-molecular-ai/44e3cbdc-949c-426e-a80a-b41c73ad6a99/application?embed=true&utm_source=Simplify&ref=Simplify
+FG IT Software Engineer Intern - Summer [Des Moines, IA; 0d old]   https://www.fglife.com/about/careers/intern/apply.html?gh_jid=7996103003&utm_source=Simplify&ref=Simplify
+BrainCo AI Product Intern [SF; 0d old]   https://jobs.ashbyhq.com/brainco/28c6cd2f-b609-4ca6-a2f6-adfa3d679d0b/application?embed=true&utm_source=Simplify&ref=Simplify
+BrainCo AI Platform Engineer Intern [SF; 0d old]   https://jobs.ashbyhq.com/brainco/2db4339e-79c8-4e97-9c94-92753b49e20a/application?embed=true&utm_source=Simplify&ref=Simplify
+FarmersMutualHail Software Developer Intern [West Des Moines, IA; 0d old]   https://job-boards.greenhouse.io/farmersmutualhailinsurancecompany/jobs/4403596009?utm_source=Simplify&ref=Simplify
+PublicisGroupe Software Engineer Intern [Boston, MA; 0d old]   https://publicisgroupe.jibeapply.com/jobs/172577?icims=1&utm_source=Simplify&ref=Simplify
+Anavation Computer Science Intern - Summer Program [San Antonio, TX; 0d old]   https://jobs.lever.co/anavationllc/a5c70b6a-2d16-4774-9043-677456614b1b/apply?utm_source=Simplify&ref=Simplify
+PublicisGroupe Software Engineer Intern [Chicago, IL; 0d old]   https://publicisgroupe.jibeapply.com/jobs/173032?icims=1&utm_source=Simplify&ref=Simplify
+PublicisGroupe Software Engineer Intern [Irving, TX; 0d old]   https://publicisgroupe.jibeapply.com/jobs/173034?icims=1&utm_source=Simplify&ref=Simplify
+Peraton Software Engineer Intern [Blacksburg, VA Herndon, VA; 0d old]   https://peraton.jibeapply.com/jobs/169665?icims=1&utm_source=Simplify&ref=Simplify
+Pyrotek Product Management Intern [Spokane, WA; 1d old]   https://jobs.smartrecruiters.com/Pyrotek3/744000158830479?utm_source=Simplify&ref=Simplify
+TheNewYorkTimes Product Manager Intern [NYC; 1d old]   https://job-boards.greenhouse.io/thenewyorktimes/jobs/4748461005?utm_source=Simplify&ref=Simplify
+TMobile Associate Product Manager Intern [Overland Park, KS; 3d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Assoc-Product-Manager-Internship_REQ380746?utm_source=Simplify&ref=Simplify
+Sonos Software Product Manager Intern [Seattle, WA; 3d old]   https://sonos.wd1.myworkdayjobs.com/Sonos/job/Seattle-WA/Software-Product-Management-Intern--Seattle-_R2888-1?utm_source=Simplify&ref=Simplify
+TMobile Associate Technical Product Manager Intern [Frisco, TX; 4d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Frisco-Texas/Summer-2027-Associate-Technical-Product-Manager-Internship_REQ380499?utm_source=Simplify&ref=Simplify
+Sonos Software Product Management Intern [Seattle, WA; 4d old]   https://sonos.wd1.myworkdayjobs.com/Sonos/job/Seattle-WA/Software-Product-Management-Intern--Seattle-_R2866-1?utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Product Management Intern [Atlanta, GA; 8d old]   https://ice.jibeapply.com/jobs/14065?icims=1&utm_source=Simplify&ref=Simplify
+Oneethos Product Management Intern [Remote in USA; 10d old]   https://job-boards.greenhouse.io/oneethos/jobs/4459298009?utm_source=Simplify&ref=Simplify
+C3Ai AI Product Manager Intern [Redwood City, CA; 29d old]   https://job-boards.greenhouse.io/c3ascend/jobs/8860562002?utm_source=Simplify&ref=Simplify
+SchneiderElectric Graduate Product Management Intern [Nashville, TN; 0d old]   https://se.jibeapply.com/jobs/135310?icims=1&utm_source=Simplify&ref=Simplify
+PublicisGroupe Product Manager Intern [Boston, MA; 0d old]   https://publicisgroupe.jibeapply.com/jobs/172574?icims=1&utm_source=Simplify&ref=Simplify
+FarmersMutualHail Product Owner Intern [West Des Moines, IA; 0d old]   https://job-boards.greenhouse.io/farmersmutualhailinsurancecompany/jobs/4404335009?utm_source=Simplify&ref=Simplify
+AndreessenHorowitz Research Intern - Frontier [NYC; 1d old]   https://a16z.com/about/jobs/?gh_jid=8046730003&utm_source=Simplify&ref=Simplify
+MolinaHealthcare Healthcare Quality & Analytics Intern [Wisconsin; 1d old]   https://hckd.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/2040143?utm_source=Simplify&ref=Simplify
+MolinaHealthcare Customer Experience & Analytics Intern - Undergraduate [Remote in USA; 1d old]   https://hckd.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/2040169?utm_source=Simplify&ref=Simplify
+DivergentTechnologies Business Intelligence Intern [Torrance, CA; 1d old]   https://job-boards.greenhouse.io/divergent/jobs/5393519008?utm_source=Simplify&ref=Simplify
+StradaEducationFoundation Clear Outcomes and Data Science Intern [Washington, DC; 1d old]   https://jobs.lever.co/stradaeducation/d8109e92-5156-48e2-879f-c9ea299e971b/apply?utm_source=Simplify&ref=Simplify
+FirstCitizensBancshares Summer Intern - AI Innovation [Raleigh, NC; 1d old]   https://firstcitizens.jibeapply.com/jobs/36311?icims=1&utm_source=Simplify&ref=Simplify
+Stratolaunch Manufacturing Systems & Data Intern - Systems [Mojave, CA; 2d old]   https://job-boards.greenhouse.io/stratolaunch/jobs/5467824008?utm_source=Simplify&ref=Simplify
+Symbotic Customer Success Intern [Wilmington, MA; 2d old]   https://symbotic.wd504.myworkdayjobs.com/Symbotic/job/USA-Wilmington--MA---HQ/Intern--Customer-Success_R8234?utm_source=Simplify&ref=Simplify
+NorthropGrumman Data Scientist Intern - Product Support [San Diego, CA; 2d old]   https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site/job/United-States-California-San-Diego/XMLNAME-2027-Intern-Product-Support---Data-Scientist_R10258679?utm_source=Simplify&ref=Simplify
+Nissan Purchasing Transformation Intern [Franklin, TN; 2d old]   https://alliance.wd3.myworkdayjobs.com/en-US/nissanjobs/job/Franklin-Tennessee---United-States-of-America/Purchasing-Transformation-Intern---Summer-2027---Franklin--TN_R00214282?utm_source=Simplify&ref=Simplify
+LifeFitness IT Intern [Rosemont, IL; 2d old]   https://lifefitness.wd1.myworkdayjobs.com/searchLFN/job/Rosemont-IL/IT-Intern_JR-025323?utm_source=Simplify&ref=Simplify
+JohnDAndCatherineTMacarthurFoundation Evaluation & Learning Intern [Chicago, IL; 2d old]   https://macfound.wd1.myworkdayjobs.com/MAC_FOUND_EXT_CAREERS/job/Chicago-Office/Evaluation---Learning-Intern---Summer-2027_REQ-000362?utm_source=Simplify&ref=Simplify
+HysterYaleMaterialsHandling Business Analytics Intern [Greenville, NC; 2d old]   https://hysteryale.wd1.myworkdayjobs.com/hyster-yalecareers/job/HY-US-Greenville-NC-Headquarters/Summer-2027-Business-Analytics-Intern_R8539?utm_source=Simplify&ref=Simplify
+DowJones Data Analyst Intern [NYC; 2d old]   https://dowjones.wd1.myworkdayjobs.com/en-US/Dow_Jones_Career/job/NYC---1211-Ave-of-the-Americas/Summer-2027-Internship-Program---Data-Analyst-Intern_Job_Req_55894?utm_source=Simplify&ref=Simplify
+DowJones Research Analyst Intern [Houston, TX; 2d old]   https://dowjones.wd1.myworkdayjobs.com/en-US/Dow_Jones_Career/job/Houston-TX---OPIS/Summer-2027-Internship-Program---Research-Analyst-Intern_Job_Req_55875?utm_source=Simplify&ref=Simplify
+Barclays Client Data & Engineering Group Summer Intern - Chief Client Office [NYC; 2d old]   https://barclays.wd3.myworkdayjobs.com/External_Career_Site_Barclays/job/New-York-745-7th-Avenue/Chief-Client-Office---Client-Data---Engineering-Group-Summer-Internship-Program-2027-New-York-City_JR-0000137731?utm_source=Simplify&ref=Simplify
+GmFinancial Data Engineer Intern [Arlington, TX; 2d old]   https://fa-exvu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/261197?utm_source=Simplify&ref=Simplify
+Axa Underwriting Data & Analytics Intern [NYC; 2d old]   https://careers.axa.com/jobs/25498?icims=1&utm_source=Simplify&ref=Simplify
+Tesla Data Engineer Intern - Energy [Palo Alto, CA; 2d old]   https://www.tesla.com/careers/search/job/287982?utm_source=Simplify&ref=Simplify
+Walmart Corporate Intern: Data & Tech Transformation Intern [Bentonville, AR; 3d old]   https://walmart.wd504.myworkdayjobs.com/WalmartExternal/job/USA-Always-AR-Bentonville-Home-Office/XMLNAME--USA--Summer-2027-Corporate-Intern---Data---Tech-Transformation-intern_R-2690457-1?utm_source=Simplify&ref=Simplify
+Uline Sales Analyst Intern [5 locations  Waukegan, IL Milwaukee, WI Glenview, IL Pleasant Prairie, WI Kenosha, WI; 3d old]   https://uline.wd1.myworkdayjobs.com/en-US/Uline_Careers/job/Pleasant-Prairie-WI/Sales-Analyst-Internship---Summer-2027_R268774?utm_source=Simplify&ref=Simplify
+TMobile Associate AI Engineer Intern [Overland Park, KS; 3d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Assoc-AI-Engineer-Internship_REQ380484?utm_source=Simplify&ref=Simplify
+Sanofi US Advanced Analytics Intern [Cambridge, MA Morristown, NJ; 3d old]   https://sanofi.wd3.myworkdayjobs.com/SanofiCareers/job/Cambridge-MA/XMLNAME-2027-Summer-Intern-US-Advanced-Analytics-Cambridge-MA_R2865218?utm_source=Simplify&ref=Simplify
+SallieMae Data Science and Engineering Intern [Newark, DE Arlington County, Arlington, VA; 3d old]   https://sallie-mae.wd5.myworkdayjobs.com/Careers/job/Newark-DE/Data-Science---Engineering-Intern_R26_000659?utm_source=Simplify&ref=Simplify
+JmFamily Customer Experience Data Analyst Intern [Deerfield Beach, FL; 3d old]   https://jmfamily.wd1.myworkdayjobs.com/jmfamily_external/job/Florida---Deerfield-Beach/Customer-Experience-Data-Analyst-Intern_JR105125?utm_source=Simplify&ref=Simplify
+Hntb GIS Intern [Tampa, FL Tallahassee, FL; 3d old]   https://hntb.wd5.myworkdayjobs.com/hntb_university_careers/job/Tampa-FL/GIS-Intern_R-32235?utm_source=Simplify&ref=Simplify
+GreatAmericanInsuranceCompany IT Data Intern [Cincinnati, OH; 3d old]   https://gaig.wd1.myworkdayjobs.com/GAIG_External/job/Cincinnati-OH-USA/IT-Data-Intern---Summer-2027_R9820?utm_source=Simplify&ref=Simplify
+Caresource Military and Veterans Intern [Florida Georgia; 3d old]   https://caresource.wd1.myworkdayjobs.com/caresource/job/Florida-WFH/XMLNAME-2027-Summer-Internship-Program---CareSource-Military-and-Veterans-Intern_R14186-1?utm_source=Simplify&ref=Simplify
+Caresource Full Stack AI Development Intern [Remote in USA; 3d old]   https://caresource.wd1.myworkdayjobs.com/caresource/job/Remote/XMLNAME-2027-Summer-Internship-Program---Full-Stack-AI-Development-Intern-1_R14181?utm_source=Simplify&ref=Simplify
+Caresource AI Intern [Remote in USA; 3d old]   https://caresource.wd1.myworkdayjobs.com/caresource/job/Remote/XMLNAME-2027-Summer-Internship-Program---AI-Intern_R14123?utm_source=Simplify&ref=Simplify
+AxiomSpace Enterprise Data Analyst Intern - Power BI & Data Quality [Houston, TX; 3d old]   https://axiomspace.wd5.myworkdayjobs.com/External_Career_Site/job/Houston/Enterprise-Data-Analyst-Intern--Power-BI---Data-Quality--Summer-2027-_JR100823?utm_source=Simplify&ref=Simplify
+SherwinWilliams R&D Data Science Co-op [Brecksville, OH; 3d old]   https://ejhp.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2/job/2627789?utm_source=Simplify&ref=Simplify
+BerkshireHathawayEnergy Data Systems Intern [Bridgeport, WV; 3d old]   https://fa-essf-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/10005970?utm_source=Simplify&ref=Simplify
+SystemsPlanningAndAnalysis Data Engineer Intern [Alexandria, VA; 3d old]   https://spa.jibeapply.com/jobs/23698?icims=1&utm_source=Simplify&ref=Simplify
+Prizepicks Business Intelligence Intern - Game Operations [Atlanta, GA; 3d old]   http://prizepicks.com/position?gh_jid=8047188003&utm_source=Simplify&ref=Simplify
+Workday Analytics Engineer Intern [Pleasanton, CA; 4d old]   https://workday.wd5.myworkdayjobs.com/Workday_Early_Career/job/USA-CA-Pleasanton/Analytics-Engineer-Intern_JR-0111200?utm_source=Simplify&ref=Simplify
+Uline International Operations Analyst Intern [Pleasant Prairie, WI; 4d old]   https://uline.wd1.myworkdayjobs.com/en-US/Uline_Careers/job/Pleasant-Prairie-WI/International-Operations-Analyst-Internship---Summer-2027_R268694?utm_source=Simplify&ref=Simplify
+RevantageCorporateServices Insurance Technology & AI Analytics Intern [Dallas, TX Chicago, IL; 4d old]   https://revantage.wd1.myworkdayjobs.com/Revantage/job/Chicago-IL/Insurance-Technology---AI-Analytics-Intern--Summer-2027_JR104539?utm_source=Simplify&ref=Simplify
+RegeneronPharmaceuticals AI/ML & Data Engineering Intern [5 locations  Cambridge, MA Armonk, NY Warren, NJ Sleepy Hollow, NY Tarrytown, NY; 4d old]   https://regeneron.wd1.myworkdayjobs.com/en-US/Careers/job/TARRYTOWN/XMLNAME-2027-Summer-Intern-AI-ML---Data-Engineering_R52560-1?utm_source=Simplify&ref=Simplify
+RegeneronPharmaceuticals Data Science & Digital Innovation Intern - Industrial Operations and Product Supply [Rensselaer, NY; 4d old]   https://regeneron.wd1.myworkdayjobs.com/en-US/Careers/job/RENSSELAER/XMLNAME-2027-Summer-Intern-Data-Science---Digital-Innovation--IOPS-_R51821-1?utm_source=Simplify&ref=Simplify
+RegeneronPharmaceuticals Data Analytics Intern - Dashboards & Business Process Automation [Armonk, NY Warren, NJ Tarrytown, NY; 4d old]   https://regeneron.wd1.myworkdayjobs.com/en-US/Careers/job/TARRYTOWN/XMLNAME-2027-Summer-Intern-Data-Analytics--Dashboards---Business-Process-Automation_R52559-1?utm_source=Simplify&ref=Simplify
+Marvell Data Science Intern [Boise, ID; 4d old]   https://marvell.wd1.myworkdayjobs.com/MarvellCareers2/job/Boise-ID/Data-Science-Intern--BS---Summer-2027_2603782?utm_source=Simplify&ref=Simplify
+FederalHomeLoanBankOfIndianapolis MPP Data Analytics Intern [Indianapolis, IN; 4d old]   https://fhlbi.wd1.myworkdayjobs.com/FHLBI_Careers/job/Indianapolis/MPP-Data-Analytics-Intern_R641?utm_source=Simplify&ref=Simplify
+AppliedMaterials Data Scientist Intern [Austin, TX; 4d old]   https://amat.wd1.myworkdayjobs.com/External/job/AustinTX/Summer-2027-Data-Scientist-Intern--Bachelor-s--Austin--TX-_R2627409?utm_source=Simplify&ref=Simplify
+AppliedMaterials Data Science Intern [Santa Clara, CA; 4d old]   https://amat.wd1.myworkdayjobs.com/External/job/Santa-ClaraCA/Summer-2027-Data-Science-Intern--Bachelor-s-Master-s--Santa-Clara--CA-_R2627525?utm_source=Simplify&ref=Simplify
+AmericanFamilyInsuranceGroup Talent Analytics Intern [Madison, WI; 4d old]   https://amfam.wd1.myworkdayjobs.com/AmFamGroupInternCareers/job/WI-Madison/Summer-2027-Intern---Talent-Analytics_R39669-2?utm_source=Simplify&ref=Simplify
+FirstCitizensBancshares Data Analyst Intern - Enterprise Data Analyst - Data Products [Raleigh, NC; 4d old]   https://firstcitizens.jibeapply.com/jobs/36230?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Audit Analytics Intern [Atlanta, GA; 8d old]   https://ice.jibeapply.com/jobs/14069?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Agentic AI Data Science Intern [Jacksonville, FL; 8d old]   https://ice.jibeapply.com/jobs/14070?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Index Analyst Intern [NYC; 8d old]   https://ice.jibeapply.com/jobs/14100?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Data Analyst Intern [Jacksonville, FL; 8d old]   https://ice.jibeapply.com/jobs/14089?icims=1&utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Data Science Intern [NYC; 8d old]   https://ice.jibeapply.com/jobs/14113?icims=1&utm_source=Simplify&ref=Simplify
+SystemsPlanningAndAnalysis Data Engineering & Analytics Tools Intern [Washington, DC; 15d old]   https://spa.jibeapply.com/jobs/23634?icims=1&utm_source=Simplify&ref=Simplify
+DowJones Subscription Experimentation Intern [NYC; 25d old]   https://dowjones.wd1.myworkdayjobs.com/en-US/Dow_Jones_Career/job/NYC---1211-Ave-of-the-Americas/Summer-2027-Internship-Program---Subscription-Experimentation-Intern_Job_Req_55879?utm_source=Simplify&ref=Simplify
+FarmersMutualHail Data Architect Intern [West Des Moines, IA; 29d old]   https://job-boards.greenhouse.io/farmersmutualhailinsurancecompany/jobs/4422262009?utm_source=Simplify&ref=Simplify
+AmericanFamilyInsuranceGroup GenAI Intern [Madison, WI Boston, MA; 0d old]   https://amfam.wd1.myworkdayjobs.com/AmFamGroupInternCareers/job/WI-Madison/AMFAM---2027-Summer-GenAI-Intern_R39561?utm_source=Simplify&ref=Simplify
+Peraton Sustainability Engineer Co-op [San Diego, CA; 0d old]   https://peraton.jibeapply.com/jobs/171537?icims=1&utm_source=Simplify&ref=Simplify
+Netsmart Revenue Cycle Management Operations Analyst Intern - Revenue Cycle Management [Overland Park, KS; 0d old]   https://ntst.wd1.myworkdayjobs.com/careers/job/Overland-Park-KS/Revenue-Cycle-Management--RCM--Operations-Analyst-Intern-Summer-2027-Internship-_R015757?utm_source=Simplify&ref=Simplify
+Soundexchange Operations Intern - Royalty Processing & Business Intelligence [Washington, DC; 0d old]   https://job-boards.greenhouse.io/sxinternships/jobs/5231079007?utm_source=Simplify&ref=Simplify
+LoweS Store Operations Intern - Retail Facilities Support [Mooresville, NC; 0d old]   https://lowes.wd5.myworkdayjobs.com/en-US/LWS_External_CS/job/Mooresville-NC-SSC-1999/Store-Operations-Real-Estate---Undergrad-Internship---Summer-2027_JR-02650537?utm_source=Simplify&ref=Simplify
+BrainCo Machine Learning Engineer – Applied AI Intern [SF; 0d old]   https://jobs.ashbyhq.com/brainco/a4bdb254-8007-4142-bf36-a3e8622b1ed9/application?embed=true&utm_source=Simplify&ref=Simplify
+NavyFederal Data Scientist Intern [Vienna, VA; 0d old]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32291?utm_source=Simplify&ref=Simplify
+Peraton Data Science Intern [Blacksburg, VA Herndon, VA; 0d old]   https://peraton.jibeapply.com/jobs/170320?icims=1&utm_source=Simplify&ref=Simplify
+Merck Co-op [Rahway, NJ; 0d old]   https://msd.wd5.myworkdayjobs.com/searchjobs/job/USA---New-Jersey---Rahway/XMLNAME-2027-Future-Talent-Program---Global-Workplace---Enterprise-Services-Global-Real-Estate--GRES--Co-op_R415296?utm_source=Simplify&ref=Simplify
+AppliedMaterials Industrial Engineering Intern [Santa Clara, CA; 0d old]   https://amat.wd1.myworkdayjobs.com/External/job/Santa-ClaraCA/Summer-2027-Industrial-Engineering-Intern--Bachelor-s--Santa-Clara--CA-_R2626710?utm_source=Simplify&ref=Simplify
+Schonfeld DMFI Intern [NYC; 3d old]   https://job-boards.greenhouse.io/schonfeld/jobs/8324611?utm_source=Simplify&ref=Simplify
+Infinitequant Quantitative Developer Intern [Dubai - United Arab Emirates NYC; 0d old]   https://jobs.smartrecruiters.com/InfiniteQuant/744000147163879?utm_source=Simplify&ref=Simplify
+Globalfoundries Device Engineering Intern - Silicon Photonics [Malta, NY; 2d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---New-York---Malta/Device-Engineering-Intern--Silicon-Photonics--Summer-2027-_JR-2604263?utm_source=Simplify&ref=Simplify
+LoftOrbital Test Engineering Intern - Test Engineering [Golden, CO; 2d old]   https://jobs.lever.co/loftorbital/be396d08-738d-4f3d-bea4-cbbdc88c3db9/apply?utm_source=Simplify&ref=Simplify
+V2X Electrical Engineer Intern [Indianapolis, IN; 2d old]   https://careers.gov2x.com/jobs/63854?icims=1&utm_source=Simplify&ref=Simplify
+BostonScientific R&D Software Design Intern [Arden Hills, MN; 3d old]   https://bostonscientific.eightfold.ai/careers/job/563602813862687?utm_source=Simplify&ref=Simplify
+Sonos Software Engineer Intern - Partner Engineering [Boston, MA; 3d old]   https://sonos.wd1.myworkdayjobs.com/Sonos/job/Boston-MA/Software-Partner-Engineering-Intern--Boston-_R2886-1?utm_source=Simplify&ref=Simplify
+Rtx Electrical Engineering Intern [Fort Wayne, IN; 3d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-IN-FT-WAYNE-150A--1010-Production-Rd--BLDG-150A/Electrical-Engineering-Hardware-Intern--Summer-2027--Onsite-_01886126?utm_source=Simplify&ref=Simplify
+Caci Systems Engineering Co-op Intern [Rochester, NY; 3d old]   https://caci.wd1.myworkdayjobs.com/external/job/Rochester-NY-US/Systems-Engineering-Co-op-Intern---Spring-2027_334157?utm_source=Simplify&ref=Simplify
+Caci Software Engineering Co-op Intern [Rochester, NY; 3d old]   https://caci.wd1.myworkdayjobs.com/external/job/Rochester-NY-US/Software-Engineering-Co-op-Intern---Spring-2027_334160?utm_source=Simplify&ref=Simplify
+RenesasElectronics Application Engineer Intern [San Jose, CA; 3d old]   https://jobs.smartrecruiters.com/RenesasElectronics/744000158346447?utm_source=Simplify&ref=Simplify
+Sonos Software Engineer Intern [Seattle, WA; 4d old]   https://sonos.wd1.myworkdayjobs.com/Sonos/job/Seattle-WA/Software-Engineering-Intern--Seattle-_R2885?utm_source=Simplify&ref=Simplify
+Rtx Electrical Engineer Intern [El Segundo, CA; 4d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CA-EL-SEGUNDO-E01--2000-E-El-Segundo-Blvd--BLDG-E01/Electrical-Engineering-Intern--Summer-2027-_01883292?utm_source=Simplify&ref=Simplify
+Rtx Hardware Electrical Engineer Intern [Cambridge, MA; 4d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MA-CAMBRIDGE-BBN01--10--50-Moulton-St--MOULTON-B2/Hardware-Electrical-Engineering-Intern--Summer-2027-_01883831?utm_source=Simplify&ref=Simplify
+HpInc Software Engineer Intern - Connectivity [SF; 4d old]   https://hp.wd5.myworkdayjobs.com/EXTEU-AC-CareerSite/job/San-Francisco-California-United-States-of-America/Software-Engineering-Intern--Connectivity---HP-IQ_UNI4812?utm_source=Simplify&ref=Simplify
+Draper Analog ASIC Design Intern [Cambridge, MA; 4d old]   https://draper.wd5.myworkdayjobs.com/Draper_Careers/job/Cambridge-MA/Analog-ASIC-Design-Intern--Summer-2027-_JR003085?utm_source=Simplify&ref=Simplify
+HpIq Product Design Engineering Intern [SF; 5d old]   https://job-boards.greenhouse.io/hpiq/jobs/6141235004?utm_source=Simplify&ref=Simplify
+Riverlane Engineer Intern [Cambridge, MA; 11d old]   https://www.riverlane.com/jobs?gh_jid=5010283101#vacancies&utm_source=Simplify&ref=Simplify
+Peraton Electrical Engineer Intern [Topeka, KS; 23d old]   https://peraton.jibeapply.com/jobs/172055?icims=1&utm_source=Simplify&ref=Simplify
+SchneiderElectric Electronics Hardware Engineer Co-op [Raleigh, NC Cedar Rapids, IA; 24d old]   https://se.jibeapply.com/jobs/136319?icims=1&utm_source=Simplify&ref=Simplify
+Astronics Electrical Engineer Intern [Kirkland, WA; 26d old]   https://job-boards.greenhouse.io/astronicscorporation/jobs/4431922009?utm_source=Simplify&ref=Simplify
+Astronics Software Engineer Intern [Kirkland, WA; 26d old]   https://job-boards.greenhouse.io/astronicscorporation/jobs/4431835009?utm_source=Simplify&ref=Simplify
+Astronics Electrical Test Engineer Intern [Redmond, WA; 0d old]   https://job-boards.greenhouse.io/astronicscorporation/jobs/4420383009?utm_source=Simplify&ref=Simplify
+RendezvousRobotics Software Engineer Intern [Golden, CO; 0d old]   https://job-boards.greenhouse.io/rendezvousrobotics/jobs/4408590009?utm_source=Simplify&ref=Simplify
+HuntingtonIngallsIndustries Software Engineer 1 [Newport News, VA; 0d old]   https://careers.huntingtoningalls.com/job/Newport-News-ENGINEER-SOFTWARE-1-Virg/1446380900/?ats=successfactors&utm_source=Simplify&ref=Simplify
+BuiltTechnologies Innovation Software Engineer 1 - Marketplace [Nashville, TN; 1d old]   https://job-boards.greenhouse.io/getbuilt/jobs/4749545005?utm_source=Simplify&ref=Simplify
+Bodyspec Junior Software Engineer [Austin, TX; 1d old]   https://bodyspec.applytojob.com/apply/YsrsS9yEg7/Junior-Developer?utm_source=Simplify&ref=Simplify
+VerizonCommunications Engineer 1 - Systems Engineering (Generative AI & Agentic Systems) [Temple Terrace, FL; 2d old]   https://verizon.wd12.myworkdayjobs.com/verizon-careers/job/Temple-Terrace-Florida/Engineer-I-Systems-Engineering_R-1103177-1?utm_source=Simplify&ref=Simplify
+Tsc Software Engineer 1 [Silver Spring, MD; 2d old]   https://tsc.wd12.myworkdayjobs.com/en-US/TSC-Careers/job/Silver-Spring-MD/Software-Engineer-I_JR2898?utm_source=Simplify&ref=Simplify
+Raydar Founding Software Engineer [NYC; 2d old]   https://apply.workable.com/raydar/j/C7935C65FF/apply?utm_source=Simplify&ref=Simplify
+Raydar Founding Product Engineer [SF; 2d old]   https://apply.workable.com/raydar/j/EB038A923D/apply?utm_source=Simplify&ref=Simplify
+Raydar Founding Software Engineer - AI Agents [SF; 2d old]   https://apply.workable.com/raydar/j/F452EE23A1/apply?utm_source=Simplify&ref=Simplify
+Raydar Founding Engineer [NYC; 2d old]   https://apply.workable.com/raydar/j/6BB37B686B/apply?utm_source=Simplify&ref=Simplify
+IntelliforceItSolutionsGroup Junior Software Engineer - Prime [Annapolis Junction, MD; 2d old]   https://intelliforceitsolutionsgroup.applytojob.com/apply/vrH8MYXO9u/Junior-Software-Engineer-Prime?utm_source=Simplify&ref=Simplify
+Rtx Software Engineer 1 [San Jose, CA; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CA-SAN-JOSE-826--200-Holger-Way--BLDG-826/Software-Engineer-I--Onsite-_01885857?utm_source=Simplify&ref=Simplify
+Startree Software Engineer 1 [Remote in USA; 4d old]   https://job-boards.greenhouse.io/startree/jobs/6235909004?utm_source=Simplify&ref=Simplify
+Priceline Junior Software Engineer - Front End [NYC; 4d old]   https://priceline.wd1.myworkdayjobs.com/Priceline/job/New-York/Junior-Software-Engineer_R5885?utm_source=Simplify&ref=Simplify
+Leidos Junior Software Engineer [Bethesda, MD; 4d old]   https://leidos.wd5.myworkdayjobs.com/External/job/Bethesda-MD/Jr-Software-Engineer_R-00195656?utm_source=Simplify&ref=Simplify
+Amazon Software Developer Engineer 1 - Graviton Software - Annapurna Labs [Austin, TX; 4d old]   https://amazon.jobs/en/jobs/10526808/software-dev-engineer-i-graviton-software-annapurna-labs?utm_source=Simplify&ref=Simplify
+SambanovaSystems ML Infrastructure Engineer New Grad [Austin, TX San Jose, CA; 4d old]   https://sambanova.ai/sambanova-available-positions/?gh_jid=6224938004&utm_source=Simplify&ref=Simplify
+CrosscountryConsulting Forward Deployed Software Engineer New Grad [Chicago, IL; 4d old]   https://jobs.lever.co/crosscountry-consulting/10ecb553-0393-4e7b-af5a-88a1947a0769/apply?utm_source=Simplify&ref=Simplify
+Salesforce Software Engineer New Grad [Indianapolis, IN Dallas, TX; 5d old]   https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/Indiana---Indianapolis/Software-Engineering-MTS_JR363598?utm_source=Simplify&ref=Simplify
+Amentum Junior Software Engineer [Vandenberg Space Force Base, CA; 5d old]   https://pae.wd1.myworkdayjobs.com/en-US/amentum_careers/job/US-CA-Vandenberg-AFB/Software-Engineer-Junior_R0173629?utm_source=Simplify&ref=Simplify
+Agave Full-Stack Software Engineer New Grad [SF; 5d old]   https://jobs.ashbyhq.com/agave/73bd2c98-bf87-4eaa-aea8-35e7b6131d0e/application?embed=true&utm_source=Simplify&ref=Simplify
+Fortinet Early Careers: Software Development Engineer [Sunnyvale, CA; 5d old]   https://edel.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2001/job/24770?utm_source=Simplify&ref=Simplify
+Hntb Software Engineer 1 New Grad [Tampa, FL Tallahassee, FL; 6d old]   https://hntb.wd5.myworkdayjobs.com/hntb_university_careers/job/Tallahassee-FL/Returning-New-Grad-Software-Engineer-I--For-Current-Previous-HNTB-Interns-ONLY-_R-32175?utm_source=Simplify&ref=Simplify
+Amentum Entry Level Software Engineer [Dahlgren, VA; 6d old]   https://pae.wd1.myworkdayjobs.com/en-US/amentum_careers/job/US-VA-Dahlgren/Entry-Level-Software-Engineer---SECRET_R0173771?utm_source=Simplify&ref=Simplify
+ShieldAi Software Engineer New Grad [Seattle, WA; 9d old]   https://jobs.ashbyhq.com/f7d8749a-72d6-407c-bf98-292ea630c73a/986a26e9-0597-4402-85ee-0f05a6012902/application?embed=true&utm_source=Simplify&ref=Simplify
+Kla Software Engineer 1 [Ann Arbor, MI; 19d old]   https://kla.wd1.myworkdayjobs.com/annarbor/job/Ann-Arbor-MI/Engr--Software-1_2642057?utm_source=Simplify&ref=Simplify
+ShieldAi Software Engineer 1 - Factory Team [Washington, DC; 22d old]   https://jobs.lever.co/shieldai/59e0cf9b-04d7-43c0-8a65-9d411fe56c68/apply?utm_source=Simplify&ref=Simplify
+Aurelian Software Engineer New Grad [Seattle, WA; 23d old]   https://jobs.ashbyhq.com/aurelian/a2bc965f-d639-41f7-946a-67c05c22e04e/application?embed=true&utm_source=Simplify&ref=Simplify
+ForgeNano Software Engineer 1 [Thornton, CO; 23d old]   https://forge-nano.breezy.hr/p/66630c61f7e4/apply?utm_source=Simplify&ref=Simplify
+Globalfoundries Software Engineer New Grad [Austin, TX Santa Clara, CA; 23d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---Texas---Austin/Software-Engineer--2027-New-College-Graduate-_JR-2604100?utm_source=Simplify&ref=Simplify
+BectonDickinson Software Engineer 1 [Sparks, MD; 23d old]   https://bdx.wd1.myworkdayjobs.com/EXTERNAL_CAREER_SITE_USA/job/USA-MD---Sparks---7-Loveton-Circle/Software-Engineer-I_R-557002-1?utm_source=Simplify&ref=Simplify
+Chalk Software Engineer New Grad [SF NYC; 24d old]   https://jobs.ashbyhq.com/chalk/927c74a5-1b40-490d-b3be-a29baec4db6f/application?embed=true&utm_source=Simplify&ref=Simplify
+SierraNevadaCorporation Software Engineer 1 [Lone Tree, CO; 24d old]   https://snc.wd1.myworkdayjobs.com/snc_external_career_site/job/Lone-Tree-CO/Software-Engineer-I_R0031025?utm_source=Simplify&ref=Simplify
+Amentum Software Engineer 1 [Hanover, MD; 24d old]   https://pae.wd1.myworkdayjobs.com/en-US/amentum_careers/job/US-MD-Hanover/Software-Engineer-1_R0171606?utm_source=Simplify&ref=Simplify
+Aerovironment Software Engineer 1 - Apps [San Diego, CA; 24d old]   https://avav.wd1.myworkdayjobs.com/en-US/avav/job/7540-Metropolitan-Dr-San-Diego-CA/Software-Engineer--Apps---I_8655?utm_source=Simplify&ref=Simplify
+IxlLearning Software Engineer New Grad [Raleigh, NC; 24d old]   https://www.ixl.com/company/jobs?gh_jid=8862049002&utm_source=Simplify&ref=Simplify
+Spruceid Full-Stack Software Engineer New Grad [Remote in USA; 24d old]   https://jobs.ashbyhq.com/spruceid/3d182b7f-482e-45b2-8668-f04f0b5fda8e/application?embed=true&utm_source=Simplify&ref=Simplify
+OtterAi Software Engineer New Grad - Front-End [Mountain View, CA; 24d old]   https://otter.ai/careers?gh_jid=8016078003&utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Web Applications [Olathe, KS; 24d old]   https://careers.garmin.com/jobs/20219?icims=1&utm_source=Simplify&ref=Simplify
+SierraSpace Software Engineer 1 - DevOps / DevSecOps [Centennial, CO Louisville, CO; 25d old]   https://sierraspace.wd1.myworkdayjobs.com/en-US/Sierra_Space_External_Career_Site/job/Louisville-CO/Software-Engineer-I---DevOps---DevSecOps_R26394-1?utm_source=Simplify&ref=Simplify
+Caci Entry Level C# Software Engineer [Virginia Beach, VA; 25d old]   https://caci.wd1.myworkdayjobs.com/external/job/Virginia-Beach-VA-US/Entry-Level-C--Software-Engineer_333249?utm_source=Simplify&ref=Simplify
+TrueAnomaly Software Engineer 1 to 3 - Digital Engineering [Long Beach, CA Denver, CO; 25d old]   https://job-boards.greenhouse.io/trueanomalyinc/jobs/5257769007?utm_source=Simplify&ref=Simplify
+PureStorage Software Engineer New Grad [Santa Clara, CA; 25d old]   https://job-boards.greenhouse.io/purestorage/jobs/8249851?utm_source=Simplify&ref=Simplify
+MachIndustries Software Engineer New Grad - Software [Huntington Beach, CA; 26d old]   https://job-boards.greenhouse.io/machindustries/jobs/4401995009?utm_source=Simplify&ref=Simplify
+AsteraLabs Applied AI New Grad - Non Silicon [San Jose, CA; 26d old]   https://job-boards.greenhouse.io/asteraearlycareer2027/jobs/4731594005?utm_source=Simplify&ref=Simplify
+IdMe Software Engineer 2 New Grad - Developer Portal [Mountain View, CA; 26d old]   https://job-boards.greenhouse.io/idme/jobs/8011089003?utm_source=Simplify&ref=Simplify
+HewlettPackardEnterprise Systems/Software Engineer 1 [Houston, TX; 26d old]   https://hpe.wd5.myworkdayjobs.com/jobsathpe/job/Houston-Texas-United-States-of-America/Systems-Software-Engineer-I---Graduate_1213648?utm_source=Simplify&ref=Simplify
+IdMe Software Development Engineer 2 New Grad - Life Hub - Super App [Mountain View, CA; 26d old]   https://job-boards.greenhouse.io/idme/jobs/8011095003?utm_source=Simplify&ref=Simplify
+Motorola Junior Software Engineer - AI Agent Platform [Remote in Canada; 27d old]   https://motorolasolutions.wd5.myworkdayjobs.com/Careers/job/Ontario-Remote-Work/Jr-Software-Engineer--AI-Agent-Platform_R66300?utm_source=Simplify&ref=Simplify
+HewlettPackardEnterprise Graduate Systems/Software Engineer 1 [Bloomington, MN; 27d old]   https://hpe.wd5.myworkdayjobs.com/jobsathpe/job/Bloomington-Minnesota-United-States-of-America/Graduate-Systems-Software-Engineer-I_1213439?utm_source=Simplify&ref=Simplify
+Harvey Software Engineer New Grad [SF; 29d old]   https://jobs.ashbyhq.com/harvey/b0996df6-6b6e-42be-a4f9-0084536068f5/application?embed=true&utm_source=Simplify&ref=Simplify
+Amazon Software Development Engineer – Early Career - Amazon Dedicated Cloud - ADC [5 locations  Seattle, WA Jessup, MD Arlington County, Arlington, VA Denver, CO Herndon, VA; 0d old]   https://amazon.jobs/en/jobs/10529546/software-development-engineer-amazon-dedicated-cloud-early-career-2026-amazon-dedicated-cloud-adc?utm_source=Simplify&ref=Simplify
+MomentumEngineering Software Engineer 1 [Annapolis Junction, MD; 0d old]   https://ats.rippling.com/momentumcareers/jobs/dd4281b8-fa2a-4833-8370-b1859933b612?utm_source=Simplify&ref=Simplify
+SwarmAero Software Engineer Early Career - Real-Time Systems [SF; 0d old]   https://jobs.ashbyhq.com/swarmaero/7d3783c5-f98c-4def-8c33-6de907aab30e/application?embed=true&utm_source=Simplify&ref=Simplify
+Harbor Junior Developer - Finance Systems [Remote in UK Remote in Canada; 0d old]   https://job-boards.greenhouse.io/harborglobal/jobs/5238900007?utm_source=Simplify&ref=Simplify
+Rtx Research Software Engineer 1 [Cambridge, MA; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MA-CAMBRIDGE-BBN06--10--50-Moulton-St--MOULTON-B6/Research-Software-Engineer-I---Onsite_01878338?utm_source=Simplify&ref=Simplify
+Ziprecruiter Software Engineer New Grad - Multiple Teams [Santa Monica, CA; 0d old]   https://job-boards.greenhouse.io/ziprecruiter/jobs/8127108?utm_source=Simplify&ref=Simplify
+GmFinancial Software Development Engineer 1 - Mobile [Irving, TX; 0d old]   https://fa-exvu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/260957?utm_source=Simplify&ref=Simplify
+Adobe Software Engineer New Grad [6 locations  Seattle, WA SF Austin, TX San Jose, CA NYC Lehi, UT; 0d old]   https://adobe.wd5.myworkdayjobs.com/external_experienced/job/San-Jose/XMLNAME-2027-University-Graduate---Software-Engineer_R172083?utm_source=Simplify&ref=Simplify
+Seatgeek Software Engineer New Grad [NYC; 0d old]   https://seatgeek.com/jobs/8227548?gh_jid=8227548&utm_source=Simplify&ref=Simplify
+Qumulo Software Development Engineer New Grad [Seattle, WA; 0d old]   https://jobs.ashbyhq.com/qumulo/e1cebc33-3bfc-4c86-9581-4d558cd5f8cc/application?embed=true&utm_source=Simplify&ref=Simplify
+Honeywell Software Engineer 1 [Duluth, GA; 0d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/157648?utm_source=Simplify&ref=Simplify
+Relx Software Engineer New Grad [Alpharetta, GA; 0d old]   https://relx.wd3.myworkdayjobs.com/en-US/relx/job/Alpharetta-GA/Tech-Accelarate-Graduate-Program_R118810-1?utm_source=Simplify&ref=Simplify
+Authentic Software Engineer New Grad [NYC; 0d old]   https://job-boards.greenhouse.io/authenticinsurance/jobs/4114318009?utm_source=Simplify&ref=Simplify
+StateStreet Software Engineer Junior - REST API Development - Officer [Burlington, MA; 0d old]   https://statestreet.wd1.myworkdayjobs.com/Global/job/Burlington-Massachusetts/Software-Engineer---REST-API-Development--Officer_R-798140?utm_source=Simplify&ref=Simplify
+AppliedMaterials Software Engineer New Grad [Gloucester, MA; 0d old]   https://amat.wd1.myworkdayjobs.com/External/job/GloucesterMA/XMLNAME-2027-Software-Engineer-New-College-Grad--Bachelor-s----Gloucester--MA_R2625914?utm_source=Simplify&ref=Simplify
+StudyCom Software Engineer New Grad - AI-Native [Mountain View, CA; 0d old]   https://study.com/pages/jobApplication.html/?gh_jid=5429313008&utm_source=Simplify&ref=Simplify
+PerseusGroup Software Engineer 1 [Sharon, PA Jacksonville, FL; 0d old]   https://talentmanagementsolution.wd3.myworkdayjobs.com/en-US/perseus-careers/job/Sharon-Pennsylvania---USA/Software-Engineer-I_R54341?utm_source=Simplify&ref=Simplify
+WolverineTrading Entry Level C++ Software Engineer [Chicago, IL; 0d old]   https://wolve.pinpointhq.com/en/postings/2b2e514b-4709-4897-960d-77909fe33ab8?ats=pinpointhq&utm_source=Simplify&ref=Simplify
+Toyota Software Engineer - Early Career Professional [Plano, TX; 0d old]   https://toyota.wd503.myworkdayjobs.com/tmna/job/Plano-Texas/Software-Engineer--Early-Career-Professional-_10325071?utm_source=Simplify&ref=Simplify
+Meow Software Engineer New Grad [NYC; 0d old]   https://jobs.ashbyhq.com/meow/56e3b840-11a0-4e98-baca-44e8e26b5218/application?embed=true&utm_source=Simplify&ref=Simplify
+Captivation Software Engineer 0 - Multiple Teams [Annapolis Junction, MD; 0d old]   https://job-boards.greenhouse.io/captivation/jobs/5426523008?utm_source=Simplify&ref=Simplify
+HeadlandsTechHoldings C++ Software Developer New Grad [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/headlandstechnologiesllc/jobs/4336806009?utm_source=Simplify&ref=Simplify
+JampackAi Founding Product Engineer [NYC; 0d old]   https://jobs.ashbyhq.com/jampack-ai/8668f920-0640-42b9-8bb4-d322c14e97a9/application?embed=true&utm_source=Simplify&ref=Simplify
+Superapp Software Engineer - Early Careers [SF; 0d old]   https://job-boards.greenhouse.io/superapp/jobs/8813982002?utm_source=Simplify&ref=Simplify
+Relx Software Engineer 1 [Alpharetta, GA; 0d old]   https://relx.wd3.myworkdayjobs.com/en-US/relx/job/Alpharetta-GA/Software-Engineer-1_R117973-1?utm_source=Simplify&ref=Simplify
+GeneralMotors Software Engineer - Early Careers [Seattle, WA Austin, TX Warren, MI; 0d old]   https://generalmotors.wd5.myworkdayjobs.com/en-CA/Careers_GM/job/Austin-Texas-United-States-of-America/Software-Engineer--Data-Software-Engineering-and-Cloud-Platforms--Early-Careers_JR-202620418?utm_source=Simplify&ref=Simplify
+Singlestore Software Engineer New Grad [United States; 0d old]   https://job-boards.greenhouse.io/singlestore/jobs/8205427?utm_source=Simplify&ref=Simplify
+Singlestore Software Engineer New Grad [United States; 0d old]   https://job-boards.greenhouse.io/singlestore/jobs/8205389?utm_source=Simplify&ref=Simplify
+C3Ai Platform Full-Stack Engineer New Grad [Redwood City, CA; 0d old]   https://c3.ai/job-description/8801434002?gh_jid=8801434002&utm_source=Simplify&ref=Simplify
+Klaviyo Software Engineer 1 [Boston, MA; 0d old]   https://job-boards.greenhouse.io/klaviyocampus/jobs/7989324003?utm_source=Simplify&ref=Simplify
+Affirm Software Engineer 1 - Frontend - Upfunnel [Remote in Canada; 0d old]   https://job-boards.greenhouse.io/affirm/jobs/7985907003?utm_source=Simplify&ref=Simplify
+Isoftstone Junior Full Stack Software Engineer [Palo Alto, CA; 0d old]   https://jobs.jobvite.com/isoftstone/job/oB4MAfwL?nl=1&nl=1&fr=false&utm_source=Simplify&ref=Simplify
+Perpay Software Engineer New Grad [Philadelphia, PA; 0d old]   https://job-boards.greenhouse.io/perpay/jobs/4034578007?utm_source=Simplify&ref=Simplify
+Anysphere Software Engineer New Grad - 2027 [SF NYC; 0d old]   https://jobs.ashbyhq.com/cursor/d0e5b41d-84ab-4887-bd3a-55589b11dd7b/application?embed=true&utm_source=Simplify&ref=Simplify
+DellTechnologies Software Engineer 1 - IT [Texas; 0d old]   https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/job/298784?utm_source=Simplify&ref=Simplify
+DominoDataLab Software Engineer New Grad [NYC; 0d old]   https://app.careerpuck.com/job-board/domino-data-lab/job/7992556?gh_jid=7992556&utm_source=Simplify&ref=Simplify
+TrueAnomaly Software Engineer 1 New Grad - Elixir [Long Beach, CA Denver, CO; 0d old]   https://job-boards.greenhouse.io/trueanomalyinc/jobs/5232802007?utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software - Starship [Hawthorne, CA; 0d old]   https://boards.greenhouse.io/spacex/jobs/8743362002?utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Android [Yarmouth, ME; 0d old]   https://careers.garmin.com/jobs/16587?icims=1&utm_source=Simplify&ref=Simplify
+Aiprise Software Engineer 1 [San Jose, CA; 0d old]   https://jobs.ashbyhq.com/aiprise/baf8a79b-d035-4bc1-8b12-4ef48e0257ba/application?embed=true&utm_source=Simplify&ref=Simplify
+IdMe Software Development Engineer New Grad [Mountain View, CA; 0d old]   https://job-boards.greenhouse.io/idmeuniversityrecruiting/jobs/7980382003?utm_source=Simplify&ref=Simplify
+JohnsHopkinsAppliedPhysicsLaboratory Systems & Software Engineer New Grad - Multi-Domain Mission Planning Development [Laurel, MD; 0d old]   https://careers.jhuapl.edu/jobs/59974?icims=1&utm_source=Simplify&ref=Simplify
+Doordash Software Engineer 1 - Entry-Level [5 locations  Seattle, WA SF LA NYC Sunnyvale, CA; 0d old]   https://job-boards.greenhouse.io/doordashusa/jobs/8163709?utm_source=Simplify&ref=Simplify
+Kikoff Software Engineer New Grad [SF; 0d old]   https://job-boards.greenhouse.io/kikoff/jobs/4393822009?utm_source=Simplify&ref=Simplify
+AmericanExpress Software Engineer 1 - Enterprise Technology Services [Charlotte, NC; 0d old]   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26012869?utm_source=Simplify&ref=Simplify
+Valon Software Engineer New Grad [SF NYC; 0d old]   https://jobs.ashbyhq.com/Valon/e08ad09a-4408-4210-8c1b-da6510f83324/application?embed=true&utm_source=Simplify&ref=Simplify
+Intersystems Software Engineer Rotational Program - Early Career [Boston, MA; 0d old]   https://job-boards.greenhouse.io/intersystems/jobs/7827894003?utm_source=Simplify&ref=Simplify
+JohnsHopkinsAppliedPhysicsLaboratory Software Developer New Grad - Engagement Optimization [Laurel, MD; 0d old]   https://careers.jhuapl.edu/jobs/59510?icims=1&utm_source=Simplify&ref=Simplify
+Sierra Software Engineer New Grad - Agent [SF NYC; 0d old]   https://jobs.ashbyhq.com/Sierra/149f368c-52d5-408f-ba26-ad888f318a00/application?embed=true&utm_source=Simplify&ref=Simplify
+Whatnot Software Engineer New Grad [4 locations  Seattle, WA SF LA NYC; 0d old]   https://jobs.ashbyhq.com/whatnot/29bad846-de60-4be7-a222-69b97e044930/application?embed=true&utm_source=Simplify&ref=Simplify
+Relx Software Engineer New Grad [Alpharetta, GA; 0d old]   https://relx.wd3.myworkdayjobs.com/en-US/relx/job/Alpharetta-GA/Tech-Accelerate-Graduate-Program---Software-Engineer--Alpharetta---June-_R117626-2?utm_source=Simplify&ref=Simplify
+Relx Software Engineer New Grad [Alpharetta, GA; 0d old]   https://relx.wd3.myworkdayjobs.com/en-US/relx/job/Alpharetta-GA/Tech-Accelerate-Graduate-Program---Software-Engineer--Alpharetta---January-_R117617-1?utm_source=Simplify&ref=Simplify
+LexisnexisRiskSolutions Software Engineer New Grad - Risk Solutions Technology Graduate Program [Boca Raton, FL; 0d old]   https://relx.wd3.myworkdayjobs.com/en-US/RiskSolutions/job/Boca-Raton-FL/Tech-Accelerate-Graduate-Program---Software-Engineer--Boca-Raton---June-_R116023-2?utm_source=Simplify&ref=Simplify
+BlueOrigin Software Development Engineer 1 - Early Career - 2027 Starts [6 locations  Seattle, WA LA Cape Canaveral, FL Kent, WA Denver, CO Huntsville, AL; 0d old]   https://blueorigin.wd5.myworkdayjobs.com/blueorigin/job/Greater-Seattle-Area/Software-Development-Engineer-I---Early-Career--2027-Starts-_R71326?utm_source=Simplify&ref=Simplify
+HewlettPackardEnterprise Software Engineer New Grad [10 locations  Andover, MA Bloomington, MN San Jose, CA Spring, TX Durham, NC Westford, MA Chippewa Falls, WI Fort Collins, CO Sunnyvale, CA Roseville, CA; 0d old]   https://hpe.wd5.myworkdayjobs.com/jobsathpe/job/Spring-Texas-United-States-of-America/Software-Engineer-Graduate_1213624-1?utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Aviation Backend Web [Olathe, KS; 0d old]   https://careers.garmin.com/jobs/19142?icims=1&utm_source=Simplify&ref=Simplify
+Teletracking Software Engineer 1 - Logistics Engineering [Pittsburgh, PA; 0d old]   https://job-boards.greenhouse.io/teletrackingtechnologiesinc/jobs/5397299008?utm_source=Simplify&ref=Simplify
+Leidos Junior Software Engineer - Intel Sector [Laurel, MD; 0d old]   https://leidos.wd5.myworkdayjobs.com/External/job/Laurel-MD/Junior-Software-Engineer_R-00190592?utm_source=Simplify&ref=Simplify
+TrueAnomaly Software Engineer 1 New Grad - Spacecraft Simulation [Long Beach, CA Denver, CO; 0d old]   https://job-boards.greenhouse.io/trueanomalyinc/jobs/5221555007?utm_source=Simplify&ref=Simplify
+Hyphenate Software Engineer New Grad [NYC; 0d old]   https://jobs.ashbyhq.com/hyphenate/67d0c7d0-fddb-4b8d-aed8-0647337a988e/application?embed=true&utm_source=Simplify&ref=Simplify
+Steerbridge Junior Software Engineer [Vienna, VA; 0d old]   https://jobs.lever.co/steerbridge/718b3135-d15d-4cbc-9541-1cbb8a6f5ec5/apply?utm_source=Simplify&ref=Simplify
+Kbr Junior Software Engineer [7 locations  King of Prussia, PA Chantilly, VA San Antonio, TX Clearfield, UT Columbia, MD Beavercreek, OH El Segundo, CA; 0d old]   https://kbr.wd5.myworkdayjobs.com/KBR_Careers/job/Chantilly-Virginia/JR-Software-Engineer_R2128745?utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 [Yarmouth, ME; 0d old]   https://careers.garmin.com/jobs/19680?icims=1&utm_source=Simplify&ref=Simplify
+IntegrationInnovationI3 Entry Level Software Engineer [Huntsville, AL; 0d old]   https://i3-corps.jibeapply.com/jobs/5218?icims=1&utm_source=Simplify&ref=Simplify
+AlticeUsa Software Development Engineer 1 [Plano, TX Bethpage, NY; 0d old]   https://www.optimumcareers.com/job/Bethpage-Software-Dev-Engineer-I-NY-11714/1420351500/?ats=successfactors&utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software - Application Software [Hawthorne, CA; 0d old]   https://boards.greenhouse.io/spacex/jobs/8730567002?utm_source=Simplify&ref=Simplify
+HumanInterest Software Engineer 1 [SF; 0d old]   https://job-boards.greenhouse.io/humaninterestswe1/jobs/8083833?utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software [Brownsville, TX; 0d old]   https://boards.greenhouse.io/spacex/jobs/8729121002?utm_source=Simplify&ref=Simplify
+Astrion Junior Software Developer - Datalinks Test Flight [Eglin AFB, FL; 0d old]   https://careers.astrion.us/jobs/24705?icims=1&utm_source=Simplify&ref=Simplify
+Koah Software Engineer - Early Career [SF; 0d old]   https://jobs.ashbyhq.com/koahlabs/197c931d-3cda-44b3-b26b-470976730808/application?embed=true&utm_source=Simplify&ref=Simplify
+DarkWolfSolutions Junior AI Software Engineer [Chantilly, VA Herndon, VA; 0d old]   https://job-boards.greenhouse.io/darkwolfsolutions/jobs/7886153003?utm_source=Simplify&ref=Simplify
+Caci Entry Level Software Engineer [Annapolis Junction, MD; 0d old]   https://jobs.smartrecruiters.com/NextCenturyCorporation/106031601?utm_source=Simplify&ref=Simplify
+Bags Junior Full Stack Engineer [NYC; 0d old]   https://jobs.ashbyhq.com/bagsfm/012239d1-0c6c-4e87-9cfa-22d8ba4e5cb4/application?embed=true&utm_source=Simplify&ref=Simplify
+Notion Software Engineer New Grad [SF; 0d old]   https://jobs.ashbyhq.com/notion/e32799d2-8ef8-4803-8189-c72514afa816/application?embed=true&utm_source=Simplify&ref=Simplify
+AppliedIntuition Software Engineer New Grad - December 2026 [Ann Arbor, MI Sunnyvale, CA; 0d old]   https://jobs.ashbyhq.com/applied/a837cbd6-9fe4-4d74-a2dc-84f602c40694/application?embed=true&utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software - Starlink [Bastrop, TX; 0d old]   https://boards.greenhouse.io/spacex/jobs/8696097002?utm_source=Simplify&ref=Simplify
+Composio Fullstack Engineer New Grad - Product Team [SF; 0d old]   https://jobs.ashbyhq.com/composio/01e0e7ad-44a2-44e8-9340-64ca70eff491/application?embed=true&utm_source=Simplify&ref=Simplify
+Crowe Machine Learning Software Engineer 1 [36 locations  Lexington, KY Boston, MA Indianapolis, IN Houston, TX Louisville, KY Knoxville, TN Nashville, TN Washington, DC SF Austin, TX Cleveland, OH LA Tampa, FL San Jose, CA Livingston, NJ Grand Rapids, MI Miami, FL Dallas, TX The Woodlands, TX Plano, TX Boca Raton, FL Chicago, IL Tallahassee, FL Charlotte, NC Oakbrook Terrace, IL Burlington, VT Sacramento, CA Columbus, OH Hartford, CT Springfield, IL NYC Denver, CO Fort Wayne, IN South Bend, IN Sarasota, FL Costa Mesa, CA; 0d old]   https://crowe.wd12.myworkdayjobs.com/en-US/external_careers/job/Chicago-IL-USA/Machine-Learning-Software-Engineer-1_R-71006?utm_source=Simplify&ref=Simplify
+Zen3 Software Engineer 1 - Software Development Engineer - Azure & C# Programming [Redmond, WA; 0d old]   https://jobs.smartrecruiters.com/Zen31/743999664760255?utm_source=Simplify&ref=Simplify
+ConsumerDirectCareNetwork Software Engineer 1 [Missoula, MT; 0d old]   https://cdcn.avature.net/careers/JobDetail/8611?utm_source=Simplify&ref=Simplify
+Tiktok Backend Software Engineer New Grad - Creator Strategy [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7672976491146004741?utm_source=Simplify&ref=Simplify
+9To9SoftwareSolutions Entry Level Software Developer [Copperhill, TN; 0d old]   https://jobs.smartrecruiters.com/9to9SoftwareSolutionsLLC/743999677188473?utm_source=Simplify&ref=Simplify
+Pathai Software Engineer 1 - Fullstack [Boston, MA; 0d old]   https://www.pathai.com/careers/8696764002?gh_jid=8696764002&utm_source=Simplify&ref=Simplify
+BlueOrigin Software Development Engineer 1 Intern [9 locations  Seattle, WA LA Space Coast, FL Longmont, CO Arlington County, Arlington, VA Reston, VA Denver, CO Huntsville, AL Van Horn, TX; 0d old]   https://blueorigin.wd5.myworkdayjobs.com/blueorigin/job/Greater-Seattle-Area/XMLNAME-2026-Intern-Conversion---Software-Development-Engineer-I_R70275?utm_source=Simplify&ref=Simplify
+LplFinancialHoldings Software Engineering New Grad [Austin, TX Fort Mill, SC Charlotte, NC; 0d old]   https://lplfinancial.wd1.myworkdayjobs.com/university/job/Fort-MillCharlotte/New-Grad-2027---Software-Engineering_R-052475?utm_source=Simplify&ref=Simplify
+BlueOrigin Software Development Engineer 1 - Early Career [Seattle, WA; 0d old]   https://blueorigin.wd5.myworkdayjobs.com/blueorigin/job/Greater-Seattle-Area/Software-Development-Engineer-I---Early-Career--2026-Starts-_R70051?utm_source=Simplify&ref=Simplify
+Bytedance Backend Inference Runtime Engineer New Grad - AML Inference [San Jose, CA; 0d old]   https://jobs.bytedance.com/en/position/7669789046777940229/detail?utm_source=Simplify&ref=Simplify
+Salesforce Software Engineer College Grad [6 locations  Palo Alto, CA Seattle, WA Indianapolis, IN SF Dallas, TX Bellevue, WA; 0d old]   https://salesforce.wd12.myworkdayjobs.com/External_Career_Site/job/California---San-Francisco/Software-Engineering-AMTS--College-Grad-_JR355250-1?utm_source=Simplify&ref=Simplify
+Roblox Software Engineer - Early Career [San Mateo, CA; 0d old]   https://careers.roblox.com/jobs/8072244?gh_jid=8072244&utm_source=Simplify&ref=Simplify
+Qualcomm Entry Level & Senior Software Engineer - Core AI Software - Machine Learning Engineering [San Diego, CA; 0d old]   https://qualcomm.eightfold.ai/careers/job/446718018413?utm_source=Simplify&ref=Simplify
+Tiktok Frontend Software Engineer New Grad - Ads Interface [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668569995571726597?utm_source=Simplify&ref=Simplify
+Tiktok Software Engineer New Grad - Ads Infrastructure [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668879883938203957?utm_source=Simplify&ref=Simplify
+Aerovironment Junior Software Engineer [Jessup, MD; 0d old]   https://avav.wd1.myworkdayjobs.com/en-US/avav/job/420-National-Business-Parkway-Jessup-MD/Junior-Software-Engineer_8322?utm_source=Simplify&ref=Simplify
+SocotecGlobal Junior Software Engineer [NYC; 0d old]   https://jobs.smartrecruiters.com/Socotec/744000141326319?utm_source=Simplify&ref=Simplify
+Bytedance Software Engineer New Grad - AI Infrastructure-Compute Efficiency & Scheduling [Seattle, WA; 0d old]   https://jobs.bytedance.com/en/position/7668799020705679669/detail?utm_source=Simplify&ref=Simplify
+Intelligenesis Software Engineer 0 [Annapolis Junction, MD; 0d old]   http://intelligenesis.applytojob.com/apply/JgkJsYNePv/Software-Engineer-Level-0?utm_source=Simplify&ref=Simplify
+Wonderbotz Junior Software Engineer [Princeton, NJ; 0d old]   https://wonderbotz.applytojob.com/apply/RrI9QanYDY/Junior-Software-Engineer?utm_source=Simplify&ref=Simplify
+Harmonytech Junior Software Developer - .NET [Herndon, VA; 0d old]   https://harmonytech.applytojob.com/apply/uhDb8hMR9P/Junior-Software-Developer-NET?utm_source=Simplify&ref=Simplify
+EaiTechnologies Entry Level Software Developer [Vienna, VA; 0d old]   https://eaiti.applytojob.com/apply/Y16NUsHVnd/Entry-Level-Software-Developer?utm_source=Simplify&ref=Simplify
+EaiTechnologies Entry Level .NET Software Developer [Vienna, VA; 0d old]   https://eaiti.applytojob.com/apply/9RStfnAuq4/Entry-Level-NET-Software-Developer?utm_source=Simplify&ref=Simplify
+Tiktok Software Engineer New Grad - Business Integrity [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668592494649690421?utm_source=Simplify&ref=Simplify
+Tiktok Software Engineer/Mobile Engineer New Grad - Ads Core Demonstration [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668701834807101749?utm_source=Simplify&ref=Simplify
+Tiktok Software Engineer New Grad - Ads Measurement Signal Technology [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668717356843977013?utm_source=Simplify&ref=Simplify
+Tiktok Software Engineer New Grad - Ads Signal & Measurement [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668724383120804149?utm_source=Simplify&ref=Simplify
+PetersonTechnologies Junior Software Engineer [Annapolis Junction, MD; 0d old]   https://petersontechnologies.applytojob.com/apply/Y3TD9CDM0V/Junior-Software-Engineer?utm_source=Simplify&ref=Simplify
+GliacellTechnologies Junior Java Software Engineer [Annapolis Junction, MD; 0d old]   https://gliacelltechnologies.applytojob.com/apply/5LJjRwD5B9/Junior-Java-Software-Engineer?utm_source=Simplify&ref=Simplify
+Walgreens Software Engineer 1 - Java [Deerfield, IL; 0d old]   https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?partnerid=26336&siteid=5014&PageType=JobDetails&jobid=1855141&utm_source=Simplify&ref=Simplify
+Mantech Software Engineer 1 [Crane, IN; 0d old]   https://mantech.avature.net/en_US/careers/JobDetail/61501?utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Aviation Database [Olathe, KS; 0d old]   https://careers.garmin.com/jobs/17162?icims=1&utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Connect IQ Applications [Olathe, KS; 0d old]   https://careers.garmin.com/jobs/18475?icims=1&utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Web Development/Applications [Olathe, KS; 0d old]   https://careers.garmin.com/jobs/18510?icims=1&utm_source=Simplify&ref=Simplify
+Newsbreak Software Engineer Junior New Grad - ML Infra [Mountain View, CA; 0d old]   https://job-boards.greenhouse.io/newsbreak/jobs/4615879006?utm_source=Simplify&ref=Simplify
+CadenceDesignSystems Multibody Dynamics Application Software Developer New Grad - Adams [Livonia, MI; 0d old]   https://cadence.wd1.myworkdayjobs.com/External_Careers/job/LIVONIA-01/Adams-MultiBody-Dynamics-Application-Software-Developer--Recent-Grad-2026-_R55788?utm_source=Simplify&ref=Simplify
+Nooks Software Engineer New Grad [SF; 0d old]   https://jobs.ashbyhq.com/nooks/311d6e70-5cfa-4e80-89f6-fe00ac1f9f53/application?embed=true&utm_source=Simplify&ref=Simplify
+Color Software Engineer New Grad [San Bruno, CA; 0d old]   https://jobs.ashbyhq.com/color-health/41fa6f16-b2f2-46c6-bdb4-9aae3b9b5b96/application?embed=true&utm_source=Simplify&ref=Simplify
+Bridger Early Career Product Engineer [NYC; 0d old]   https://jobs.ashbyhq.com/bridger/5a4a77e4-31a0-40c6-8e3d-9b5c6205943f/application?embed=true&utm_source=Simplify&ref=Simplify
+Amazon EFA Network Software Engineer 1 - Annapurna Labs [Seattle, WA; 0d old]   https://amazon.jobs/en/jobs/10481932/efa-network-software-engineer-i-annapurna-labs?utm_source=Simplify&ref=Simplify
+SupernovaTechnology Junior Software Engineer [Chicago, IL; 0d old]   https://ats.rippling.com/supernova-technology/jobs/7ea1a05c-b0e6-4f1a-b53c-193ce3d91502?utm_source=Simplify&ref=Simplify
+Rollout Founding Software Engineer [Louisville, KY NYC; 0d old]   https://jobs.ashbyhq.com/rollout/ac255ccb-888f-46d9-8d57-5e7334a5ee46/application?embed=true&utm_source=Simplify&ref=Simplify
+Strada Software Engineer New Grad [SF; 0d old]   https://jobs.ashbyhq.com/stradahq/626411c6-808e-4eb2-b28d-76f5d88e0af6/application?embed=true&utm_source=Simplify&ref=Simplify
+HippHealth Software Engineer New Grad [United States; 0d old]   https://jobs.ashbyhq.com/hipp/ea04e914-674c-4c05-b40a-7e8a035bad14/application?embed=true&utm_source=Simplify&ref=Simplify
+CyberneticLabs Software Engineer New Grad - Agent Platform [SF; 0d old]   https://jobs.ashbyhq.com/netic/d9bcb6a2-0e54-4cb3-baec-43f2d74db18f/application?embed=true&utm_source=Simplify&ref=Simplify
+CyberneticLabs Full-Stack Software Engineer New Grad - Product [SF; 0d old]   https://jobs.ashbyhq.com/netic/bab5d1e5-e31b-42f0-9cef-334b1f17fed3/application?embed=true&utm_source=Simplify&ref=Simplify
+Lightfield Software Engineer New Grad - Applied AI [SF; 0d old]   https://jobs.ashbyhq.com/Lightfield/fc93a467-773d-4805-b342-bf470950732d/application?embed=true&utm_source=Simplify&ref=Simplify
+FarosAi Software Engineer New Grad [San Mateo, CA; 0d old]   https://jobs.ashbyhq.com/faros-ai/622e1f1e-4a39-4e7c-8526-1189ca588066/application?embed=true&utm_source=Simplify&ref=Simplify
+Instalily Software Engineer 1 - General [SF NYC; 0d old]   https://job-boards.greenhouse.io/instalilyai/jobs/4271757009?utm_source=Simplify&ref=Simplify
+Rtx Conversion Software Engineer 1 [Richardson, TX; 0d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-TX-RICHARDSON-C17--1717-Cityline-Dr--CITYLINE-C17/XMLNAME-2027-Conversion-Software-Engineer-I--Onsite-_01858534?utm_source=Simplify&ref=Simplify
+OldMission Software Engineer New Grad [Chicago, IL; 0d old]   https://jobs.ashbyhq.com/old-mission-capital/78e433a8-cd5f-404d-8f58-3fcb61e9837d/application?embed=true&utm_source=Simplify&ref=Simplify
+Pylon Software Engineer New Grad [SF; 0d old]   https://jobs.ashbyhq.com/pylon-labs/38814ce7-217b-40f2-9ba5-8a7733a5691d/application?utm_source=Simplify&ref=Simplify
+Notion Software Engineer – Early Career - AI [SF; 0d old]   https://jobs.ashbyhq.com/notion/85947779-6b87-466a-98bc-30a640448c28/application?utm_source=Simplify&ref=Simplify
+Citadel Software Engineer – University Graduate [4 locations  Greenwich, CT Houston, TX Miami, FL NYC; 0d old]   https://www.citadel.com/careers/details/software-engineer-university-graduate-us/?utm_source=Simplify&ref=Simplify
+Cylake Software Engineer – University Grad [Sunnyvale, CA; 0d old]   https://jobs.ashbyhq.com/cylake-inc/1d1ac42e-299c-42af-bd7c-b8c5fb07f735/application?utm_source=Simplify&ref=Simplify
+Solerity JavaScript Software Engineer 1 - TS/SCI with Poly [Fort Meade, MD; 0d old]   https://recruiting.paylocity.com/Recruiting/Jobs/Details/4272523?utm_source=Simplify&ref=Simplify
+Solerity JavaScript Developer Software Engineer 1 [Fort Meade, MD; 0d old]   https://recruiting.paylocity.com/Recruiting/Jobs/Details/4272488?utm_source=Simplify&ref=Simplify
+Exl Junior Software Developer [United States; 0d old]   https://fa-ewjt-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2/job/15785?utm_source=Simplify&ref=Simplify
+Quantiq Software Developer New Grad [Austin, TX; 0d old]   https://job-boards.greenhouse.io/quantiq/jobs/4280650009?utm_source=Simplify&ref=Simplify
+JuliusAi Refresh Software Engineer New Grad - Product [SF; 0d old]   https://jobs.ashbyhq.com/julius/5e0b677a-f677-44de-93c6-f7848ab5a8e6/application?utm_source=Simplify&ref=Simplify
+Tsc Software Engineer 1 [Silver Spring, MD; 0d old]   https://tsc.wd12.myworkdayjobs.com/en-US/TSC-Careers/job/Silver-Spring-MD/Software-Engineer-I_JR2567-1?utm_source=Simplify&ref=Simplify
+MeyerDistributing Junior Full Stack Developer [Indianapolis, IN; 0d old]   https://recruiting.paylocity.com/Recruiting/Jobs/Details/4121413?utm_source=Simplify&ref=Simplify
+Wonderschool Early Career Software Engineer - Applied AI [SF; 0d old]   https://job-boards.greenhouse.io/wonderschool/jobs/6359139003?utm_source=Simplify&ref=Simplify
+Anduril Early Career Software Engineer [Newport Beach, CA; 0d old]   https://boards.greenhouse.io/andurilindustries/jobs/4802146007?utm_source=Simplify&ref=Simplify
+SigmaComputing Software Engineer New Grad [SF NYC; 0d old]   https://job-boards.greenhouse.io/sigmacomputing/jobs/7690411003?utm_source=Simplify&ref=Simplify
+Realm Software Engineer New Grad [Remote in USA; 0d old]   https://jobs.ashbyhq.com/realmalliance/56d8b433-31ad-43a2-997e-b8538f5f2c9f/application?embed=true&utm_source=Simplify&ref=Simplify
+Flexai Software Engineer – New Grad [San Jose, CA; 0d old]   https://ats.rippling.com/flexai/jobs/93ada67c-8527-427c-b2f6-4a5557b00674?utm_source=Simplify&ref=Simplify
+AquaticCapitalManagement Software Engineer – Early Career [Chicago, IL NYC; 0d old]   https://job-boards.greenhouse.io/aquaticcapitalmanagement/jobs/8489226002?utm_source=Simplify&ref=Simplify
+TrueAnomaly Software Engineer 1 - Full Stack [Long Beach, CA Denver, CO; 0d old]   https://job-boards.greenhouse.io/trueanomalyinc/jobs/5092069007?utm_source=Simplify&ref=Simplify
+EllipsisLabs Software Engineer – New Grads - Multiple Teams [NYC; 0d old]   https://jobs.ashbyhq.com/ellipsislabs/256c2ec2-01c8-4ff6-9ad0-b926fe40472d/application?utm_source=Simplify&ref=Simplify
+N1 New Grad Software Engineer - Backend Rust [4 locations  SF Remote in USA Europe NYC; 0d old]   https://jobs.ashbyhq.com/n1/a3e25c84-0846-454a-b2fc-a356c2a713bd/application?utm_source=Simplify&ref=Simplify
+Tiktok Product Solutions and Operations New Grad - Global Monetization Product and Technology [San Jose, CA; 1d old]   https://lifeattiktok.com/search/7702517151362976053?utm_source=Simplify&ref=Simplify
+
+# ---- added by agents/job_sources.py (multi-source, <= 30 days old)
+Palantir Legal Operations Specialist [Denver, CO; 1d old]   https://jobs.lever.co/palantir/bd500579-5e1c-441f-b42f-66822d07dbba
+Palantir Security Systems Engineer [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/a9788f77-d6d2-4ef9-9d57-7002d587b84f
+Harvey Senior People Systems Analyst [Remote; 1d old]   https://jobs.ashbyhq.com/harvey/6a0e78a0-e797-449d-8d6c-c20c9bfa214d
+Rtx Software Engineer Intern [Sterling, VA; 4d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-VA-STERLING-291--22640-Davis-Dr--DAVIS/Software-Engineering-Intern--Summer-2027-_01885169?utm_source=Simplify&ref=Simplify
+HpInc Software Engineer Intern [SF; 4d old]   https://hp.wd5.myworkdayjobs.com/externalcareersite/job/San-Francisco-California-United-States-of-America/Software-Engineering-Intern---HP-IQ_UNI4806-1?utm_source=Simplify&ref=Simplify
+HpInc Software Systems Intern - IQ [SF; 4d old]   https://hp.wd5.myworkdayjobs.com/EXTEU-AC-CareerSite/job/San-Francisco-California-United-States-of-America/Software-Systems-Intern_UNI4801?utm_source=Simplify&ref=Simplify
+Visa Software Engineer Intern [Austin, TX; 5d old]   https://visa.wd5.myworkdayjobs.com/Visa/job/US---Austin-TX/Software-Engineer--Intern---2027-Austin--TX_REF089918W-1?utm_source=Simplify&ref=Simplify
+IntercontinentalExchange Software Engineer Intern [NYC; 8d old]   https://ice.jibeapply.com/jobs/14105?icims=1&utm_source=Simplify&ref=Simplify
+DowJones Research Analyst Intern [Houston, TX; 2d old]   https://dowjones.wd1.myworkdayjobs.com/en-US/Dow_Jones_Career/job/Houston-TX---OPIS/Summer-2027-Internship-Program---Research-Analyst-Intern_Job_Req_55874?utm_source=Simplify&ref=Simplify
+TMobile Associate AI Engineer Intern [Frisco, TX Overland Park, KS; 4d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Assoc-AI-Engineer-Internship_REQ380492?utm_source=Simplify&ref=Simplify
+Raydar Founding Software Engineer [SF; 2d old]   https://apply.workable.com/raydar/j/29870CA1DE/apply?utm_source=Simplify&ref=Simplify
+Raydar Founding Product Engineer [NYC; 2d old]   https://apply.workable.com/raydar/j/8017722EB8/apply?utm_source=Simplify&ref=Simplify
+Harvey Software Engineer New Grad [SF NYC; 29d old]   https://jobs.ashbyhq.com/harvey/4d8dc9ba-eb86-4d88-af7d-65d2fdaf3fdc/application?embed=true&utm_source=Simplify&ref=Simplify
+WolverineTrading Entry Level C++ Software Engineer [Chicago, IL; 0d old]   https://wolve.pinpointhq.com/en/postings/1f33c89b-2592-498d-b45a-1b2092cf944e?ats=pinpointhq&utm_source=Simplify&ref=Simplify
+9To9SoftwareSolutions Entry Level Software Developer [Randolph AFB, TX; 0d old]   https://jobs.smartrecruiters.com/9to9SoftwareSolutionsLLC/743999674053935?utm_source=Simplify&ref=Simplify
+PetersonTechnologies Junior Software Engineer [Annapolis Junction, MD; 0d old]   https://petersontechnologies.applytojob.com/apply/ma86Yof82u/Junior-Software-Engineer?utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 [Olathe, KS; 0d old]   https://careers.garmin.com/jobs/19098?icims=1&utm_source=Simplify&ref=Simplify
+Palantir Software Engineer New Grad [NYC; 0d old]   https://jobs.lever.co/palantir/94984771-0704-446c-88c6-91ce748f6d92/apply?utm_source=Simplify&ref=Simplify
+Tiktok Product Manager New Grad - Platform Trust and Ecosystem [San Jose, CA; 6d old]   https://lifeattiktok.com/search/7680761598014015797?utm_source=Simplify&ref=Simplify
+MTBank Forward Deployed Digital Product Analyst New Grad - IS [Wilmington, DE; 0d old]   https://mtb.wd5.myworkdayjobs.com/Campus/job/Wilmington-DE/XMLNAME-2027-Management-Development-Program---IS-Forward-Deployed-Product-Analyst---Wilmington--DE-_R89998?utm_source=Simplify&ref=Simplify
+MTBank Management Development Program New Grad - IS Forward Deployed Product Analyst [Wilmington, DE; 0d old]   https://mtb.wd5.myworkdayjobs.com/Campus/job/Wilmington-DE/XMLNAME-2027-Management-Development-Program---IS-Forward-Deployed-Product-Analyst--Wilmington--DE-_R89997?utm_source=Simplify&ref=Simplify
+Roblox Associate Product Manager - Early Career [San Mateo, CA; 0d old]   https://careers.roblox.com/jobs/8143976?gh_jid=8143976&utm_source=Simplify&ref=Simplify
+LplFinancialHoldings Product Management New Grad - Product [Austin, TX Fort Mill, SC Charlotte, NC; 0d old]   https://lplfinancial.wd1.myworkdayjobs.com/university/job/Fort-MillCharlotte/New-Grad---2027---Product_R-052468-1?utm_source=Simplify&ref=Simplify
+Tiktok Content Product New Grad - TikTok Local Services [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7667573235673073925?utm_source=Simplify&ref=Simplify
+Uncountable Product Manager – New Grad [SF NYC; 0d old]   https://jobs.ashbyhq.com/uncountable/1f8425be-cd39-4397-a9c1-6511ecfc39fc/application?utm_source=Simplify&ref=Simplify
+TysonFoods Data Engineer 1 [Springdale, AR; 4d old]   https://tysonfoods.wd5.myworkdayjobs.com/TSN/job/Tyson-Emma---Springdale-Arkansas/Data-Engineer-I---Onsite-_R0492784-2?utm_source=Simplify&ref=Simplify
+IntegrationInnovationI3 Data Analyst - Junior-Associate [Orlando, FL Huntsville, AL; 19d old]   https://i3-corps.jibeapply.com/jobs/5307?icims=1&utm_source=Simplify&ref=Simplify
+AmericaSTire Data Engineer 1 [South Bend, IN; 22d old]   https://discounttire.jibeapply.com/jobs/19242?icims=1&utm_source=Simplify&ref=Simplify
+Tiktok Machine Learning Engineer New Grad - E-Commerce User Growth [San Jose, CA; 23d old]   https://lifeattiktok.com/search/7694352871949682997?utm_source=Simplify&ref=Simplify
+ShieldAi Software Development Engineer New Grad [San Diego, CA; 25d old]   https://jobs.lever.co/shieldai/79c3b65f-ce0c-4868-bedf-4ddcc4cfe583/apply?utm_source=Simplify&ref=Simplify
+Peraton Artificial Intelligence/Machine Learning Engineer 1 - Top Secret/SCI w/Poly [Laurel, MD; 29d old]   https://peraton.jibeapply.com/jobs/171539?icims=1&utm_source=Simplify&ref=Simplify
+SystemsPlanningAndAnalysis Junior Targeting Analyst [Sterling, VA; 0d old]   https://spa.jibeapply.com/jobs/23563?icims=1&utm_source=Simplify&ref=Simplify
+Relling Robotics Software Engineer New Grad [SF; 0d old]   https://jobs.ashbyhq.com/relling/a31f91ae-30f9-4e36-b9d2-2cb74c398d2e/application?embed=true&utm_source=Simplify&ref=Simplify
+Laminar Junior Machine Learning Engineer - ML - Developer [Somerville, MA; 0d old]   https://jobs.lever.co/runlaminar/827f30da-67cd-4274-91e7-87fb12019a23/apply?utm_source=Simplify&ref=Simplify
+Quora Software Engineer New Grad - Machine Learning Platform [Remote in USA Remote in Canada; 0d old]   https://jobs.ashbyhq.com/quora/cf34f80e-fe5c-454d-bc9a-4c59993ffda0/application?embed=true&utm_source=Simplify&ref=Simplify
+Peraton Artificial Intelligence/Machine Learning Engineer 1 [Laurel, MD; 0d old]   https://peraton.jibeapply.com/jobs/171011?icims=1&utm_source=Simplify&ref=Simplify
+CadenceDesignSystems Software Engineer New Grad [San Jose, CA; 0d old]   https://cadence.wd1.myworkdayjobs.com/University_Talent_NCG/job/SAN-JOSE/Software-Engineer---new-college-grad-Dec-2026-_R55738?utm_source=Simplify&ref=Simplify
+JohnsHopkinsAppliedPhysicsLaboratory Data Analyst New Grad - Engagement Optimization [Laurel, MD; 0d old]   https://careers.jhuapl.edu/jobs/59507?icims=1&utm_source=Simplify&ref=Simplify
+JohnsHopkinsAppliedPhysicsLaboratory Sensor Systems/Data Analytics New Grad [Laurel, MD; 0d old]   https://careers.jhuapl.edu/jobs/59770?icims=1&utm_source=Simplify&ref=Simplify
+Goaly Founding Senior AI Infrastructure Engineer [Palo Alto, CA; 0d old]   https://jobs.ashbyhq.com/goaly/ce5f6b51-0258-4956-87cf-c630a08323c7/application?embed=true&utm_source=Simplify&ref=Simplify
+Kbr Junior Data Engineer [Chantilly, VA; 0d old]   https://kbr.wd5.myworkdayjobs.com/KBR_Careers/job/Chantilly-Virginia/Data-Engineer--JR_R2128783?utm_source=Simplify&ref=Simplify
+DatalabUsa Production Programmer – Entry Level SQL Developer [Germantown, MD; 0d old]   https://jobs.lever.co/datalabusa/dd9a80d9-a296-4ea9-a231-b68bf268e8ea/apply?utm_source=Simplify&ref=Simplify
+DarkWolfSolutions Junior Data Engineer [Chantilly, VA Herndon, VA; 0d old]   https://job-boards.greenhouse.io/darkwolfsolutions/jobs/7886212003?utm_source=Simplify&ref=Simplify
+SmarterAgent Junior Data Engineer - Multiple Teams [Collingswood, NJ; 0d old]   https://jobs.smartrecruiters.com/SmarterAgent/743999706496509?utm_source=Simplify&ref=Simplify
+LplFinancialHoldings Data Engineering New Grad [Austin, TX Fort Mill, SC Charlotte, NC; 0d old]   https://lplfinancial.wd1.myworkdayjobs.com/university/job/Fort-MillCharlotte/New-Grad---2027---Data-Engineering_R-052493-1?utm_source=Simplify&ref=Simplify
+Bytedance Large Language Model Inference System Engineer New Grad - Applied Machine Learning [San Jose, CA; 0d old]   https://jobs.bytedance.com/en/position/7667726338627356933/detail?utm_source=Simplify&ref=Simplify
+VarsityBrands Data Engineer 1 [Farmers Branch, TX; 0d old]   https://careers.varsitybrands.com/global/en/job/JR114562?utm_source=Simplify&ref=Simplify
+Tiktok Research Scientist New Grad - TikTok Recommendation [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7663389956951918853?utm_source=Simplify&ref=Simplify
+Tiktok Research Scientist New Grad - Recommendation [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7663388039600883973?utm_source=Simplify&ref=Simplify
+Tiktok Machine Learning Infrastructure Engineer New Grad - Ads Infra [San Jose, CA; 0d old]   https://lifeattiktok.com/search/7668693662561634613?utm_source=Simplify&ref=Simplify
+BackboneSystems Founding Engineer - Applied Research [SF; 0d old]   https://jobs.ashbyhq.com/backbone/cbfce5dc-e2c7-452e-bb23-2dac1198df7d/application?embed=true&utm_source=Simplify&ref=Simplify
+XterraAi Founding Research Scientist [SF; 0d old]   https://jobs.ashbyhq.com/xterra%20ai/468e9870-0d18-468c-8fad-241b1a7566c0/application?embed=true&utm_source=Simplify&ref=Simplify
+MicronTechnology New College Grad - Product Yield Enhancement Engineer - High Bandwidth Memory [Boise, ID; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/New-College-Grad---Product-Yield-Enhancement-Engineer--HBM_JR104805?utm_source=Simplify&ref=Simplify
+Globalfoundries Global Tapeout and Mask Operations New College Graduate - Biz App and Data Engineer [Austin, TX; 0d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/USA---Texas---Austin/Global-Tapeout-and-Mask-Operations--Biz-App-and-Data-Engineer--2026-New-College-Graduate-_JR-2502471-1?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Researcher [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065206?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065007?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065025?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Researcher [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065202?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065014?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Researcher [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065309?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065051?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Researcher - Harvard [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065211?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065049?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Researcher [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065317?utm_source=Simplify&ref=Simplify
+AkunaCapital Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/akunacapitaloci/jobs/8065123?utm_source=Simplify&ref=Simplify
+AkunaCapitalUniversity Junior Quantitative Researcher [Chicago, IL; 0d old]   https://www.akunacapital.com/careers/job/8036541/?gh_jid=8036541&utm_source=Simplify&ref=Simplify
+AkunaCapitalUniversity Junior Quantitative Developer & Strategist [Chicago, IL; 0d old]   https://www.akunacapital.com/careers/job/8016687/?gh_jid=8016687&utm_source=Simplify&ref=Simplify
+OldMission Quantitative Trader New Grad [Chicago, IL NYC; 0d old]   https://jobs.ashbyhq.com/old-mission-capital/a7b34fe6-cd82-4f17-b5d7-983aa354b505/application?embed=true&utm_source=Simplify&ref=Simplify
+Citadel Quantitative Trader: Equity Quantitative Research – University Graduate [NYC; 0d old]   https://www.citadel.com/careers/details/quantitative-trader-equity-quantitative-research-university-graduate-us/?utm_source=Simplify&ref=Simplify
+CitadelSecurities Quantitative Trader – University Graduate [Miami, FL; 0d old]   https://www.citadelsecurities.com/careers/details/quantitative-trader-university-graduate-us-miami/?utm_source=Simplify&ref=Simplify
+Citadel Quantitative Research Analyst University Graduate [Greenwich, CT Miami, FL NYC; 0d old]   https://www.citadel.com/careers/details/quantitative-research-analyst-university-graduate-us/?utm_source=Simplify&ref=Simplify
+TransmarketGroup Junior Quantitative Trader [Chicago, IL; 0d old]   https://job-boards.greenhouse.io/transmarketgroup/jobs/5151574007?gh_jid=5151574007&utm_source=Simplify&ref=Simplify
+Tsc Software Engineer 1 [Huntsville, AL; 2d old]   https://tsc.wd12.myworkdayjobs.com/en-US/TSC-Careers/job/Huntsville-AL-Discovery/Software-Engineer-I_JR2897?utm_source=Simplify&ref=Simplify
+Rtx CCA/PCB Product Development Engineer 1 [McKinney, TX; 2d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-TX-MCKINNEY-513WD--2501-W-University-Dr--WING-D-BLDG/CCA-PCB-Product-Development-Engineer-I--Onsite-_01886239?utm_source=Simplify&ref=Simplify
+Broadcom Physical Design Engineer New Grad - ASIC Products Division (APD) [San Jose, CA; 2d old]   https://broadcom.wd1.myworkdayjobs.com/external_career/job/USA-CA-San-Jose-Innovation-Drive/Physical-Design-Engineer_R027516?utm_source=Simplify&ref=Simplify
+NobleMachines Electrical Engineer – Early Career - Embedded Systems & Tools [Sunnyvale, CA; 2d old]   https://job-boards.greenhouse.io/undercontrolroboticsinc/jobs/4473572009?utm_source=Simplify&ref=Simplify
+VoyagerTechnologies Electrical Hardware Engineer 1 [Pittsburgh, PA; 2d old]   https://job-boards.greenhouse.io/voyagertechnologiesinc/jobs/4455215009?utm_source=Simplify&ref=Simplify
+Tsc Junior Software Engineer [Arlington County, Arlington, VA; 3d old]   https://tsc.wd12.myworkdayjobs.com/en-US/TSC-Careers/job/Arlington-VA/Junior-Software-Engineer--UAS-_JR2896?utm_source=Simplify&ref=Simplify
+Tsc Software Engineer 1 [Plymouth, MA; 3d old]   https://tsc.wd12.myworkdayjobs.com/en-US/TSC-Careers/job/Plymouth-MA/Software-Engineer-I_JR2890?utm_source=Simplify&ref=Simplify
+Rtx Electrical Production Support REA Engineer 1 [Huntsville, AL; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AL-HUNTSVILLE-315--315-Bob-Heath-Dr--BOB-HEATH/Electrical-Production-Support-REA-Engineer-I---Onsite_01885401?utm_source=Simplify&ref=Simplify
+Rtx Software Security Engineer 1 [El Segundo, CA; 3d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CA-EL-SEGUNDO-E01--2000-E-El-Segundo-Blvd--BLDG-E01/Software-Security-Engineer-I_01885443?utm_source=Simplify&ref=Simplify
+ShieldAi Autonomous Software Engineer New Grad [San Diego, CA; 5d old]   https://jobs.ashbyhq.com/f7d8749a-72d6-407c-bf98-292ea630c73a/c0735824-2b3c-46a2-a888-99e7376a9606/application?embed=true&utm_source=Simplify&ref=Simplify
+Rtx Software Engineer 1 [Tucson, AZ; 5d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AZ-TUCSON-805--1151-E-Hermans-Rd--BLDG-805/Software-Engineer-I----Onsite-_01884645?utm_source=Simplify&ref=Simplify
+RendezvousRobotics Flight Software Engineer – Early Career [Golden, CO; 9d old]   https://job-boards.greenhouse.io/rendezvousrobotics/jobs/4464270009?utm_source=Simplify&ref=Simplify
+RocketLabCorporation Flight Software Engineer 1 [Littleton, CO; 12d old]   https://job-boards.greenhouse.io/rocketlab/jobs/8038139003?utm_source=Simplify&ref=Simplify
+BrainCorp Embedded Software Engineer 1 - Firmware [San Diego, CA; 23d old]   https://www.braincorp.com/open-positions?gh_jid=8879726002&utm_source=Simplify&ref=Simplify
+Freeform FPGA Engineer New Grad [LA; 24d old]   https://job-boards.greenhouse.io/freeformfuturecorp/jobs/8016243003?utm_source=Simplify&ref=Simplify
+EmersonElectric Digital Hardware Engineer 1 [Austin, TX; 25d old]   https://hdjq.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26011531?utm_source=Simplify&ref=Simplify
+BadgerMeter Firmware Engineer 1 [Milwaukee, WI Racine, WI; 25d old]   https://badgermeter.wd5.myworkdayjobs.com/US_CareerSite/job/Milwaukee-WI/Engineer-I--Firmware_4628?utm_source=Simplify&ref=Simplify
+MachIndustries Software Engineer New Grad [Huntington Beach, CA; 26d old]   https://job-boards.greenhouse.io/machindustries/jobs/4390274009?utm_source=Simplify&ref=Simplify
+Aerovironment Software Engineer 1 (Embedded) [Moorpark, CA; 26d old]   https://avav.wd1.myworkdayjobs.com/en-US/avav/job/Moorpark-CA/Software-Engineer--EMB--I_9054?utm_source=Simplify&ref=Simplify
+Rtx FPGA/Digital Design Engineer 1 [Tucson, AZ; 27d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AZ-TUCSON-M02--1151-E-Hermans-Rd--BLDG-M02/FPGA--Digital-Design-Engineer-I---Onsite_01879326?utm_source=Simplify&ref=Simplify
+Rtx Electrical Engineer 1 - Hardware Engineering [Tucson, AZ; 27d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AZ-TUCSON-928--1151-E-Hermans-Rd--MULTI-PURPOSE-FAC-928/Electrical-Engineer-I---Hardware-Engineering_01879465?utm_source=Simplify&ref=Simplify
+MicronTechnology Semiconductor Design Engineer New Grad - DRAM Products Group [Boise, ID; 28d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/New-College-Grad---Semiconductor-Design-Engineer--DRAM-Products-Group_JR114119?utm_source=Simplify&ref=Simplify
+HewlettPackardEnterprise Electrical Hardware Engineer 1 Graduate [Chippewa Falls, WI; 28d old]   https://hpe.wd5.myworkdayjobs.com/jobsathpe/job/Chippewa-Falls-Wisconsin-United-States-of-America/Electrical-Hardware-Engineer-I---Graduate_1213428?utm_source=Simplify&ref=Simplify
+Rtx Embedded Software Engineer 1 [East Hartford, CT; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-CT-EAST-HARTFORD-ETC--400-Main-St--BLDG-ETC/Embedded-Software-Engineer-I--Onsite-_01878013?utm_source=Simplify&ref=Simplify
+Rtx FPGA Engineer 1 [Fort Wayne, IN; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IN-FT-WAYNE-150A--1010-Production-Rd--BLDG-150A/FPGA-Engineer-I--Onsite-_01878710?utm_source=Simplify&ref=Simplify
+MicronTechnology Design Validation Product Engineer New Grad - Engineering - HIG HBM PSE Design Validation [Boise, ID; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/New-College-Grad---ENG--HIG-HBM-PSE-Design-Validation_JR112995?utm_source=Simplify&ref=Simplify
+MicronTechnology Design Validation Product Engineer New Grad - Engineering - HIG HBM PSE Design Validation [Boise, ID; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/Engineer---HIG-HBM-PSE---Design-Validation_JR112996?utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software - Starfall [Hawthorne, CA; 0d old]   https://boards.greenhouse.io/spacex/jobs/8854394002?utm_source=Simplify&ref=Simplify
+Rtx Embedded Software Security Engineer 1 - S3E [Tucson, AZ; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AZ-TUCSON-801--1151-E-Hermans-Rd--BLDG-801-External-Site/Embedded-Software-Security-Engineer-I---S3E_01878692?utm_source=Simplify&ref=Simplify
+Rtx FPGA/ASIC Engineer 1 [Cambridge, MA; 0d old]   https://globalhr.wd5.myworkdayjobs.com/fr-CA/Private_Posting_No_TMP/job/US-MA-CAMBRIDGE-BBN01--10--50-Moulton-St--MOULTON-B2/FPGA-ASIC-Engineer-I_01876996?utm_source=Simplify&ref=Simplify
+Nvidia ASIC Verification Engineer New Grad [Austin, TX Santa Clara, CA; 0d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-TX-Austin/ASIC-Verification-Engineer---New-College-Grad-2027_JR2026343?utm_source=Simplify&ref=Simplify
+Nvidia ASIC Verification Engineer New Grad - Memory Management [Madison, AL Durham, NC Hillsboro, OR; 0d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-NC-Durham/ASIC-Verification-Engineer--Memory-Management---New-College-Grad-2027_JR2026341?utm_source=Simplify&ref=Simplify
+Aescape Junior Electrical & Firmware Engineer [NYC; 0d old]   https://jobs.ashbyhq.com/aescape/5ab3f804-c547-40e3-b496-53f1d3b5048e/application?embed=true&utm_source=Simplify&ref=Simplify
+Anduril Early Career Firmware Engineer [Costa Mesa, CA; 0d old]   https://boards.greenhouse.io/andurilindustries/jobs/5246141007?utm_source=Simplify&ref=Simplify
+MicrochipTechnology Product/Test Engineer 1 - Networking & Connectivity Solutions [Austin, TX; 0d old]   https://wd5.myworkdaysite.com/recruiting/microchiphr/External/job/TX---Austin---Park-Centre/Engineer-I-Product-Test_R4032-26?utm_source=Simplify&ref=Simplify
+HewlettPackardEnterprise Electrical/Hardware Engineer 1 [Spring, TX; 0d old]   https://hpe.wd5.myworkdayjobs.com/jobsathpe/job/Spring-Texas-United-States-of-America/Electrical-Hardware-Engineer-I_1213860-2?utm_source=Simplify&ref=Simplify
+CirrusLogic Post-Silicon Validation Engineer New Grad - Mixed IC Validation [Austin, TX; 0d old]   https://jobs.eu.lever.co/cirrus/b4334931-aee2-40d9-a82e-ae6fb644cab0/apply?utm_source=Simplify&ref=Simplify
+MicronTechnology ASIC Digital Design Engineer New Grad [Minneapolis, MN; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Minneapolis-MN/New-College-Grad---Engineer--ASIC-Digital-Design_JR112164?utm_source=Simplify&ref=Simplify
+Rtx Receiver – Exciter - & Processing Architecture Software Engineer I [Marlborough, MA; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-MA-MARLBOROUGH-MA2--1001-Boston-Post-Rd--BLDG-2/Receiver--Exciter----Processing-Architecture-Software-Engineer-I---Onsite_01873475?utm_source=Simplify&ref=Simplify
+StanleyBlackDecker Software Engineer 1 - Motor Control [Towson, MD; 0d old]   https://sbdinc.wd1.myworkdayjobs.com/en-US/Stanley_Black_Decker_Career_Site/job/Towson-MD-United-States/Engineer-1--Software-Engineering---Motor-Control_REQ-1000052383?utm_source=Simplify&ref=Simplify
+Rtx Flight Control Software Engineer 1 [Cedar Rapids, IA; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IA-CEDAR-RAPIDS-193--1120-Collins-Rd-NE--BLDG193/Flight-Control-Software-Engineer-I--Onsite-_01871083?utm_source=Simplify&ref=Simplify
+Anduril Early Career Flight Software Engineer [Costa Mesa, CA; 0d old]   https://boards.greenhouse.io/andurilindustries/jobs/5228868007?utm_source=Simplify&ref=Simplify
+Rtx FPGA Electrical Engineer 1 [Huntsville, AL; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AL-HUNTSVILLE-315--315-Bob-Heath-Dr--BOB-HEATH/FPGA-Electrical-Engineer-I---Onsite_01871787?utm_source=Simplify&ref=Simplify
+Vermeer Embedded Software Engineer 1 - Engineering Development Program [Pella, IA; 0d old]   https://vermeer.wd5.myworkdayjobs.com/externalcareersite/job/Pella-Iowa-USA---Plant-7--West-Segment-Office/Engineer-I---Embedded-Software-Engineer--Engineering-Development-Program-2027-_REQ-22180?utm_source=Simplify&ref=Simplify
+Ciena Software Developer New Grad [Atlanta, GA; 0d old]   https://ciena.wd5.myworkdayjobs.com/Careers/job/Atlanta/WaveLogic-Software-Developer---New-Grad_R031608?utm_source=Simplify&ref=Simplify
+Rtx Digital Hardware Engineer 1 [Huntsville, AL; 0d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-AL-HUNTSVILLE-315--315-Bob-Heath-Dr--BOB-HEATH/Digital-Hardware-Engineering-I---Onsite_01870657?utm_source=Simplify&ref=Simplify
+BlueOrigin Avionics / Embedded Software Engineer 1 - 2027 Starts [7 locations  Seattle, WA LA Cape Canaveral, FL Kent, WA Denver, CO Huntsville, AL Van Horn, TX; 0d old]   https://blueorigin.wd5.myworkdayjobs.com/blueorigin/job/Greater-Seattle-Area/Avionics---Embedded-Software-Engineer-I---Early-Career--2027-Starts-_R71324?utm_source=Simplify&ref=Simplify
+MicronTechnology Product Test Engineer New Grad [Boise, ID; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/Product-Test-Engineer_JR109985?utm_source=Simplify&ref=Simplify
+AsmInternational Software Engineer - Early Career - Fall 2026 [Phoenix, AZ; 0d old]   https://www.asm.com/open-vacancies/?gh_jid=4876722101&utm_source=Simplify&ref=Simplify
+TrueAnomaly Flight Software Engineer 1 New Grad [Long Beach, CA Denver, CO; 0d old]   https://job-boards.greenhouse.io/trueanomalyinc/jobs/5221572007?utm_source=Simplify&ref=Simplify
+AlarmCom Embedded Software Engineer 1 [Tysons, VA; 0d old]   https://job-boards.greenhouse.io/alarmcom/jobs/8622530002?utm_source=Simplify&ref=Simplify
+MicronTechnology Embedded Firmware Engineer New Grad [Boise, ID; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---SIG-Building/New-College-Grad---Embedded-Firmware-Engineer_JR109306?utm_source=Simplify&ref=Simplify
+Freeform Software Engineer New Grad - Summer 2027 [LA; 0d old]   https://job-boards.greenhouse.io/freeformfuturecorp/jobs/7895902003?utm_source=Simplify&ref=Simplify
+BlueOrigin ASIC Engineer - Early Career [Washington California Texas; 0d old]   https://blueorigin.wd5.myworkdayjobs.com/blueorigin/job/Greater-Seattle-Area/ASIC-Engineer---Early-Career_R70802?utm_source=Simplify&ref=Simplify
+V2X Embedded Firmware Engineer 1 [Indianapolis, IN; 0d old]   https://careers.gov2x.com/jobs/62490?icims=1&utm_source=Simplify&ref=Simplify
+AppliedIntuition Embedded Software Engineer New Grad [Sunnyvale, CA; 0d old]   https://jobs.ashbyhq.com/applied/6971d533-1536-448b-96b8-544ad5383f44/application?embed=true&utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software - Starlink [Palo Alto, CA; 0d old]   https://boards.greenhouse.io/spacex/jobs/8696080002?utm_source=Simplify&ref=Simplify
+Spacex Software Engineer New Grad - Software [Redmond, WA; 0d old]   https://boards.greenhouse.io/spacex/jobs/8696058002?utm_source=Simplify&ref=Simplify
+PanasonicHoldings Software Engineer 1 - Embedded Systems [Irvine, CA; 0d old]   https://careers.na.panasonic.com/jobs/50269?icims=1&utm_source=Simplify&ref=Simplify
+GeneralMatter Software Engineer New Grad [LA; 0d old]   https://job-boards.greenhouse.io/generalmatter/jobs/5375987008?utm_source=Simplify&ref=Simplify
+BlueOrigin Avionics / Embedded Software Engineer 1 - Early Career [LA Kent, WA; 0d old]   https://blueorigin.wd5.myworkdayjobs.com/blueorigin/job/Greater-Seattle-Area/Avionics---Embedded-Software-Engineer-I---Early-Career--2026-Starts-_R70055?utm_source=Simplify&ref=Simplify
+Freeform Software Engineer New Grad [LA; 0d old]   https://job-boards.greenhouse.io/freeformfuturecorp/jobs/7826634003?utm_source=Simplify&ref=Simplify
+Garmin Embedded Software Engineer 1 [Chandler, AZ; 0d old]   https://careers.garmin.com/jobs/19134?icims=1&utm_source=Simplify&ref=Simplify
+Garmin Software Engineer 1 - Embedded Aviation [Olathe, KS; 0d old]   https://careers.garmin.com/jobs/18513?icims=1&utm_source=Simplify&ref=Simplify
+Oracle Systems Software Engineer 1 [United States; 0d old]   https://eeho.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_45001/job/340728?utm_source=Simplify&ref=Simplify
+Nidec Software Engineer 1 [St. Louis, MO; 0d old]   https://nidec.wd1.myworkdayjobs.com/nidec/job/North-AmericaUSAMissouriSt-Louis---WPE-MO/Software-Engineer-I_R0016664?utm_source=Simplify&ref=Simplify
+MorseMicro Product Quality Engineer 1 [Irvine, CA; 0d old]   https://jobs.ashbyhq.com/morse-micro/ca01644b-bb2f-4dda-8ea3-b3c3085e62fc/application?embed=true&utm_source=Simplify&ref=Simplify
+Nvidia ASIC Design Engineer New Grad [Santa Clara, CA; 0d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-CA-Santa-Clara/ASIC-Design-Engineer---New-College-Grad-2026_JR2020309?utm_source=Simplify&ref=Simplify
+MicronTechnology Design Engineer New Grad - Design Engineer - DRAM Technology and Products [Boise, ID; 0d old]   https://micron.wd1.myworkdayjobs.com/External/job/Boise-ID---Main-Site/New-College-Grad---Design-Engineer--DRAM-Technology-and-Products_JR105519?utm_source=Simplify&ref=Simplify
+Cerebras Software Engineer New Grad [Sunnyvale, CA; 0d old]   https://jobs.ashbyhq.com/cerebras/987d7f64-c957-4c8f-b89d-2f9d64738507/application?utm_source=Simplify&ref=Simplify
+Globalfoundries New Graduate Heterogeneous Integration Engineer - Quantum Cryogenic 3D Packaging [Malta, NY Burlington, VT Leuven, Belgium; 0d old]   https://globalfoundries.wd1.myworkdayjobs.com/External/job/Leuven/NCG-3D-Heterogeneous-Integration-Engineer-Cryogenic-3D-packaging_JR-2601211?utm_source=Simplify&ref=Simplify
+Honeywell Embedded Engineer 1 New Grad [St. Charles, IL; 0d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/140055?utm_source=Simplify&ref=Simplify
+Icon Founding Engineer [NYC; 0d old]   https://jobs.ashbyhq.com/icon/8de569c7-814f-4ffe-9c21-a92d7b806be2/application?utm_source=Simplify&ref=Simplify
+NorthwoodSpace Software Engineer – New grad / early career [Carson, CA; 0d old]   https://jobs.ashbyhq.com/NorthwoodSpace/b960b661-e1cc-40d0-bde3-290cd1b58ede/application?utm_source=Simplify&ref=Simplify
+AmericanExpress Campus Undergraduate Summer Internship - Strategy & Analytics - Credit & Fraud Risk [NYC; 27d old]   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26011984?utm_source=Simplify&ref=Simplify
