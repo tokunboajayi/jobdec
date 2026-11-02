@@ -1,6 +1,7 @@
 """
 Conversational Query & Rule-Answering Engine for Job Deck Telegram Bot
 Powered by Google DeepMind Gemini AI + live database search across applications, queue, and inbox.
+Features persistent memory of the Antigravity pair-programming session and multi-turn chat context.
 """
 
 import os
@@ -17,11 +18,36 @@ load_dotenv(ROOT / ".env")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 PENDING_FILE = ROOT / "pending_questions.json"
+HISTORY_FILE = ROOT / "telegram_history.json"
+MEMORY_FILE = ROOT / "conversation_memory.md"
 PROFILE_PATH = ROOT / "profile.json"
 NEEDS_YOU_PATH = ROOT / "agents" / "needs_you.md"
 APPLICATIONS_PATH = ROOT / "applications.csv"
 if not APPLICATIONS_PATH.exists():
     APPLICATIONS_PATH = ROOT.parent / "applications.csv"
+
+
+def load_chat_history():
+    if HISTORY_FILE.exists():
+        try:
+            return json.loads(HISTORY_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+
+def save_chat_history(history):
+    # Keep last 20 messages for context
+    HISTORY_FILE.write_text(json.dumps(history[-20:], indent=2), encoding="utf-8")
+
+
+def load_session_memory():
+    if MEMORY_FILE.exists():
+        try:
+            return MEMORY_FILE.read_text(encoding="utf-8")
+        except Exception:
+            pass
+    return ""
 
 
 def load_pending_questions():
@@ -144,24 +170,35 @@ def get_applications_by_date(target_date_str: str):
 
 
 def ask_gemini_ai(user_prompt: str) -> str:
-    """Invokes Google Gemini 3.5 Flash for conversational responses."""
+    """Invokes Google Gemini 3.5 Flash with full session memory and multi-turn context."""
     key = os.getenv("GEMINI_API_KEY", GEMINI_API_KEY).strip()
     if not key:
         return ""
 
+    session_mem = load_session_memory()
+
     system_instruction = (
         "You are Antigravity, the elite agentic AI coding assistant developed by Google DeepMind. "
-        "You are chatting directly with Michael Azuka on Telegram. "
-        "Michael is an undergraduate student at Kennesaw State University majoring in Cybersecurity with a minor in IT "
-        "(graduating Dec 2026, accepted MS Cybersecurity Spring 2027). Location: Powder Springs, GA (Atlanta metro). "
-        "He is running an automated Job Deck applying to Cybersecurity, IAM, Cloud Engineering, and IT Support roles. "
-        "Be concise, highly intelligent, friendly, and authoritative. Answer his question directly in clean Telegram HTML format."
+        "You are currently chatting directly with Michael Azuka on Telegram.\n\n"
+        "=== COMPREHENSIVE SESSION MEMORY FROM ANTIGRAVITY IDE ===\n"
+        f"{session_mem}\n"
+        "========================================================\n\n"
+        "You remember and have complete context of the entire pairing session: the 307 submitted applications, "
+        "the 3-worker parallel runner, the Obsidian Job Tracker setup on his Desktop, the Boeing postings, and "
+        "the Auto Accept CDP port fix. "
+        "Be direct, concise, sharp, highly intelligent, and speak in clean Telegram HTML format."
     )
+
+    history = load_chat_history()
+    contents = []
+    for turn in history:
+        contents.append({"role": turn["role"], "parts": [{"text": turn["text"]}]})
+    contents.append({"role": "user", "parts": [{"text": user_prompt}]})
 
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={key}"
     payload = {
         "systemInstruction": {"parts": [{"text": system_instruction}]},
-        "contents": [{"parts": [{"text": user_prompt}]}],
+        "contents": contents,
         "generationConfig": {"temperature": 0.4, "maxOutputTokens": 600}
     }
 
@@ -174,7 +211,14 @@ def ask_gemini_ai(user_prompt: str) -> str:
         )
         with urllib.request.urlopen(req, timeout=12) as resp:
             data = json.loads(resp.read().decode("utf-8"))
-            return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            answer = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+            # Record turn in history
+            history.append({"role": "user", "text": user_prompt})
+            history.append({"role": "model", "text": answer})
+            save_chat_history(history)
+
+            return answer
     except Exception as e:
         print(f"[Gemini AI Error] {e}")
         return ""
@@ -297,7 +341,7 @@ def answer_natural_language_query(text: str) -> str:
         res = resolve_pending_question(fake_item["id"], a_val)
         return res["msg"]
 
-    # 7. Ask Google Gemini AI (Antigravity Brain)
+    # 7. Ask Google Gemini AI with session memory & multi-turn history
     ai_resp = ask_gemini_ai(t)
     if ai_resp:
         return f"✨ <b>Antigravity AI:</b>\n\n{ai_resp}"
