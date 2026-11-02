@@ -1882,6 +1882,11 @@ def _upsert_applied_row(path, target_url, company, role, resume):
         telegram_notify.notify_applied(hit.get("Company", ""), hit.get("Role", ""), hit.get("Job URL", ""))
     except Exception:
         pass
+    try:
+        import sync_obsidian
+        sync_obsidian.export_applications_to_obsidian()
+    except Exception:
+        pass
 
 
 NAV_JS = r"""
