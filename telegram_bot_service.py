@@ -1,155 +1,123 @@
 """
-High-Performance, Low-Latency Telegram Bot Service & 3-Hour Interval Reporter
-Optimized for sub-second reply speed with persistent connection pooling,
-multithreaded dispatch, and in-memory mtime cached queries.
+Enterprise Telegram Command & Control Dashboard for Job Deck
+Built on python-telegram-bot (v22+) with native asyncio, interactive inline buttons,
+JobQueue 3-hour scheduled updates, and immediate sub-second command responses.
 """
 
 import os
 import sys
-import time
 import csv
 import subprocess
-import threading
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 
-import requests
 import psutil
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.constants import ParseMode
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    CallbackQueryHandler,
+    ContextTypes,
+    filters,
+)
 
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-INTERVAL_SECONDS = 3 * 60 * 60  # 3 hours
-
-# Persistent connection pool for zero TLS handshake latency
-SESSION = requests.Session()
-ADAPTER = requests.adapters.HTTPAdapter(pool_connections=10, pool_maxsize=20, max_retries=3)
-SESSION.mount("https://", ADAPTER)
-
-EXECUTOR = ThreadPoolExecutor(max_workers=5)
-
-# Fast Stats Cache
-_CACHE = {
-    "csv_mtime": 0,
-    "total_applied": 0,
-    "recent": [],
-    "q_mtime": 0,
-    "queue_count": 0,
-    "last_check": 0,
-    "python_count": 0,
-}
+CHAT_ID_STR = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+AUTHORIZED_USER_ID = int(CHAT_ID_STR) if CHAT_ID_STR.isdigit() else 0
 
 
-def send_telegram(text: str) -> bool:
-    """Send message via persistent HTTP connection."""
-    if not BOT_TOKEN or not CHAT_ID:
-        return False
-    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": CHAT_ID,
-        "text": text,
-        "parse_mode": "HTML",
-        "disable_web_page_preview": True,
-    }
-    try:
-        resp = SESSION.post(url, json=payload, timeout=6)
-        return resp.status_code == 200
-    except Exception as e:
-        print(f"[Telegram Send Error] {e}", flush=True)
-        return False
+def get_keyboard():
+    """Generates the interactive touch buttons for Telegram."""
+    keyboard = [
+        [
+            InlineKeyboardButton("📊 Live Status", callback_data="btn_status"),
+            InlineKeyboardButton("▶ Run 3 Workers", callback_data="btn_run"),
+        ],
+        [
+            InlineKeyboardButton("✈ Apply Boeing", callback_data="btn_boeing"),
+            InlineKeyboardButton("🛑 Pause Runner", callback_data="btn_stop"),
+        ],
+        [
+            InlineKeyboardButton("📂 Queue Count", callback_data="btn_queue"),
+            InlineKeyboardButton("🔄 Refresh Obsidian", callback_data="btn_obsidian"),
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
 
 
 def get_current_stats_fast():
-    """In-memory cached stats check taking < 1ms."""
-    now = time.time()
     csv_path = ROOT / "applications.csv"
     if not csv_path.exists():
         csv_path = ROOT.parent / "applications.csv"
 
+    total_applied = 0
+    recent = []
     if csv_path.exists():
-        mtime = csv_path.stat().st_mtime
-        if mtime != _CACHE["csv_mtime"]:
-            with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
-                rows = list(csv.DictReader(f))
-                _CACHE["total_applied"] = len(rows)
-                _CACHE["recent"] = rows[-3:]
-                _CACHE["csv_mtime"] = mtime
+        with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
+            rows = list(csv.DictReader(f))
+            total_applied = len(rows)
+            recent = rows[-3:]
 
+    queue_count = 0
     q_path = ROOT / "queue_cyber_iam.txt"
     if q_path.exists():
-        qmtime = q_path.stat().st_mtime
-        if qmtime != _CACHE["q_mtime"]:
-            with open(q_path, "r", encoding="utf-8", errors="ignore") as f:
-                _CACHE["queue_count"] = len([l for l in f if l.strip() and not l.startswith("#")])
-                _CACHE["q_mtime"] = qmtime
+        with open(q_path, "r", encoding="utf-8", errors="ignore") as f:
+            queue_count = len([l for l in f if l.strip() and not l.startswith("#")])
 
-    # Update active python process count (psutil takes < 10ms)
-    if now - _CACHE["last_check"] > 2:
-        try:
-            curr_pid = os.getpid()
-            _CACHE["python_count"] = sum(
-                1 for p in psutil.process_iter(["pid", "name"])
-                if "python" in (p.info["name"] or "").lower() and p.info["pid"] != curr_pid
-            )
-        except Exception:
-            _CACHE["python_count"] = 0
-        _CACHE["last_check"] = now
+    curr_pid = os.getpid()
+    python_count = 0
+    try:
+        python_count = sum(
+            1 for p in psutil.process_iter(["pid", "name", "cmdline"])
+            if "python" in (p.info["name"] or "").lower()
+            and p.info["pid"] != curr_pid
+            and ("batch_apply" in " ".join(p.info["cmdline"] or []) or "fill.py" in " ".join(p.info["cmdline"] or []))
+        )
+    except Exception:
+        pass
 
-    return _CACHE["total_applied"], _CACHE["queue_count"], _CACHE["python_count"], _CACHE["recent"]
+    return total_applied, queue_count, python_count, recent
 
 
-def generate_status_message(header="📊 <b>Job Deck Status Report</b>"):
+def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>"):
     total, queue_count, py_count, recent = get_current_stats_fast()
-    workers_active = f"Active ({py_count} workers)" if py_count > 0 else "Idle (ready)"
+    workers_state = f"Active ({py_count} workers)" if py_count > 0 else "Idle (ready)"
     now_str = datetime.now().strftime("%I:%M:%S %p")
 
     lines = [
         f"{header} <i>({now_str})</i>",
         "",
         f"🎯 <b>Total Verified Applications:</b> {total}",
-        f"📋 <b>Queue Remaining:</b> {queue_count} roles",
-        f"⚡ <b>Runner State:</b> {workers_active}",
+        f"📋 <b>Queue Remaining:</b> {queue_count} prioritized roles",
+        f"⚡ <b>Runner State:</b> {workers_state}",
         "",
     ]
     if recent:
         lines.append("<b>Recent Submissions:</b>")
         for r in recent:
-            lines.append(f"• {r.get('Company')} — {r.get('Role')}")
+            lines.append(f"• <b>{r.get('Company')}</b> — {r.get('Role')}")
     return "\n".join(lines)
 
 
-def background_interval_reporter():
-    """Sends a summary update every 3 hours."""
-    while True:
-        time.sleep(INTERVAL_SECONDS)
-        try:
-            msg = generate_status_message(header="🕒 <b>3-Hour Scheduled Update</b>")
-            send_telegram(msg)
-            print(f"[Reporter] Sent 3-hour status update at {datetime.now()}", flush=True)
-        except Exception as e:
-            print(f"[Reporter Error] {e}", flush=True)
-
-
-def start_application_runner():
-    """Starts batch_apply_parallel.py in background with 3 workers."""
+def launch_runner(workers=3, queue="queue_cyber_iam.txt"):
     cmd = [
         str(ROOT / ".venv" / "Scripts" / "python.exe"),
         str(ROOT / "batch_apply_parallel.py"),
-        "--queue", "queue_cyber_iam.txt",
-        "--workers", "3",
+        "--queue", queue,
+        "--workers", str(workers),
         "--no-triage",
         "--resume", "resumes/resume.pdf"
     ]
     subprocess.Popen(cmd, cwd=str(ROOT))
-    return "🚀 <b>Runner started!</b> 3 workers are now actively applying in headless mode."
 
 
-def stop_application_runner():
-    """Stops batch apply processes using fast native process termination."""
+def halt_runner():
     curr_pid = os.getpid()
     stopped = 0
     for p in psutil.process_iter(["pid", "name", "cmdline"]):
@@ -161,83 +129,114 @@ def stop_application_runner():
                     stopped += 1
         except Exception:
             pass
-    return f"🛑 <b>Runner paused.</b> Stopped {stopped} active worker process(es)."
+    return stopped
 
 
-def handle_message(text: str) -> str:
-    t = text.strip().lower()
-    if t in ["/start", "start", "/help", "help"]:
-        return (
-            "⚡ <b>Job Deck Turbo Bot Active!</b>\n\n"
-            "Sub-second response mode enabled with persistent connection pooling.\n\n"
-            "<b>Quick Commands:</b>\n"
-            "• <code>status</code> or <code>/status</code> — Live stats (< 0.1s)\n"
-            "• <code>apply</code> or <code>run</code> — Launch 3 headless workers\n"
-            "• <code>stop</code> or <code>pause</code> — Halt all background workers\n"
-            "• <code>update</code> — Immediate progress summary"
-        )
-    elif "status" in t or "/status" in t or "update" in t or "/update" in t:
-        return generate_status_message()
-    elif "apply" in t or "run" in t or "/apply" in t:
-        return start_application_runner()
-    elif "stop" in t or "pause" in t or "/stop" in t:
-        return stop_application_runner()
-    elif "boeing" in t:
-        return "✈️ <b>Boeing Priority</b>: Both Boeing 2027 internship postings are queued at the top of your list. Type <code>apply</code> anytime to process them!"
-    else:
-        return f"⚡ <b>Received:</b> \"{text}\"\nInstruction logged into your Job Deck pipeline."
+# ---- Handlers ----
+
+async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != AUTHORIZED_USER_ID:
+        return
+    text = (
+        "👋 <b>Welcome to Job Deck Control!</b>\n\n"
+        "Tap any button below to view status or start/pause applications in real-time."
+    )
+    await update.message.reply_text(text, reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
 
 
-def process_update_async(item):
-    """Processes message and dispatches reply concurrently in thread pool."""
-    msg = item.get("message", {})
-    chat_id_from_msg = str(msg.get("chat", {}).get("id", ""))
-    text = msg.get("text", "")
-
-    if chat_id_from_msg == CHAT_ID and text:
-        t0 = time.perf_counter()
-        reply = handle_message(text)
-        if reply:
-            send_telegram(reply)
-            dt = (time.perf_counter() - t0) * 1000
-            print(f"[Turbo Bot] Replied to '{text}' in {dt:.1f}ms", flush=True)
+async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != AUTHORIZED_USER_ID:
+        return
+    await update.message.reply_text(format_status_message(), reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
 
 
-def poll_telegram():
-    """Ultra-fast long polling loop."""
-    print("[Turbo Bot] Polling daemon started with persistent connection pooling...", flush=True)
-    offset = None
+async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    if query.from_user.id != AUTHORIZED_USER_ID:
+        await query.answer("Unauthorized.", show_alert=True)
+        return
 
-    while True:
+    data = query.data
+    await query.answer()
+
+    if data == "btn_status":
+        await query.message.edit_text(format_status_message(), reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+    elif data == "btn_run":
+        launch_runner(workers=3)
+        await query.message.reply_text("🚀 <b>Launched 3 workers!</b> Applying in headless mode...", parse_mode=ParseMode.HTML)
+    elif data == "btn_stop":
+        stopped = halt_runner()
+        await query.message.reply_text(f"🛑 <b>Halted {stopped} worker processes.</b>", parse_mode=ParseMode.HTML)
+    elif data == "btn_boeing":
+        launch_runner(workers=1, queue="queue_cyber_iam.txt")
+        await query.message.reply_text("✈️ <b>Boeing Priority Run Launched!</b> Worker is targeting top of queue...", parse_mode=ParseMode.HTML)
+    elif data == "btn_queue":
+        _, q_count, _, _ = get_current_stats_fast()
+        await query.message.reply_text(f"📋 <b>Queue Inventory:</b> {q_count} prioritized Cyber/IAM/Cloud roles remaining in queue.", parse_mode=ParseMode.HTML)
+    elif data == "btn_obsidian":
         try:
-            params = {"timeout": 20, "allowed_updates": ["message"]}
-            if offset is not None:
-                params["offset"] = offset
-
-            url = f"https://api.telegram.org/bot{BOT_TOKEN}/getUpdates"
-            resp = SESSION.get(url, params=params, timeout=25)
-            if resp.status_code == 200:
-                data = resp.json()
-                results = data.get("result", [])
-                for item in results:
-                    offset = item.get("update_id") + 1
-                    # Dispatch to thread pool immediately for instant response
-                    EXECUTOR.submit(process_update_async, item)
-            else:
-                time.sleep(1)
-        except Exception:
-            time.sleep(0.5)
+            import sync_obsidian
+            count = sync_obsidian.export_applications_to_obsidian()
+            await query.message.reply_text(f"🔄 <b>Obsidian Vault Synced!</b> {count} new/updated notes in Desktop/Obsidian Job Tracker.", parse_mode=ParseMode.HTML)
+        except Exception as e:
+            await query.message.reply_text(f"Obsidian sync notice: {e}")
 
 
-if __name__ == "__main__":
-    if not BOT_TOKEN or not CHAT_ID:
+async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != AUTHORIZED_USER_ID:
+        return
+
+    t = (update.message.text or "").strip().lower()
+    if "status" in t or "update" in t:
+        await update.message.reply_text(format_status_message(), reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+    elif "run" in t or "apply" in t or "start" in t:
+        launch_runner(workers=3)
+        await update.message.reply_text("🚀 <b>Started 3 headless workers!</b>", reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+    elif "stop" in t or "pause" in t:
+        stopped = halt_runner()
+        await update.message.reply_text(f"🛑 <b>Runner paused ({stopped} stopped).</b>", reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+    elif "boeing" in t:
+        await update.message.reply_text("✈️ Boeing roles are #1 on the queue. Tap <b>Apply Boeing</b> below to process immediately!", reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+    else:
+        await update.message.reply_text(f"⚡ <b>Received:</b> \"{update.message.text}\"\nInstruction noted for Job Deck.", reply_markup=get_keyboard(), parse_mode=ParseMode.HTML)
+
+
+async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):
+    """JobQueue scheduled job: executes every 3 hours."""
+    try:
+        msg = format_status_message(header="🕒 <b>3-Hour Scheduled Update</b>")
+        await context.bot.send_message(
+            chat_id=AUTHORIZED_USER_ID,
+            text=msg,
+            reply_markup=get_keyboard(),
+            parse_mode=ParseMode.HTML,
+        )
+    except Exception as e:
+        print(f"[3-Hour Update Error] {e}", flush=True)
+
+
+def main():
+    if not BOT_TOKEN or not AUTHORIZED_USER_ID:
         print("[!] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing in .env")
         sys.exit(1)
 
-    # Start 3-hour reporter thread
-    t = threading.Thread(target=background_interval_reporter, daemon=True)
-    t.start()
+    print("[Job Deck Control Bot] Initializing python-telegram-bot v22...", flush=True)
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    send_telegram("⚡ <b>Reply Speed Boosted!</b>\nPersistent connection pooling & sub-second response engine active. Try typing <code>status</code> now!")
+    # Commands & buttons
+    app.add_handler(CommandHandler(["start", "help"], cmd_start))
+    app.add_handler(CommandHandler(["status", "update"], cmd_status))
+    app.add_handler(CallbackQueryHandler(handle_callback_query))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 
-    poll_telegram()
+    # Schedule 3-hour updates (10800 seconds)
+    if app.job_queue:
+        app.job_queue.run_repeating(send_3hour_update, interval=3 * 3600, first=3 * 3600)
+        print("[Job Deck Control Bot] 3-hour JobQueue interval scheduled.", flush=True)
+
+    print("[Job Deck Control Bot] Polling started. Ready!", flush=True)
+    app.run_polling(drop_pending_updates=True)
+
+
+if __name__ == "__main__":
+    main()
