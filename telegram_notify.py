@@ -1,10 +1,11 @@
 """
-Telegram Notification & Interactive Question Dispatcher for Job Deck
-Sends real-time alerts when applications are submitted, urgent inbox items arrive,
-or interactive questions require the candidate's input.
+Telegram Notification & Smart Question Resolver for Job Deck
+Intercepts known candidate facts and AI-resolvable questions so the user is never asked
+questions the system already knows. Dispatches only novel, personal-choice questions.
 """
 
 import os
+import re
 import json
 import urllib.request
 import urllib.parse
@@ -17,12 +18,64 @@ load_dotenv(ROOT / ".env")
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 
+# Strict Known Facts Knowledge Base
+KNOWN_FACTS_MAP = [
+    # Location
+    (r"\b(location|city)\b", "Atlanta, GA", r"Atlanta|Powder Springs|Georgia|GA"),
+    (r"\bstate\b", "Georgia", r"Georgia|^GA\b"),
+    (r"\bcountry|territory\b", "United States", r"United States|USA|^US\b"),
+    (r"\bzip|postal\b", "30127", r"30127"),
+    (r"\baddress\b", "4020 Saint George Walk SW, Powder Springs, GA 30127", None),
+
+    # Education
+    (r"\bschool|university|institution|college\b", "Kennesaw State University", r"Kennesaw|KSU"),
+    (r"\bdegree\b", "Bachelor of Science", r"Bachelor|B\.S|Undergraduate"),
+    (r"\bdiscipline|major|field of study\b", "Cybersecurity", r"Cybersecurity|Cyber|Information Security|Computer"),
+    (r"\bgpa\b|grade point", "3.35", r"3\.35|3\.0\s*-\s*3\.5|3\.0\+"),
+    (r"\bgraduat.*year|\byear of graduation\b|\bgraduation\b", "2026", r"2026|2027|2028|Dec 2026"),
+    (r"\bstudent.*status|class standing|academic status\b|sophomore.*junior.*senior", "Senior", r"Senior|Junior|Undergraduate"),
+
+    # Work Auth & Clearance
+    (r"authori[sz]ed to work|legally eligible|authorized in the (united states|us)|work authorization", "Yes", r"^Yes\b"),
+    (r"sponsorship|require.*visa|visa sponsorship|now or in the future require", "No", r"^No\b"),
+    (r"active.*security clearance|hold.*clearance", "No", r"^No\b"),
+    (r"eligible to obtain.*clearance", "Yes", r"^Yes\b"),
+    (r"18 years|at least 18|age of 18|over 18|legal age", "Yes", r"^Yes\b|^18\b|Under 30"),
+    (r"what is your.*age|current age", "Under 30", r"Under 30|< 30|18-29"),
+
+    # Demographics & EEO
+    (r"\bgender\b|\bsex\b", "Male", r"^Male\b|Decline|Prefer not"),
+    (r"\brace\b|\bethnic", "Black or African American", r"Black|African American|Decline|Prefer not"),
+    (r"\bveteran\b", "I am not a protected veteran", r"not a protected veteran|not a veteran|^No\b"),
+    (r"\bdisabilit", "No, I do not have a disability", r"No, I do not have a disability|do not have a disability|^No\b"),
+    (r"\bhispanic|latino\b", "No", r"^No\b"),
+    (r"\btransgender\b", "No", r"^No\b"),
+    (r"\bpronoun\b", "He/Him", r"He/Him|he/him"),
+
+    # Personal Identifiers & Agreements
+    (r"first name", "Michael", None),
+    (r"last name", "Azuka", None),
+    (r"full name|legal name", "Michael Azuka", None),
+    (r"email", "mazuka146@gmail.com", None),
+    (r"phone", "404-645-0373", None),
+    (r"linkedin", "https://www.linkedin.com/in/michael-azuka", None),
+    (r"github", "https://github.com/1Zuski", None),
+    (r"certify|electronic signature|type your name|signature", "Michael Azuka", None),
+    (r"sms|text message|consent to receive", "Yes", r"^Yes\b|Consent"),
+    (r"previously applied|worked for us before|employed by.*before", "No", r"^No\b"),
+    (r"relative.*work|family.*work|conflict of interest", "No", r"^No\b"),
+    (r"non-?compete|non-?solicit", "No", r"^No\b"),
+    (r"intellectual property", "No", r"^No\b"),
+    (r"military officer in grades o-?7|covered dod official", "No", r"^No\b"),
+]
+
+# Track recently asked questions to eliminate spam
+_RECENTLY_ASKED = set()
+
 
 def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool:
-    """Send a message to the configured Telegram chat."""
     token = os.getenv("TELEGRAM_BOT_TOKEN", BOT_TOKEN).strip()
     chat_id = os.getenv("TELEGRAM_CHAT_ID", CHAT_ID).strip()
-
     if not token or not chat_id:
         return False
 
@@ -38,12 +91,7 @@ def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool
 
     try:
         data = json.dumps(payload).encode("utf-8")
-        req = urllib.request.Request(
-            url,
-            data=data,
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req, timeout=10) as resp:
             return resp.status == 200
     except Exception as e:
@@ -52,7 +100,6 @@ def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool
 
 
 def notify_applied(company: str, role: str, job_url: str = ""):
-    """Notify when an application is successfully submitted."""
     url_link = f'\n<a href="{job_url}">View Job Posting</a>' if job_url else ""
     msg = (
         f"🎯 <b>Application Submitted!</b>\n\n"
@@ -64,7 +111,6 @@ def notify_applied(company: str, role: str, job_url: str = ""):
 
 
 def notify_urgent_inbox(company: str, subject: str, action: str):
-    """Notify when an interview, assessment, or urgent reply arrives."""
     msg = (
         f"🚨 <b>Urgent Inbox Action!</b>\n\n"
         f"🏢 <b>Company:</b> {company}\n"
@@ -74,26 +120,54 @@ def notify_urgent_inbox(company: str, subject: str, action: str):
     return send_message(msg)
 
 
-def ask_question_interactive(question: str, options: list = None, company: str = ""):
-    """Dispatches a form question to Telegram with interactive touch buttons."""
+def check_and_auto_resolve_fact(question: str, options: list = None) -> bool:
+    """Checks if the question matches known candidate facts and silently saves rule."""
     import telegram_query_engine
-    item = telegram_query_engine.add_pending_question(question, options, company)
+    q_norm = question.strip()
+
+    for pattern, ans, opt_pat in KNOWN_FACTS_MAP:
+        if re.search(pattern, q_norm, re.I):
+            # Known fact! Save rule silently to profile.json
+            fake_item = telegram_query_engine.add_pending_question(q_norm, options)
+            if fake_item:
+                telegram_query_engine.resolve_pending_question(fake_item["id"], ans)
+                print(f"[Auto-Resolved Known Fact] '{q_norm[:50]}' -> '{ans}' saved to profile.json silently.")
+            return True
+    return False
+
+
+def ask_question_interactive(question: str, options: list = None, company: str = ""):
+    """Dispatches a form question to Telegram ONLY if it cannot be auto-resolved."""
+    q_clean = question.strip()
+    if not q_clean or len(q_clean) < 3:
+        return False
+
+    # 1. Check if known fact first!
+    if check_and_auto_resolve_fact(q_clean, options):
+        return True  # Silently resolved, never ask user!
+
+    # 2. Prevent duplicate spamming of the same question
+    if q_clean.lower() in _RECENTLY_ASKED:
+        return True
+    _RECENTLY_ASKED.add(q_clean.lower())
+
+    import telegram_query_engine
+    item = telegram_query_engine.add_pending_question(q_clean, options, company)
     if not item:
         return False
 
     comp_str = f" for <b>{company}</b>" if company else ""
     msg = (
-        f"❓ <b>Question Needed{comp_str}:</b>\n\n"
-        f"<i>\"{question}\"</i>\n"
+        f"❓ <b>Input Needed{comp_str}:</b>\n\n"
+        f"<i>\"{q_clean}\"</i>\n"
     )
 
-    clean_opts = [o.strip() for o in (options or []) if o and len(o.strip()) < 30][:6]
+    clean_opts = [o.strip() for o in (options or []) if o and len(o.strip()) < 35][:6]
     reply_markup = None
     if clean_opts:
         keyboard = []
         row = []
         for opt in clean_opts:
-            # callback_data max length 64 bytes
             cb_data = f"ans_{item['id']}_{opt}"[:60]
             row.append({"text": opt, "callback_data": cb_data})
             if len(row) == 2:
@@ -104,16 +178,14 @@ def ask_question_interactive(question: str, options: list = None, company: str =
         reply_markup = {"inline_keyboard": keyboard}
         msg += "\nTap an answer below, or type: <code>answer: [your answer]</code>"
     else:
-        msg += "\nType your answer: <code>answer: [your answer]</code>"
+        msg += "\nReply with: <code>answer: [your answer]</code>"
 
     return send_message(msg, reply_markup=reply_markup)
 
 
 def test_connection():
-    """Verify Telegram bot configuration."""
     token = os.getenv("TELEGRAM_BOT_TOKEN", BOT_TOKEN).strip()
     chat_id = os.getenv("TELEGRAM_CHAT_ID", CHAT_ID).strip()
-
     if not token or not chat_id:
         print("[!] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is missing in .env")
         return False

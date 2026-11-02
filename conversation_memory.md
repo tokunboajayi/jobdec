@@ -17,3 +17,4 @@
 - **Obsidian Job Tracker:** Deployed the full Obsidian Career Vault at `Desktop/Obsidian Job Tracker` with 300 generated application notes and live Dataview/Sankey charts.
 - **CDP Port Fix:** Resolved Antigravity Auto Accept mismatch by configuring `autoAcceptFree.cdpPort: 9222`.
 - **Telegram Bot:** Built and launched `@ZuskiBot` with sub-second persistent connection pooling, 3-hour automatic progress updates, interactive inline buttons, and two-way form question-answering.
+
