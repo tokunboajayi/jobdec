@@ -119,3 +119,4 @@ tags:
 
 if __name__ == "__main__":
     export_applications_to_obsidian()
+
