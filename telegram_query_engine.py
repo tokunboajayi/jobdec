@@ -1,16 +1,21 @@
 """
 Conversational Query & Rule-Answering Engine for Job Deck Telegram Bot
-Handles natural language questions about applications, queue, inbox, and adds rules to profile.json.
+Powered by Google DeepMind Gemini AI + live database search across applications, queue, and inbox.
 """
 
 import os
 import re
 import csv
 import json
+import urllib.request
 from datetime import datetime, date, timedelta
 from pathlib import Path
+from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent
+load_dotenv(ROOT / ".env")
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 PENDING_FILE = ROOT / "pending_questions.json"
 PROFILE_PATH = ROOT / "profile.json"
 NEEDS_YOU_PATH = ROOT / "agents" / "needs_you.md"
@@ -33,13 +38,11 @@ def save_pending_questions(q_list):
 
 
 def add_pending_question(label: str, options: list = None, company: str = ""):
-    """Records a question that needs the user's answer."""
     label_clean = label.strip()
     if not label_clean or len(label_clean) < 3:
         return None
 
     pending = load_pending_questions()
-    # Check if already pending (avoid duplicates)
     for item in pending:
         if item.get("question", "").lower() == label_clean.lower():
             return item
@@ -58,7 +61,6 @@ def add_pending_question(label: str, options: list = None, company: str = ""):
 
 
 def resolve_pending_question(q_id_or_latest: str, answer: str) -> dict:
-    """Saves user answer as a rule into profile.json and clears pending question."""
     pending = load_pending_questions()
     if not pending:
         return {"ok": False, "msg": "No pending questions found waiting for an answer."}
@@ -71,18 +73,12 @@ def resolve_pending_question(q_id_or_latest: str, answer: str) -> dict:
                 break
 
     if not matched_item:
-        matched_item = pending[-1]  # Most recent
+        matched_item = pending[-1]
 
     question = matched_item["question"]
     ans_clean = answer.strip()
-
-    # Create pattern from question
-    # Remove asterisk, punctuation, trailing words
     clean_q = re.sub(r"[\*#\?]", "", question).strip()
-    # Take key parts
-    escaped_q = re.escape(clean_q)
 
-    # Save to profile.json
     try:
         if PROFILE_PATH.exists():
             data = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
@@ -95,19 +91,15 @@ def resolve_pending_question(q_id_or_latest: str, answer: str) -> dict:
             "src": "telegram_user",
             "added": str(date.today())
         }
-        # If options exist and answer matches an option, add regex pattern
         if matched_item.get("options"):
             new_rule["option"] = rf"^{re.escape(ans_clean)}\b"
 
-        # Prepend rule to profile.json
         data["rules"].insert(0, new_rule)
         PROFILE_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
-        # Remove from pending list
         pending = [p for p in pending if p.get("id") != matched_item.get("id")]
         save_pending_questions(pending)
 
-        # Clear from agents/needs_you.md if present
         if NEEDS_YOU_PATH.exists():
             lines = NEEDS_YOU_PATH.read_text(encoding="utf-8").splitlines()
             new_lines = [l for l in lines if clean_q.lower() not in l.lower()]
@@ -124,7 +116,6 @@ def resolve_pending_question(q_id_or_latest: str, answer: str) -> dict:
 
 
 def search_applications(query: str):
-    """Searches applications.csv for company or role."""
     if not APPLICATIONS_PATH.exists():
         return []
     q_norm = query.strip().lower()
@@ -140,7 +131,6 @@ def search_applications(query: str):
 
 
 def get_applications_by_date(target_date_str: str):
-    """Filters applications by date (YYYY-MM-DD)."""
     if not APPLICATIONS_PATH.exists():
         return []
     matches = []
@@ -153,8 +143,44 @@ def get_applications_by_date(target_date_str: str):
     return matches
 
 
+def ask_gemini_ai(user_prompt: str) -> str:
+    """Invokes Google Gemini 3.5 Flash for conversational responses."""
+    key = os.getenv("GEMINI_API_KEY", GEMINI_API_KEY).strip()
+    if not key:
+        return ""
+
+    system_instruction = (
+        "You are Antigravity, the elite agentic AI coding assistant developed by Google DeepMind. "
+        "You are chatting directly with Michael Azuka on Telegram. "
+        "Michael is an undergraduate student at Kennesaw State University majoring in Cybersecurity with a minor in IT "
+        "(graduating Dec 2026, accepted MS Cybersecurity Spring 2027). Location: Powder Springs, GA (Atlanta metro). "
+        "He is running an automated Job Deck applying to Cybersecurity, IAM, Cloud Engineering, and IT Support roles. "
+        "Be concise, highly intelligent, friendly, and authoritative. Answer his question directly in clean Telegram HTML format."
+    )
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={key}"
+    payload = {
+        "systemInstruction": {"parts": [{"text": system_instruction}]},
+        "contents": [{"parts": [{"text": user_prompt}]}],
+        "generationConfig": {"temperature": 0.4, "maxOutputTokens": 600}
+    }
+
+    try:
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=12) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+    except Exception as e:
+        print(f"[Gemini AI Error] {e}")
+        return ""
+
+
 def answer_natural_language_query(text: str) -> str:
-    """Answers user's questions asked directly in Telegram."""
     t = text.strip()
     t_lower = t.lower()
 
@@ -182,7 +208,6 @@ def answer_natural_language_query(text: str) -> str:
                 lines.append(f"• <b>{comp}</b> | {role}\n  <i>Date: {date_str}</i>{link_html}")
             return "\n".join(lines)
         else:
-            # Check if it's in queue
             q_file = ROOT / "queue_cyber_iam.txt"
             in_queue = []
             if q_file.exists():
@@ -201,7 +226,6 @@ def answer_natural_language_query(text: str) -> str:
     if "today" in t_lower:
         rows = get_applications_by_date(today_str)
         if not rows:
-            # Check yesterday or most recent
             return f"📅 <b>No applications submitted today yet ({today_str}).</b>\nType <code>apply</code> to start the 3 headless workers!"
         lines = [f"📅 <b>Applications Submitted Today ({len(rows)} total):</b>", ""]
         for r in rows[-8:]:
@@ -226,7 +250,6 @@ def answer_natural_language_query(text: str) -> str:
             if lines:
                 out = ["📋 <b>Next 5 Roles in Priority Queue:</b>", ""]
                 for i, l in enumerate(lines, 1):
-                    # Extract company and role
                     parts = l.split("   ")
                     title = parts[0] if parts else l[:60]
                     out.append(f"{i}. {title}")
@@ -246,7 +269,7 @@ def answer_natural_language_query(text: str) -> str:
                 return "\n".join(out)
         return "📬 <b>No urgent recruiter actions or interview requests pending in your inbox right now.</b>"
 
-    # 5. Pending questions / questions that need answers
+    # 5. Pending questions
     if any(k in t_lower for k in ["pending question", "questions", "need answer", "needs you", "unanswered"]):
         pending = load_pending_questions()
         if pending:
@@ -274,14 +297,10 @@ def answer_natural_language_query(text: str) -> str:
         res = resolve_pending_question(fake_item["id"], a_val)
         return res["msg"]
 
-    # 7. Fallback: Friendly AI contextual answer
-    return (
-        f"🤖 <b>Job Deck Assistant:</b>\n\n"
-        f"I received: \"<i>{t}</i>\"\n\n"
-        f"<b>Try asking me:</b>\n"
-        f"• <i>\"Did we apply to Boeing?\"</i>\n"
-        f"• <i>\"What jobs were submitted today?\"</i>\n"
-        f"• <i>\"What's next in the queue?\"</i>\n"
-        f"• <i>\"Any interview replies in inbox?\"</i>\n"
-        f"• <i>\"Status\"</i> or <i>\"Run 3 workers\"</i>"
-    )
+    # 7. Ask Google Gemini AI (Antigravity Brain)
+    ai_resp = ask_gemini_ai(t)
+    if ai_resp:
+        return f"✨ <b>Antigravity AI:</b>\n\n{ai_resp}"
+
+    # Fallback
+    return f"⚡ <b>Received:</b> \"{t}\"\nInstruction noted for Job Deck."
