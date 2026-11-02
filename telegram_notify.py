@@ -28,7 +28,7 @@ KNOWN_FACTS_MAP = [
     (r"\baddress\b", "4020 Saint George Walk SW, Powder Springs, GA 30127", None),
 
     # Education
-    (r"\bschool|university|institution|college\b", "Kennesaw State University", r"Kennesaw|KSU"),
+    (r"\b(school|university|college|alma mater)\b(?!.*cap.exempt)", "Kennesaw State University", r"Kennesaw|KSU"),
     (r"\bdegree\b", "Bachelor of Science", r"Bachelor|B\.S|Undergraduate"),
     (r"\bdiscipline|major|field of study\b", "Cybersecurity", r"Cybersecurity|Cyber|Information Security|Computer"),
     (r"\bgpa\b|grade point", "3.35", r"3\.35|3\.0\s*-\s*3\.5|3\.0\+"),
@@ -36,6 +36,7 @@ KNOWN_FACTS_MAP = [
     (r"\bstudent.*status|class standing|academic status\b|sophomore.*junior.*senior", "Senior", r"Senior|Junior|Undergraduate"),
 
     # Work Auth & Clearance
+    (r"h-?1b", "No", r"^No\b"),
     (r"authori[sz]ed to work|legally eligible|authorized in the (united states|us)|work authorization", "Yes", r"^Yes\b"),
     (r"sponsorship|require.*visa|visa sponsorship|now or in the future require", "No", r"^No\b"),
     (r"active.*security clearance|hold.*clearance", "No", r"^No\b"),
