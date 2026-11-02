@@ -128,3 +128,6 @@ def fact_rule(label: str, rule_for_fn=None):
         if cat in lbl or re.search(rf"\b{cat}\b", lbl):
             return cat, {"a": ans, "option": pat, "src": f"fact_{cat}"}
     return None, None
+
+
+fact_category = fact_rule
