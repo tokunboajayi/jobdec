@@ -67,6 +67,11 @@ def _note(d):
     existing = ACTIONS.read_text(encoding="utf-8") if ACTIONS.exists() else "# Inbox actions (newest last)\n"
     if line not in existing:
         ACTIONS.write_text(existing.rstrip("\n") + "\n" + line + "\n", encoding="utf-8")
+        try:
+            import telegram_notify
+            telegram_notify.notify_urgent_inbox(d.get("company", ""), d.get("subject", ""), d.get("action_needed") or d.get("summary", ""))
+        except Exception:
+            pass
 
 
 def open_actions(days=14):
