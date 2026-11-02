@@ -1,7 +1,7 @@
 """
-Telegram Notification Helper for Job Deck
-Sends real-time alerts to your Telegram when applications are submitted,
-urgent inbox items are detected, or daily briefings are generated.
+Telegram Notification & Interactive Question Dispatcher for Job Deck
+Sends real-time alerts when applications are submitted, urgent inbox items arrive,
+or interactive questions require the candidate's input.
 """
 
 import os
@@ -18,7 +18,7 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 
 
-def send_message(text: str, parse_mode: str = "HTML") -> bool:
+def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool:
     """Send a message to the configured Telegram chat."""
     token = os.getenv("TELEGRAM_BOT_TOKEN", BOT_TOKEN).strip()
     chat_id = os.getenv("TELEGRAM_CHAT_ID", CHAT_ID).strip()
@@ -33,6 +33,8 @@ def send_message(text: str, parse_mode: str = "HTML") -> bool:
         "parse_mode": parse_mode,
         "disable_web_page_preview": True,
     }
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
 
     try:
         data = json.dumps(payload).encode("utf-8")
@@ -70,6 +72,41 @@ def notify_urgent_inbox(company: str, subject: str, action: str):
         f"⚡ <b>Action:</b> {action}"
     )
     return send_message(msg)
+
+
+def ask_question_interactive(question: str, options: list = None, company: str = ""):
+    """Dispatches a form question to Telegram with interactive touch buttons."""
+    import telegram_query_engine
+    item = telegram_query_engine.add_pending_question(question, options, company)
+    if not item:
+        return False
+
+    comp_str = f" for <b>{company}</b>" if company else ""
+    msg = (
+        f"❓ <b>Question Needed{comp_str}:</b>\n\n"
+        f"<i>\"{question}\"</i>\n"
+    )
+
+    clean_opts = [o.strip() for o in (options or []) if o and len(o.strip()) < 30][:6]
+    reply_markup = None
+    if clean_opts:
+        keyboard = []
+        row = []
+        for opt in clean_opts:
+            # callback_data max length 64 bytes
+            cb_data = f"ans_{item['id']}_{opt}"[:60]
+            row.append({"text": opt, "callback_data": cb_data})
+            if len(row) == 2:
+                keyboard.append(row)
+                row = []
+        if row:
+            keyboard.append(row)
+        reply_markup = {"inline_keyboard": keyboard}
+        msg += "\nTap an answer below, or type: <code>answer: [your answer]</code>"
+    else:
+        msg += "\nType your answer: <code>answer: [your answer]</code>"
+
+    return send_message(msg, reply_markup=reply_markup)
 
 
 def test_connection():

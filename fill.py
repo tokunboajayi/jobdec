@@ -1795,6 +1795,13 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
             data.append({"url": url, "when": datetime.datetime.now().isoformat(timespec="minutes"),
                          "questions": [{"label": f["label"], "options": f.get("options")} for f in unanswered + needs_you]})
             p.write_text(json.dumps(data, indent=2), encoding="utf-8")
+            try:
+                import telegram_notify
+                for q_item in (unanswered + needs_you):
+                    comp_name = url.split("/")[2] if "//" in url else "Job Portal"
+                    telegram_notify.ask_question_interactive(q_item.get("label", ""), q_item.get("options") or [], company=comp_name)
+            except Exception:
+                pass
 
 
 def log_applied(url, company, role, resume, job_url=None):
