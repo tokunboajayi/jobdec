@@ -689,13 +689,13 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif t_lower in ["status", "/status", "update", "metrics"]:
         m = get_realtime_metrics()
         await safe_reply(update.message, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
-    elif t_lower in ["run", "apply", "/apply", "start", "begin"]:
+    elif t_lower in ["run", "apply", "/apply", "start", "begin", "launch", "initiate"]:
         launch_runner(workers=3)
         m = get_realtime_metrics()
         m["is_running"] = True
         m["worker_count"] = 3
         await safe_reply(update.message, "🚀 <b>Started 3 headless workers!</b>", reply_markup=get_smart_keyboard(m))
-    elif t_lower in ["stop", "pause", "/stop"]:
+    elif t_lower in ["stop", "pause", "/stop", "halt", "exit", "quit", "terminate", "end", "close"]:
         stopped = halt_runner()
         m = get_realtime_metrics()
         m["is_running"] = False
