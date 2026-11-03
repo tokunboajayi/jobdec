@@ -53,3 +53,12 @@ resumes/
 logs/
 profile.backup_*.json
 queue_replenished.txt
+
+# Virtual environment & personal runtime state
+.venv/
+venv/
+ENV/
+telegram_history.json
+pending_questions.json
+Candidate_Resume.pdf
+*.pdf
