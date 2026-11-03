@@ -440,6 +440,16 @@ def answer_natural_language_query(text: str) -> str:
                 return "\n".join(out)
         return "📬 <b>No urgent recruiter actions or interview requests pending in your inbox right now.</b>"
 
+    # Profile / identity facts
+    if any(k in t_lower for k in ["birthday", "birth date", "birthdate", "when was i born", "how old", "what is my age", "my age"]):
+        return (
+            "🎂 <b>Candidate Profile — Age & Birthday:</b>\n\n"
+            "• <b>Date of Birth:</b> September 20, 2002 (09/20/2002)\n"
+            "• <b>Age:</b> 24 years of age\n"
+            "• <b>Legal Status:</b> Over 18 years of age (Adult)\n\n"
+            "<i>Registered across profile.json invariants and active on all application workers.</i>"
+        )
+
     # 5. Pending questions
     if any(k in t_lower for k in ["pending question", "questions", "need answer", "needs you", "unanswered"]):
         pending = load_pending_questions()

@@ -2,6 +2,7 @@
 
 ## 1. Candidate Identity & Background
 - **Name:** Michael Azuka
+- **Date of Birth:** September 20, 2002 (09/20/2002) — Age: 24 (Over 18 years of age)
 - **University:** Kennesaw State University (KSU)
 - **Education:** B.S. in Cybersecurity, Minor in Information Technology (Grad: Dec 2026; accepted MS in Cybersecurity Spring 2027)
 - **Address:** 4020 Saint George Walk SW, Powder Springs, GA 30127 (Cobb County / Atlanta Metro)
