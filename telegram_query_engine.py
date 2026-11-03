@@ -326,7 +326,14 @@ def answer_natural_language_query(text: str) -> str:
             return "\n".join(out)
         return "✅ <b>All caught up!</b> There are no pending questions waiting for your answer."
 
-    # 6. User answering a question via "answer: ..." or "set rule: ..."
+    # 6. User answering a question (direct match or 'answer: ...')
+    pending = load_pending_questions()
+    if len(pending) == 1:
+        opts_lower = [o.lower() for o in pending[0].get("options", [])]
+        if t_lower in ["yes", "no", "i agree", "agree", "decline"] or (opts_lower and t_lower in opts_lower):
+            res = resolve_pending_question(pending[0]["id"], t)
+            return res["msg"]
+
     m_answer = re.search(r"^(?:answer|ans)\s*:\s*(.+)$", t, re.I)
     if m_answer:
         ans_val = m_answer.group(1).strip()
