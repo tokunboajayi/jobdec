@@ -19,6 +19,7 @@ import json
 import os
 import pathlib
 import random
+import re
 import subprocess
 import sys
 import threading
