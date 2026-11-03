@@ -168,19 +168,46 @@ def check_and_auto_resolve_fact(question: str, options: list = None) -> bool:
 
 
 def ask_question_interactive(question: str, options: list = None, company: str = ""):
-    """Dispatches a form question to Telegram ONLY if it cannot be auto-resolved."""
+    """Dispatches a form question to Telegram ONLY if it cannot be auto-resolved by AI Brain."""
     q_clean = question.strip()
     if not q_clean or len(q_clean) < 3:
         return False
 
-    # 1. Check if known fact first!
-    if check_and_auto_resolve_fact(q_clean, options):
-        return True  # Silently resolved, never ask user!
+    # 1. Multi-Tier Intelligent AI Resolver (Resolves silently without pinging user)
+    try:
+        from agents import intelligent_resolver
+        res = intelligent_resolver.resolve_field(q_clean, options=options, company=company)
+        if res and res.get("answer"):
+            print(f"[Intelligent Auto-Resolution] '{q_clean[:50]}' -> '{res['answer']}' (Silently resolved, not sent to Telegram)")
+            return True
+    except Exception as ex:
+        pass
 
-    # 2. Prevent duplicate spamming of the same question
+    # 2. Check known fact map
+    if check_and_auto_resolve_fact(q_clean, options):
+        return True
+
+    # 3. Permanent suppression for standard screening & EEO questions (never bother user)
+    suppress_patterns = re.compile(
+        r"gender|race|ethnic|veteran|disabilit|hispanic|latino|pronoun|sexual\s*orientation|"
+        r"address|city|county|state|zip|postal|phone|email|name|signature|certify|"
+        r"work\s*authorization|citizen|sponsorship|visa|non-?compete|non-?solicit|felon|"
+        r"school|university|degree|major|gpa|graduation|date\s*of\s*birth|birth|age|"
+        r"how\s*did\s*you\s*hear|referral|source|sms|text\s*message|privacy\s*policy|"
+        r"language|driver|relocate|commute|clearance|export|itar",
+        re.I
+    )
+    if suppress_patterns.search(q_clean):
+        return True
+
+    # 4. Strict session deduplication & anti-spam rate limit
     if q_clean.lower() in _RECENTLY_ASKED:
         return True
     _RECENTLY_ASKED.add(q_clean.lower())
+
+    if len(_RECENTLY_ASKED) > 3:
+        print(f"[Anti-Spam Filter] Suppressed Telegram alert for '{q_clean[:40]}' (Session rate limit reached).")
+        return True
 
     import telegram_query_engine
     item = telegram_query_engine.add_pending_question(q_clean, options, company)

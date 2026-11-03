@@ -843,6 +843,23 @@ def _resolve_rule(c, st, sec_code_fields):
             return None
 
     if rule is None:
+        try:
+            from agents import intelligent_resolver
+            resolved = intelligent_resolver.resolve_field(
+                label, field_type=f.get("type", "text"), options=f.get("options"), company=company, role=role
+            )
+            if resolved and resolved.get("answer"):
+                rule = {
+                    "q": re.escape(label),
+                    "a": resolved["answer"],
+                    "option": resolved.get("option"),
+                    "src": resolved.get("src", "intelligent_resolver"),
+                    "ai_gen": True
+                }
+        except Exception:
+            pass
+
+    if rule is None:
             # Guess answer for unmapped fields
             ai_ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role)
             if ai_ans:
@@ -1797,9 +1814,13 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
             p.write_text(json.dumps(data, indent=2), encoding="utf-8")
             try:
                 import telegram_notify
+                from agents import intelligent_resolver
                 for q_item in (unanswered + needs_you):
-                    comp_name = url.split("/")[2] if "//" in url else "Job Portal"
-                    telegram_notify.ask_question_interactive(q_item.get("label", ""), q_item.get("options") or [], company=comp_name)
+                    lab = q_item.get("label", "")
+                    auto_res = intelligent_resolver.resolve_field(lab, options=q_item.get("options"))
+                    if not auto_res:
+                        comp_name = url.split("/")[2] if "//" in url else "Job Portal"
+                        telegram_notify.ask_question_interactive(lab, q_item.get("options") or [], company=comp_name)
             except Exception:
                 pass
 
