@@ -337,7 +337,7 @@ def replenish_queue_action():
     import agents.job_sources as js
     import re
     
-    jobs = js.fetch_github_sources()
+    jobs = js.fetch(max_age_days=180)
     
     csv_path = ROOT / "applications.csv"
     applied_urls = set()
@@ -579,23 +579,23 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Quick command shortcuts
     if t_lower in ["status", "/status", "update"]:
         m = get_realtime_metrics()
-        await update.message.reply_text(format_status_message(metrics=m), reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_reply(update.message, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
     elif t_lower in ["run", "apply", "/apply", "start"]:
         launch_runner(workers=3)
         m = get_realtime_metrics()
         m["is_running"] = True
         m["worker_count"] = 3
-        await update.message.reply_text("🚀 <b>Started 3 headless workers!</b>", reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_reply(update.message, "🚀 <b>Started 3 headless workers!</b>", reply_markup=get_smart_keyboard(m))
     elif t_lower in ["stop", "pause", "/stop"]:
         stopped = halt_runner()
         m = get_realtime_metrics()
         m["is_running"] = False
         m["worker_count"] = 0
-        await update.message.reply_text(f"🛑 <b>Runner paused ({stopped} stopped).</b>", reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_reply(update.message, f"🛑 <b>Runner paused ({stopped} stopped).</b>", reply_markup=get_smart_keyboard(m))
     elif t_lower.startswith("target:"):
         target_query = text.split(":", 1)[1].strip()
         launch_runner(workers=1, queue="queue_cyber_iam.txt")
-        await update.message.reply_text(f"🎯 <b>Targeting '{target_query}'!</b> Worker launched in priority mode.", parse_mode=ParseMode.HTML)
+        await safe_reply(update.message, f"🎯 <b>Targeting '{target_query}'!</b> Worker launched in priority mode.")
     else:
         # Route through natural language query & rule answering engine
         answer = telegram_query_engine.answer_natural_language_query(text)
