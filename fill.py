@@ -254,8 +254,12 @@ def rule_for(label):
             # 'Date' -> today's date used to answer "visa type and expiration date"
             if lab_core != lit.lower().strip(" *:?"):
                 continue
-        elif not re.search(q, lab, re.I):
-            continue
+        else:
+            try:
+                if not re.search(q, lab, re.I):
+                    continue
+            except Exception:
+                continue
         if True:
             a = r.get("a")
             if a in ("TODAY",) or (re.fullmatch(r"\d{2}/\d{2}/20\d\d", str(a or "")) and lit.lower().strip(" *:?") in ("date", "today's date", "todays date")):
