@@ -51,7 +51,20 @@ KNOWN_FACTS_MAP = [
     (r"\bdisabilit", "No, I do not have a disability", r"No, I do not have a disability|do not have a disability|^No\b"),
     (r"\bhispanic|latino\b", "No", r"^No\b"),
     (r"\btransgender\b", "No", r"^No\b"),
-    (r"\bpronoun\b", "He/Him", r"He/Him|he/him"),
+    (r"\bpronouns?\b", "He/Him", r"He/Him|he/him|^He\b"),
+    (r"sexual orientation", "Heterosexual", r"Heterosexual|Straight|Decline|Prefer not"),
+    (r"\bprefix\b|\btitle\b", "Mr.", r"Mr\.|Mr"),
+    (r"privacy policy|consent to.*process|candidate privacy", "I agree", r"agree|consent|accept"),
+
+    # Experience, Skills & Agreements
+    (r"production.*level code|production.*code", "Yes", r"^Yes\b"),
+    (r"applied cryptography|cryptographic|security capabilities|security boundaries", "Yes", r"^Yes\b"),
+    (r"active on the platform|years.*active", "3", r"3|1-3|2-4"),
+    (r"how did you (first )?(hear|learn) about", "Job Board - LinkedIn", r"LinkedIn|Job Board"),
+    (r"military experience|veteran status mapping", "No", r"^No\b|Decline"),
+    (r"start date month", "May", r"May|June"),
+    (r"end date month", "August", r"August|July"),
+    (r"\bregion\b", "Georgia", r"Georgia|^GA\b"),
 
     # Personal Identifiers & Agreements
     (r"first name", "Michael", None),
@@ -63,9 +76,9 @@ KNOWN_FACTS_MAP = [
     (r"github", "https://github.com/1Zuski", None),
     (r"certify|electronic signature|type your name|signature", "Michael Azuka", None),
     (r"sms|text message|consent to receive", "Yes", r"^Yes\b|Consent"),
-    (r"previously applied|worked for us before|employed by.*before", "No", r"^No\b"),
+    (r"previously applied|worked (for|with) us before|employed by.*before", "No", r"^No\b"),
     (r"relative.*work|family.*work|conflict of interest", "No", r"^No\b"),
-    (r"non-?compete|non-?solicit", "No", r"^No\b"),
+    (r"non-?compet|non-?solicit", "No", r"^No\b"),
     (r"intellectual property", "No", r"^No\b"),
     (r"military officer in grades o-?7|covered dod official", "No", r"^No\b"),
 ]
