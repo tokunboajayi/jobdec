@@ -87,7 +87,7 @@ KNOWN_FACTS_MAP = [
 _RECENTLY_ASKED = set()
 
 
-def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool:
+def send_message(text: str, reply_markup=None, parse_mode: str = "HTML"):
     token = os.getenv("TELEGRAM_BOT_TOKEN", BOT_TOKEN).strip()
     chat_id = os.getenv("TELEGRAM_CHAT_ID", CHAT_ID).strip()
     if not token or not chat_id:
@@ -107,7 +107,12 @@ def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req, timeout=10) as resp:
-            return resp.status == 200
+            resp_body = resp.read().decode("utf-8")
+            res_data = json.loads(resp_body)
+            if res_data.get("ok"):
+                msg_id = res_data.get("result", {}).get("message_id")
+                return msg_id if msg_id is not None else True
+            return False
     except urllib.error.HTTPError as he:
         # If HTML entity parsing failed (HTTP 400), fall back to clean plain text
         if he.code == 400 and parse_mode:
@@ -119,7 +124,12 @@ def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool
                 data = json.dumps(payload).encode("utf-8")
                 req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
                 with urllib.request.urlopen(req, timeout=10) as resp:
-                    return resp.status == 200
+                    resp_body = resp.read().decode("utf-8")
+                    res_data = json.loads(resp_body)
+                    if res_data.get("ok"):
+                        msg_id = res_data.get("result", {}).get("message_id")
+                        return msg_id if msg_id is not None else True
+                    return False
             except Exception as ex2:
                 print(f"[Telegram Notify Plaintext Retry Error] {ex2}")
                 return False
@@ -127,6 +137,26 @@ def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool
         return False
     except Exception as e:
         print(f"[Telegram Notify Error] {e}")
+        return False
+
+
+def delete_message(message_id: int, chat_id: str = None) -> bool:
+    """Silently deletes a message by ID from the Telegram chat."""
+    token = os.getenv("TELEGRAM_BOT_TOKEN", BOT_TOKEN).strip()
+    c_id = chat_id or os.getenv("TELEGRAM_CHAT_ID", CHAT_ID).strip()
+    if not token or not c_id or not message_id:
+        return False
+
+    url = f"https://api.telegram.org/bot{token}/deleteMessage"
+    payload = {"chat_id": c_id, "message_id": int(message_id)}
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            res_data = json.loads(resp.read().decode("utf-8"))
+            return res_data.get("ok", False)
+    except Exception:
+        # Silently ignore if message already deleted or older than 48h
         return False
 
 
@@ -238,7 +268,40 @@ def ask_question_interactive(question: str, options: list = None, company: str =
     else:
         msg += "\nReply with: <code>answer: [your answer]</code>"
 
-    return send_message(msg, reply_markup=reply_markup)
+    msg += "\n\n⏱️ <i>Auto-expires and disappears in 5 minutes</i>"
+
+    msg_id = send_message(msg, reply_markup=reply_markup)
+    if msg_id and isinstance(msg_id, int):
+        telegram_query_engine.record_question_message(
+            q_id=item["id"],
+            question=q_clean,
+            message_id=msg_id,
+            company=company,
+            chat_id=os.getenv("TELEGRAM_CHAT_ID", CHAT_ID),
+            ttl_seconds=300
+        )
+    return bool(msg_id)
+
+
+def cleanup_expired_questions(force_all: bool = False) -> int:
+    """Deletes expired (or all if force_all=True) question messages from Telegram."""
+    import telegram_query_engine
+    if force_all:
+        msg_ids = telegram_query_engine.clear_all_pending_questions()
+        deleted = 0
+        for mid in msg_ids:
+            if delete_message(mid):
+                deleted += 1
+        return deleted
+
+    expired = telegram_query_engine.get_expired_question_messages()
+    deleted = 0
+    for item in expired:
+        mid = item.get("message_id")
+        if mid and delete_message(mid, item.get("chat_id")):
+            deleted += 1
+            telegram_query_engine.mark_question_deleted_or_resolved(message_id=mid)
+    return deleted
 
 
 def test_connection():

@@ -18,6 +18,7 @@ load_dotenv(ROOT / ".env")
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 PENDING_FILE = ROOT / "pending_questions.json"
+QUESTION_TRACKER_FILE = ROOT / "question_messages.json"
 HISTORY_FILE = ROOT / "telegram_history.json"
 MEMORY_FILE = ROOT / "conversation_memory.md"
 PROFILE_PATH = ROOT / "profile.json"
@@ -48,6 +49,82 @@ def load_session_memory():
         except Exception:
             pass
     return ""
+
+
+def load_question_messages():
+    if QUESTION_TRACKER_FILE.exists():
+        try:
+            return json.loads(QUESTION_TRACKER_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+
+def save_question_messages(msgs):
+    QUESTION_TRACKER_FILE.write_text(json.dumps(msgs, indent=2), encoding="utf-8")
+
+
+def record_question_message(q_id: str, question: str, message_id: int, company: str = "", chat_id: str = None, ttl_seconds: int = 300):
+    """Registers an active Telegram 'Input Needed' question message with auto-expiration TTL."""
+    if not message_id:
+        return
+    now_ts = datetime.now().timestamp()
+    exp_ts = now_ts + ttl_seconds
+
+    # Update pending_questions.json
+    pending = load_pending_questions()
+    for p in pending:
+        if p.get("id") == q_id or p.get("question", "").lower() == question.lower():
+            p["message_id"] = int(message_id)
+            p["expires_at"] = exp_ts
+    save_pending_questions(pending)
+
+    # Track in question_messages.json
+    msgs = load_question_messages()
+    msgs.append({
+        "q_id": q_id,
+        "question": question,
+        "company": company or "Job Portal",
+        "message_id": int(message_id),
+        "chat_id": str(chat_id or os.getenv("TELEGRAM_CHAT_ID", "")),
+        "sent_at": now_ts,
+        "expires_at": exp_ts,
+        "status": "active"
+    })
+    save_question_messages(msgs)
+
+
+def get_active_question_messages():
+    msgs = load_question_messages()
+    return [m for m in msgs if m.get("status") == "active"]
+
+
+def get_expired_question_messages():
+    msgs = load_question_messages()
+    now_ts = datetime.now().timestamp()
+    return [m for m in msgs if m.get("status") == "active" and now_ts >= m.get("expires_at", 0)]
+
+
+def mark_question_deleted_or_resolved(message_id: int = None, q_id: str = None):
+    msgs = load_question_messages()
+    updated = False
+    for m in msgs:
+        if (message_id and m.get("message_id") == int(message_id)) or (q_id and m.get("q_id") == q_id):
+            m["status"] = "deleted"
+            updated = True
+    if updated:
+        save_question_messages(msgs)
+
+
+def clear_all_pending_questions():
+    """Wipes all pending questions and returns list of active message IDs for immediate chat deletion."""
+    msgs = load_question_messages()
+    active_msg_ids = [m.get("message_id") for m in msgs if m.get("status") == "active" and m.get("message_id")]
+    for m in msgs:
+        m["status"] = "deleted"
+    save_question_messages(msgs)
+    save_pending_questions([])
+    return active_msg_ids
 
 
 def load_pending_questions():
@@ -126,6 +203,10 @@ def resolve_pending_question(q_id_or_latest: str, answer: str) -> dict:
         pending = [p for p in pending if p.get("id") != matched_item.get("id")]
         save_pending_questions(pending)
 
+        msg_id = matched_item.get("message_id")
+        if msg_id:
+            mark_question_deleted_or_resolved(message_id=msg_id, q_id=matched_item.get("id"))
+
         if NEEDS_YOU_PATH.exists():
             lines = NEEDS_YOU_PATH.read_text(encoding="utf-8").splitlines()
             new_lines = [l for l in lines if clean_q.lower() not in l.lower()]
@@ -135,6 +216,7 @@ def resolve_pending_question(q_id_or_latest: str, answer: str) -> dict:
             "ok": True,
             "question": clean_q,
             "answer": ans_clean,
+            "message_id": msg_id,
             "msg": f"✅ Rule saved to <code>profile.json</code>!\n\n<b>Field:</b> {clean_q}\n<b>Your Answer:</b> {ans_clean}\n\nFuture jobs asking this will be answered automatically."
         }
     except Exception as e:

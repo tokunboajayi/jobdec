@@ -205,23 +205,24 @@ def get_smart_keyboard(metrics=None):
     if len(pending_q) > 0:
         row3 = [
             InlineKeyboardButton(f"⚠️ Answer Questions ({len(pending_q)})", callback_data="btn_questions"),
-            InlineKeyboardButton("📈 Stats Breakdown", callback_data="btn_stats"),
+            InlineKeyboardButton("🧹 Clean Questions", callback_data="btn_clean_questions"),
         ]
     elif len(inbox) > 0:
         row3 = [
             InlineKeyboardButton(f"📬 Recruiter Action ({len(inbox)})", callback_data="btn_alerts"),
-            InlineKeyboardButton("📈 Stats Breakdown", callback_data="btn_stats"),
+            InlineKeyboardButton("🧹 Clean Chat", callback_data="btn_clean_questions"),
         ]
     else:
         row3 = [
             InlineKeyboardButton("🎯 Replenish Queue", callback_data="btn_replenish"),
-            InlineKeyboardButton("📈 Stats Breakdown", callback_data="btn_stats"),
+            InlineKeyboardButton("🧹 Clean Chat", callback_data="btn_clean_questions"),
         ]
     keyboard.append(row3)
 
-    # Row 4: Targeted Operations
+    # Row 4: Targeted Operations & Analytics
     row4 = [
         InlineKeyboardButton("✈️ Targeted Priority Run", callback_data="btn_target"),
+        InlineKeyboardButton("📈 Stats Breakdown", callback_data="btn_stats"),
     ]
     keyboard.append(row4)
 
@@ -430,6 +431,83 @@ async def safe_edit(query, text: str, reply_markup=None):
             disable_web_page_preview=True
         )
 
+
+async def safe_delete_message(bot, chat_id: int, message_id: int) -> bool:
+    """Silently deletes a message by ID without throwing exceptions."""
+    try:
+        await bot.delete_message(chat_id=chat_id, message_id=message_id)
+        return True
+    except Exception:
+        return False
+
+
+async def _delayed_delete_job(context: ContextTypes.DEFAULT_TYPE):
+    """JobQueue callback to delete a message after a countdown."""
+    data = context.job.data or {}
+    chat_id = data.get("chat_id")
+    message_id = data.get("message_id")
+    if chat_id and message_id:
+        await safe_delete_message(context.bot, chat_id, message_id)
+
+
+async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id: int, trigger_msg_id: int = None):
+    """Deletes all active question messages and wipes pending questions."""
+    msg_ids = telegram_query_engine.clear_all_pending_questions()
+    deleted = 0
+    for mid in msg_ids:
+        if await safe_delete_message(context.bot, chat_id, mid):
+            deleted += 1
+
+    # In private chat, also scan backwards up to 35 messages from trigger to catch any untracked question prompts
+    if trigger_msg_id:
+        for past_id in range(trigger_msg_id - 1, max(1, trigger_msg_id - 35), -1):
+            if past_id not in msg_ids:
+                if await safe_delete_message(context.bot, chat_id, past_id):
+                    deleted += 1
+
+    # Send auto-vanishing confirmation
+    confirm = await context.bot.send_message(
+        chat_id=chat_id,
+        text=f"🧹 <b>Smart Chat Cleanup Complete!</b>\nCleaned <b>{deleted}</b> question prompt(s) and reset pending questions to 0.\n\n<i>Auto-deleting confirmation in 4s...</i>",
+        parse_mode=ParseMode.HTML
+    )
+    if context.job_queue:
+        context.job_queue.run_once(
+            _delayed_delete_job,
+            when=4.0,
+            data={"chat_id": chat_id, "message_id": confirm.message_id}
+        )
+
+
+async def sweep_expired_questions_job(context: ContextTypes.DEFAULT_TYPE):
+    """Background task: periodically deletes expired 'Input Needed' questions and trims stale questions."""
+    try:
+        expired = telegram_query_engine.get_expired_question_messages()
+        for item in expired:
+            mid = item.get("message_id")
+            cid = item.get("chat_id") or AUTHORIZED_USER_ID
+            if mid:
+                await safe_delete_message(context.bot, int(cid), int(mid))
+                telegram_query_engine.mark_question_deleted_or_resolved(message_id=mid)
+
+        # Clear any stale pending questions older than 10 mins from pending_questions.json
+        pending = telegram_query_engine.load_pending_questions()
+        if pending:
+            now_ts = datetime.now().timestamp()
+            valid = []
+            for p in pending:
+                asked_ts = 0
+                try:
+                    asked_ts = datetime.fromisoformat(p.get("asked_at", "")).timestamp()
+                except Exception:
+                    pass
+                if now_ts - asked_ts < 600:
+                    valid.append(p)
+            if len(valid) != len(pending):
+                telegram_query_engine.save_pending_questions(valid)
+    except Exception as e:
+        print(f"[Smart Cleaner Sweeper Error] {e}", flush=True)
+
 # ---- Handlers ----
 
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -468,8 +546,36 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             q_id = f"{parts[0]}_{parts[1]}"
             selected_answer = parts[2]
             res = telegram_query_engine.resolve_pending_question(q_id, selected_answer)
-            await safe_edit(query, res["msg"])
+            telegram_query_engine.mark_question_deleted_or_resolved(message_id=query.message.message_id, q_id=q_id)
+
+            clean_q = res.get("question", "Field")
+            confirm_text = (
+                f"✅ <b>Answer Recorded:</b> <code>{selected_answer}</code>\n"
+                f"<b>Field:</b> {clean_q}\n\n"
+                f"<i>🧹 Smart auto-delete: removing message in 4s to keep chat clean...</i>"
+            )
+            await safe_edit(query, confirm_text)
+
+            # Auto-delete message in 4 seconds
+            if context.job_queue:
+                context.job_queue.run_once(
+                    _delayed_delete_job,
+                    when=4.0,
+                    data={"chat_id": query.message.chat_id, "message_id": query.message.message_id}
+                )
+            else:
+                import asyncio
+                async def _del():
+                    await asyncio.sleep(4)
+                    await safe_delete_message(context.bot, query.message.chat_id, query.message.message_id)
+                asyncio.create_task(_del())
             return
+
+    elif data == "btn_clean_questions":
+        await clean_all_questions_action(context, query.message.chat_id, trigger_msg_id=query.message.message_id)
+        m = get_realtime_metrics()
+        await safe_edit(query, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
+        return
 
     # 2. Control panel buttons
     if data == "btn_status":
@@ -577,10 +683,13 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     t_lower = text.strip().lower()
 
     # Quick command shortcuts
-    if t_lower in ["status", "/status", "update"]:
+    if t_lower in ["clean", "/clean", "clear", "/clear", "clearchat", "/clearchat", "clean chat", "clear questions"]:
+        await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
+        return
+    elif t_lower in ["status", "/status", "update", "metrics"]:
         m = get_realtime_metrics()
         await safe_reply(update.message, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
-    elif t_lower in ["run", "apply", "/apply", "start"]:
+    elif t_lower in ["run", "apply", "/apply", "start", "begin"]:
         launch_runner(workers=3)
         m = get_realtime_metrics()
         m["is_running"] = True
@@ -596,11 +705,37 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         target_query = text.split(":", 1)[1].strip()
         launch_runner(workers=1, queue="queue_cyber_iam.txt")
         await safe_reply(update.message, f"🎯 <b>Targeting '{target_query}'!</b> Worker launched in priority mode.")
+    elif t_lower.startswith("answer:") or t_lower.startswith("ans:") or t_lower in ["yes", "no", "i agree"]:
+        ans_val = text.split(":", 1)[1].strip() if ":" in text else text.strip()
+        res = telegram_query_engine.resolve_pending_question("latest", ans_val)
+        if res.get("ok"):
+            q_msg_id = res.get("message_id")
+            if q_msg_id:
+                await safe_delete_message(context.bot, update.effective_chat.id, q_msg_id)
+
+            clean_q = res.get("question", "Field")
+            reply_msg = await safe_reply(
+                update.message,
+                f"✅ <b>Rule Saved:</b> <code>{res['answer']}</code>\n<b>Field:</b> {clean_q}\n\n<i>🧹 Deleting confirmation in 4s to keep chat clean...</i>"
+            )
+            if context.job_queue:
+                context.job_queue.run_once(_delayed_delete_job, when=4.0, data={"chat_id": update.effective_chat.id, "message_id": reply_msg.message_id})
+                context.job_queue.run_once(_delayed_delete_job, when=4.0, data={"chat_id": update.effective_chat.id, "message_id": update.message.message_id})
+            return
+        else:
+            await safe_reply(update.message, res.get("msg", "No pending question found."))
+            return
     else:
         # Route through natural language query & rule answering engine
         answer = telegram_query_engine.answer_natural_language_query(text)
         m = get_realtime_metrics()
         await safe_reply(update.message, answer, reply_markup=get_smart_keyboard(m))
+
+
+async def cmd_clean(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_user.id != AUTHORIZED_USER_ID:
+        return
+    await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
 
 
 async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):
@@ -628,12 +763,14 @@ def main():
 
     app.add_handler(CommandHandler(["start", "help"], cmd_start))
     app.add_handler(CommandHandler(["status", "update"], cmd_status))
+    app.add_handler(CommandHandler(["clean", "clear", "clearchat"], cmd_clean))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 
     if app.job_queue:
         app.job_queue.run_repeating(send_3hour_update, interval=3 * 3600, first=3 * 3600)
-        print("[Job Deck Control Bot] 3-hour JobQueue scheduled.", flush=True)
+        app.job_queue.run_repeating(sweep_expired_questions_job, interval=30, first=10)
+        print("[Job Deck Control Bot] 3-hour JobQueue and 30s Smart Deletion Sweeper scheduled.", flush=True)
 
     print("[Job Deck Control Bot] Two-way polling active. Ready!", flush=True)
     app.run_polling(drop_pending_updates=True)
