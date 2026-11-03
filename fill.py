@@ -1806,12 +1806,15 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
 
 def log_applied(url, company, role, resume, job_url=None):
     target_url = job_url or url
-    path = ROOT / "applications.csv"
-    try:
-        with FileLock(path):
-            _upsert_applied_row(path, target_url, company, role, resume)
-    except Exception as e:  # the submission already happened: never lose the results.csv row below
-        print(f"[Log Applied Error] {e}")
+    targets = [HERE / "applications.csv"]
+    if ROOT != HERE and (ROOT / "applications.csv").exists():
+        targets.append(ROOT / "applications.csv")
+    for p in targets:
+        try:
+            with FileLock(p):
+                _upsert_applied_row(p, target_url, company, role, resume)
+        except Exception as e:
+            print(f"[Log Applied Error on {p.name}] {e}")
     if RE:
         try:
             RE.ledger_add(company or "Unknown", role or "Unknown", target_url, "submitted")

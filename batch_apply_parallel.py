@@ -36,7 +36,7 @@ if sys.platform == "win32":
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
-CSV_FILE = ROOT / "applications.csv"
+CSV_FILE = HERE / "applications.csv" if (HERE / "applications.csv").exists() else ROOT / "applications.csv"
 
 import results_engine as RE
 
