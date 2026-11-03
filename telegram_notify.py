@@ -108,6 +108,23 @@ def send_message(text: str, reply_markup=None, parse_mode: str = "HTML") -> bool
         req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
         with urllib.request.urlopen(req, timeout=10) as resp:
             return resp.status == 200
+    except urllib.error.HTTPError as he:
+        # If HTML entity parsing failed (HTTP 400), fall back to clean plain text
+        if he.code == 400 and parse_mode:
+            try:
+                clean_text = re.sub(r"<[^>]+>", "", text)
+                clean_text = clean_text.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+                payload["text"] = clean_text
+                payload.pop("parse_mode", None)
+                data = json.dumps(payload).encode("utf-8")
+                req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"}, method="POST")
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    return resp.status == 200
+            except Exception as ex2:
+                print(f"[Telegram Notify Plaintext Retry Error] {ex2}")
+                return False
+        print(f"[Telegram Notify Error] {he}")
+        return False
     except Exception as e:
         print(f"[Telegram Notify Error] {e}")
         return False

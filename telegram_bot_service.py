@@ -356,13 +356,17 @@ def replenish_queue_action():
         r"security|cyber|iam|identity|cloud|soc|infosec|network|systems|support|infrastructure|devops|threat|vulnerability|incident",
         re.I
     )
+    swe_exclude = re.compile(
+        r"\b(software\s+(engineer|developer|dev)|full\s*stack|backend|frontend|mobile\s+dev|ios\s+dev|android\s+dev|ml\s+engineer|machine\s+learning|algorithm|compiler|firmware|embedded\s+software|c\+\+\s+dev|java\s+dev|python\s+dev|react\s+dev|programmer|sde\b|swe\b)\b",
+        re.I
+    )
 
     matches = []
     for j in jobs:
         title = (j.get("role") or j.get("title") or "").encode("ascii", "ignore").decode("ascii").strip()
         url = (j.get("url") or "").strip().rstrip("/")
         company = (j.get("company") or "").encode("ascii", "ignore").decode("ascii").strip()
-        if keywords.search(title) and url and url not in applied_urls and url not in existing_urls:
+        if keywords.search(title) and not swe_exclude.search(title) and url and url not in applied_urls and url not in existing_urls:
             matches.append((company, title, url))
 
     # Sort priority: Greenhouse > Ashby > Workday > Lever > Other
@@ -383,6 +387,48 @@ def replenish_queue_action():
 
     return len(matches)
 
+
+
+async def safe_reply(target, text: str, reply_markup=None):
+    """Safely replies to a message or query, falling back to plain text if HTML parsing fails."""
+    try:
+        return await target.reply_text(
+            text,
+            reply_markup=reply_markup,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+    except Exception as e:
+        print(f"[SafeReply Fallback] HTML entity parse error ({e}), sending plain text...")
+        clean = re.sub(r"<[^>]+>", "", text)
+        clean = clean.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+        return await target.reply_text(
+            clean,
+            reply_markup=reply_markup,
+            parse_mode=None,
+            disable_web_page_preview=True
+        )
+
+
+async def safe_edit(query, text: str, reply_markup=None):
+    """Safely edits callback query message, falling back to plain text if HTML parsing fails."""
+    try:
+        return await query.message.edit_text(
+            text,
+            reply_markup=reply_markup,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+    except Exception as e:
+        print(f"[SafeEdit Fallback] HTML parse error ({e}), sending plain text...")
+        clean = re.sub(r"<[^>]+>", "", text)
+        clean = clean.replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&")
+        return await query.message.edit_text(
+            clean,
+            reply_markup=reply_markup,
+            parse_mode=None,
+            disable_web_page_preview=True
+        )
 
 # ---- Handlers ----
 
@@ -422,13 +468,13 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             q_id = f"{parts[0]}_{parts[1]}"
             selected_answer = parts[2]
             res = telegram_query_engine.resolve_pending_question(q_id, selected_answer)
-            await query.message.edit_text(res["msg"], parse_mode=ParseMode.HTML)
+            await safe_edit(query, res["msg"])
             return
 
     # 2. Control panel buttons
     if data == "btn_status":
         m = get_realtime_metrics()
-        await query.message.edit_text(format_status_message(metrics=m), reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_edit(query, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
 
     elif data == "btn_run":
         launch_runner(workers=3)
@@ -502,7 +548,7 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
 
     elif data == "btn_questions":
         ans = telegram_query_engine.answer_natural_language_query("pending questions")
-        await query.message.reply_text(ans, parse_mode=ParseMode.HTML)
+        await safe_reply(query.message, ans)
 
     elif data == "btn_alerts":
         m = get_realtime_metrics()
@@ -511,7 +557,7 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             await query.message.reply_text("✅ <b>No urgent recruiter actions pending!</b>", parse_mode=ParseMode.HTML)
         else:
             msg = "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(inbox[:10])
-            await query.message.reply_text(msg, parse_mode=ParseMode.HTML)
+            await safe_reply(query.message, msg)
 
     elif data == "btn_target":
         await query.message.reply_text(
@@ -554,7 +600,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Route through natural language query & rule answering engine
         answer = telegram_query_engine.answer_natural_language_query(text)
         m = get_realtime_metrics()
-        await update.message.reply_text(answer, reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_reply(update.message, answer, reply_markup=get_smart_keyboard(m))
 
 
 async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):

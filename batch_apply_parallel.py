@@ -455,6 +455,12 @@ def main():
                 except Exception as e:
                     print(f"[{w_prefix}] Pre-submit guard failed, continuing: {e}")
 
+                # Strict Exclusion: Software Engineering & Heavy Coding
+                role_str = (job.get("role") or "").lower()
+                if re.search(r"\b(software\s+(engineer|developer|dev)|full\s*stack|backend|frontend|mobile\s+dev|ios\s+dev|android\s+dev|ml\s+engineer|machine\s+learning\s+engineer|algorithm\s+engineer|compiler|sde\b|swe\b)\b", role_str):
+                    print(f"[{w_prefix}] [Exclusion Guard] Skipping SWE/coding role: {job['role']}")
+                    continue
+
                 cmd = [
                     sys.executable, "-u", str(HERE / "fill.py"), job["url"],
                     "--worker-id", str(worker_id),

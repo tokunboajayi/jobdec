@@ -169,6 +169,32 @@ def get_applications_by_date(target_date_str: str):
     return matches
 
 
+def sanitize_for_telegram(text: str) -> str:
+    """Sanitizes text for safe Telegram HTML parsing, escaping rogue tags and stripping action blocks."""
+    if not text:
+        return ""
+    # Strip any action blocks (complete or incomplete)
+    text = re.sub(r"<<+ACTION.*?>>+", "", text, flags=re.DOTALL)
+    text = re.sub(r"<<+ACTION.*$", "", text, flags=re.DOTALL)
+    text = text.replace("<<<", "").replace(">>>", "")
+
+    # Normalize common markdown formatting into valid Telegram HTML
+    text = re.sub(r"\*\*([^*]+?)\*\*", r"<b>\1</b>", text)
+    text = re.sub(r"`([^`\n]+?)`", r"<code>\1</code>", text)
+
+    # Allowed Telegram HTML tags: b, strong, i, em, u, ins, s, strike, del, a, code, pre, blockquote
+    allowed_pattern = re.compile(r"^</?(?:b|strong|i|em|u|ins|s|strike|del|code|pre|blockquote|a(?:\s+href=\"[^\"]*\")?)>$", re.I)
+
+    def clean_tag(m):
+        full = m.group(0)
+        if allowed_pattern.match(full):
+            return full
+        return full.replace("<", "&lt;").replace(">", "&gt;")
+
+    text = re.sub(r"<[^>]+>", clean_tag, text)
+    return text.strip()
+
+
 def execute_gemini_action(action_dict: dict) -> str:
     """Executes real modifications to Job Deck based on Gemini's action block."""
     action = action_dict.get("action")
@@ -296,7 +322,9 @@ def ask_gemini_ai(user_prompt: str) -> str:
             answer = data["candidates"][0]["content"]["parts"][0]["text"].strip()
 
             # Parse and execute any embedded actions
-            m_act = re.search(r"<<<ACTION\s*(\{.*?\})\s*>>>", answer, re.DOTALL)
+            m_act = re.search(r"<<+ACTION\s*(\{.*?\})\s*>>+", answer, re.DOTALL)
+            if not m_act:
+                m_act = re.search(r"<<+ACTION\s*(\{.*?\})", answer, re.DOTALL)
             action_notice = ""
             if m_act:
                 try:
@@ -304,9 +332,13 @@ def ask_gemini_ai(user_prompt: str) -> str:
                     action_notice = execute_gemini_action(act_dict)
                 except Exception as ex:
                     print(f"[Gemini Action Parse Error] {ex}")
-                answer = re.sub(r"<<<ACTION.*?>>>", "", answer, flags=re.DOTALL).strip()
-                if action_notice:
-                    answer += action_notice
+
+            # Clean up all action blocks completely and sanitize HTML
+            answer = re.sub(r"<<+ACTION.*?>>+", "", answer, flags=re.DOTALL)
+            answer = re.sub(r"<<+ACTION.*$", "", answer, flags=re.DOTALL).strip()
+            answer = sanitize_for_telegram(answer)
+            if action_notice:
+                answer += action_notice
 
             # Record turn in history
             history.append({"role": "user", "text": user_prompt})
