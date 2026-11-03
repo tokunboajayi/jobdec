@@ -134,6 +134,16 @@ def get_realtime_metrics():
         except Exception:
             pass
 
+    # System RAM & Adaptive Concurrency
+    mem = psutil.virtual_memory()
+    avail_gb = mem.available / (1024 ** 3)
+    mem_pct = mem.percent
+    try:
+        import batch_apply_parallel
+        optimal_workers = batch_apply_parallel.calculate_optimal_workers()
+    except Exception:
+        optimal_workers = 3
+
     return {
         "total_applied": total_applied,
         "today_applied": today_applied,
@@ -148,6 +158,9 @@ def get_realtime_metrics():
         "current_target": current_target,
         "pending_questions": pending_questions,
         "inbox_actions": inbox_actions,
+        "avail_gb": avail_gb,
+        "mem_pct": mem_pct,
+        "optimal_workers": optimal_workers,
     }
 
 
@@ -250,6 +263,7 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
 
     lines.extend([
         "",
+        f"🧠 <b>Memory & Auto-Scale:</b> {metrics.get('avail_gb', 0):.1f}GB free ({metrics.get('mem_pct', 0)}% RAM) ➔ Optimal: <b>{metrics.get('optimal_workers', 3)} workers</b>",
         f"📋 <b>Queue Inventory:</b> {metrics['unapplied_count']} unapplied ({metrics['queue_count']} total in queue)",
     ])
 
@@ -269,7 +283,7 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     return "\n".join(lines)
 
 
-def launch_runner(workers=3, queue="queue_cyber_iam.txt"):
+def launch_runner(workers=None, queue="queue_cyber_iam.txt"):
     # Clear stale lock files before launching
     for lock in ROOT.glob(".batch_apply*.lock"):
         try:
@@ -277,11 +291,20 @@ def launch_runner(workers=3, queue="queue_cyber_iam.txt"):
         except Exception:
             pass
 
+    try:
+        import batch_apply_parallel
+        opt_workers = batch_apply_parallel.calculate_optimal_workers()
+    except Exception:
+        opt_workers = 3
+
+    target_w = workers if workers is not None else opt_workers
+
     cmd = [
         str(ROOT / ".venv" / "Scripts" / "python.exe"),
         str(ROOT / "batch_apply_parallel.py"),
         "--queue", queue,
-        "--workers", str(workers),
+        "--workers", str(target_w),
+        "--adaptive",
         "--no-triage",
         "--resume", "resumes/resume.pdf"
     ]

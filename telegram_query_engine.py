@@ -169,8 +169,72 @@ def get_applications_by_date(target_date_str: str):
     return matches
 
 
+def execute_gemini_action(action_dict: dict) -> str:
+    """Executes real modifications to Job Deck based on Gemini's action block."""
+    action = action_dict.get("action")
+    if action == "update_rule":
+        q = action_dict.get("q", "").strip()
+        a = action_dict.get("a", "").strip()
+        if q and a:
+            try:
+                if PROFILE_PATH.exists():
+                    p_data = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
+                else:
+                    p_data = {"rules": []}
+                new_rule = {
+                    "q": q.lower(),
+                    "a": a,
+                    "src": "telegram_gemini_action",
+                    "added": str(date.today())
+                }
+                if action_dict.get("option"):
+                    new_rule["option"] = action_dict["option"]
+                p_data["rules"].insert(0, new_rule)
+                PROFILE_PATH.write_text(json.dumps(p_data, indent=2), encoding="utf-8")
+                return f"\n\n⚙️ <i>Updated profile rule: '<b>{q}</b>' ➔ '<b>{a}</b>'</i>"
+            except Exception as e:
+                return f"\n\n⚠️ <i>Failed updating rule: {e}</i>"
+
+    elif action == "add_queue":
+        url = action_dict.get("url", "").strip()
+        co = action_dict.get("company", "Target Company").strip()
+        role = action_dict.get("role", "Prioritized Role").strip()
+        if url:
+            q_path = ROOT / "queue_cyber_iam.txt"
+            with open(q_path, "a", encoding="utf-8") as f:
+                f.write(f"{co} {role}   {url}\n")
+            return f"\n\n⚙️ <i>Added <b>{co} — {role}</b> to the active queue!</i>"
+
+    elif action == "remove_queue":
+        kw = action_dict.get("keyword", "").strip().lower()
+        if kw:
+            q_path = ROOT / "queue_cyber_iam.txt"
+            if q_path.exists():
+                lines = [l for l in q_path.read_text(encoding="utf-8").splitlines() if kw not in l.lower()]
+                q_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+                return f"\n\n⚙️ <i>Removed postings matching '<b>{kw}</b>' from queue.</i>"
+
+    elif action == "control_runner":
+        cmd = action_dict.get("command", "").lower()
+        try:
+            import telegram_bot_service
+            if cmd in ["start", "run"]:
+                telegram_bot_service.launch_runner(workers=3)
+                return "\n\n⚙️ <i>Launched 3 parallel workers in headless mode!</i>"
+            elif cmd == "turbo":
+                telegram_bot_service.launch_runner(workers=4)
+                return "\n\n⚙️ <i>Turbo mode activated (4 workers)!</i>"
+            elif cmd in ["stop", "pause"]:
+                stopped = telegram_bot_service.halt_runner()
+                return f"\n\n⚙️ <i>Halted {stopped} active worker process(es). System idle.</i>"
+        except Exception as e:
+            return f"\n\n⚠️ <i>Runner command error: {e}</i>"
+
+    return ""
+
+
 def ask_gemini_ai(user_prompt: str) -> str:
-    """Invokes Google Gemini 3.5 Flash with full session memory and multi-turn context."""
+    """Invokes Google Gemini 3.5 Flash with full session memory, multi-turn context, and active action execution."""
     key = os.getenv("GEMINI_API_KEY", GEMINI_API_KEY).strip()
     if not key:
         return ""
@@ -183,10 +247,28 @@ def ask_gemini_ai(user_prompt: str) -> str:
         "=== COMPREHENSIVE SESSION MEMORY FROM ANTIGRAVITY IDE ===\n"
         f"{session_mem}\n"
         "========================================================\n\n"
-        "You remember and have complete context of the entire pairing session: the 307 submitted applications, "
-        "the 3-worker parallel runner, the Obsidian Job Tracker setup on his Desktop, the Boeing postings, and "
-        "the Auto Accept CDP port fix. "
-        "Be direct, concise, sharp, highly intelligent, and speak in clean Telegram HTML format."
+        "You remember and have complete context of the entire pairing session: the 350 submitted applications, "
+        "the 3-worker parallel runner, the candidate profile (Michael Azuka, KSU Cybersecurity B.S. & IT minor, "
+        "Powder Springs GA 30127), and the full Job Deck infrastructure.\n\n"
+        "YOU HAVE ACTIVE EXECUTION POWERS: Michael can ask you to make real changes to his Job Deck. "
+        "When Michael instructs you to update facts/rules, add or remove jobs from the queue, or control the runner, "
+        "answer clearly in Telegram HTML format and ALWAYS append an executable action block in this EXACT syntax at the very end:\n\n"
+        "<<<ACTION\n"
+        '{"action": "update_rule", "q": "question or field name pattern", "a": "value"}\n'
+        ">>>\n"
+        "or\n"
+        "<<<ACTION\n"
+        '{"action": "add_queue", "url": "https://...", "company": "Company Name", "role": "Role Title"}\n'
+        ">>>\n"
+        "or\n"
+        "<<<ACTION\n"
+        '{"action": "remove_queue", "keyword": "company or keyword to remove"}\n'
+        ">>>\n"
+        "or\n"
+        "<<<ACTION\n"
+        '{"action": "control_runner", "command": "start"|"stop"|"turbo"}\n'
+        ">>>\n\n"
+        "Only append <<<ACTION >>> when Michael asks for a change or control. Otherwise respond normally."
     )
 
     history = load_chat_history()
@@ -199,7 +281,7 @@ def ask_gemini_ai(user_prompt: str) -> str:
     payload = {
         "systemInstruction": {"parts": [{"text": system_instruction}]},
         "contents": contents,
-        "generationConfig": {"temperature": 0.4, "maxOutputTokens": 600}
+        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 600}
     }
 
     try:
@@ -212,6 +294,19 @@ def ask_gemini_ai(user_prompt: str) -> str:
         with urllib.request.urlopen(req, timeout=12) as resp:
             data = json.loads(resp.read().decode("utf-8"))
             answer = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+            # Parse and execute any embedded actions
+            m_act = re.search(r"<<<ACTION\s*(\{.*?\})\s*>>>", answer, re.DOTALL)
+            action_notice = ""
+            if m_act:
+                try:
+                    act_dict = json.loads(m_act.group(1))
+                    action_notice = execute_gemini_action(act_dict)
+                except Exception as ex:
+                    print(f"[Gemini Action Parse Error] {ex}")
+                answer = re.sub(r"<<<ACTION.*?>>>", "", answer, flags=re.DOTALL).strip()
+                if action_notice:
+                    answer += action_notice
 
             # Record turn in history
             history.append({"role": "user", "text": user_prompt})

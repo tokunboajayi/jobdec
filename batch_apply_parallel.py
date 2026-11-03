@@ -40,6 +40,26 @@ CSV_FILE = HERE / "applications.csv" if (HERE / "applications.csv").exists() els
 
 import results_engine as RE
 
+def calculate_optimal_workers(min_w: int = 1, max_w: int = 6) -> int:
+    """Calculates optimal worker concurrency based on real-time memory and CPU pressure."""
+    try:
+        mem = psutil.virtual_memory()
+        avail_gb = mem.available / (1024 ** 3)
+        pct = mem.percent
+        if pct > 90 or avail_gb < 1.6:
+            return min_w
+        elif pct > 83 or avail_gb < 2.8:
+            return max(min_w, 2)
+        elif avail_gb >= 6.0 and pct < 72:
+            return min(max_w, 5)
+        elif avail_gb >= 3.8 and pct < 83:
+            return min(max_w, 4)
+        else:
+            return 3
+    except Exception:
+        return 3
+
+
 
 def get_applied_count() -> int:
     """Reads distinct verified applied jobs from applications.csv."""
@@ -162,6 +182,9 @@ def run_logged_worker(cmd: List[str], timeout: int | float, log_path: pathlib.Pa
 def main():
     parser = argparse.ArgumentParser(description="Parallel Multi-Worker Autonomous Application Runner")
     parser.add_argument("--workers", type=int, default=3, help="Number of concurrent worker instances (default: 3)")
+    parser.add_argument("--adaptive", action="store_true", default=True, help="Auto-scale workers dynamically based on memory pressure")
+    parser.add_argument("--min-workers", type=int, default=1, help="Minimum worker floor during memory pressure (default: 1)")
+    parser.add_argument("--max-workers", type=int, default=6, help="Maximum worker ceiling when memory headroom is high (default: 6)")
     parser.add_argument("--limit", type=int, default=1000, help="Max applications to attempt in this run (default: 1000)")
     parser.add_argument("--target", type=int, default=3000, help="Stop automatically when total verified submissions reach this target (default: 3000)")
     parser.add_argument("--target-new", type=int, default=None, help="Stop automatically after this many NEW verified submissions in this session")
@@ -220,7 +243,11 @@ def main():
     if args.target_new is not None:
         args.target = initial_applied_count + args.target_new
 
-    num_workers = max(1, min(args.workers, 6))
+    if args.adaptive:
+        optimal_w = calculate_optimal_workers(args.min_workers, args.max_workers)
+        num_workers = optimal_w if args.workers == 3 else max(1, min(args.workers, args.max_workers))
+    else:
+        num_workers = max(1, min(args.workers, args.max_workers))
     strat = RE.strategy()
     daily_cap = args.daily_cap if args.daily_cap is not None else strat.get("daily_cap", 3000)
 
@@ -385,6 +412,10 @@ def main():
         w_prefix = f"W{worker_id}"
 
         while not stop_flag:
+            with state_lock:
+                if args.adaptive and worker_id > current_target_workers:
+                    print(f"[{w_prefix}] Scaled down to balance system memory pressure. Retiring worker cleanly.")
+                    break
             item = get_next_job(worker_id)
             if not item:
                 with state_lock:
@@ -555,9 +586,38 @@ def main():
             if not stop_flag:
                 time.sleep(random.uniform(args.delay, args.delay + 1.5))
 
+    current_target_workers = num_workers
+    next_worker_id = num_workers
+
+    def scaler_monitor():
+        nonlocal current_target_workers, next_worker_id
+        while not stop_flag:
+            time.sleep(15)
+            if not args.adaptive or stop_flag:
+                continue
+            new_target = calculate_optimal_workers(args.min_workers, args.max_workers)
+            with state_lock:
+                if new_target != current_target_workers:
+                    old_target = current_target_workers
+                    current_target_workers = new_target
+                    try:
+                        mem = psutil.virtual_memory()
+                        if new_target > old_target:
+                            print(f"\n[Auto-Scaler] Memory headroom detected ({mem.available/(1024**3):.1f}GB free, {mem.percent}% RAM). Scaling UP: {old_target} -> {new_target} workers.")
+                            for _ in range(new_target - old_target):
+                                next_worker_id += 1
+                                t = threading.Thread(target=worker_loop, args=(next_worker_id,), daemon=True)
+                                threads.append(t)
+                                t.start()
+                        else:
+                            print(f"\n[Auto-Scaler] Memory pressure detected ({mem.percent}% RAM). Scaling DOWN: {old_target} -> {new_target} workers to maintain peak efficiency.")
+                    except Exception:
+                        pass
+
     # Spawn isolated worker threads
     threads = []
-    print(f"[Parallel Runner] Launching {num_workers} concurrent browser workers...")
+    mode_str = "Adaptive Auto-Scaling Active" if args.adaptive else "Static"
+    print(f"[Parallel Runner] Launching {num_workers} concurrent browser workers ({mode_str})...")
     for w_id in range(1, num_workers + 1):
         t = threading.Thread(target=worker_loop, args=(w_id,), daemon=True)
         threads.append(t)
@@ -565,6 +625,10 @@ def main():
         if w_id < num_workers:
             # Stagger startup to prevent thundering herd
             time.sleep(1.5)
+
+    if args.adaptive:
+        s_thread = threading.Thread(target=scaler_monitor, daemon=True)
+        s_thread.start()
 
     try:
         while any(t.is_alive() for t in threads):
