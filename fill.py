@@ -1893,8 +1893,6 @@ def _upsert_applied_row(path, target_url, company, role, resume):
     except Exception:
         pass
     try:
-        import sync_obsidian
-        sync_obsidian.export_applications_to_obsidian()
     except Exception:
         pass
 

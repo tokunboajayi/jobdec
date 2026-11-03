@@ -47,7 +47,7 @@ def get_keyboard():
         ],
         [
             InlineKeyboardButton("❓ Pending Questions", callback_data="btn_questions"),
-            InlineKeyboardButton("🔄 Refresh Obsidian", callback_data="btn_obsidian"),
+            InlineKeyboardButton("📋 Recent Apps", callback_data="btn_recent"),
         ],
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -188,13 +188,15 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
     elif data == "btn_questions":
         ans = telegram_query_engine.answer_natural_language_query("pending questions")
         await query.message.reply_text(ans, parse_mode=ParseMode.HTML)
-    elif data == "btn_obsidian":
-        try:
-            import sync_obsidian
-            count = sync_obsidian.export_applications_to_obsidian()
-            await query.message.reply_text(f"🔄 <b>Obsidian Vault Synced!</b> {count} notes verified in Desktop/Obsidian Job Tracker.", parse_mode=ParseMode.HTML)
-        except Exception as e:
-            await query.message.reply_text(f"Obsidian sync notice: {e}")
+    elif data == "btn_recent":
+        _, _, _, recent = get_current_stats_fast()
+        if not recent:
+            await query.message.reply_text("📋 <b>No recent submissions found.</b>", parse_mode=ParseMode.HTML)
+        else:
+            lines = ["📋 <b>Latest Verified Submissions:</b>\n"]
+            for r in recent:
+                lines.append(f"• <b>{r.get('Company')}</b> — {r.get('Role')} (<i>{r.get('Date Applied')}</i>)")
+            await query.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML)
 
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
