@@ -1,54 +1,35 @@
 Cloudflare Network Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8159206?gh_jid=8159206
 Cloudflare Technical Support Engineer - Developer Platform [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330121?gh_jid=8330121
-Figma Manager, Security Operations [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6015609004?gh_jid=6015609004
 Figma Security Scientist [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6180172004?gh_jid=6180172004
 ScaleAi DevOps Engineer, Infrastructure & Security [Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4674863005
 ScaleAi National Security Hackathon 2026 - General Interest [San Francisco, CA; New York, NY; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4687588005
 Robinhood Senior Offensive Security Engineer [Bellevue, WA; Denver, CO; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202858?t=gh_src=&gh_jid=8202858
-Robinhood Senior Physical Security Operations Manager [Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8259652?t=gh_src=&gh_jid=8259652
 Robinhood Senior Security Engineer, Detection & Response [Bellevue, WA; Denver, CO; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202863?t=gh_src=&gh_jid=8202863
 Robinhood Staff Offensive Security Engineer [Bellevue, WA; Denver, CO; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/7460167?t=gh_src=&gh_jid=7460167
-Cloudflare Senior Engineering Director, Security Products [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8195695?gh_jid=8195695
-Cloudflare Senior Product Manager, Email Security [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8173954?gh_jid=8173954
 Cloudflare Senior Product Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8079931?gh_jid=8079931
 Cloudflare Senior Systems Engineer - Application Security [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8222091?gh_jid=8222091
-Verkada Director of Global Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5155848007
-Verkada Lead Product Manager, Security Trailers [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5255988007
 Verkada Physical Security Associate, Events [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5262546007
-Verkada Product Marketing Manager, Privacy and Data Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5150337007
-Verkada Senior Product Manager, Perimeter & Intrusion Security  [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5205130007
 Verkada Senior Technical Support Engineer [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4997665007
 Verkada Staff+ Security Engineer, Core Command  [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5167601007
 Verkada Staff+ Security Engineer, Developer Tools [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5167607007
 Verkada Staff+ Security Engineer, IT and Corporate Security [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5141647007
-Affirm Director, Information Technology & Security [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7607567003
 Affirm Security Risk Management Lead [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7718808003
 Affirm Staff Security Engineer, Enterprise AI [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7994553003
 Reddit Staff Product Security Engineer [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/7868511
-Twitch Senior Engineering Manager, Security Platform [San Francisco, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847075002
-Twitch Senior Engineering Manager, Security Platform [Irvine, CA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847084002
-Twitch Senior Engineering Manager, Security Platform [Seattle, WA; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847085002
-Twitch Senior Engineering Manager, Security Platform [New York City; 1d old]   https://job-boards.greenhouse.io/twitch/jobs/8847086002
-Discord Engineering Manager, Platform Security [Remote (West Coast); 1d old]   https://job-boards.greenhouse.io/discord/jobs/8649856002
 Discord Senior Platform Security Engineer  [San Francisco Bay Area ; 1d old]   https://job-boards.greenhouse.io/discord/jobs/8769799002
-Discord Staff Technical Program Manager, Security + IT [San Francisco Bay Area; 1d old]   https://job-boards.greenhouse.io/discord/jobs/8771034002
-Chime Manager, Product Security [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8526680002?gh_jid=8526680002
 Chime Regional Physical Security Lead [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8907828002?gh_jid=8907828002
 Chime Senior Application Security Engineer [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8575541002?gh_jid=8575541002
 Robinhood Senior Cloud Security Engineer [Bellevue, WA; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8077370?t=gh_src=&gh_jid=8077370
 Cloudflare Forward Deployed Engineer, Professional Services (Application Security) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330512?gh_jid=8330512
 Cloudflare Security Research Analyst, WAF Managed Rules [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8317733?gh_jid=8317733
-Affirm Senior Manager, Security Incident Response [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8045376003
 Affirm Senior Product Security Engineer [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8042128003
 Chime Sr. Analyst, Identity & KYC [Chicago, IL, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8917560002?gh_jid=8917560002
 DriveWealth AI Consulting Associate Program Product Owner Intern   https://boards.greenhouse.io/drivewealth/jobs/8038087003?utm_source=Simplify&ref=Simplify
 Astranis Network Software Intern   https://job-boards.greenhouse.io/astranis/jobs/4705597006?utm_source=Simplify&ref=Simplify
-KnowBe4 Associate Product Manager Intern   https://job-boards.greenhouse.io/knowbe4/jobs/8919274002?utm_source=Simplify&ref=Simplify
 Stratolaunch Manufacturing Systems & Data Intern - Systems   https://job-boards.greenhouse.io/stratolaunch/jobs/5467824008?utm_source=Simplify&ref=Simplify
 Together AI Systems Research Engineer Intern - GPU Programming   https://job-boards.greenhouse.io/togetherai/jobs/5238460007?utm_source=Simplify&ref=Simplify
 Astranis Software Defined Radio Hardware Associate Intern   https://job-boards.greenhouse.io/astranis/jobs/4715983006?utm_source=Simplify&ref=Simplify
 Harbor Junior Developer - Finance Systems   https://job-boards.greenhouse.io/harborglobal/jobs/5238900007?utm_source=Simplify&ref=Simplify
-ID.me Associate Product Manager New Grad   https://job-boards.greenhouse.io/idmeuniversityrecruiting/jobs/7986694003?utm_source=Simplify&ref=Simplify
 Noble Machines Electrical Engineer  Early Career - Embedded Systems & Tools   https://job-boards.greenhouse.io/undercontrolroboticsinc/jobs/4473572009?utm_source=Simplify&ref=Simplify
 Robinhood Account Servicing Associate   https://boards.greenhouse.io/robinhood/jobs/8319304?t=gh_src=&gh_jid=8319304
 Robinhood Cashiering Support Associate   https://boards.greenhouse.io/robinhood/jobs/8262110?t=gh_src=&gh_jid=8262110
@@ -62,9 +43,7 @@ Cloudflare Customer Engineering Specialist - Network Services   https://boards.g
 Cloudflare Data Center Infrastructure Management (DCIM) Administrator - Infrastructure Operations   https://boards.greenhouse.io/cloudflare/jobs/7736431?gh_jid=7736431
 Cloudflare Infrastructure Business Operations Associate   https://boards.greenhouse.io/cloudflare/jobs/8278383?gh_jid=8278383
 Cloudflare Senior Forward Deployed Infrastructure Engineer   https://boards.greenhouse.io/cloudflare/jobs/8256332?gh_jid=8256332
-Cloudflare Senior Revenue Operations Support Manager, Singapore   https://boards.greenhouse.io/cloudflare/jobs/8172873?gh_jid=8172873
 Cloudflare Technical Accounting Analyst (Infrastructure)   https://boards.greenhouse.io/cloudflare/jobs/8161030?gh_jid=8161030
-Verkada Associate Solutions Engineering Program Manager   https://job-boards.greenhouse.io/verkada/jobs/4595354007
 Verkada Deputy / Associate General Counsel, Corporate   https://job-boards.greenhouse.io/verkada/jobs/5165396007
 Verkada People Operations Associate   https://job-boards.greenhouse.io/verkada/jobs/5263704007
 Verkada Sales Strategy and Operations Associate   https://job-boards.greenhouse.io/verkada/jobs/4086576007
@@ -74,10 +53,8 @@ Verkada Security Software Engineering Intern 2027   https://job-boards.greenhous
 Verkada Senior Associate, Pricing & Commercial Operations   https://job-boards.greenhouse.io/verkada/jobs/5274927007
 Verkada Senior Associate, Pricing & Commercial Operations   https://job-boards.greenhouse.io/verkada/jobs/5265168007
 Verkada Sr. Analyst Business Systems   https://job-boards.greenhouse.io/verkada/jobs/5116424007
-Verkada (Sr) Associate / Manager, Strategic Finance & Business Operations   https://job-boards.greenhouse.io/verkada/jobs/5231662007
 Affirm Product Security Engineer II - IAM   https://job-boards.greenhouse.io/affirm/jobs/8016932003
 Affirm Security Risk Management Lead   https://job-boards.greenhouse.io/affirm/jobs/8036613003
-Affirm Senior Manager, Security Incident Response   https://job-boards.greenhouse.io/affirm/jobs/8045378003
 Affirm Staff Security Engineer, Enterprise AI   https://job-boards.greenhouse.io/affirm/jobs/7994555003
 Reddit Associate General Counsel, Ads Product   https://job-boards.greenhouse.io/reddit/jobs/8148089
 Reddit Staff Threat Analyst, Ads Fraud   https://job-boards.greenhouse.io/reddit/jobs/8189395
@@ -89,7 +66,6 @@ Chime Senior Associate, Compliance Advisory   https://boards.greenhouse.io/chime
 Chime Senior Associate, Strategic Finance   https://boards.greenhouse.io/chime/jobs/8801438002?gh_jid=8801438002
 Chime Senior Associate, Strategic Finance (Growth)   https://boards.greenhouse.io/chime/jobs/8895833002?gh_jid=8895833002
 Writer Staff security engineer, application security [New York City, NY; 1d old]   https://jobs.ashbyhq.com/writer/36aef3b1-ded0-4aed-9943-01bbf6568fe4
-Sierra Security Technical Program Manager [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/47fd7def-71fa-4585-a625-14e2f25f5058
 DriveWealth AI Consulting Associate Program Product Owner Intern   https://jobs.ashbyhq.com/drivewealth/ec17ef99-dea9-4150-b935-5f74750d7b87/application?embed=true&utm_source=Simplify&ref=Simplify
 Bedrock Robotics Onboard Infrastructure Engineer Intern - ML Inference   https://jobs.ashbyhq.com/bedrock-robotics/0331551e-c18e-428a-8e91-e6cb25c9c2e8/application?embed=true&utm_source=Simplify&ref=Simplify
 Goaly Founding Senior AI Infrastructure Engineer   https://jobs.ashbyhq.com/goaly/ce5f6b51-0258-4956-87cf-c630a08323c7/application?embed=true&utm_source=Simplify&ref=Simplify
@@ -98,7 +74,6 @@ Ramp Credit Risk Associate   https://jobs.ashbyhq.com/ramp/4745807e-82f4-4b1a-85
 Ramp Senior Associate, Strategic Finance   https://jobs.ashbyhq.com/ramp/5cc4e600-1b28-4083-8a70-90f790112f89
 Ramp GTM Senior Business Systems Analyst, Marketing & Pre-Sales   https://jobs.ashbyhq.com/ramp/aa433e44-f095-484b-a46a-a330583d84b0
 Ramp Associate GTM Recruiter   https://jobs.ashbyhq.com/ramp/a85afad0-8051-4333-ae89-0f82321dea87
-Perplexity Associate Product Marketing Manager   https://jobs.ashbyhq.com/perplexity/08f1a218-bdff-4cdd-aefe-0d55529b1ece
 Harvey Associate Commercial Counsel   https://jobs.ashbyhq.com/harvey/95d7c087-8283-4e17-937d-2ee363ec95ef
 Harvey Staff Corporate Security Engineer   https://jobs.ashbyhq.com/harvey/fa02d0c2-4a44-4deb-a409-6a3b3bd05e9c
 Harvey Senior People Systems Analyst   https://jobs.ashbyhq.com/harvey/bbf25f2b-0652-4a14-aab2-5205aba53d30
@@ -107,41 +82,6 @@ Harvey Staff Infrastructure Security Engineer   https://jobs.ashbyhq.com/harvey/
 Sierra Associate Sales Engineer   https://jobs.ashbyhq.com/sierra/cfecdf07-ee22-45a0-b472-5de10f167984
 Writer Staff security engineer, application security   https://jobs.ashbyhq.com/writer/e523bb66-545f-4357-89f6-4b8b3f7033db
 Writer Security engineer, detection and response   https://jobs.ashbyhq.com/writer/e5997d72-0cd0-4981-b161-6c2e3a5f4c5b
-Palantir Forward Deployed Infrastructure Engineer, Internship - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/3db7e40a-28e0-4ad1-96c5-93de5bc96aa9
-Palantir Information Security Engineer, Internship [New York, NY; 1d old]   https://jobs.lever.co/palantir/ef725594-42dd-4f0d-ba8e-df8179dbc6cb
-Palantir Compliance Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/4d3986f0-4c01-4327-a0e4-e7d9bc7bc0c3
-Palantir Defensive Security Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/bc803bd5-7793-452d-9ae5-9301ee24615a
-Palantir Forward Deployed Security Engineer - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/22053072-4c22-49c4-8299-28e107ceeb98
-Palantir Information Security Engineer - Infrastructure Security [New York, NY; 1d old]   https://jobs.lever.co/palantir/1e77a5e8-9843-4516-a186-7c24f0ff07a0
-Palantir Information Security Engineer - Insider Risk [New York, NY; 1d old]   https://jobs.lever.co/palantir/2127f3af-1fb3-4aa3-9aa1-eb06967e0166
-Palantir Site Reliability Operations Analyst - Commercial [New York, NY; 1d old]   https://jobs.lever.co/palantir/5174e95b-2e0a-46f8-8db7-e2c837a0ac94
-Palantir Compliance Analyst [New York, NY; 1d old]   https://jobs.lever.co/palantir/c6f9eaaf-b397-476f-8b7d-c511cfb7e5c6
-Palantir Forward Deployed Site Reliability Engineer - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/a194220b-684a-4b4e-b918-1f70154b464c
-Palantir Risk and Compliance Specialist - Global Trade [New York, NY; 1d old]   https://jobs.lever.co/palantir/1b694ba4-dfda-46b3-ae07-6392bcabb75c
-Palantir Industrial Security Specialist [New York, NY; 1d old]   https://jobs.lever.co/palantir/12d13a31-5764-4678-8835-809f0deae49b
-Palantir Operations Analyst - US Government Security [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/5f3f9547-2aea-4ac2-995d-e8fa53b16e39
-Palantir Physical Security Manager [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/0492e9c4-9ba9-4da0-896f-75be5151bae9
-Palantir Security Systems Engineer [Denver, CO; 1d old]   https://jobs.lever.co/palantir/8704b8c0-80b3-48b1-a82c-939994a0316c
-Palantir Senior Identity Security Engineer [New York, NY; 1d old]   https://jobs.lever.co/palantir/144f32bc-21e5-42bd-9710-7165a22d51e1
-Palantir Technical Program Manager - Security [New York, NY; 1d old]   https://jobs.lever.co/palantir/b5362bc1-8a07-44e2-9ddc-cb4236aa0f20
-Palantir Security Systems Engineer [Seattle, WA; 1d old]   https://jobs.lever.co/palantir/98c244fc-444b-43ba-b152-30227191170b
-Palantir Security Systems Engineer [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/a9788f77-d6d2-4ef9-9d57-7002d587b84f
-Palantir Forward Deployed Infrastructure Engineer - US Government   https://jobs.lever.co/palantir/0fccbe95-2520-4df3-8600-7897656c06a2
-Palantir Forward Deployed Infrastructure Engineer - US Government   https://jobs.lever.co/palantir/74748e0e-a0bc-4c53-a636-ef14e36d9b5e
-Palantir Forward Deployed Infrastructure Engineer - US Government   https://jobs.lever.co/palantir/b57f08e9-546c-4b9b-8d21-db0ebbc11363
-Palantir Forward Deployed Infrastructure Engineer, Internship - US Government   https://jobs.lever.co/palantir/8f362a1f-1eff-4327-94c1-ff46e2101c69
-Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/33243fb5-6907-40c7-930c-968b25d825d0
-Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/5a28f3a5-8655-47f2-ab19-a79b8a319da8
-Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/701a9307-0619-45d3-b077-cabe9897cd12
-Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/91117724-9389-48dc-912f-98e48d4d45d8
-Palantir Information Security Engineer - Infrastructure Security   https://jobs.lever.co/palantir/4bfef5e0-6689-4db8-9ffe-ab6df6836845
-Palantir Information Security Engineer - Insider Risk   https://jobs.lever.co/palantir/b0e1823a-fbe7-4c9d-a4d3-a1e738db2589
-Palantir Operations Analyst - US Government Security   https://jobs.lever.co/palantir/a468565d-8502-4baf-8788-b7ffe233b725
-Palantir Security Systems Engineer   https://jobs.lever.co/palantir/fdbc68df-8817-49dc-96f3-18a53f4fcd4c
-Palantir Senior Identity Security Engineer   https://jobs.lever.co/palantir/146aba99-2a9a-44ee-9fb3-42dd1e211221
-Palantir Senior Identity Security Engineer   https://jobs.lever.co/palantir/bb7af139-064c-4a59-a784-9ba8c4324d21
-Palantir Support Engineer   https://jobs.lever.co/palantir/838bce97-415d-4cdc-95ea-904005feb131
-Palantir Technical Program Manager - Security   https://jobs.lever.co/palantir/b908b3e4-81f9-47b3-9088-ee8dd3932003
 XcelEnergy Reporting and Compliance Ana   https://xcelenergy.wd1.myworkdayjobs.com/External/job/Minneapolis-MN-55418/Reporting-and-Compliance-Analyst-Intern---MN_JR115608-1?utm_source=Simplify&ref=Simplify
 Motorola SoC Digital Engineer Intern [Plantation, FL; 22d old]   https://motorolasolutions.wd5.myworkdayjobs.com/Careers/job/Plantation-FL/XMLNAME-2027-Intern---SoC-Digital-Engineer_R69149?utm_source=Simplify&ref=Simplify
 Saab Systems Engineer Coop   https://saabusa.wd1.myworkdayjobs.com/saab_careers/job/East-Syracuse-NY-Collamer/Systems-Engineering-Co-Op--Summer-2027-_R-03231-1?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
@@ -184,8 +124,6 @@ General Dynamics Information Technology AI Network Engineering Intern   https://
 Teledyne Systems Engineering Intern - Summer 2027   https://flir.wd1.myworkdayjobs.com/flircareers/job/US---Huntsville-AL/EADSIM-MBSE-Intern--Summer-2027-_REQ36670-1?utm_source=Simplify&ref=Simplify
 TruStage Information Technology Development and Infrastructure Intern   https://trustage.wd1.myworkdayjobs.com/TruStage/job/Wisconsin---Remote/Enterprise-Information---Technology-Internship--Hybrid-_R-012155?utm_source=Simplify&ref=Simplify
 RTX Systems Co-op   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-IA-CEDAR-RAPIDS-182--1100-Cimmie-Ave-Ne--BLDG-182/XMLNAME-2027-Spring-Summer-Co-Op---Systems---AVI-MIL-FMS-DAS_01872835?utm_source=Simplify&ref=Simplify
-T-Mobile Associate Product Manager Intern   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Assoc-Product-Manager-Internship_REQ380746?utm_source=Simplify&ref=Simplify
-T-Mobile Associate Technical Product Manager Intern   https://tmobile.wd1.myworkdayjobs.com/External/job/Frisco-Texas/Summer-2027-Associate-Technical-Product-Manager-Internship_REQ380499?utm_source=Simplify&ref=Simplify
 Northrop Grumman Data Scientist Intern - Product Support   https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site/job/United-States-California-San-Diego/XMLNAME-2027-Intern-Product-Support---Data-Scientist_R10258679?utm_source=Simplify&ref=Simplify
 United Parcel Service Human Resources Intern - Data Analytics - HR Systems   https://hcmportal.wd5.myworkdayjobs.com/en-US/Search/job/US---UPS-CORPORATE-OFFICES-GACOR/MHR-Summer-2027-Intern---Data-Analytics--HR-Systems-_R26039546?utm_source=Simplify&ref=Simplify
 Johnson & Johnson Laboratory Automation Systems Intern   https://jj.wd5.myworkdayjobs.com/JJ/job/Spring-House-Pennsylvania-United-States-of-America/Laboratory-Automation-Systems-Intern_R-103027?utm_source=Simplify&ref=Simplify
@@ -207,10 +145,41 @@ RTX Production Support Engineer 1   https://globalhr.wd5.myworkdayjobs.com/rec_r
 Air Products Information Technology/Digital Technology Intern - Infrastructure Services   https://airproducts.wd5.myworkdayjobs.com/en-US/AP0001/job/Allentown-Pennsylvania/Summer-Intern--IT-Digital-Technology--2027-_JR-2026-21953?utm_source=Simplify&ref=Simplify
 QTS Data Center Infrastructure Management Intern - DCIM   https://qtsdatacenters.wd5.myworkdayjobs.com/qts/job/Suwanee-GA/Summer-2027-Internship--Data-Center-Infrastructure-Management--DCIM-_R2026-1892?utm_source=Simplify&ref=Simplify
 T-Mobile Associate AI Engineer Intern   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Assoc-AI-Engineer-Internship_REQ380492?utm_source=Simplify&ref=Simplify
+Palantir Forward Deployed Infrastructure Engineer, Internship - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/3db7e40a-28e0-4ad1-96c5-93de5bc96aa9
+Palantir Information Security Engineer, Internship [New York, NY; 1d old]   https://jobs.lever.co/palantir/ef725594-42dd-4f0d-ba8e-df8179dbc6cb
+Palantir Compliance Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/4d3986f0-4c01-4327-a0e4-e7d9bc7bc0c3
+Palantir Defensive Security Analyst [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/bc803bd5-7793-452d-9ae5-9301ee24615a
+Palantir Forward Deployed Security Engineer - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/22053072-4c22-49c4-8299-28e107ceeb98
+Palantir Information Security Engineer - Infrastructure Security [New York, NY; 1d old]   https://jobs.lever.co/palantir/1e77a5e8-9843-4516-a186-7c24f0ff07a0
+Palantir Information Security Engineer - Insider Risk [New York, NY; 1d old]   https://jobs.lever.co/palantir/2127f3af-1fb3-4aa3-9aa1-eb06967e0166
+Palantir Site Reliability Operations Analyst - Commercial [New York, NY; 1d old]   https://jobs.lever.co/palantir/5174e95b-2e0a-46f8-8db7-e2c837a0ac94
+Palantir Compliance Analyst [New York, NY; 1d old]   https://jobs.lever.co/palantir/c6f9eaaf-b397-476f-8b7d-c511cfb7e5c6
+Palantir Forward Deployed Site Reliability Engineer - US Government [Washington, D.C.; 1d old]   https://jobs.lever.co/palantir/a194220b-684a-4b4e-b918-1f70154b464c
+Palantir Risk and Compliance Specialist - Global Trade [New York, NY; 1d old]   https://jobs.lever.co/palantir/1b694ba4-dfda-46b3-ae07-6392bcabb75c
+Palantir Industrial Security Specialist [New York, NY; 1d old]   https://jobs.lever.co/palantir/12d13a31-5764-4678-8835-809f0deae49b
+Palantir Operations Analyst - US Government Security [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/5f3f9547-2aea-4ac2-995d-e8fa53b16e39
+Palantir Security Systems Engineer [Denver, CO; 1d old]   https://jobs.lever.co/palantir/8704b8c0-80b3-48b1-a82c-939994a0316c
+Palantir Senior Identity Security Engineer [New York, NY; 1d old]   https://jobs.lever.co/palantir/144f32bc-21e5-42bd-9710-7165a22d51e1
+Palantir Security Systems Engineer [Seattle, WA; 1d old]   https://jobs.lever.co/palantir/98c244fc-444b-43ba-b152-30227191170b
+Palantir Security Systems Engineer [Palo Alto, CA; 1d old]   https://jobs.lever.co/palantir/a9788f77-d6d2-4ef9-9d57-7002d587b84f
+Palantir Forward Deployed Infrastructure Engineer - US Government   https://jobs.lever.co/palantir/0fccbe95-2520-4df3-8600-7897656c06a2
+Palantir Forward Deployed Infrastructure Engineer - US Government   https://jobs.lever.co/palantir/74748e0e-a0bc-4c53-a636-ef14e36d9b5e
+Palantir Forward Deployed Infrastructure Engineer - US Government   https://jobs.lever.co/palantir/b57f08e9-546c-4b9b-8d21-db0ebbc11363
+Palantir Forward Deployed Infrastructure Engineer, Internship - US Government   https://jobs.lever.co/palantir/8f362a1f-1eff-4327-94c1-ff46e2101c69
+Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/33243fb5-6907-40c7-930c-968b25d825d0
+Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/5a28f3a5-8655-47f2-ab19-a79b8a319da8
+Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/701a9307-0619-45d3-b077-cabe9897cd12
+Palantir Forward Deployed Infrastructure Engineer, New Grad - US Government   https://jobs.lever.co/palantir/91117724-9389-48dc-912f-98e48d4d45d8
+Palantir Information Security Engineer - Infrastructure Security   https://jobs.lever.co/palantir/4bfef5e0-6689-4db8-9ffe-ab6df6836845
+Palantir Information Security Engineer - Insider Risk   https://jobs.lever.co/palantir/b0e1823a-fbe7-4c9d-a4d3-a1e738db2589
+Palantir Operations Analyst - US Government Security   https://jobs.lever.co/palantir/a468565d-8502-4baf-8788-b7ffe233b725
+Palantir Security Systems Engineer   https://jobs.lever.co/palantir/fdbc68df-8817-49dc-96f3-18a53f4fcd4c
+Palantir Senior Identity Security Engineer   https://jobs.lever.co/palantir/146aba99-2a9a-44ee-9fb3-42dd1e211221
+Palantir Senior Identity Security Engineer   https://jobs.lever.co/palantir/bb7af139-064c-4a59-a784-9ba8c4324d21
+Palantir Support Engineer   https://jobs.lever.co/palantir/838bce97-415d-4cdc-95ea-904005feb131
 Asana Security Compliance Lead, FedRAMP [San Francisco; 1d old]   https://www.asana.com/jobs/apply/7821582?gh_jid=7821582
 Coinbase Security Engineer, Corporate Security [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8319444?gh_jid=8319444
 GrowFinancialFederalCreditUnion Systems Analyst Intern [Remote in USA; 24d old]   https://careers-growfinancial.icims.com/jobs/2754/job?mobile=true&needsRedirect=false&utm_source=Simplify&ref=Simplify
-Tiktok Product Manager Intern - Signal and Identity Product [San Jose, CA; 18d old]   https://lifeattiktok.com/search/7672554809555192117?utm_source=Simplify&ref=Simplify
 Honeywell Information Systems Intern - IT - Cyber Engineer & Data Science [United States; 5d old]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155554?utm_source=Simplify&ref=Simplify
 WWGrainger Business Systems Analyst Intern [Chicago, IL; 13d old]   https://jobs.grainger.com/job/CHICAGO-GTG-Intern-Business-Systems-Analyst-IL-60654-4203/1419931200/?ats=successfactors&utm_source=Simplify&ref=Simplify
 Montenson System Administrator Intern [Minnesota; 20d old]   https://fa-esgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/23368?utm_source=Simplify&ref=Simplify
@@ -251,12 +220,10 @@ Lyft Senior Security Assurance Analyst [New York, NY; 1d old]   https://app.care
 Asana IT Support Specialist [Dublin; 1d old]   https://www.asana.com/jobs/apply/8212344?gh_jid=8212344
 Asana Product Security Engineer [Warsaw; 1d old]   https://www.asana.com/jobs/apply/8244347?gh_jid=8244347
 Asana Senior Security Engineer, Threat Response [Warsaw; 1d old]   https://www.asana.com/jobs/apply/7964484?gh_jid=7964484
-Asana Senior Security Technical Program Manager [San Francisco; 1d old]   https://www.asana.com/jobs/apply/7959069?gh_jid=7959069
 Sofi Offensive Security Lead [CA - San Francisco; WA - Seattle; NY - New York City; UT - Cottonwood Heights; TX - Frisco; MT - Helena; 1d old]   https://sofi.com/careers/job/7985585003?gh_jid=7985585003
 Sofi Staff Enterprise Security Engineer [WA - Seattle; CA - San Francisco; UT - Cottonwood Heights; NY - New York City; TX - Frisco; 1d old]   https://sofi.com/careers/job/8017077003?gh_jid=8017077003
 NavyFederal Security Workflow Engineer Intern [Vienna, VA; 0d old]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32382?utm_source=Simplify&ref=Simplify
 CitizensFinancialGroup Data Engineer Intern - Enterprise Technology & Security [Plano, TX Johnston, RI Phoenix, AZ; 0d old]   https://hcgn.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/49285?utm_source=Simplify&ref=Simplify
-Coinbase Regional Security Manager, APAC [Remote - Singapore; 1d old]   https://www.coinbase.com/careers/positions/8312623?gh_jid=8312623
 Coinbase Senior Security Engineer, Corporate Security [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8319448?gh_jid=8319448
 Navy Federal Associate Intern - Lending Automation Technology & Solutions   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32359?utm_source=Simplify&ref=Simplify
 Navy Federal Summer Associate Intern - Digital Payments Strategist   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32459?utm_source=Simplify&ref=Simplify
@@ -274,17 +241,13 @@ Ernst & Young Summer Associate Intern - Corporate Finance - Quantitative Finance
 Peak Energy Systems Integration and Test Engineer Intern   https://peakenergy.com/get-in-touch/careers/jobs?job_id=5272567007&gh_jid=5272567007&utm_source=Simplify&ref=Simplify
 Formlabs Hardware Systems Integration Intern   https://careers.formlabs.com/job/8212683/apply/?gh_jid=8212683&utm_source=Simplify&ref=Simplify
 Dell Technologies Hardware Engineering Intern - Infrastructure Solutions Group   https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/job/297770?utm_source=Simplify&ref=Simplify
-Roblox Associate Product Manager - Early Career   https://careers.roblox.com/jobs/8143976?gh_jid=8143976&utm_source=Simplify&ref=Simplify
 Integration Innovation (i3) Data Analyst - Junior-Associate   https://i3-corps.jibeapply.com/jobs/5307?icims=1&utm_source=Simplify&ref=Simplify
 Johns Hopkins Applied Physics Laboratory Sensor Systems/Data Analytics New Grad   https://careers.jhuapl.edu/jobs/59770?icims=1&utm_source=Simplify&ref=Simplify
 TikTok Machine Learning Infrastructure Engineer New Grad - Ads Infra   https://lifeattiktok.com/search/7668693662561634613?utm_source=Simplify&ref=Simplify
 Amazon Post-Silicon Systems Validation Engineer 1   https://amazon.jobs/en/jobs/10475661/post-silicon-systems-validation-engineer-i-annapurna-labs?utm_source=Simplify&ref=Simplify
 Microchip Technology Product/Test Engineer 1 - Networking & Connectivity Solutions   https://wd5.myworkdaysite.com/recruiting/microchiphr/External/job/TX---Austin---Park-Centre/Engineer-I-Product-Test_R4032-26?utm_source=Simplify&ref=Simplify
 ByteDance AI Network Automation Engineer Intern - Global Physical Network Infrastructure   https://jobs.bytedance.com/en/position/7670690923748870405/detail?utm_source=Simplify&ref=Simplify
-TikTok AI Product Manager Intern - Product Social   https://lifeattiktok.com/search/7675616554318596357?utm_source=Simplify&ref=Simplify
 Vertiv IT Systems Product Management Intern - Summer 2027   https://egup.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/20279239?utm_source=Simplify&ref=Simplify
-TikTok AI Agent Product Manager Intern - Product Infrastructure-Customer Service Platform   https://lifeattiktok.com/search/7670010726514493749?utm_source=Simplify&ref=Simplify
-TikTok Product Manager Intern - Product Infrastructure - Account   https://lifeattiktok.com/search/7670009830602721589?utm_source=Simplify&ref=Simplify
 American Express Product Management Intern - Global Merchant & Network Services   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26012152?utm_source=Simplify&ref=Simplify
 American Express Product Management Intern - Global Merchant & Network Services   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26012148?utm_source=Simplify&ref=Simplify
 Honeywell Information Systems Intern - Multiple Teams   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155555?utm_source=Simplify&ref=Simplify
@@ -295,8 +258,6 @@ Navy Federal Mobile Developer Intern - Summer Associate   https://fa-etbx-saasfa
 Amazon Software Development Engineer  Early Career - Amazon Dedicated Cloud - ADC   https://amazon.jobs/en/jobs/10529546/software-development-engineer-amazon-dedicated-cloud-early-career-2026-amazon-dedicated-cloud-adc?utm_source=Simplify&ref=Simplify
 ByteDance Software Development Engineer Intern - Network Automation - 2027 Summer   https://jobs.bytedance.com/en/position/7671147251943213317/detail?utm_source=Simplify&ref=Simplify
 Coinbase Associate General Counsel, EU Legal   https://www.coinbase.com/careers/positions/8265422?gh_jid=8265422
-Coinbase Associate Manager, Internal Audit   https://www.coinbase.com/careers/positions/8154987?gh_jid=8154987
-Coinbase Associate Product Manager Intern   https://www.coinbase.com/careers/positions/8168322?gh_jid=8168322
 Coinbase Broker Dealer Operations, Associate   https://www.coinbase.com/careers/positions/8248775?gh_jid=8248775
 Coinbase Broker Dealer Operations, Senior Associate   https://www.coinbase.com/careers/positions/8249920?gh_jid=8249920
 Coinbase Business Operations, Senior Associate   https://www.coinbase.com/careers/positions/7980600?gh_jid=7980600
@@ -348,11 +309,8 @@ Brex Fraud Strategy Associate   https://www.brex.com/careers/8907623002?gh_jid=8
 Brex Fraud Strategy Associate   https://www.brex.com/careers/8907553002?gh_jid=8907553002
 Brex Fraud Strategy Associate   https://www.brex.com/careers/8907563002?gh_jid=8907563002
 Brex Fraud Strategy Associate   https://www.brex.com/careers/8907584002?gh_jid=8907584002
-Brex Partner Operations Program Manager, Associate   https://www.brex.com/careers/8925893002?gh_jid=8925893002
 Brex Startup Partnerships Associate   https://www.brex.com/careers/8864643002?gh_jid=8864643002
 Brex Venture Partnerships Associate   https://www.brex.com/careers/8864648002?gh_jid=8864648002
-Samsara Associate Creative Director, Digital Design   https://www.samsara.com/company/careers/roles/8250008?gh_jid=8250008
-Samsara Associate Creative Director, Digital Design   https://www.samsara.com/company/careers/roles/8205153?gh_jid=8205153
 Samsara Associate Sales Engineer, SE Desk (French Bilingual)   https://www.samsara.com/company/careers/roles/7624120?gh_jid=7624120
 Samsara Associate Sales Engineer, SE Desk - Mid West   https://www.samsara.com/company/careers/roles/7311761?gh_jid=7311761
 Samsara Associate Sales Engineer, SE Desk - Northeast   https://www.samsara.com/company/careers/roles/7311741?gh_jid=7311741
@@ -365,7 +323,6 @@ Samsara Senior Security Operations Engineer I   https://www.samsara.com/company/
 Lyft Associate Counsel, Employment   https://app.careerpuck.com/job-board/lyft/job/8908836002?gh_jid=8908836002
 Lyft Associate Counsel, Employment   https://app.careerpuck.com/job-board/lyft/job/8863276002?gh_jid=8863276002
 Lyft Associate Counsel, Employment   https://app.careerpuck.com/job-board/lyft/job/8779945002?gh_jid=8779945002
-Lyft Associate Operations Manager   https://app.careerpuck.com/job-board/lyft/job/8733655002?gh_jid=8733655002
 Lyft Fleet Operations Associate   https://app.careerpuck.com/job-board/lyft/job/8925465002?gh_jid=8925465002
 Lyft Fleet Operations Associate (Day Shift)   https://app.careerpuck.com/job-board/lyft/job/8925486002?gh_jid=8925486002
 Lyft Fleet Operations Associate (Overnight Shift)   https://app.careerpuck.com/job-board/lyft/job/8925493002?gh_jid=8925493002
@@ -384,29 +341,21 @@ Block Business Development Rep Associate   http://block.xyz/careers/jobs/5232001
 Block Business Development Rep Associate   http://block.xyz/careers/jobs/5232000008?gh_jid=5232000008
 Block Business Development Rep Associate, New York City   http://block.xyz/careers/jobs/5232008008?gh_jid=5232008008
 Block Business Systems Analyst, IT Vendor Operations   http://block.xyz/careers/jobs/5427849008?gh_jid=5427849008
-Block Principal Security Engineer   http://block.xyz/careers/jobs/5281304008?gh_jid=5281304008
 Block Security Engineer, Business Continuity & Risk   http://block.xyz/careers/jobs/5427789008?gh_jid=5427789008
 Block Security Engineer - Network Edge Security   http://block.xyz/careers/jobs/5427855008?gh_jid=5427855008
 Block Senior Security Engineer, Detection & Response   http://block.xyz/careers/jobs/5425346008?gh_jid=5425346008
 Block Senior Security Engineer, Platform Security   http://block.xyz/careers/jobs/5231316008?gh_jid=5231316008
-Elastic Principal Analyst Sales, Compensation Systems & Administration   https://jobs.elastic.co/jobs?gh_jid=8303741&gh_jid=8303741
-Datadog Associate Customer Success Manager - Boston   https://careers.datadoghq.com/detail/8301102/?gh_jid=8301102
 Datadog Enterprise Security Sales Specialist   https://careers.datadoghq.com/detail/8237332/?gh_jid=8237332
 Datadog Enterprise Security Sales Specialist   https://careers.datadoghq.com/detail/8243668/?gh_jid=8243668
 Datadog Enterprise Security Sales Specialist   https://careers.datadoghq.com/detail/8256245/?gh_jid=8256245
 Datadog Enterprise Security Sales Specialist   https://careers.datadoghq.com/detail/7129425/?gh_jid=7129425
 Datadog Enterprise Security Sales Specialist   https://careers.datadoghq.com/detail/7132132/?gh_jid=7132132
 Datadog FP&A Analyst, Cloud Finance   https://careers.datadoghq.com/detail/8267437/?gh_jid=8267437
-Datadog Group Product Manager - Code Security   https://careers.datadoghq.com/detail/8314006/?gh_jid=8314006
 Datadog GTM Strategy/Operations Associate   https://careers.datadoghq.com/detail/8171303/?gh_jid=8171303
 Datadog GTM Strategy & Operations Senior Associate   https://careers.datadoghq.com/detail/8247250/?gh_jid=8247250
-Datadog Manager I, Premier Support Engineering - Denver   https://careers.datadoghq.com/detail/8083563/?gh_jid=8083563
-Datadog Manager I, Technical Support Engineering   https://careers.datadoghq.com/detail/8014851/?gh_jid=8014851
 Datadog Senior Business Systems Analyst   https://careers.datadoghq.com/detail/8231811/?gh_jid=8231811
 Datadog Senior Enablement Program Associate - Technical Solutions Enablement   https://careers.datadoghq.com/detail/8279776/?gh_jid=8279776
-Datadog Senior Enablement Program Manager, Support Engineering   https://careers.datadoghq.com/detail/8128764/?gh_jid=8128764
 Datadog Senior Financial Systems Analyst   https://careers.datadoghq.com/detail/8002771/?gh_jid=8002771
-Datadog Senior Manager, Product Design - Security   https://careers.datadoghq.com/detail/8281102/?gh_jid=8281102
 Datadog Senior Security Sales Engineer   https://careers.datadoghq.com/detail/7554877/?gh_jid=7554877
 Datadog Senior Security Sales Engineer   https://careers.datadoghq.com/detail/8141240/?gh_jid=8141240
 Datadog Senior Security Sales Engineer   https://careers.datadoghq.com/detail/8141243/?gh_jid=8141243
@@ -419,3 +368,6 @@ Coinbase Social Support Specialist I   https://www.coinbase.com/careers/position
 Dropbox Legal Operations Associate   https://jobs.dropbox.com/listing/8328469?gh_jid=8328469
 American Express Cybersecurity AI Engineer Intern - Enterprise Technology Services   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26016065?utm_source=Simplify&ref=Simplify
 Amazon Software Development Engineer  Early Career - Embedded Systems   https://amazon.jobs/en/jobs/10595839/software-development-engineer-embedded-systems-early-career-2027-us?utm_source=Simplify&ref=Simplify
+Coinbase Customer Support Specialist ll   https://www.coinbase.com/careers/positions/8350367?gh_jid=8350367
+Coinbase Customer Support Specialist ll   https://www.coinbase.com/careers/positions/8350371?gh_jid=8350371
+Coinbase Customer Support Specialist ll   https://www.coinbase.com/careers/positions/8350374?gh_jid=8350374

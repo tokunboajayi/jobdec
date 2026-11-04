@@ -88,6 +88,7 @@ INTERN_KEYWORDS = re.compile(
     re.I
 )
 GRAD_ONLY = re.compile(r"\b(phd|postdoc)\b", re.I)
+EXCLUDE_SENIOR = re.compile(r"\b(director|vp\b|vice\s+president|head\s+of|manager|principal|staff\+)\b", re.I)
 
 
 def _clean(s):
@@ -142,7 +143,7 @@ def fetch_direct_ats():
                 data = json.loads(urllib.request.urlopen(req, timeout=6).read().decode("utf-8"))
                 for j in data.get("jobs", []):
                     title = j.get("title", "")
-                    if not INTERN_KEYWORDS.search(title) or GRAD_ONLY.search(title):
+                    if not INTERN_KEYWORDS.search(title) or GRAD_ONLY.search(title) or EXCLUDE_SENIOR.search(title):
                         continue
                     loc = j.get("location", {}).get("name", "USA")
                     if NON_US.search(loc) and "remote" not in loc.lower():
@@ -159,7 +160,7 @@ def fetch_direct_ats():
                 data = json.loads(urllib.request.urlopen(req, timeout=6).read().decode("utf-8"))
                 for j in data:
                     title = j.get("text", "")
-                    if not INTERN_KEYWORDS.search(title) or GRAD_ONLY.search(title):
+                    if not INTERN_KEYWORDS.search(title) or GRAD_ONLY.search(title) or EXCLUDE_SENIOR.search(title):
                         continue
                     loc = j.get("categories", {}).get("location", "USA")
                     if NON_US.search(loc) and "remote" not in loc.lower():
@@ -176,7 +177,7 @@ def fetch_direct_ats():
                 data = json.loads(urllib.request.urlopen(req, timeout=6).read().decode("utf-8"))
                 for j in data.get("jobs", []):
                     title = j.get("title", "")
-                    if not INTERN_KEYWORDS.search(title) or GRAD_ONLY.search(title):
+                    if not INTERN_KEYWORDS.search(title) or GRAD_ONLY.search(title) or EXCLUDE_SENIOR.search(title):
                         continue
                     loc = j.get("location", "USA")
                     if NON_US.search(loc) and "remote" not in loc.lower():

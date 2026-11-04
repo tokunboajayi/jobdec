@@ -361,13 +361,17 @@ def replenish_queue_action():
         r"\b(software\s+(engineer|developer|dev)|full\s*stack|backend|frontend|mobile\s+dev|ios\s+dev|android\s+dev|ml\s+engineer|machine\s+learning|algorithm|compiler|firmware|embedded\s+software|c\+\+\s+dev|java\s+dev|python\s+dev|react\s+dev|programmer|sde\b|swe\b)\b",
         re.I
     )
+    senior_exclude = re.compile(
+        r"\b(director|vp\b|vice\s+president|head\s+of|manager|principal|staff\+)\b",
+        re.I
+    )
 
     matches = []
     for j in jobs:
         title = (j.get("role") or j.get("title") or "").encode("ascii", "ignore").decode("ascii").strip()
         url = (j.get("url") or "").strip().rstrip("/")
         company = (j.get("company") or "").encode("ascii", "ignore").decode("ascii").strip()
-        if keywords.search(title) and not swe_exclude.search(title) and url and url not in applied_urls and url not in existing_urls:
+        if keywords.search(title) and not swe_exclude.search(title) and not senior_exclude.search(title) and url and url not in applied_urls and url not in existing_urls:
             matches.append((company, title, url))
 
     # Sort priority: Greenhouse > Ashby > Workday > Lever > Other
