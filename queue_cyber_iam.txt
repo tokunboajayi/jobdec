@@ -2,11 +2,9 @@ Cloudflare Network Security Engineer [Hybrid; 1d old]   https://boards.greenhous
 Cloudflare Technical Support Engineer - Developer Platform [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330121?gh_jid=8330121
 Figma Security Scientist [San Francisco, CA • New York, NY • United States; 1d old]   https://boards.greenhouse.io/figma/jobs/6180172004?gh_jid=6180172004
 ScaleAi DevOps Engineer, Infrastructure & Security [Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4674863005
-ScaleAi National Security Hackathon 2026 - General Interest [San Francisco, CA; New York, NY; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4687588005
 Robinhood Senior Offensive Security Engineer [Bellevue, WA; Denver, CO; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202858?t=gh_src=&gh_jid=8202858
 Robinhood Senior Security Engineer, Detection & Response [Bellevue, WA; Denver, CO; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8202863?t=gh_src=&gh_jid=8202863
 Robinhood Staff Offensive Security Engineer [Bellevue, WA; Denver, CO; Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/7460167?t=gh_src=&gh_jid=7460167
-Cloudflare Senior Product Security Engineer [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8079931?gh_jid=8079931
 Cloudflare Senior Systems Engineer - Application Security [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8222091?gh_jid=8222091
 Verkada Physical Security Associate, Events [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5262546007
 Verkada Senior Technical Support Engineer [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4997665007
@@ -17,10 +15,7 @@ Affirm Security Risk Management Lead [Remote US; 1d old]   https://job-boards.gr
 Affirm Staff Security Engineer, Enterprise AI [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/7994553003
 Reddit Staff Product Security Engineer [Remote - United States; 1d old]   https://job-boards.greenhouse.io/reddit/jobs/7868511
 Discord Senior Platform Security Engineer  [San Francisco Bay Area ; 1d old]   https://job-boards.greenhouse.io/discord/jobs/8769799002
-Chime Regional Physical Security Lead [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8907828002?gh_jid=8907828002
 Chime Senior Application Security Engineer [San Francisco, CA, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8575541002?gh_jid=8575541002
-Robinhood Senior Cloud Security Engineer [Bellevue, WA; Menlo Park, CA; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8077370?t=gh_src=&gh_jid=8077370
-Cloudflare Forward Deployed Engineer, Professional Services (Application Security) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330512?gh_jid=8330512
 Cloudflare Security Research Analyst, WAF Managed Rules [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8317733?gh_jid=8317733
 Affirm Senior Product Security Engineer [Remote US; 1d old]   https://job-boards.greenhouse.io/affirm/jobs/8042128003
 Chime Sr. Analyst, Identity & KYC [Chicago, IL, USA; 1d old]   https://boards.greenhouse.io/chime/jobs/8917560002?gh_jid=8917560002
