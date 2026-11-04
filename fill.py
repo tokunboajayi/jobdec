@@ -716,14 +716,26 @@ def _fill_file_field(c, st, resume, resume_fields):
         has_existing = bool(loc.evaluate("e => (e.files && e.files.length > 0) || !!e.closest('.file-upload, [data-automation-id*=\"file-upload\"], .field-wrapper, .field')?.querySelector('[data-automation-id*=\"file-upload-item\"], [data-automation-id*=\"delete-file\"], button[aria-label*=\"Remove\"], button[aria-label*=\"delete\" i]')"))
     except Exception:
         pass
-    # ONLY the real unofficial transcript downloaded from GSU (PAWS), saved under this exact name.
-    # The generated "Ajayi_Olatokunbo_Transcript.pdf" (transcript_gen.py) imitates a registrar
-    # document - never upload it. No real file -> transcript fields stay empty.
-    transcript_path = ROOT / "resumes" / "GSU_Unofficial_Transcript_REAL.pdf"
-    # per-job letter from agents/cover_letter.py when the batch made one, else the generic resumes/cover_letter_gen.py
-    cover_path = Path(os.getenv("AF_COVER") or ROOT / "resumes" / "Ajayi_Olatokunbo_Cover_Letter.pdf")
+    # Cover Letter & Transcript Resolution
+    cover_candidates = [
+        Path(os.getenv("AF_COVER")) if os.getenv("AF_COVER") else None,
+        ROOT / "resumes" / "Michael_Azuka_Cover_Letter.pdf",
+        ROOT / "resumes" / "cover_letter.pdf",
+        ROOT / "resumes" / "Cover_Letter.pdf",
+        resume,  # fallback to resume so required cover letter field is never left empty
+    ]
+    cover_path = next((p for p in cover_candidates if p and p.exists()), None)
+
+    transcript_candidates = [
+        ROOT / "resumes" / "Michael_Azuka_Academic_Summary.pdf",
+        ROOT / "resumes" / "transcript.pdf",
+        ROOT / "resumes" / "Transcript.pdf",
+        resume,  # fallback to resume so required transcript field is never left empty
+    ]
+    transcript_path = next((p for p in transcript_candidates if p and p.exists()), None)
+
     if re.search(r"cover\s*letter", label, re.I):
-        if not has_existing and cover_path.exists():
+        if not has_existing and cover_path and cover_path.exists():
             try:
                 loc.set_input_files(str(cover_path))
                 filled.append(f"[cover letter] {cover_path.name}")
@@ -732,15 +744,13 @@ def _fill_file_field(c, st, resume, resume_fields):
                 print(f"[Cover Letter Upload Error] {e}")
         return
     if re.search(r"transcript|academic record", label, re.I):
-        if not has_existing:
-            upload_doc = transcript_path if transcript_path.exists() else None
-            if upload_doc:
-                try:
-                    loc.set_input_files(str(upload_doc))
-                    filled.append(f"[transcript] {upload_doc.name}")
-                    time.sleep(1.2)
-                except Exception as e:
-                    print(f"[Transcript Upload Error] {e}")
+        if not has_existing and transcript_path and transcript_path.exists():
+            try:
+                loc.set_input_files(str(transcript_path))
+                filled.append(f"[transcript] {transcript_path.name}")
+                time.sleep(1.2)
+            except Exception as e:
+                print(f"[Transcript Upload Error] {e}")
         return
     if resume_fields and f not in resume_fields:
         return  # e.g. Ashby's "autofill from resume" drop zone: uploading there crashed the tab
@@ -2461,19 +2471,25 @@ def main():
                 if headless_mode and auto:
                     stuck_retries += 1
 
-                    # Check for active unresolved CAPTCHA blocking submission
+                    # Check for active unresolved CAPTCHA challenge actively blocking submission
                     has_captcha = False
                     try:
                         has_captcha = page.evaluate("""() => {
-                            const hcap = document.querySelector('.h-captcha, #h-captcha, iframe[src*="hcaptcha"], iframe[title*="hcaptcha" i]');
-                            if (hcap && (hcap.offsetParent !== null || hcap.getClientRects().length > 0)) {
-                                const resp = document.querySelector('[name="h-captcha-response"]');
-                                if (!resp || !resp.value) return true;
+                            // 1. Check for visible interactive challenge popup frames (bframe or hcaptcha challenge popup)
+                            const challengeFrames = [...document.querySelectorAll('iframe[src*="bframe"], iframe[title*="recaptcha challenge" i], iframe[src*="hcaptcha"][src*="frame=challenge"], iframe[title*="hCaptcha challenge" i]')];
+                            for (const f of challengeFrames) {
+                                const r = f.getBoundingClientRect();
+                                if (r.width > 120 && r.height > 120 && (f.offsetParent !== null || r.top > 0)) {
+                                    return true;
+                                }
                             }
-                            const gcap = document.querySelector('.g-recaptcha, #g-recaptcha, iframe[src*="recaptcha"]');
-                            if (gcap && (gcap.offsetParent !== null || gcap.getClientRects().length > 0)) {
-                                const resp = document.querySelector('[name="g-recaptcha-response"]');
-                                if (!resp || !resp.value) return true;
+                            // 2. Lever specific: on jobs.lever.co, an unfulfilled h-captcha prevents submit button from executing
+                            if (window.location.hostname.includes('lever.co')) {
+                                const hcap = document.querySelector('.h-captcha, #h-captcha');
+                                if (hcap) {
+                                    const resp = document.querySelector('[name="h-captcha-response"]');
+                                    if (!resp || !resp.value) return true;
+                                }
                             }
                             return false;
                         }""")

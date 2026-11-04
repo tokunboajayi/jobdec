@@ -6,21 +6,21 @@ output against FACT_TEXT so nothing invented reaches an application.
 import ast, importlib.util, json, os, pathlib, re
 
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
-RESUMES = AUTOFILL.parent / "resumes"
+RESUMES = (AUTOFILL / "resumes") if (AUTOFILL / "resumes").exists() else (AUTOFILL.parent / "resumes")
 
 DEFAULT_MASTER = {
-    "name": os.getenv("CANDIDATE_FULL_NAME", "Candidate"),
-    "contact": f"{os.getenv('CANDIDATE_LOCATION_TEXT', 'Atlanta, GA')} • {os.getenv('CANDIDATE_EMAIL', 'candidate@example.com')} • {os.getenv('CANDIDATE_PHONE', '555-0199')}",
+    "name": os.getenv("CANDIDATE_FULL_NAME", "Michael Azuka"),
+    "contact": f"{os.getenv('CANDIDATE_LOCATION_TEXT', 'Atlanta, GA')} • {os.getenv('CANDIDATE_EMAIL', 'mazuka146@gmail.com')} • {os.getenv('CANDIDATE_PHONE', '404-645-0373')}",
     "sections": [
         {"title": "EDUCATION", "entries": [
-            {"org": os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University"), "loc": os.getenv("CANDIDATE_CITY", "Atlanta"), "lines": [
-                f"{os.getenv('CANDIDATE_DEGREE', 'Bachelor of Business Administration')}, {os.getenv('CANDIDATE_MAJOR', 'Computer Information Systems (AI & Analytics)')}; Expected Graduation: {os.getenv('CANDIDATE_EXPECTED_GRAD_DATE', 'May 2028')}",
+            {"org": os.getenv("CANDIDATE_UNIVERSITY", "Kennesaw State University"), "loc": os.getenv("CANDIDATE_CITY", "Atlanta"), "lines": [
+                f"{os.getenv('CANDIDATE_DEGREE', 'Bachelor of Science')}, {os.getenv('CANDIDATE_MAJOR', 'Cybersecurity')}; Expected Graduation: {os.getenv('CANDIDATE_EXPECTED_GRAD_DATE', 'Dec 2026')}",
                 f"Cumulative GPA: {os.getenv('CANDIDATE_GPA', '3.35')}"
             ]}
         ]},
         {"title": "TECHNICAL SKILLS", "labeled": [
             ["Languages & Tools", os.getenv("CANDIDATE_TOP_SKILLS", "Python, SQL, Playwright, Git, Docker")],
-            ["Focus Areas", "Process automation, software engineering, agentic workflows, data pipelines"]
+            ["Focus Areas", "Cybersecurity, Identity & Access Management (IAM), Systems Administration, Network Defense"]
         ]}
     ]
 }

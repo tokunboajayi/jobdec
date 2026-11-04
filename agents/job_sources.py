@@ -29,7 +29,6 @@ DIRECT_ATS_COMPANIES = [
     ("Databricks", "greenhouse", "databricks"),
     ("Scale AI", "greenhouse", "scaleai"),
     ("Ramp", "ashby", "ramp"),
-    ("Palantir", "lever", "palantir"),
     ("Coinbase", "greenhouse", "coinbase"),
     ("Robinhood", "greenhouse", "robinhood"),
     ("DoorDash", "greenhouse", "doordash"),
@@ -88,7 +87,7 @@ INTERN_KEYWORDS = re.compile(
     re.I
 )
 GRAD_ONLY = re.compile(r"\b(phd|postdoc)\b", re.I)
-EXCLUDE_SENIOR = re.compile(r"\b(director|vp\b|vice\s+president|head\s+of|manager|principal|staff\+)\b", re.I)
+EXCLUDE_SENIOR = re.compile(r"\b(director|vp\b|vice\s+president|head\s+of|manager|principal|staff\b|staff\+|lead\b|senior\b|sr\.?\b|architect\b)\b", re.I)
 
 
 def _clean(s):
