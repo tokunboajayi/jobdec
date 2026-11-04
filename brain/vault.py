@@ -134,16 +134,16 @@ class ErrorVault:
             "avg_duration": 0.0,
             "last_active": ""
         })
-        d["attempts"] += 1
+        d["attempts"] = d.get("attempts", 0) + 1
         d["last_active"] = time.strftime("%Y-%m-%d %H:%M:%S")
         if success:
-            d["successes"] += 1
+            d["successes"] = d.get("successes", 0) + 1
             if duration > 0:
                 old_avg = d.get("avg_duration", 0.0)
                 n = d["successes"]
                 d["avg_duration"] = round(((old_avg * (n - 1)) + duration) / n, 2)
         else:
-            d["failures"] += 1
+            d["failures"] = d.get("failures", 0) + 1
         self._save_json(self.metrics_file, metrics)
 
     def get_recurring_errors(self, min_count: int = 2) -> List[Dict[str, Any]]:
