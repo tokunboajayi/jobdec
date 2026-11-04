@@ -2460,6 +2460,30 @@ def main():
             if sig == last_sig:
                 if headless_mode and auto:
                     stuck_retries += 1
+
+                    # Check for active unresolved CAPTCHA blocking submission
+                    has_captcha = False
+                    try:
+                        has_captcha = page.evaluate("""() => {
+                            const hcap = document.querySelector('.h-captcha, #h-captcha, iframe[src*="hcaptcha"], iframe[title*="hcaptcha" i]');
+                            if (hcap && (hcap.offsetParent !== null || hcap.getClientRects().length > 0)) {
+                                const resp = document.querySelector('[name="h-captcha-response"]');
+                                if (!resp || !resp.value) return true;
+                            }
+                            const gcap = document.querySelector('.g-recaptcha, #g-recaptcha, iframe[src*="recaptcha"]');
+                            if (gcap && (gcap.offsetParent !== null || gcap.getClientRects().length > 0)) {
+                                const resp = document.querySelector('[name="g-recaptcha-response"]');
+                                if (!resp || !resp.value) return true;
+                            }
+                            return false;
+                        }""")
+                    except Exception:
+                        pass
+
+                    if has_captcha and stuck_retries >= 2:
+                        print("\n[CAPTCHA Block] Active unsolved CAPTCHA challenge is blocking submission in headless mode. Fast-skipping job...")
+                        break
+
                     # Check for validation messages
                     try:
                         err_msgs = page.evaluate("() => [...document.querySelectorAll('[data-automation-id*=\"error\" i], [class*=\"error\" i], [data-automation-id*=\"validationMessage\"]')].filter(e => (e.offsetParent !== null || e.getClientRects().length > 0) && e.innerText && e.innerText.trim().length > 1).map(e => e.innerText.trim())")
@@ -2533,6 +2557,17 @@ def main():
                         break
                     print(f"\n[Headless Autonomous] Waiting for page transition / retrying advance (attempt {stuck_retries}/5)...")
                     settle(page, 4)
+                    # Try checking hCaptcha checkbox if present
+                    try:
+                        hcap_frame = page.frame_locator("iframe[title*='hCaptcha' i], iframe[src*='hcaptcha' i]").first
+                        hcap_box = hcap_frame.locator("#checkbox, .check, [role='checkbox']").first
+                        if hcap_box.count() > 0 and hcap_box.is_visible(timeout=800):
+                            print("[Captcha Auto-Check] Attempting hCaptcha verification click...")
+                            hcap_box.click(force=True)
+                            time.sleep(1.5)
+                    except Exception:
+                        pass
+
                     # Re-click nav button in case pointer event was swallowed
                     try:
                         click_nav(page, click_target.locator('[data-af-nav="1"]').first)
