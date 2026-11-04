@@ -451,6 +451,22 @@ def resolve_field(
 
     # TIER 2: Fast Invariant Check
     lab_low = lab.lower()
+
+    # Fast Language Proficiency Invariant (resolves 50+ language lists in 0ms)
+    lang_match = re.search(r"\b(english|spanish|hindi|french|german|mandarin|cantonese|japanese|arabic|portuguese|russian|italian|korean|vietnamese|telugu|marathi|tamil|urdu|gujarati|bengali|lithuanian|khmer|hmong|tagalog|polish|dutch|turkish)\b", lab_low)
+    if lang_match:
+        lang = lang_match.group(1).lower()
+        if lang == "english":
+            ans = "Native / Fluent"
+            if options:
+                ans = pick_best_matching_option("Fluent", options) or pick_best_matching_option("Native", options) or pick_best_matching_option("Professional", options) or pick_best_matching_option("Yes", options) or ans
+            return {"answer": ans, "option": f"^{re.escape(ans)}$", "src": "language_invariant", "confidence": "high"}
+        else:
+            ans = "None"
+            if options:
+                ans = pick_best_matching_option("None", options) or pick_best_matching_option("Not Applicable", options) or pick_best_matching_option("No proficiency", options) or pick_best_matching_option("No", options) or ans
+            return {"answer": ans, "option": f"^{re.escape(ans)}$", "src": "language_invariant", "confidence": "high"}
+
     if re.search(r"authorized.*to.*work|legal(ly)?.*authoriz|right.*to.*work", lab_low):
         return {"answer": "Yes", "option": r"^Yes\b", "src": "invariant", "confidence": "high"}
     if re.search(r"require.*sponsor|visa.*sponsor|sponsorship.*future", lab_low):
