@@ -467,6 +467,14 @@ def resolve_field(
                 ans = pick_best_matching_option("None", options) or pick_best_matching_option("Not Applicable", options) or pick_best_matching_option("No proficiency", options) or pick_best_matching_option("No", options) or ans
             return {"answer": ans, "option": f"^{re.escape(ans)}$", "src": "language_invariant", "confidence": "high"}
 
+    # Split Digit Zip Code Fields (e.g. Dropbox / Greenhouse)
+    m_zip_digit = re.search(r"(?:zip|postal).*digit\s*([1-5])\b", lab_low)
+    if m_zip_digit:
+        digit_idx = int(m_zip_digit.group(1))
+        zip_str = "30127"
+        ans_char = zip_str[digit_idx - 1]
+        return {"answer": ans_char, "option": f"^{ans_char}$", "src": "zip_digit_invariant", "confidence": "high"}
+
     if re.search(r"authorized.*to.*work|legal(ly)?.*authoriz|right.*to.*work", lab_low):
         return {"answer": "Yes", "option": r"^Yes\b", "src": "invariant", "confidence": "high"}
     if re.search(r"require.*sponsor|visa.*sponsor|sponsorship.*future", lab_low):
