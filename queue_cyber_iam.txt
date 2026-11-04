@@ -150,8 +150,6 @@ ByteDance Data Lake Infrastructure & Data Analytics Research Engineer Intern - A
 ByteDance Data Lake Infrastructure and Data Analytics Research Engineer Intern - Applied Machine Learning Ark   https://jobs.bytedance.com/en/position/7671109787509213445/detail?utm_source=Simplify&ref=Simplify
 TikTok Research Engineer Intern - Agentic Systems & AI Infrastructure - Generalized Architecture   https://lifeattiktok.com/search/7667934792727906565?utm_source=Simplify&ref=Simplify
 Navy Federal Mobile Developer Intern - Summer Associate   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32368?utm_source=Simplify&ref=Simplify
-Amazon Software Development Engineer  Early Career - Amazon Dedicated Cloud - ADC   https://amazon.jobs/en/jobs/10529546/software-development-engineer-amazon-dedicated-cloud-early-career-2026-amazon-dedicated-cloud-adc?utm_source=Simplify&ref=Simplify
-ByteDance Software Development Engineer Intern - Network Automation - 2027 Summer   https://jobs.bytedance.com/en/position/7671147251943213317/detail?utm_source=Simplify&ref=Simplify
 Coinbase Associate General Counsel, EU Legal   https://www.coinbase.com/careers/positions/8265422?gh_jid=8265422
 Coinbase Broker Dealer Operations, Associate   https://www.coinbase.com/careers/positions/8248775?gh_jid=8248775
 Coinbase Compliance, International Investigations Associate   https://www.coinbase.com/careers/positions/8224726?gh_jid=8224726
@@ -241,7 +239,12 @@ Coinbase Social Support Specialist I   https://www.coinbase.com/careers/position
 Coinbase Social Support Specialist I   https://www.coinbase.com/careers/positions/8335621?gh_jid=8335621
 Dropbox Legal Operations Associate   https://jobs.dropbox.com/listing/8328469?gh_jid=8328469
 American Express Cybersecurity AI Engineer Intern - Enterprise Technology Services   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26016065?utm_source=Simplify&ref=Simplify
-Amazon Software Development Engineer  Early Career - Embedded Systems   https://amazon.jobs/en/jobs/10595839/software-development-engineer-embedded-systems-early-career-2027-us?utm_source=Simplify&ref=Simplify
 Coinbase Customer Support Specialist ll   https://www.coinbase.com/careers/positions/8350367?gh_jid=8350367
 Coinbase Customer Support Specialist ll   https://www.coinbase.com/careers/positions/8350371?gh_jid=8350371
 Coinbase Customer Support Specialist ll   https://www.coinbase.com/careers/positions/8350374?gh_jid=8350374
+VeeamSoftware Security  AI Engineer Intern   https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4952609101?utm_source=Simplify&ref=Simplify   resumes/master_resume.pdf
+ScaleAi National Security Hackathon 2026 - General Interest [San Francisco, CA; New York, NY; Washington, DC; 1d old]   https://job-boards.greenhouse.io/scaleai/jobs/4687588005
+Cloudflare Infrastructure Operations Analyst [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8245787?gh_jid=8245787
+GeVernova Hardware Engineer Intern - Critical Infrastructure Communications [Rochester, NY; 0d old]   https://gevernova.wd5.myworkdayjobs.com/only_confidential_executive_recruiting/job/Rochester/GE-Vernova-Grid-Solutions---Hardware-Engineering-Intern--Critical-Infrastructure-Communications----Spring-Summer-2027_R5051647-1?utm_source=Simplify&ref=Simplify
+Cloudflare Forward Deployed Engineer, Professional Services (Application Security) [Hybrid; 1d old]   https://boards.greenhouse.io/cloudflare/jobs/8330512?gh_jid=8330512
+Datadog Information Security Analyst II - Federal Programs [Boston, Massachusetts, USA; Denver, Colorado, USA; New York, New York, USA; 1d old]   https://careers.datadoghq.com/detail/8319487/?gh_jid=8319487

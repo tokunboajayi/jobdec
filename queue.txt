@@ -3339,3 +3339,105 @@ Honeywell Embedded Engineer 1 New Grad [St. Charles, IL; 0d old]   https://ibqbj
 Icon Founding Engineer [NYC; 0d old]   https://jobs.ashbyhq.com/icon/8de569c7-814f-4ffe-9c21-a92d7b806be2/application?utm_source=Simplify&ref=Simplify
 NorthwoodSpace Software Engineer – New grad / early career [Carson, CA; 0d old]   https://jobs.ashbyhq.com/NorthwoodSpace/b960b661-e1cc-40d0-bde3-290cd1b58ede/application?utm_source=Simplify&ref=Simplify
 AmericanExpress Campus Undergraduate Summer Internship - Strategy & Analytics - Credit & Fraud Risk [NYC; 27d old]   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26011984?utm_source=Simplify&ref=Simplify
+
+# ---- added by agents/job_sources.py (multi-source, <= 30 days old)
+Coinbase Customer Support Specialist II [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8352329?gh_jid=8352329
+Coinbase Customer Support Specialist II-3 [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8083906?gh_jid=8083906
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8346073?gh_jid=8346073
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337048?gh_jid=8337048
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337055?gh_jid=8337055
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337042?gh_jid=8337042
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337049?gh_jid=8337049
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337038?gh_jid=8337038
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337032?gh_jid=8337032
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8350374?gh_jid=8350374
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8350371?gh_jid=8350371
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8350367?gh_jid=8350367
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337035?gh_jid=8337035
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8350362?gh_jid=8350362
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337045?gh_jid=8337045
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8334387?gh_jid=8334387
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8346064?gh_jid=8346064
+Coinbase Customer Support Specialist ll [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8346070?gh_jid=8346070
+Coinbase Payments Risk Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337162?gh_jid=8337162
+Coinbase Payments Risk Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337149?gh_jid=8337149
+Coinbase Payments Risk Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337152?gh_jid=8337152
+Coinbase Payments Risk Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337157?gh_jid=8337157
+Coinbase Social Support Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337064?gh_jid=8337064
+Coinbase Social Support Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337052?gh_jid=8337052
+Coinbase Social Support Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337058?gh_jid=8337058
+Coinbase Social Support Specialist I [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8335621?gh_jid=8335621
+Coinbase Social Support Specialist I [Remote - USA; 1d old]   https://www.coinbase.com/careers/positions/8335618?gh_jid=8335618
+Coinbase Social Support Specialist I [Manila, Philippines; 1d old]   https://www.coinbase.com/careers/positions/8337061?gh_jid=8337061
+Robinhood Risk Specialist [Menlo Park, CA; New York, NY; 1d old]   https://boards.greenhouse.io/robinhood/jobs/8334344?t=gh_src=&gh_jid=8334344
+Dropbox Legal Operations Associate [Remote - US: Select locations; 1d old]   https://jobs.dropbox.com/listing/8328469?gh_jid=8328469
+Dropbox Product Support Representative [Remote - Ireland; 1d old]   https://jobs.dropbox.com/listing/8328394?gh_jid=8328394
+Dropbox Stock Administrator [Remote - US: Select locations; 1d old]   https://jobs.dropbox.com/listing/8328476?gh_jid=8328476
+Verkada Backend Software Engineer - University Graduate 2027 [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/5280545007
+Verkada Sales Development Representative, Internship [Austin, TX United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4995135007
+Verkada Sales Development Representative, Internship [San Mateo, CA United States; 1d old]   https://job-boards.greenhouse.io/verkada/jobs/4866879007
+Sierra Recruiting Operations Specialist [San Francisco, CA; 1d old]   https://jobs.ashbyhq.com/sierra/f673561e-aece-4df9-ae46-55779dc6a9d8
+Duolingo QA Specialist I, Recent Graduate [New York, NY; Pittsburgh, PA; 1d old]   https://careers.duolingo.com/jobs/8927565002?gh_jid=8927565002
+Lyft Lyft Business Customer Success Associate [New York, NY; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8928746002?gh_jid=8928746002
+Lyft Lyft Business Customer Success Associate [San Francisco, CA; 1d old]   https://app.careerpuck.com/job-board/lyft/job/8928721002?gh_jid=8928721002
+Microsoft Software Engineer Intern [Redmond, WA; 0d old]   https://apply.careers.microsoft.com/careers/job/1970393557037859?utm_source=Simplify&ref=Simplify
+ElectronicArts Anticheat Engineer Intern [Austin, TX; 0d old]   https://jobs.ea.com/en_US/careers/JobDetail/Anticheat-Engineer-Intern-Summer-2027/216242?utm_source=Simplify&ref=Simplify
+CommonwealthFusionSystems Software Engineer Intern [Devens, MA; 0d old]   https://jobs.lever.co/cfsenergy/f71bb176-75b9-4a30-8b2a-e3078b45505d/apply?utm_source=Simplify&ref=Simplify
+Staples Software Engineer Intern - SDS e-Commerce Team [Framingham, MA; 0d old]   https://fa-exhh-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/StaplesInc/job/77133?utm_source=Simplify&ref=Simplify
+Nex Software Engineer Intern - Sports & Fitness - Game Development [San Jose, CA; 0d old]   https://job-boards.greenhouse.io/nex/jobs/5421056008?utm_source=Simplify&ref=Simplify
+ZebraTechnologies Software Engineer Intern [Holtsville, NY; 1d old]   https://zebra.wd501.myworkdayjobs.com/Zebra_careers/job/Holtsville-New-York/XMLNAME-2027-Summer-Internship--US----Software-Engineer_JR103638?utm_source=Simplify&ref=Simplify
+TMobile T-Ads Software Engineer Intern [Philadelphia, PA; 1d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Philadelphia-Pennsylvania/Summer-2027-T-Ads-Software-Engineering-Internship_REQ381234?utm_source=Simplify&ref=Simplify
+TMobile Software Engineering Intern [Atlanta, GA; 1d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Atlanta-Georgia/Summer-2027-Software-Engineering-Internship_REQ380652?utm_source=Simplify&ref=Simplify
+Rtx Software Engineer Intern [West Valley City, UT; 1d old]   https://globalhr.wd5.myworkdayjobs.com/rec_rtx_ext_gateway/job/US-UT-WEST-VALLEY-CITY-338--1127--1128-w-2400-S--BLDG-338/Software-Engineering-Intern--Summer-2027-_01886446?utm_source=Simplify&ref=Simplify
+NorthropGrumman Flight Software Engineer Intern [Manhattan Beach, CA; 1d old]   https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site/job/United-States-California-Manhattan-Beach/XMLNAME-2027-Flight-Software-Engineer-Intern---Redondo-Beach-CA_R10259032?utm_source=Simplify&ref=Simplify
+NorthropGrumman Ground Software Engineer Intern [Redondo Beach, CA; 1d old]   https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site/job/United-States-California-Redondo-Beach/XMLNAME-2027-Ground-Software-Engineer-Intern---Redondo-Beach-CA_R10259057?utm_source=Simplify&ref=Simplify
+JmFamily AI Center of Excellence Delivery Team Intern [Deerfield Beach, FL; 1d old]   https://jmfamily.wd1.myworkdayjobs.com/jmfamily_external/job/Florida---Deerfield-Beach/AI-Center-of-Excellence--COE--Delivery-Team-Intern_JR105176?utm_source=Simplify&ref=Simplify
+HpInc Software Engineer Intern - Product & Developer Productivity [SF; 1d old]   https://hp.wd5.myworkdayjobs.com/externalcareersite/job/San-Francisco-California-United-States-of-America/Software-Quality-Assurance-Intern_UNI4803-1?utm_source=Simplify&ref=Simplify
+ArrowstreetCapital Software Engineer Intern [Boston, MA; 1d old]   https://arrowstreetcapital.wd5.myworkdayjobs.com/Campus_Careers/job/Boston/Software-Engineer-Intern--Summer-2027_R1561?utm_source=Simplify&ref=Simplify
+ArchCapitalGroup Originations Portal IT Intern [Greensboro, NC; 1d old]   https://archgroup.wd1.myworkdayjobs.com/careers/job/Greensboro-NC-United-States-of-America/Originations-Portal-IT-Intern_R26_1135?utm_source=Simplify&ref=Simplify
+Costco CDS Intern - Innovation [Issaquah, WA; 1d old]   https://phf.tbe.taleo.net/phf02/ats/careers/v2/viewRequisition?org=COSTCO&cws=41&rid=10998&utm_source=Simplify&ref=Simplify
+Resideo Mobile Software Engineer Intern [Austin, TX; 1d old]   https://ehtl.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/19816?utm_source=Simplify&ref=Simplify
+Wellmark Software Engineer Intern - AI Platform Team [Des Moines, IA; 1d old]   https://jobs.smartrecruiters.com/WellmarkInc/744000159260670?utm_source=Simplify&ref=Simplify
+TriaFederal Growth Operations Intern [Arlington County, Arlington, VA; 1d old]   https://triafed.com/jobs/?gh_jid=5470246008&utm_source=Simplify&ref=Simplify
+Paretohealth Software Engineer Intern [Philadelphia, PA; 2d old]   https://job-boards.greenhouse.io/paretocaptiveservicesllc/jobs/4726117006?utm_source=Simplify&ref=Simplify
+Roku Software Engineer Intern - AI Engineering [San Jose, CA; 2d old]   https://www.weareroku.com/jobs/8258241?gh_jid=8258241&utm_source=Simplify&ref=Simplify
+ZebraTechnologies Intern - AI [Lincolnshire, IL; 2d old]   https://zebra.wd501.myworkdayjobs.com/Zebra_careers/job/Lincolnshire-Illinois/XMLNAME-2027-Summer-Internship--US----AI_JR103639?utm_source=Simplify&ref=Simplify
+ZebraTechnologies Software/AI Engineer Intern - Handheld Mobile Computers [Holtsville, NY; 2d old]   https://zebra.wd501.myworkdayjobs.com/Zebra_careers/job/Holtsville-New-York/XMLNAME-2027-Summer-Internship--US----Software-AI-Engineer--Handheld-Mobile-Computers-_JR103632?utm_source=Simplify&ref=Simplify
+TMobile Software Engineer Intern [NYC; 2d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/New-York-New-York/Summer-2027-Software-Engineering-Internship_REQ380886?utm_source=Simplify&ref=Simplify
+SierraNevadaCorporation Software Engineer Intern [Southern Pines, NC; 2d old]   https://snc.wd1.myworkdayjobs.com/snc_external_career_site/job/Southern-Pines-NC/Software-Engineer-Intern--Summer-2027-_R0031229?utm_source=Simplify&ref=Simplify
+SierraNevadaCorporation Software Engineer Intern [Southern Pines, NC; 2d old]   https://snc.wd1.myworkdayjobs.com/snc_external_career_site/job/Southern-Pines-NC/Software-Engineer-Intern--Summer-2027-_R0031230?utm_source=Simplify&ref=Simplify
+Nvidia AI Compiler and Kernel Intern [Austin, TX; 2d old]   https://nvidia.wd5.myworkdayjobs.com/NVIDIAExternalCareerSite/job/US-TX-Austin/AI-Compiler-and-Kernel-Intern---Summer-2027_JR2029220-1?utm_source=Simplify&ref=Simplify
+NorthropGrumman Engineering Intern - Multiple Teams [Chandler, AZ; 2d old]   https://ngc.wd1.myworkdayjobs.com/Northrop_Grumman_External_Site/job/United-States-Arizona-Chandler/XMLNAME-2027-Engineering-Intern--Software-Mission-Assurance-Quality----Chandler-AZ_R10258848?utm_source=Simplify&ref=Simplify
+MotorolaSolutions Software Engineer Cybersecurity Services Intern [6 locations  Salt Lake City, UT Remote in USA Chicago, IL Ashburn, VA Schaumburg, IL Plantation, FL; 2d old]   https://motorolasolutions.wd5.myworkdayjobs.com/Careers/job/Virginia-Remote-Work/Software-Engineer-Cybersecurity-Services---2027-Summer-Internship_R69250?utm_source=Simplify&ref=Simplify
+Labcorp Full-Stack Life Sciences Software Engineer Co-op [Durham, NC Burlington, NC; 2d old]   https://labcorp.wd1.myworkdayjobs.com/external/job/Durham-NC/Co-op---Full-Stack-Life-Sciences-Engineer_2639083?utm_source=Simplify&ref=Simplify
+KlaCorporation Software Engineer Intern [Austin, TX; 2d old]   https://kla.wd1.myworkdayjobs.com/search/job/Austin-TX/Software-Engineering-Intern_2642004-1?utm_source=Simplify&ref=Simplify
+JmFamily Software Engineer Intern [Deerfield Beach, FL; 2d old]   https://jmfamily.wd1.myworkdayjobs.com/jmfamily_external/job/Florida---Deerfield-Beach/Software-Engineer-Intern_JR105182?utm_source=Simplify&ref=Simplify
+Visa Software Engineer Intern [Austin, TX; 8d old]   https://visa.wd5.myworkdayjobs.com/Visa_Early_Careers/job/US---Austin-TX/XMLNAME-2027-Sophomore-Internship-Program---Software-Engineer-Intern--Austin--TX---2027_REF089882W?utm_source=Simplify&ref=Simplify
+WilliamBlair Agentic AI Development Intern [Chicago, IL; 0d old]   https://www.williamblair.com/Careers/job-description?gh_jid=5242282007&utm_source=Simplify&ref=Simplify
+DellTechnologies Software Engineer Intern - Client Solutions Group Engineering [Austin, TX; 0d old]   https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/job/298217?utm_source=Simplify&ref=Simplify
+Saronic Enterprise Technology Intern - AI and Automation [Austin, TX; 0d old]   https://jobs.ashbyhq.com/saronic/6118e5ce-36b0-4f9a-a0c4-34dceb46b9c1/application?embed=true&utm_source=Simplify&ref=Simplify
+Paccar Product Planning Intern [Denton, TX; 0d old]   https://jobs.paccar.com/job/Denton-2027-Summer-Internship-Product-Planning-TX-76205-7864/1453917433/?ats=successfactors&utm_source=Simplify&ref=Simplify
+LexisnexisRiskSolutions Product Management Intern - Insurance [Alpharetta, GA; 1d old]   https://relx.wd3.myworkdayjobs.com/en-US/RiskSolutions/job/Alpharetta-GA-Alderman/Product-Management-Intern--Insurance_R118879?utm_source=Simplify&ref=Simplify
+LexisnexisRiskSolutions Product Manager Intern - Government [Alpharetta, GA; 1d old]   https://relx.wd3.myworkdayjobs.com/en-US/RiskSolutions/job/Alpharetta-GA-Alderman/Product-Management-Intern--Government_R118611?utm_source=Simplify&ref=Simplify
+Paretohealth Product Manager Intern [Philadelphia, PA; 2d old]   https://job-boards.greenhouse.io/paretocaptiveservicesllc/jobs/4725351006?utm_source=Simplify&ref=Simplify
+TheFederalReserveSystem Supervision & Regulation Intern - Business Relationship [Atlanta, GA; 2d old]   https://rb.wd5.myworkdayjobs.com/en-US/FRS/job/Atlanta-GA/XMLNAME-2027-Summer-Internship-Program---Supervision---Regulation--Business-Relationship-_R-0000033860?utm_source=Simplify&ref=Simplify
+TMobile Product Operations Manager Intern [Bellevue, WA; 2d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Bellevue-Washington/Summer-2027-Product-Operations-Manager-Internship_REQ380888?utm_source=Simplify&ref=Simplify
+TMobile Product Management Intern [Philadelphia, PA; 2d old]   https://tmobile.wd1.myworkdayjobs.com/External/job/Philadelphia-Pennsylvania/Summer-2027-Product-Management-Internship_REQ380735?utm_source=Simplify&ref=Simplify
+SherwinWilliams R&D Data Visualization Intern [Brecksville, OH; 0d old]   https://ejhp.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_2/job/2628298?utm_source=Simplify&ref=Simplify
+AmericanExpress Cybersecurity AI Engineer Intern - Enterprise Technology Services [Phoenix, AZ; 0d old]   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26016065?utm_source=Simplify&ref=Simplify
+JomboyMedia Business Intelligence Intern [NYC; 0d old]   https://job-boards.greenhouse.io/jomboymedia/jobs/4478036009?utm_source=Simplify&ref=Simplify
+HiveFinancialSystems HFA Intern [Atlanta, GA; 0d old]   https://job-boards.greenhouse.io/hivefinancialsystems/jobs/5283228007?utm_source=Simplify&ref=Simplify
+FirstCitizensBancshares Applied AI Intern [Raleigh, NC; 0d old]   https://firstcitizens.jibeapply.com/jobs/36413?icims=1&utm_source=Simplify&ref=Simplify
+Vizient Summer Intern - Digital Collaboration & Data Insights [Chicago, IL; 1d old]   https://vizient.wd1.myworkdayjobs.com/Vizient_Careers/job/Chicago-IL-60607/XMLNAME-2027-Summer-Internship---Digital-Collaboration---Data-Insights_35969R?utm_source=Simplify&ref=Simplify
+Trustage Innovation & AI Technology Intern [Madison, WI; 1d old]   https://trustage.wd1.myworkdayjobs.com/TruStage/job/Madison-WI/IT---Innovation---AI-Technology-Internship--Hybrid-_R-012293?utm_source=Simplify&ref=Simplify
+Mosaic Artificial Intelligence Co-op Intern [Lithia, FL; 1d old]   https://mosaic.wd5.myworkdayjobs.com/mosaic/job/US---Tampa-FL-Lithia-area/Artificial-Intelligence-Co-Op-Intern---Summer-2027_65420?utm_source=Simplify&ref=Simplify
+JmFamily AI & Decision Science Intern [Deerfield Beach, FL; 1d old]   https://jmfamily.wd1.myworkdayjobs.com/jmfamily_external/job/Florida---Deerfield-Beach/AI---Decision-Science-Intern_JR105095?utm_source=Simplify&ref=Simplify
+Itron Data Analytics and Automation Intern - Finance [Liberty Lake, WA; 1d old]   https://itron.wd5.myworkdayjobs.com/Early_Careers/job/United-States-of-America-Washington-Liberty-Lake/Intern---Data-Analytics-and-Automation--Finance_JR103020?utm_source=Simplify&ref=Simplify
+HpInc Software Engineer Intern - AIML Platform - HP IQ [SF; 1d old]   https://hp.wd5.myworkdayjobs.com/externalcareersite/job/San-Francisco-California-United-States-of-America/Software-Engineering-Intern--AIML-Platform---HP-IQ_UNI4800-1?utm_source=Simplify&ref=Simplify
+Caresource Data Science Intern [Remote in USA; 1d old]   https://caresource.wd1.myworkdayjobs.com/caresource/job/Remote/XMLNAME-2027-Summer-Internship-Program---Data-Science-Intern_R14306?utm_source=Simplify&ref=Simplify
+Resideo Data Science Intern [Austin, TX Golden Valley, MN; 1d old]   https://ehtl.fa.us6.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX/job/19817?utm_source=Simplify&ref=Simplify
+Paccar Warranty Business Intern [Denton, TX; 1d old]   https://jobs.paccar.com/job/Denton-2027-Summer-Internship-Warranty-Business-TX-76205-7864/1453566133/?ats=successfactors&utm_source=Simplify&ref=Simplify
+Paccar Materials Systems Intern [Denton, TX; 1d old]   https://jobs.paccar.com/job/Denton-2027-Summer-Internship-Materials-Systems-TX-76205-7864/1453566333/?ats=successfactors&utm_source=Simplify&ref=Simplify
+Paccar Sales Administration Data Analyst Intern - Greenhouse Gas [Denton, TX; 1d old]   https://jobs.paccar.com/job/Denton-2027-Summer-Internship-Sales-Administration-Data-Analyst-Greenhouse-Gas-TX-76205-7864/1453564433/?ats=successfactors&utm_source=Simplify&ref=Simplify
+DivergentTechnologies Production Business Intelligence Intern [Torrance, CA; 1d old]   https://job-boards.greenhouse.io/divergent/jobs/5393537008?utm_source=Simplify&ref=Simplify
+IntuitiveSurgical AI/ML Engineer Intern [Sunnyvale, CA; 1d old]   https://jobs.smartrecruiters.com/Intuitive/744000159218439?utm_source=Simplify&ref=Simplify
