@@ -1,313 +1,36 @@
 Databricks Deputy Facility Security Officer [Washington, D.C.]   https://boards.greenhouse.io/databricks/jobs/8811713002
-Scaleai IT Systems Engineer [Washington, DC]   https://job-boards.greenhouse.io/scaleai/jobs/4704551005
 Coinbase Security Engineer, Corporate Security [Remote - USA]   https://boards.greenhouse.io/coinbase/jobs/8319444
-Cloudflare Hardware Systems Engineer [In-Office]   https://boards.greenhouse.io/cloudflare/jobs/8223480?gh_jid=8223480
-Cloudflare Hardware Systems Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8325821?gh_jid=8325821
-Cloudflare Infrastructure Network & Supply Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8188468?gh_jid=8188468
-Cloudflare Network Security Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8159206?gh_jid=8159206
-Cloudflare Systems Engineer, Browser Isolation [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8276155?gh_jid=8276155
-Cloudflare Systems Engineer - Database Platform [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8158016?gh_jid=8158016
-Cloudflare Systems Engineer (Data Intelligence & Analytics Team) [In-Office]   https://boards.greenhouse.io/cloudflare/jobs/8022909?gh_jid=8022909
-Cloudflare Systems Engineer, Data Intelligence & Analytics Team [In-Office]   https://boards.greenhouse.io/cloudflare/jobs/8050813?gh_jid=8050813
-Cloudflare Systems Engineer, DNS [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8275392?gh_jid=8275392
-Cloudflare Systems Engineer, Growth Engineering [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8175620?gh_jid=8175620
-Cloudflare Systems Engineer, MAPS [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/7742773?gh_jid=7742773
-Cloudflare Systems Engineer, MCP Portals [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8207326?gh_jid=8207326
-Cloudflare Systems Engineer, Network Automation [Lisbon, Portugal]   https://boards.greenhouse.io/cloudflare/jobs/8142261?gh_jid=8142261
-Cloudflare Systems Engineer, Network Protocols & Distributed Systems [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8187404?gh_jid=8187404
-Cloudflare Systems Engineer, SSL/TLS Team [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8130936?gh_jid=8130936
-Cloudflare Systems Engineer, WARP [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8336674?gh_jid=8336674
-Lyft Business Systems Engineer [U.S. Anywhere]   https://boards.greenhouse.io/lyft/jobs/8772602002
-Lyft Business Systems Engineer, Oracle STP [Mexico City, Mexico]   https://boards.greenhouse.io/lyft/jobs/8483261002
-Lyft Investigator, Global Security [Nashville, TN]   https://boards.greenhouse.io/lyft/jobs/8675426002
 Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America]   https://boards.greenhouse.io/block/jobs/5427789008
 Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America]   https://boards.greenhouse.io/block/jobs/5427855008
 Elastic Okta Identity Engineer [United States]   https://boards.greenhouse.io/elastic/jobs/8093275
-Datadog Enterprise Security Sales Specialist [San Francisco, California, USA]   https://boards.greenhouse.io/datadog/jobs/8243668
-Datadog Enterprise Security Sales Specialist [California, USA, Remote]   https://boards.greenhouse.io/datadog/jobs/8256245
-Datadog Enterprise Security Sales Specialist [District of Columbia, USA, Remote; North Carolina, USA, Remote]   https://boards.greenhouse.io/datadog/jobs/7132132
-Datadog Enterprise Security Sales Specialist [New York, New York, USA]   https://boards.greenhouse.io/datadog/jobs/7129425
-Datadog Enterprise Security Sales Specialist [Chicago, Illinois, USA]   https://boards.greenhouse.io/datadog/jobs/8237332
-Asana IT Systems Engineer - Identity [Vancouver, BC]   https://boards.greenhouse.io/asana/jobs/7839280
-Asana Product Security Engineer [Vancouver, BC]   https://boards.greenhouse.io/asana/jobs/8137817
-Asana Product Security Engineer [Warsaw]   https://boards.greenhouse.io/asana/jobs/8244347
-Nuro Security Engineer, Infrastructure [Mountain View, California (HQ)]   https://boards.greenhouse.io/nuro/jobs/7702403
 Astranis IT Support Technician Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4716175006
 Astranis Product Security Engineer [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4667335006
-Stratolaunch Data Systems / Network Engineer [Mojave, California, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5419048008
-Stratolaunch Environmental Test Systems Engineer (LabVIEW) [Mojave, California, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5294697008
-Stratolaunch Facility Security Officer [Huntsville, Alabama, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5445852008
-Stratolaunch Security Administrative Assistant [Mojave, California, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5458038008
-Stratolaunch Security Intern- Summer 2027 [Mojave, California, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5466978008
-Stratolaunch Systems Engineer [Mojave, California, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5159784008
-Spacex ASIC/SOC DFT Engineer (Silicon Engineering) [Austin, TX]   https://boards.greenhouse.io/spacex/jobs/8686199002?gh_jid=8686199002
-Spacex ASIC/SOC DFT Engineer (Silicon Engineering) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8686195002?gh_jid=8686195002
-Spacex Automation & Controls Engineer, Infrastructure & Utility (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8727906002?gh_jid=8727906002
-Spacex Automation & Controls Specialist, Infrastructure & Utility (Starship) - Level 4/5 [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8730117002?gh_jid=8730117002
-Spacex Avionics Systems Engineer (Falcon & Dragon) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8805284002?gh_jid=8805284002
-Spacex Avionics Systems Engineer (Special Programs) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8929143002?gh_jid=8929143002
-Spacex Avionics Systems Engineer (Special Programs) - Top Secret Clearance [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8929464002?gh_jid=8929464002
-Spacex Avionics Systems Engineer (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8739392002?gh_jid=8739392002
-Spacex Civil Engineer, Land Development (Starbase Infrastructure - Louisiana) [Pecan Island, LA]   https://boards.greenhouse.io/spacex/jobs/8814619002?gh_jid=8814619002
-Spacex Civil Engineer, Land Development (Starship Infrastructure) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8673971002?gh_jid=8673971002
-Spacex Civil Engineer, Starbase Infrastructure (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8583754002?gh_jid=8583754002
-Spacex Classified Cyber Assurance Analyst [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8594579002?gh_jid=8594579002
-Spacex Construction Technician, Starbase Infrastructure [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8846172002?gh_jid=8846172002
 Spacex Data Infrastructure Operations Specialist II (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8508424002?gh_jid=8508424002
-Spacex Electrical Engineer, Energy Infrastructure & Generation [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8658859002?gh_jid=8658859002
-Spacex Electrical Engineer, Facilities Infrastructure [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8583707002?gh_jid=8583707002
-Spacex Electrical Engineer, Launch Infrastructure (Starship) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8737393002?gh_jid=8737393002
-Spacex Embedded Security Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8719863002?gh_jid=8719863002
-Spacex Embedded Security Engineer (Starlink) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8719858002?gh_jid=8719858002
-Spacex Embedded Security Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8719857002?gh_jid=8719857002
-Spacex Executive IT Support Specialist [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8908024002?gh_jid=8908024002
-Spacex Executive IT Support Specialist [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8617198002?gh_jid=8617198002
-Spacex Fire Protection Specialist (Facilities Infrastructure) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8901606002?gh_jid=8901606002
-Spacex Flight Software Infrastructure Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8692260002?gh_jid=8692260002
-Spacex Fluid Systems Engineer, Production (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8906243002?gh_jid=8906243002
-Spacex Fluid Systems Engineer, Solar Cell Factory (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8672670002?gh_jid=8672670002
-Spacex Industrial Security Analyst (MDSO) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8876676002?gh_jid=8876676002
-Spacex Industrial Security Analyst (PERSEC) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8803646002?gh_jid=8803646002
-Spacex Industrial Security Analyst (PERSEC) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8803006002?gh_jid=8803006002
-Spacex Information System Security Officer [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8599825002?gh_jid=8599825002
-Spacex Infrastructure Engineer [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8604308002?gh_jid=8604308002
-Spacex International Infrastructure Operations Specialist (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8766913002?gh_jid=8766913002
-Spacex IT Infrastructure Engineer, Virtualization & Storage [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8875925002?gh_jid=8875925002
-Spacex IT Network Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8924393002?gh_jid=8924393002
-Spacex IT Network Engineer [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8859573002?gh_jid=8859573002
-Spacex IT Network Engineer [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8922064002?gh_jid=8922064002
-Spacex IT Network Engineer (OT) [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8890337002?gh_jid=8890337002
-Spacex IT Network Engineer (OT) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8859652002?gh_jid=8859652002
-Spacex IT Network Infrastructure Engineer [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8570046002?gh_jid=8570046002
-Spacex IT Network Infrastructure Engineer, Launch [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8458745002?gh_jid=8458745002
-Spacex IT Network Infrastructure Engineer, Outside Plant [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8815068002?gh_jid=8815068002
 Spacex IT Network Infrastructure Engineer, Outside Plant [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8869044002?gh_jid=8869044002
-Spacex IT Network Infrastructure Specialist [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8751830002?gh_jid=8751830002
-Spacex IT Network Infrastructure Technician [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8827863002?gh_jid=8827863002
-Spacex IT Network Infrastructure Technician [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8918371002?gh_jid=8918371002
-Spacex IT Network Infrastructure Technician [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8459561002?gh_jid=8459561002
-Spacex IT Network Infrastructure Technician [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8918407002?gh_jid=8918407002
-Spacex IT Network Infrastructure Technician (Night Shift) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8869126002?gh_jid=8869126002
-Spacex IT Network Infrastructure Technician (Night Shift) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8920839002?gh_jid=8920839002
-Spacex IT NOC Technician [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8925803002?gh_jid=8925803002
-Spacex IT Security Engineer - Top Secret Clearance [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8784792002?gh_jid=8784792002
-Spacex IT Support Technician [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8924774002?gh_jid=8924774002
-Spacex IT Support Technician [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8577847002?gh_jid=8577847002
-Spacex IT Support Technician [Canandaigua, NY]   https://boards.greenhouse.io/spacex/jobs/8650222002?gh_jid=8650222002
-Spacex IT Support Technician [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8534863002?gh_jid=8534863002
-Spacex IT Support Technician (Help Desk) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8927727002?gh_jid=8927727002
-Spacex IT Support Technician (Logistics) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8650224002?gh_jid=8650224002
-Spacex IT Support Technician, VIP Support [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8784698002?gh_jid=8784698002
-Spacex IT Systems Engineer, Propellant Generation & Industrial Systems [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8815160002?gh_jid=8815160002
-Spacex IT Wireless Network Engineer [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8859575002?gh_jid=8859575002
-Spacex IT Wireless Network Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8924320002?gh_jid=8924320002
-Spacex Kubernetes Platform Infrastructure Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8573281002?gh_jid=8573281002
-Spacex Mechanical Engineer, Infrastructure [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8735901002?gh_jid=8735901002
-Spacex Mechanical Engineer (Structures), Starship Infrastructure [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8617175002?gh_jid=8617175002
-Spacex Mission Integration Engineer (Security Products) - Top Secret Clearance [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8780622002?gh_jid=8780622002
-Spacex Network Engineer, AI Infrastructure (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8808150002?gh_jid=8808150002
-Spacex Network Engineer, AI Infrastructure (Starshield) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8808184002?gh_jid=8808184002
-Spacex Network Engineer, AI Infrastructure (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8808182002?gh_jid=8808182002
-Spacex Network Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8784089002?gh_jid=8784089002
-Spacex Network Engineer (Starlink Community Gateway) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8927070002?gh_jid=8927070002
-Spacex Network Security Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8893736002?gh_jid=8893736002
-Spacex New Graduate Engineer, Infrastructure [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8893406002?gh_jid=8893406002
-Spacex New Graduate Engineer, Security Software (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8802897002?gh_jid=8802897002
-Spacex New Graduate Engineer, Security Software (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8802882002?gh_jid=8802882002
-Spacex New Graduate Engineer, Software Security - '26/'27 (Starlink) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8696158002?gh_jid=8696158002
-Spacex New Graduate Engineer, Software Security - '26/'27 (Starlink) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8724316002?gh_jid=8724316002
-Spacex New Graduate Engineer, Software Security - '26/'27 (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8696156002?gh_jid=8696156002
-Spacex New Graduate Engineer, Software Security - '26/'27 (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8696143002?gh_jid=8696143002
-Spacex Operations Engineer, Starbase Infrastructure [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8780717002?gh_jid=8780717002
-Spacex OT Network Engineer, Mission Systems [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8925985002?gh_jid=8925985002
-Spacex OT Network Engineer, Mission Systems [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8679658002?gh_jid=8679658002
-Spacex OT Systems Engineer, Mission Systems [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8679947002?gh_jid=8679947002
 Spacex Physical Security Hardware Specialist [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8843396002?gh_jid=8843396002
-Spacex Physical Security Hardware Specialist - Memphis [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8743978002?gh_jid=8743978002
-Spacex Physical Security Specialist [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8782684002?gh_jid=8782684002
-Spacex Power Systems Engineer [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8731134002?gh_jid=8731134002
-Spacex Power Systems Engineer, Launch Pad (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8916039002?gh_jid=8916039002
-Spacex Power Systems Engineer (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8450056002?gh_jid=8450056002
-Spacex Power Systems Engineer (Starship Avionics) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8627222002?gh_jid=8627222002
-Spacex Power Systems Engineer (Starship Avionics) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8627410002?gh_jid=8627410002
-Spacex Product Security Engineer (Starlink) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8719859002?gh_jid=8719859002
-Spacex Product Security Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8719864002?gh_jid=8719864002
-Spacex Product Security Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8719856002?gh_jid=8719856002
-Spacex Product Security Engineer (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8738708002?gh_jid=8738708002
-Spacex Product Security Engineer (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8738670002?gh_jid=8738670002
-Spacex Project Controls Engineer, Starship Infrastructure [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8838385002?gh_jid=8838385002
-Spacex Security Analyst (Blue Team) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8650240002?gh_jid=8650240002
-Spacex Security Analyst (Detection and Incident Response) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8525400002?gh_jid=8525400002
-Spacex Security Analyst (SOC) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8650239002?gh_jid=8650239002
-Spacex Security Analyst (Threat Detection) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8650241002?gh_jid=8650241002
-Spacex Security Concierge [College Station, TX]   https://boards.greenhouse.io/spacex/jobs/8920822002?gh_jid=8920822002
-Spacex Security Concierge [Bellevue, WA]   https://boards.greenhouse.io/spacex/jobs/8753238002?gh_jid=8753238002
-Spacex Security Engineer [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8567522002?gh_jid=8567522002
-Spacex Security Engineer [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8893743002?gh_jid=8893743002
-Spacex Security Engineer [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8893742002?gh_jid=8893742002
-Spacex Security Engineer [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8567571002?gh_jid=8567571002
-Spacex Security Engineer (Blue Team) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8611223002?gh_jid=8611223002
-Spacex Security Engineer (Blue Team) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8611050002?gh_jid=8611050002
-Spacex Security Engineer (Detection Engineering) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8650242002?gh_jid=8650242002
-Spacex Security Engineer (Infrastructure) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8893745002?gh_jid=8893745002
-Spacex Security Engineer (OT) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8854691002?gh_jid=8854691002
-Spacex Security Engineer (OT) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8893744002?gh_jid=8893744002
-Spacex Security Engineer (Red Team) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8847094002?gh_jid=8847094002
-Spacex Security Engineer (Software) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8893741002?gh_jid=8893741002
-Spacex Security Engineer (Software) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8893740002?gh_jid=8893740002
-Spacex Security Engineer (Vulnerability Management) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8843974002?gh_jid=8843974002
-Spacex Security Officer 3 [Vandenberg, CA]   https://boards.greenhouse.io/spacex/jobs/8600112002?gh_jid=8600112002
-Spacex Security Officer 3 [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8600048002?gh_jid=8600048002
-Spacex Security Officer 3 [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8600089002?gh_jid=8600089002
-Spacex Security Officer 3 [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8910176002?gh_jid=8910176002
-Spacex Security Officer 3 [College Station, TX]   https://boards.greenhouse.io/spacex/jobs/8904735002?gh_jid=8904735002
 Spacex Security Officer 3 [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8733698002?gh_jid=8733698002
-Spacex Security Officer 3 [Austin, TX]   https://boards.greenhouse.io/spacex/jobs/8684152002?gh_jid=8684152002
-Spacex Security Officer 3 [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8862389002?gh_jid=8862389002
-Spacex Security Officer 3 [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8869040002?gh_jid=8869040002
-Spacex Security Officer 3 [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8649254002?gh_jid=8649254002
-Spacex Security Officer 3 - Memphis [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8635128002?gh_jid=8635128002
-Spacex Security Operator [College Station, TX]   https://boards.greenhouse.io/spacex/jobs/8904755002?gh_jid=8904755002
 Spacex Security Operator [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8783172002?gh_jid=8783172002
-Spacex Security Operator 2 - Memphis [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8756083002?gh_jid=8756083002
-Spacex Security Operator 3 [Bellevue, WA]   https://boards.greenhouse.io/spacex/jobs/8649800002?gh_jid=8649800002
-Spacex Security Operator 3 - Memphis [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8743990002?gh_jid=8743990002
-Spacex Security Protective Operations Center Operator (Night Shift) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8917480002?gh_jid=8917480002
-Spacex Site Reliability Engineer, AI Infrastructure (Starshield) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8829681002?gh_jid=8829681002
-Spacex Site Reliability Engineer, AI Infrastructure (Starshield) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8807795002?gh_jid=8807795002
-Spacex Site Reliability Engineer, AI Infrastructure (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8807493002?gh_jid=8807493002
-Spacex Site Reliability Engineer, AI Infrastructure (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8807783002?gh_jid=8807783002
-Spacex Site Reliability Engineer, Data Center Infrastructure [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8880672002?gh_jid=8880672002
-Spacex Site Reliability Engineer, Platform Infrastructure [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8776746002?gh_jid=8776746002
 Spacex Software Infrastructure Engineer, Flight Software (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8692270002?gh_jid=8692270002
-Spacex Software Infrastructure Engineer (Starlink) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8584920002?gh_jid=8584920002
-Spacex Software Infrastructure Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8573279002?gh_jid=8573279002
-Spacex Structural Engineer (Critical Infrastructure) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8595083002?gh_jid=8595083002
-Spacex Structural Engineer, Launch Infrastructure (Starship) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8737416002?gh_jid=8737416002
-Spacex Structural Engineer (Starship Infrastructure) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8790404002?gh_jid=8790404002
-Spacex Supervisor, IT Network Infrastructure - 1st Shift [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8818961002?gh_jid=8818961002
-Spacex Supervisor, IT Network Infrastructure - 2nd Shift [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8818980002?gh_jid=8818980002
-Spacex Supervisor, Security [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8893724002?gh_jid=8893724002
-Spacex Technical Recruiter, Security [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8902884002?gh_jid=8902884002
-Spacex Voice Systems Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8919948002?gh_jid=8919948002
-Spacex Wireless Systems Engineer (Starlink Mobile) [Sunnyvale, CA]   https://boards.greenhouse.io/spacex/jobs/8546717002?gh_jid=8546717002
-Tanium Cloud Security Intern [Durham, NC (Hybrid)]   https://job-boards.greenhouse.io/tanium/jobs/8176398
 Netskope IT Support Analyst [Taipei, Taiwan]   https://boards.greenhouse.io/netskope/jobs/8335814
-Zscaler AI Security - Account Executive Strategic Accounts [Tokyo, JPN]   https://job-boards.greenhouse.io/zscaler/jobs/5219179007
-Zscaler Architect, Software Development  (Layer 7 Security & Proxy) [Santa Clara, California, USA]   https://job-boards.greenhouse.io/zscaler/jobs/5239093007
-Zscaler Detection Analyst [Bellevue, Washington, USA; Remote - D.C., USA; Remote - Georgia, USA; Remote - New York, USA; Remote - North Carolina, USA; Remote - Texas, USA; Remote - USA; Remote - Washington, USA; Santa Clara, California, USA; USA - Update Location]   https://job-boards.greenhouse.io/zscaler/jobs/5219486007
-Zscaler Information Security Engineer (Thick Client Testing /  Harness / VAPT) [Bangalore, IND]   https://job-boards.greenhouse.io/zscaler/jobs/5261565007
-Zscaler Insider Risk Security Engineer [Remote - USA]   https://job-boards.greenhouse.io/zscaler/jobs/5208421007
-Zscaler Specialist Account Executive - AI Security [Remote - USA]   https://job-boards.greenhouse.io/zscaler/jobs/5260493007
-Zscaler Specialist Account Executive - AI Security [Mumbai, IND]   https://job-boards.greenhouse.io/zscaler/jobs/5219181007
-Okta Security Architect - U.S. Public Sector [Washington, DC]   https://boards.greenhouse.io/okta/jobs/8332602
 Okta Splunk Infrastructure Engineer [Bellevue, Washington; Chicago, Illinois; New York, New York; San Francisco, California; Washington, DC]   https://boards.greenhouse.io/okta/jobs/7658254
-Knowbe4 Client Security Advisor (Position located in Cheltenham, United Kingdom) [Cheltenham, England, United Kingdom]   https://job-boards.greenhouse.io/knowbe4/jobs/8878401002
-Knowbe4 Graduate Data Scientist - Cyber Analytics (Position located in Cheltenham, United Kingdom) [Cheltenham, United Kingdom]   https://job-boards.greenhouse.io/knowbe4/jobs/8700231002
-Knowbe4 Information Security Analyst (Remote in the UK) [Cheltenham, England, United Kingdom]   https://job-boards.greenhouse.io/knowbe4/jobs/8893957002
-Knowbe4 Security Awareness Content Specialist Summer Internship (Hybrid) [Clearwater, Florida]   https://job-boards.greenhouse.io/knowbe4/jobs/8928056002
-Knowbe4 Snr. Information Security Analyst(Remote) [Cheltenham, England, United Kingdom]   https://job-boards.greenhouse.io/knowbe4/jobs/8893954002
-Ramp GTM Business Systems Engineer, Quote-to-Cash []   https://jobs.ashbyhq.com/ramp/6310f1b3-1ae2-476c-b4ce-affe530ede26
-Harvey Research Engineer, Infrastructure []   https://jobs.ashbyhq.com/harvey/7d5946ab-9b70-4c33-9e0f-cadbf0b892aa
-Harvey Research Engineer, Infrastructure []   https://jobs.ashbyhq.com/harvey/264aac9e-3f8d-402f-a33b-04d2fe1e16be
-Harvey Research Engineer, Infrastructure []   https://jobs.ashbyhq.com/harvey/4fc070c5-99be-459c-b5ef-63e5f4d68f8b
-Harvey Research Engineer, Infrastructure []   https://jobs.ashbyhq.com/harvey/9b63e15d-2d43-4c4a-94be-75908e942ea7
-Writer Security engineer, detection and response (UK) []   https://jobs.ashbyhq.com/writer/8dbcf68d-d57e-45ad-8b09-72d9fa8a87e8
-Writer Infrastructure engineer []   https://jobs.ashbyhq.com/writer/770c58f3-7391-41cd-b992-be5a7311b1b2
-Writer Security engineer, application security (UK) []   https://jobs.ashbyhq.com/writer/765addca-700f-4819-a97f-4361edf5767f
-Sierra IT Infrastructure Engineer []   https://jobs.ashbyhq.com/sierra/742020b7-5a2a-495d-8ac9-d74d31dc91c6
-Sierra Deployed Infrastructure Engineer []   https://jobs.ashbyhq.com/sierra/d9c0aa93-e35d-4752-9cef-4c39dcad5365
-Cohere Forward Deployed Engineer, Infrastructure Specialist (Middle East) []   https://jobs.ashbyhq.com/cohere/291e5dee-dcda-49e6-a1b6-dae0d48f80af
-Cohere Forward Deployed Engineer, Infrastructure Specialist (North America) []   https://jobs.ashbyhq.com/cohere/be48aafc-9610-4ebd-8414-a0722a3cd59a
-Cohere Forward Deployed Engineer, Infrastructure Specialist (Public Sector) []   https://jobs.ashbyhq.com/cohere/52a2b83b-7537-4e88-af7b-e4e9630a96e0
-Cohere Forward Deployed Engineer, Infrastructure Specialist (UK Public Sector) []   https://jobs.ashbyhq.com/cohere/a0f174cf-4407-4334-b812-45a767092fca
-Cohere Product Security Engineer, North Security []   https://jobs.ashbyhq.com/cohere/9b596ab8-0df4-41aa-85da-e07578c082b2
-Cohere IT Support Specialist []   https://jobs.ashbyhq.com/cohere/5cfb3495-e33f-4cf2-a54d-fa9a5ca3cc3e
-Baseten Security Engineer []   https://jobs.ashbyhq.com/baseten/b85e4b1d-6531-46b5-bc8a-238f3761a50e
-Baseten IT Support / Operations Engineer []   https://jobs.ashbyhq.com/baseten/c07eb44f-b5fa-4808-90b7-03b265d97836
-Baseten IT Support / Operations Engineer (NY) []   https://jobs.ashbyhq.com/baseten/4dcdf587-38f3-4363-8033-a453f54b38b0
-Baseten IT Systems Engineer []   https://jobs.ashbyhq.com/baseten/64bdba5c-8cf6-473f-814c-1e86c8c66681
-Anyscale Customer Engineer, Infrastructure []   https://jobs.ashbyhq.com/anyscale/1466478e-9797-4318-bdca-bb1ae5798d52
-Anyscale Site Reliability Engineer, Platform Infrastructure (Foundations) []   https://jobs.ashbyhq.com/anyscale/23733eb9-f839-4209-b191-36cb0ff5b973
-Modal Infrastructure Security Engineer []   https://jobs.ashbyhq.com/modal/8de60620-09bf-4905-910f-a290814a29ee
-Modal Detection and Response Engineer []   https://jobs.ashbyhq.com/modal/e1915603-d9de-4760-b445-c266a1080499
 Leidos Cybersecurity / IAM / IT Operations   https://careers.leidos.com/
-Okta Security Architect - U.S. Public Sector [Washington, DC]   https://www.okta.com/company/careers/opportunity/8332602?gh_jid=8332602
 Okta Splunk Infrastructure Engineer [Bellevue, Washington; Chicago, Illinois; New York, New York; San Francisco, California; Washington, DC]   https://www.okta.com/company/careers/opportunity/7658254?gh_jid=7658254
 Netskope IT Support Analyst [Taipei, Taiwan]   https://www.netskope.com/company/careers/open-positions/?gh_jid=8335814
-Spacex Automation & Controls Engineer (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8911675002?gh_jid=8911675002
-Spacex Compressed Air Technician (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8605112002?gh_jid=8605112002
-Spacex Construction Supervisor, Facilities [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8843104002?gh_jid=8843104002
-Spacex Contractor Service Administrator (Facilities) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8648204002?gh_jid=8648204002
-Spacex Data Center Facilities Specialist [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8782746002?gh_jid=8782746002
-Spacex Data Center Facilities Technician [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8782372002?gh_jid=8782372002
-Spacex Electrical Engineer (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8686707002?gh_jid=8686707002
-Spacex Electrical Engineer, Facilities (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8546238002?gh_jid=8546238002
-Spacex Facilities Engineer, Mechanical (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8540341002?gh_jid=8540341002
-Spacex Facilities Engineer, MEP [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8580838002?gh_jid=8580838002
-Spacex Facilities Engineer, Solar Cell Factory (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8524791002?gh_jid=8524791002
-Spacex Facilities Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8886427002?gh_jid=8886427002
-Spacex Facilities Maintenance Technician, Solar Cells (Starlink) - Day Shift [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8912970002?gh_jid=8912970002
-Spacex Facilities Mechanical Specialist [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8927128002?gh_jid=8927128002
-Spacex Facilities Mechanical Specialist [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8756157002?gh_jid=8756157002
-Spacex Facilities Operations Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8635006002?gh_jid=8635006002
-Spacex Facilities Specialist [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8727564002?gh_jid=8727564002
-Spacex Facilities Specialist, Solar Cell Factory (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8895622002?gh_jid=8895622002
-Spacex Facilities Technician [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8760867002?gh_jid=8760867002
-Spacex Facilities Technician Level 4/5 - Temporary [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8878058002?gh_jid=8878058002
-Spacex Facilities Technician, Mechanical (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8696942002?gh_jid=8696942002
-Spacex Facilities Technician (MEP) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8815474002?gh_jid=8815474002
-Spacex Facilities Technician (Starlink/Akoustis) - Day Shift [Canandaigua, NY]   https://boards.greenhouse.io/spacex/jobs/8870690002?gh_jid=8870690002
 Spacex Facilities Technician (Starlink/Akoustis) - Night Shift [Canandaigua, NY]   https://boards.greenhouse.io/spacex/jobs/8574251002?gh_jid=8574251002
-Spacex Facilities Technician - Temporary [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8703599002?gh_jid=8703599002
 Spacex Facilities Technician - Temporary [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8792136002?gh_jid=8792136002
-Spacex Fueling Facilities Technician (Starship) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8826324002?gh_jid=8826324002
-Spacex Ground Systems Engineer, Asset Engineering [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8931372002?gh_jid=8931372002
-Spacex HVAC Design Engineer (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8919878002?gh_jid=8919878002
-Spacex HVAC Technician (Facilities) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8595156002?gh_jid=8595156002
-Spacex HVAC Technician (Facilities) - 1st Shift [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8765632002?gh_jid=8765632002
-Spacex HVAC Technician (Facilities) - 3rd Shift [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8654421002?gh_jid=8654421002
-Spacex IT Linux Systems Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8930419002?gh_jid=8930419002
-Spacex IT Windows Systems Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8927740002?gh_jid=8927740002
-Spacex Mechanical Engineer (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8910221002?gh_jid=8910221002
-Spacex Mechanical Engineer, HVAC (Facilities) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8893292002?gh_jid=8893292002
-Spacex Mechanical Facilities Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8831357002?gh_jid=8831357002
-Spacex Mechanical Technician (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8604948002?gh_jid=8604948002
-Spacex Mechanical Technician, Facilities (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8853299002?gh_jid=8853299002
-Spacex Operations Engineer, Facilities (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8634955002?gh_jid=8634955002
-Spacex Plumbing Technician - 2nd Shift (Facilities) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8605109002?gh_jid=8605109002
-Spacex Supervisor, Facilities [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8694679002?gh_jid=8694679002
-Spacex Supervisor, Facilities - 2nd Shift [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8801224002?gh_jid=8801224002
-Spacex Supervisor, Facilities Maintenance, Solar Cell Factory (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8656828002?gh_jid=8656828002
-Spacex Supervisor, Facilities (Starlink) - Split Shift [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8546298002?gh_jid=8546298002
 Twitch Software Dev Engineer I - Security Platform [San Francisco, CA]   https://job-boards.greenhouse.io/twitch/jobs/8929545002
 Twitch Software Dev Engineer I - Security Platform [Irvine, CA]   https://job-boards.greenhouse.io/twitch/jobs/8931345002
 Twitch Software Dev Engineer I - Security Platform [Seattle, WA]   https://job-boards.greenhouse.io/twitch/jobs/8931343002
 Lyft Business Systems Engineer [U.S. Anywhere]   https://app.careerpuck.com/job-board/lyft/job/8772602002?gh_jid=8772602002
 Lyft Investigator, Global Security [Nashville, TN]   https://app.careerpuck.com/job-board/lyft/job/8675426002?gh_jid=8675426002
-Mongodb Enterprise Account Executive (Cyber) [Tel Aviv]   https://www.mongodb.com/careers/job/?gh_jid=7628750
 Elastic Okta Identity Engineer [United States]   https://jobs.elastic.co/jobs?gh_jid=8093275&gh_jid=8093275
-Datadog Enterprise Security Sales Specialist [California, USA, Remote]   https://careers.datadoghq.com/detail/8256245/?gh_jid=8256245
-Datadog Enterprise Security Sales Specialist [San Francisco, California, USA]   https://careers.datadoghq.com/detail/8243668/?gh_jid=8243668
-Datadog Enterprise Security Sales Specialist [New York, New York, USA]   https://careers.datadoghq.com/detail/7129425/?gh_jid=7129425
-Datadog Enterprise Security Sales Specialist [Chicago, Illinois, USA]   https://careers.datadoghq.com/detail/8237332/?gh_jid=8237332
-Datadog Enterprise Security Sales Specialist [District of Columbia, USA, Remote; North Carolina, USA, Remote]   https://careers.datadoghq.com/detail/7132132/?gh_jid=7132132
-Asana IT Systems Engineer - Identity [Vancouver, BC]   https://www.asana.com/jobs/apply/7839280?gh_jid=7839280
-Asana Product Security Engineer [Warsaw]   https://www.asana.com/jobs/apply/8244347?gh_jid=8244347
-Asana Product Security Engineer [Vancouver, BC]   https://www.asana.com/jobs/apply/8137817?gh_jid=8137817
 Asana Security Risk Engineer [San Francisco]   https://www.asana.com/jobs/apply/7950767?gh_jid=7950767
 Astranis Facilities Technician [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4248382006
-Stratolaunch Facilities Technician [Mojave, California, United States]   https://job-boards.greenhouse.io/stratolaunch/jobs/5461818008
 Stripe Blockchain Security Engineer, Bridge [Luxembourg]   https://stripe.com/jobs/search?gh_jid=8336819
 Coinbase Security Engineer, Corporate Security [Remote - USA]   https://www.coinbase.com/careers/positions/8319444?gh_jid=8319444
-Instacart Detection Engineer II [United States - Remote]   https://instacart.careers/job/?gh_jid=8080512
-Cloudflare Hardware Systems Engineer - AI Hardware [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8325834?gh_jid=8325834
-Cloudflare Hardware Systems Engineer, Hardware Tools / Firmware [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8306486?gh_jid=8306486
-Cloudflare Network Security Support Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8028403?gh_jid=8028403
 Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427789008?gh_jid=5427789008
 Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427855008?gh_jid=5427855008
 Databricks Deputy Facility Security Officer [Washington, D.C.]   https://databricks.com/company/careers/open-positions/job?gh_jid=8811713002
-↳ Systems Engineer Intern [Germantown, MD]   https://zebra.wd501.myworkdayjobs.com/Zebra_careers/job/Germantown-Maryland/XMLNAME-2027-Summer-Internship--US----Systems-Engineer_JR103659?utm_source=Simplify&ref=Simplify
 ↳ Costco Digital Services Intern - Infosec AI/ML [Issaquah, WA]   https://phf.tbe.taleo.net/phf02/ats/careers/v2/viewRequisition?org=COSTCO&cws=41&rid=10994&utm_source=Simplify&ref=Simplify
 ↳ Summer Games Systems Engineer Intern [Lexington, MA]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Lexington-MA/University---2027-Summer-Games-Systems-Engineer-Intern---Lexington--MA_R0252273?utm_source=Simplify&ref=Simplify
 ↳ Systems Engineer Intern [Dayton, OH]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Dayton-OH/University---2027-Summer-Games--Systems-Engineer-Intern---Dayton--OH_R0252342?utm_source=Simplify&ref=Simplify
@@ -316,41 +39,243 @@ Databricks Deputy Facility Security Officer [Washington, D.C.]   https://databri
 ↳ Systems Engineer Intern - Autonomous Vehicle Networks & Diagnostics 🎓 [Mountain View, CA]   https://careers.withwaymo.com/jobs?gh_jid=8231711&utm_source=Simplify&ref=Simplify
 Booz Allen Systems Engineer Intern - Summer Games [Huntsville, AL]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Huntsville-AL/University---2027-Summer-Games-Systems-Engineer-Intern---Huntsville--AL_R0249188?utm_source=Simplify&ref=Simplify
 ↳ Security Workflow Engineer Intern [Vienna, VA]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32382?utm_source=Simplify&ref=Simplify
-Peraton Cyber Research Intern [4 locationsWest Lafayette, INBasking Ridge, Bernards, NJSilver Spring, MDBedford, NH]   https://careers-peraton.icims.com/jobs/170120/job?mobile=true&needsRedirect=false&utm_source=Simplify&ref=Simplify
-Lawrence Livermore National Laboratory (LLNL) Critical Infrastructure Analysis Graduate Intern - Cyber and Critical Infrastructure Summer Institute [Livermore, CA]   https://jobs.smartrecruiters.com/LLNL/3743990016610216?utm_source=Simplify&ref=Simplify
-↳ AI Research Infrastructure – Reinforcement Learning Post-Training Intern 🎓 [Santa Clara, CA]   https://careers.amd.com/jobs/90950?icims=1&utm_source=Simplify&ref=Simplify
 ↳ Data Engineer Intern - Enterprise Technology & Security [Plano, TXJohnston, RIPhoenix, AZ]   https://hcgn.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/49285?utm_source=Simplify&ref=Simplify
 Motorola SoC Digital Engineer Intern [Plantation, FL]   https://motorolasolutions.wd5.myworkdayjobs.com/Careers/job/Plantation-FL/XMLNAME-2027-Intern---SoC-Digital-Engineer_R69149?utm_source=Simplify&ref=Simplify
-Dell Technologies Hardware Engineering Intern - Infrastructure Solutions Group [Round Rock, TXHopkinton, MA]   https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/job/297770?utm_source=Simplify&ref=Simplify
-🔥 Amazon Software Developer Engineer 1 - Security Platform [Seattle, WASFIrvine, CA]   https://amazon.jobs/en/jobs/10597112/software-dev-engineer-i-security-platform?utm_source=Simplify&ref=Simplify
 SambaNova Systems ML Infrastructure Engineer New Grad [Austin, TXSan Jose, CA]   https://sambanova.ai/sambanova-available-positions/?gh_jid=6224938004&utm_source=Simplify&ref=Simplify
-↳ Research Scientist New Grad - AI for Infrastructure 🎓 [San Jose, CA]   https://jobs.bytedance.com/en/position/7667291055662811445/detail?utm_source=Simplify&ref=Simplify
-↳ Research Scientist New Grad - Infrastructure System Lab 🎓 [San Jose, CA]   https://jobs.bytedance.com/en/position/7665108869591140613/detail?utm_source=Simplify&ref=Simplify
 ↳ Machine Learning Infrastructure Engineer New Grad - Ads Infra [San Jose, CA]   https://lifeattiktok.com/search/7668693662561634613?utm_source=Simplify&ref=Simplify
-🔥 ByteDance AI Network Automation Engineer Intern - Global Physical Network Infrastructure [San Jose, CA]   https://jobs.bytedance.com/en/position/7670690923748870405/detail?utm_source=Simplify&ref=Simplify
 🔥 TikTok AI Infrastructure Engineer Intern - Recommendation & LLM [San Jose, CA]   https://lifeattiktok.com/search/7672671220798818613?utm_source=Simplify&ref=Simplify
 ↳ Information Systems Intern - IT - Cyber Engineer & Data Science [United States]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155554?utm_source=Simplify&ref=Simplify
-🔥 ByteDance Data Lake Infrastructure & Data Analytics Research Engineer Intern - Applied Machine Learning Ark [Seattle, WA]   https://jobs.bytedance.com/en/position/7672394389001816325/detail?utm_source=Simplify&ref=Simplify
-↳ Data Lake Infrastructure and Data Analytics Research Engineer Intern - Applied Machine Learning Ark [San Jose, CA]   https://jobs.bytedance.com/en/position/7671109787509213445/detail?utm_source=Simplify&ref=Simplify
-↳ Research Engineer Intern - Agentic Systems & AI Infrastructure - Generalized Architecture [Seattle, WA]   https://lifeattiktok.com/search/7667934792727906565?utm_source=Simplify&ref=Simplify
-Beyondtrust Cloud Network Engineer [Remote United States]   https://job-boards.greenhouse.io/beyondtrust/jobs/8279128
-Beyondtrust Cyber Defense Engineer [Remote Canada | Remote United States]   https://job-boards.greenhouse.io/beyondtrust/jobs/8185856
-Beyondtrust Cyber Defense Engineer [Hybrid Tel Aviv, Israel]   https://job-boards.greenhouse.io/beyondtrust/jobs/7859213
 Cursor Security GRC Engineer []   https://jobs.ashbyhq.com/cursor/1703501f-53a1-4307-93ec-84b723be92ef
-Cognition GTM Systems Engineer []   https://jobs.ashbyhq.com/cognition/dabc56df-b50a-4056-9e01-14ca3e0b12a4
-Cognition Research Engineer, ML Infrastructure []   https://jobs.ashbyhq.com/cognition/b6f96827-ce14-44f4-98fa-b1b8640858b6
-Cognition Security Engineer []   https://jobs.ashbyhq.com/cognition/71165bb4-9bc8-49df-9eca-49c4232f72ff
-Cognition IT Support Engineer []   https://jobs.ashbyhq.com/cognition/1f3ff659-8106-4041-ab28-56713c1860d0
-Cognition Network Engineer []   https://jobs.ashbyhq.com/cognition/3e384a5e-2ff7-4368-91f8-5972047318b0
-Poolside Member of Engineering (Infrastructure) []   https://jobs.ashbyhq.com/poolside/ade02c95-890f-4f1d-9ca6-05076b6fe687
-Poolside Member of Engineering (Inference Infrastructure) []   https://jobs.ashbyhq.com/poolside/1f2a733a-a3fe-48fe-bf61-1425eddb30f6
 Deepgram ML Ops Infrastructure Engineer []   https://jobs.ashbyhq.com/deepgram/7ced4c1f-4126-44fe-9cf1-da427a9e4e3e
-Deepgram Security Engineer []   https://jobs.ashbyhq.com/deepgram/89c0ef18-7433-4c0e-b136-4b03f326c86f
-Flexport Security Engineer, Corporate Security [San Francisco, California, United States]   https://job-boards.greenhouse.io/flexport/jobs/8166038
-Cartesia Research Engineer, Data Infrastructure (Language Modeling) []   https://jobs.ashbyhq.com/cartesia/6ca9b352-6a7b-42a3-a7c4-8f071712db90
-Replit Security Engineer - Vuln Management (Infra) []   https://jobs.ashbyhq.com/replit/4b290489-9ce6-45f9-bbc8-e1baa4bd8b6f
-Replit AI Agent Security Architect []   https://jobs.ashbyhq.com/replit/df7b6d30-9da1-4ace-8121-17c2aa55aa6f
-Replit Security Engineer - Incident Response []   https://jobs.ashbyhq.com/replit/de941de4-b0f2-4de8-a018-af667c67f33e
-Character Machine Learning Infrastructure Engineer []   https://jobs.ashbyhq.com/character/13006848-6a69-4467-9274-5d54e80b965d
-Elevenlabs Research Engineer - Data Infrastructure []   https://jobs.ashbyhq.com/elevenlabs/9fbd9227-57e0-4221-9255-1a1d967be8ed
 Elevenlabs Infrastructure Security Engineer []   https://jobs.ashbyhq.com/elevenlabs/687394d7-fbf8-49ed-822e-c0690191330c
+PingIdentity Technical Enablement Associate [USA - Denver, CO]   https://job-boards.greenhouse.io/pingidentity/jobs/8731905002
+Cloudflare Data Center Design Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8227832?gh_jid=8227832
+Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311366?gh_jid=8311366
+Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311376?gh_jid=8311376
+Cloudflare Data Center Strategy - Edge [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8282124?gh_jid=8282124
+SpaceX Customer Support Associate, Bilingual - Ukrainian (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8548093002?gh_jid=8548093002
+SpaceX Customer Support Associate, Bilingual - Ukrainian (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8548098002?gh_jid=8548098002
+SpaceX Data Center Administrator [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8784543002?gh_jid=8784543002
+SpaceX Data Center Administrator [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8931226002?gh_jid=8931226002
+SpaceX Data Center Administrator [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8927645002?gh_jid=8927645002
+SpaceX Data Center Administrator [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8827845002?gh_jid=8827845002
+SpaceX Data Center Safety Engineer (Automation)  [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8660139002?gh_jid=8660139002
+SpaceX Data Center Safety Engineer (Electrical)  [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8727446002?gh_jid=8727446002
+SpaceX Data Center Specialist (Starlink) [Remote - WA]   https://boards.greenhouse.io/spacex/jobs/8465286002?gh_jid=8465286002
+SpaceX Data Center Technician [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8919885002?gh_jid=8919885002
+SpaceX Data Center Technician [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8861870002?gh_jid=8861870002
+SpaceX Data Center Technician (TS/SCI) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8926143002?gh_jid=8926143002
+SpaceX Data Engineer, Ground Network Engineering (Gateway) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8784022002?gh_jid=8784022002
+SpaceX Diamond Turning Machinist (Starlink) [Woodinville, WA]   https://boards.greenhouse.io/spacex/jobs/8928905002?gh_jid=8928905002
+SpaceX Diamond Turning Machinist (Starlink) - Level 4/5 [Woodinville, WA]   https://boards.greenhouse.io/spacex/jobs/8928920002?gh_jid=8928920002
+SpaceX Diamond Turning Technician (Starlink) - 2nd Shift [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8582763002?gh_jid=8582763002
+SpaceX Environmental Engineer, Compliance/ Air [Vandenberg, CA]   https://boards.greenhouse.io/spacex/jobs/8853840002?gh_jid=8853840002
+SpaceX Environmental Engineer, Compliance/Air Programs [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8829347002?gh_jid=8829347002
+SpaceX Environmental Engineer, Compliance/Air Programs  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8702120002?gh_jid=8702120002
+SpaceX Fulfillment Buyer, Datacenters  [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8888682002?gh_jid=8888682002
+SpaceX Fulfillment Buyer, Datacenters  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8786280002?gh_jid=8786280002
+SpaceX HRIS Compliance Analyst [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8901124002?gh_jid=8901124002
+SpaceX IT Network Administrator [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8859658002?gh_jid=8859658002
+SpaceX IT Network Administrator [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8924408002?gh_jid=8924408002
+SpaceX IT Systems Administrator, Launch [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8698618002?gh_jid=8698618002
+SpaceX IT Systems Administrator, Launch [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8469052002?gh_jid=8469052002
+SpaceX IT Systems Administrator, Manufacturing [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8815130002?gh_jid=8815130002
+SpaceX IT Systems Administrator, Mission Systems [Vandenberg, CA]   https://boards.greenhouse.io/spacex/jobs/8525777002?gh_jid=8525777002
+SpaceX IT Systems Administrator, Test Operations (2nd Shift) [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8854361002?gh_jid=8854361002
+SpaceX IT Windows Systems Administrator  [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8924734002?gh_jid=8924734002
+SpaceX IT Windows Systems Administrator  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8924702002?gh_jid=8924702002
+SpaceX Mechanical Engineer (Data Center MEP Systems) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8623383002?gh_jid=8623383002
+SpaceX Power Projects Development Associate [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8928676002?gh_jid=8928676002
+SpaceX Power Projects Development Associate [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8928573002?gh_jid=8928573002
+SpaceX Product Compliance Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8484568002?gh_jid=8484568002
+SpaceX Production Associate (Starlink/Akoustis) [Canandaigua, NY ]   https://boards.greenhouse.io/spacex/jobs/8626973002?gh_jid=8626973002
+SpaceX Propulsion Fluids Analyst (Raptor Systems Engineering) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8605143002?gh_jid=8605143002
+SpaceX Quality Inspector, Data Center (Starlink) [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8872084002?gh_jid=8872084002
+SpaceX RF & Wireless Compliance Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8484564002?gh_jid=8484564002
+SpaceX Satellite Policy Associate (Starlink Regulatory Affairs) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8691084002?gh_jid=8691084002
+SpaceX Sr. Application Security Engineer    [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8624695002?gh_jid=8624695002
+SpaceX Sr. Avionics Systems Engineer (Special Programs) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8929172002?gh_jid=8929172002
+SpaceX Sr. Avionics Systems Engineer (Special Programs) - Top Secret Clearance [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8929466002?gh_jid=8929466002
+SpaceX Sr. Classified Cyber Assurance Analyst [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8594632002?gh_jid=8594632002
+SpaceX Sr. Classified Cyber Assurance Analyst [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8806986002?gh_jid=8806986002
+SpaceX Sr. Cyber Assurance Analyst, Starlink [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8601804002?gh_jid=8601804002
+SpaceX Sr. Cyber Assurance Analyst, Starlink [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8603677002?gh_jid=8603677002
+SpaceX Sr. Cybersecurity Engineer (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8865114002?gh_jid=8865114002
+SpaceX Sr. Cybersecurity Engineer (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8865055002?gh_jid=8865055002
+SpaceX Sr. Data Center Administrator [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8846102002?gh_jid=8846102002
+SpaceX Sr. Data Center Safety Engineer (AI Supercomputer)  [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8827481002?gh_jid=8827481002
+SpaceX Sr. Data Engineer, Ground Network Engineering (Business Analytics) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8482128002?gh_jid=8482128002
+SpaceX Sr. DSP Systems Engineer (Silicon Engineering) [Irvine, CA]   https://boards.greenhouse.io/spacex/jobs/8700965002?gh_jid=8700965002
+SpaceX Sr. DSP Systems Engineer (Silicon Engineering) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8703186002?gh_jid=8703186002
+SpaceX Sr. Embedded Security Engineer (Starlink) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8815809002?gh_jid=8815809002
+SpaceX Sr. Embedded Security Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8815806002?gh_jid=8815806002
+SpaceX Sr. Embedded Security Engineer (Starlink) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8815810002?gh_jid=8815810002
+SpaceX Sr. Embedded Security Engineer (Starlink)  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8624866002?gh_jid=8624866002
+SpaceX Sr. Facilities Assurance Analyst, Data Centers [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8857071002?gh_jid=8857071002
+SpaceX Sr. Fluids Systems Engineer, Production (Starship)  [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8918369002?gh_jid=8918369002
+SpaceX Sr. Fluid Systems Engineer, Solar Cell Factory [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8919873002?gh_jid=8919873002
+SpaceX Sr. High Performance Computing (HPC) Systems Engineer  [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8831452002?gh_jid=8831452002
+SpaceX Sr. HPC  Systems Engineer (High Performance Computing)  [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8831610002?gh_jid=8831610002
+SpaceX Sr. Industrial Security Analyst (MDSO)  [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8871809002?gh_jid=8871809002
+SpaceX Sr. Industrial Security Analyst (PERSEC)  [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8877391002?gh_jid=8877391002
+SpaceX Sr. IT Network Engineer [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8859564002?gh_jid=8859564002
+SpaceX Sr. IT Network Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8797934002?gh_jid=8797934002
+SpaceX Sr. IT Network Engineer [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8843968002?gh_jid=8843968002
+SpaceX Sr. IT Network Engineer [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8757406002?gh_jid=8757406002
+SpaceX Sr. IT Network Engineer (OT) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8859650002?gh_jid=8859650002
+SpaceX Sr. IT Systems Administrator, IT Applications [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8818157002?gh_jid=8818157002
+SpaceX Sr. IT Systems Administrator, IT Applications [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8638708002?gh_jid=8638708002
+SpaceX Sr. IT Systems Administrator, IT Applications [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8920125002?gh_jid=8920125002
+SpaceX Sr. IT Systems Administrator, IT Applications [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8641301002?gh_jid=8641301002
+SpaceX Sr. IT Systems Administrator, IT Applications [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8641290002?gh_jid=8641290002
+SpaceX Sr. IT Systems Administrator, Mission Systems [Vandenberg, CA]   https://boards.greenhouse.io/spacex/jobs/8843923002?gh_jid=8843923002
+SpaceX Sr. IT Systems Administrator (Top Secret Clearance) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8601161002?gh_jid=8601161002
+SpaceX Sr. IT Systems Engineer, DevOps [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8846406002?gh_jid=8846406002
+SpaceX Sr. IT Wireless Network Engineer [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8843966002?gh_jid=8843966002
+SpaceX Sr. IT Wireless Network Engineer [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8818989002?gh_jid=8818989002
+SpaceX Sr. IT Wireless Network Engineer [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8831488002?gh_jid=8831488002
+SpaceX Sr. IT Wireless Network Engineer [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8924353002?gh_jid=8924353002
+SpaceX Sr. Mechanical Engineer (Data Center MEP Systems) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8836922002?gh_jid=8836922002
+SpaceX Sr. Network Engineer [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8692506002?gh_jid=8692506002
+SpaceX Sr. Network Engineer, AI Infrastructure (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8808192002?gh_jid=8808192002
+SpaceX Sr. Network Engineer, AI Infrastructure (Starshield) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8829677002?gh_jid=8829677002
+SpaceX Sr. Network Engineer, AI Infrastructure (Starshield) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8808194002?gh_jid=8808194002
+SpaceX Sr. Network Engineer, AI Infrastructure (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8808186002?gh_jid=8808186002
+SpaceX Sr. Network Engineer (Starshield) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8609670002?gh_jid=8609670002
+SpaceX Sr. Network Engineer (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8609666002?gh_jid=8609666002
+SpaceX Sr. Network Security Engineer  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8893739002?gh_jid=8893739002
+SpaceX Sr. Network Security Engineer  [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8806384002?gh_jid=8806384002
+SpaceX Sr. Network Security Engineer  [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8893738002?gh_jid=8893738002
+SpaceX Sr. Optical Network Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8784050002?gh_jid=8784050002
+SpaceX Sr. Physical Security Hardware Specialist [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8888957002?gh_jid=8888957002
+SpaceX Sr. Physical Security Hardware Specialist [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8694862002?gh_jid=8694862002
+SpaceX Sr. Physical Security Hardware Specialist [Vandenberg, CA]   https://boards.greenhouse.io/spacex/jobs/8926159002?gh_jid=8926159002
+SpaceX Sr. Power Systems Engineer [College Station, TX]   https://boards.greenhouse.io/spacex/jobs/8834104002?gh_jid=8834104002
+SpaceX Sr. Power Systems Engineer (Starship)  [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8631444002?gh_jid=8631444002
+SpaceX Sr. Product Compliance Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8484570002?gh_jid=8484570002
+SpaceX Sr. Product Security Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8815817002?gh_jid=8815817002
+SpaceX Sr. Product Security Engineer (Starlink) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8815815002?gh_jid=8815815002
+SpaceX Sr. Product Security Engineer (Starlink) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8815816002?gh_jid=8815816002
+SpaceX Sr. Product Security Engineer (Starlink)  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8624867002?gh_jid=8624867002
+SpaceX Sr. Propulsion Fluids Analyst (Raptor Systems Engineering) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8605151002?gh_jid=8605151002
+SpaceX Sr. RF & Wireless Compliance Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8484566002?gh_jid=8484566002
+SpaceX Sr. Satellite Policy Associate (Starlink Regulatory Affairs) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8750691002?gh_jid=8750691002
+SpaceX Sr. Security Analyst [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8822829002?gh_jid=8822829002
+SpaceX Sr. Security Analyst (Threat Detection) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8893750002?gh_jid=8893750002
+SpaceX Sr. Security Engineer (Infrastructure) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8893748002?gh_jid=8893748002
+SpaceX Sr. Security Engineer (Infrastructure) [Cape Canaveral, FL]   https://boards.greenhouse.io/spacex/jobs/8927312002?gh_jid=8927312002
+SpaceX Sr. Security Software Enginer (Starshield) [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8738721002?gh_jid=8738721002
+SpaceX Sr. Security Software Enginer (Starshield) [Washington, DC]   https://boards.greenhouse.io/spacex/jobs/8738736002?gh_jid=8738736002
+SpaceX Sr. Site Reliability Engineer, Data Center Infrastructure  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8882642002?gh_jid=8882642002
+SpaceX Sr. SOC/ASIC Physical Design Engineer (Silicon Engineering) [Irvine, CA]   https://boards.greenhouse.io/spacex/jobs/8564795002?gh_jid=8564795002
+SpaceX Sr. SOC/ASIC Physical Design Engineer (Silicon Engineering) [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8564781002?gh_jid=8564781002
+SpaceX Sr. SOC/ASIC Physical Design Engineer (Silicon Engineering) [Austin, TX]   https://boards.greenhouse.io/spacex/jobs/8564796002?gh_jid=8564796002
+SpaceX Sr. Software Infrastructure Engineer (Starlink) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8573254002?gh_jid=8573254002
+SpaceX Sr. Supplier Development Engineer, Data Center (Starlink)  [Palo Alto, CA]   https://boards.greenhouse.io/spacex/jobs/8645827002?gh_jid=8645827002
+SpaceX Sr. Supplier Development Engineer, Data Center (Starlink)  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8642976002?gh_jid=8642976002
+SpaceX Sr. Supplier Development Engineer, Data Center (Starlink) - Memphis [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8653632002?gh_jid=8653632002
+SpaceX Sr. Supplier Quality Specialist, Data Center (Starlink) - Memphis [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8653649002?gh_jid=8653649002
+SpaceX Starlink Production Associate [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8697970002?gh_jid=8697970002
+SpaceX Telecommunications Engineer, Data Centers [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8814943002?gh_jid=8814943002
+SpaceX Video & Voice Systems Administrator [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8791800002?gh_jid=8791800002
+SpaceX Warehouse Associate (Starlink)  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8697995002?gh_jid=8697995002
+SpaceX Wifi & RF Compliance Test Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8892607002?gh_jid=8892607002
+Datadog GTM Strategy/Operations Associate [New York, New York, USA]   https://careers.datadoghq.com/detail/8171303/?gh_jid=8171303
+Tanium Technical Support Engineer (TSE) Intern [Addison, TX (Hybrid)]   https://job-boards.greenhouse.io/tanium/jobs/8176322
+KnowBe4 Compliance Summer Internship (Remote) [Remote]   https://job-boards.greenhouse.io/knowbe4/jobs/8926721002
+KnowBe4 Cybersecurity Threat Researcher (Hybrid) [Arlington, Virginia]   https://job-boards.greenhouse.io/knowbe4/jobs/8856509002
+Zscaler Sr. Data Center Operations (DCO) Engineer-Federal [Remote - Texas, USA]   https://job-boards.greenhouse.io/zscaler/jobs/5247843007
+Zscaler Sr. Site Reliability Engineer-Federal, Security Clearance [Crystal City, Virginia, USA]   https://job-boards.greenhouse.io/zscaler/jobs/5200385007
+MongoDB Associate Technical Services Engineer (Tues-Sat Shift) [Milan]   https://www.mongodb.com/careers/job/?gh_jid=8258710
+MongoDB Product Pricing & Monetization Strategy - Associate [New York City]   https://www.mongodb.com/careers/job/?gh_jid=7523751
+Coinbase Broker Dealer Operations, Associate [Remote - USA]   https://www.coinbase.com/careers/positions/8248775?gh_jid=8248775
+Coinbase Embedded Engineer, Compliance [Office of the CTO] [Remote - USA]   https://www.coinbase.com/careers/positions/8099099?gh_jid=8099099
+Coinbase Social Support Specialist I [Manila, Philippines]   https://www.coinbase.com/careers/positions/8337058?gh_jid=8337058
+Coinbase Social Support Specialist I [Remote - USA]   https://www.coinbase.com/careers/positions/8335618?gh_jid=8335618
+Coinbase Social Support Specialist I [Remote - USA]   https://www.coinbase.com/careers/positions/8335621?gh_jid=8335621
+Coinbase Social Support Specialist I [Manila, Philippines]   https://www.coinbase.com/careers/positions/8337052?gh_jid=8337052
+Coinbase Social Support Specialist I [Manila, Philippines]   https://www.coinbase.com/careers/positions/8337061?gh_jid=8337061
+Coinbase Social Support Specialist I [Manila, Philippines]   https://www.coinbase.com/careers/positions/8337064?gh_jid=8337064
+Databricks Sr. Forward Deployed Engineer (FDE) - Public Sector/National Security  [Washington, D.C.]   https://databricks.com/company/careers/open-positions/job?gh_jid=8657478002
+Databricks Sr. Forward Deployed Engineer - National Security [United States]   https://databricks.com/company/careers/open-positions/job?gh_jid=8657468002
+Databricks Sr. Forward Deployed Engineer - National Security [Boston, Massachusetts; Delaware; Maryland; Remote - California; Remote - New York; Remote - Washington D.C.; Virginia; West Virginia]   https://databricks.com/company/careers/open-positions/job?gh_jid=8746374002
+Databricks Sr. Security Engineer, Enterprise Security [Remote - California]   https://databricks.com/company/careers/open-positions/job?gh_jid=8841962002
+Verkada Sr. IT Systems Engineer  [San Mateo, CA United States]   https://job-boards.greenhouse.io/verkada/jobs/5146680007
+Flexport Air Operations Associate, Hanoi [Hanoi, Vietnam]   https://job-boards.greenhouse.io/flexport/jobs/7742856
+Flexport Customs Associate [Bellevue, Washington, United States]   https://job-boards.greenhouse.io/flexport/jobs/8329610
+Flexport Customs Associate [Atlanta, Georgia, United States]   https://job-boards.greenhouse.io/flexport/jobs/8263427
+Flexport Customs Associate [Antwerpen, Belgium]   https://job-boards.greenhouse.io/flexport/jobs/8336787
+Flexport Global Operations Associate [San Francisco, California, United States]   https://job-boards.greenhouse.io/flexport/jobs/7450540
+Flexport Global Operations Associate [Atlanta, Georgia, United States]   https://job-boards.greenhouse.io/flexport/jobs/7450530
+Flexport Global Operations Associate [Milan, Italy]   https://job-boards.greenhouse.io/flexport/jobs/8213181
+Flexport Global Operations Associate [Antwerpen, Belgium]   https://job-boards.greenhouse.io/flexport/jobs/8207775
+Flexport Global Operations Associate - Ocean Freight [København, Capital Region of Denmark, Denmark]   https://job-boards.greenhouse.io/flexport/jobs/8195554
+Flexport Ocean Gateway Associate [Bangkok, Thailand]   https://job-boards.greenhouse.io/flexport/jobs/7273081
+Flexport Ocean Operations Associate [Phnom Penh, Cambodia]   https://job-boards.greenhouse.io/flexport/jobs/7774352
+Flexport Ocean Operations Associate [Taipei, Taiwan]   https://job-boards.greenhouse.io/flexport/jobs/7312100
+Flexport Ocean Operations Associate [Kuala Lumpur, Malaysia]   https://job-boards.greenhouse.io/flexport/jobs/7702522
+Flexport Ocean Operations Associate [Jakarta, Indonesia]   https://job-boards.greenhouse.io/flexport/jobs/7708188
+Flexport Ocean Operations Associate [Shenzhen, China]   https://job-boards.greenhouse.io/flexport/jobs/8304749
+Flexport Ocean Operations Associate  [Hanoi, Vietnam]   https://job-boards.greenhouse.io/flexport/jobs/8349277
+Flexport Ocean Planning Associate [Bangkok, Thailand]   https://job-boards.greenhouse.io/flexport/jobs/8131984
+Flexport Ocean Planning Associate [Jakarta, Indonesia]   https://job-boards.greenhouse.io/flexport/jobs/8330095
+Flexport Operations Associate [Sao Paulo]   https://job-boards.greenhouse.io/flexport/jobs/8225605
+Twitch Software Development Engineer, Security Platform [San Francisco, CA]   https://job-boards.greenhouse.io/twitch/jobs/8739060002
+Twitch Software Development Engineer, Security Platform [Seattle, WA]   https://job-boards.greenhouse.io/twitch/jobs/8739185002
+Stripe Cloud Security Engineer [Seattle]   https://stripe.com/jobs/search?gh_jid=7867389
+Stripe Comms Strategy & Operations Associate [NYC, SF]   https://stripe.com/jobs/search?gh_jid=8241857
+Stripe Infrastructure Engineer, Privy [New York]   https://stripe.com/jobs/search?gh_jid=7462961
+Stripe  IT Support Engineer [New York]   https://stripe.com/jobs/search?gh_jid=8265151
+Stripe IT Support Engineer [San Francisco]   https://stripe.com/jobs/search?gh_jid=8328323
+Stripe Offensive Security Engineer [US - Remote]   https://stripe.com/jobs/search?gh_jid=8233889
+Stripe Security Analyst  [US Remote]   https://stripe.com/jobs/search?gh_jid=8142302
+Stripe Security Engineer  [US Remote ]   https://stripe.com/jobs/search?gh_jid=8174965
+Stripe Security Engineer, Bridge [Luxembourg]   https://stripe.com/jobs/search?gh_jid=8209307
+Stripe Security Engineer, Bridge [SF, New York, Seattle]   https://stripe.com/jobs/search?gh_jid=7776179
+Stripe Security Engineer, Privy [NYC-Privy]   https://stripe.com/jobs/search?gh_jid=8306475
+Stripe Thailand Compliance Officer & Money Laundering Reporting Officer [Bangkok]   https://stripe.com/jobs/search?gh_jid=8076966
+Figma Compliance Engineer [San Francisco, CA • New York, NY • United States]   https://boards.greenhouse.io/figma/jobs/6223155004?gh_jid=6223155004
+Figma PhD Intern, Security Engineer (2027) [San Francisco, CA • New York, NY]   https://boards.greenhouse.io/figma/jobs/6238015004?gh_jid=6238015004
+Ramp Chief Compliance Officer, Ramp Advisory LLC [New York, NY (HQ)]   https://jobs.ashbyhq.com/ramp/abd1360f-bd9d-4649-ac02-9af2a437ff98
+Replit Support Engineer I (FC, Weekend Shift) [Foster City, CA]   https://jobs.ashbyhq.com/replit/951e0ebb-a957-45fa-8763-d56ba46750b4
+Replit Support Engineer I (NYC, Weekend Shift) [NYC (SoHo)]   https://jobs.ashbyhq.com/replit/4e64e46f-f69d-4454-89b6-bd27302a464d
+Harvey Sr. Systems Engineer, Client Engineering [New York]   https://jobs.ashbyhq.com/harvey/02005c77-4871-4100-8030-27aa08ed7aa7
+Harvey Sr. Systems Engineer, Client Engineering [San Francisco]   https://jobs.ashbyhq.com/harvey/d926b184-364b-49f5-a269-bef158c1c408
+Harvey Social Strategist, X and Insights [New York]   https://jobs.ashbyhq.com/harvey/9429dc22-04a9-4704-a465-11e3b0f92416
+Harvey Social Strategist, X and Insights [San Francisco]   https://jobs.ashbyhq.com/harvey/b10f6bee-a93a-4dd9-9eca-ccef79c5d01b
+OpenAI Security Engineer, Application Security [San Francisco]   https://jobs.ashbyhq.com/openai/0322d6d8-6588-4209-a304-83e768063a25
+OpenAI Security Engineer, Application Security [Seattle]   https://jobs.ashbyhq.com/openai/1e110226-448a-4c0b-b0e4-d0f5df579fbf
+OpenAI IT Support Specialist [San Francisco]   https://jobs.ashbyhq.com/openai/49ae54dc-3d33-4107-8112-63fac1ee86ca
+OpenAI Security Engineer, Application Security [New York City]   https://jobs.ashbyhq.com/openai/ec5a5d98-6314-44d9-9466-8d4d7ee866f6
+OpenAI Applied AI Engineer, Cyber, Government [Washington, DC]   https://jobs.ashbyhq.com/openai/be7b1bf5-37ab-40f7-9ec1-e9732244f12a
+OpenAI Security Engineer, Agent Security [San Francisco]   https://jobs.ashbyhq.com/openai/e9bea775-7eb6-438a-ab96-27d5f941e69d
+OpenAI Data Center Infrastructure Electrical Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/e602cd50-002d-4ace-bb30-19db0afcf635
+OpenAI Data Center Controls Network Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/68f7ef0f-97a4-47ce-ac0a-a442572ab7a7
+OpenAI Datacenter Networking Technician, AI Compute Deployment - Stargate [San Francisco]   https://jobs.ashbyhq.com/openai/3ca637f8-c0d6-4253-8568-1f31b02adf76
+OpenAI Security Engineer, Infrastructure Security [US - Remote]   https://jobs.ashbyhq.com/openai/f51f750f-a737-4441-8f96-30133a2a8049
+OpenAI Operating Systems Engineer | Consumer Devices [San Francisco]   https://jobs.ashbyhq.com/openai/efed424b-e025-400f-8ac3-73e962b85751
+OpenAI Operating Systems Engineer, Linux Kernel | Consumer Devices [San Francisco]   https://jobs.ashbyhq.com/openai/f0529a1d-fb6a-4229-a590-8caff1785bb3
+OpenAI AI Systems Engineer, Codex Agents [San Francisco]   https://jobs.ashbyhq.com/openai/de06790a-7243-4e33-a6f1-e7bd34009588
+OpenAI Forward Deployed Security Engineer [Washington, DC]   https://jobs.ashbyhq.com/openai/89d61ae8-1ce1-4187-9edd-da8029979e41
+OpenAI Researcher, Frontier Cybersecurity Risks [San Francisco]   https://jobs.ashbyhq.com/openai/66e76c14-bb6e-4e26-a333-744bbe35abbb
+OpenAI Account Associate - SF [San Francisco]   https://jobs.ashbyhq.com/openai/55f36629-8351-41d9-b2f5-3d63c5e26bf7
+OpenAI Data Center Compute, OpenHouse Savannah 2026 [US - Remote]   https://jobs.ashbyhq.com/openai/6ba0ce24-ad32-4c3b-b49c-b373be9a8480
+OpenAI Early Access Deployment Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/ee6b7ece-ffcb-4546-8b4c-ef755ec21c14
+OpenAI Financial Systems Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/ac43a452-1f50-42a2-816e-f920fdb51823
+OpenAI Data Scientist, Cybersecurity  [US - Remote]   https://jobs.ashbyhq.com/openai/894ce80d-c587-4ef0-92d2-b16deb9a06b9
+OpenAI Network Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/9f78c41f-8d39-46c9-b9c3-c3b075905b24
+OpenAI Red Team - Cyber [San Francisco]   https://jobs.ashbyhq.com/openai/badafdf8-116b-4849-b848-2f20a3ff2732
+OpenAI Data Center Controls Engineer (BMS / EPMS) [San Francisco]   https://jobs.ashbyhq.com/openai/a46ffc60-39c6-4b1e-bd0f-9c33a8b06703
+OpenAI Product Engineer, Cyber [San Francisco]   https://jobs.ashbyhq.com/openai/c442eab0-b8b4-40f6-b0f2-0fc91aea294a
+OpenAI Product Designer, Accessibility [San Francisco]   https://jobs.ashbyhq.com/openai/2ace6bbe-a7ac-4930-bcdc-14c618179b1f
+OpenAI AI Infrastructure Engineer, pAGI [San Francisco]   https://jobs.ashbyhq.com/openai/b2250643-bfd0-4ce6-abbf-cb7e8c8123ba
+OpenAI SoC Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/e8e7fd72-bc4e-4717-8a67-81e4798372c7
+OpenAI Enterprise Security Engineer, Vulnerability Management [San Francisco]   https://jobs.ashbyhq.com/openai/f2d8ed04-3c2f-4298-832b-dda7e1644c1b
+OpenAI Customer Service Systems Engineer, Government [San Francisco]   https://jobs.ashbyhq.com/openai/068c4492-1e07-4d51-9ab0-ec2727b7fc51
+OpenAI IT Systems Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/b73e46a6-881a-4413-835a-94b9d5f35d2f
+OpenAI Network Infrastructure Engineer, Global Network Infra (WAN) [San Francisco]   https://jobs.ashbyhq.com/openai/9f7371c4-e306-4a45-a400-aa2843fabd85
+OpenAI Data Center Electrical R&D Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/c3d39767-3824-4d41-83dd-7b132834b122
+OpenAI Employer Brand, Communications & Social [San Francisco]   https://jobs.ashbyhq.com/openai/0ed35971-23c6-4723-a5c6-c24ce0ca8350
+OpenAI Trusted Access Specialist, Critical Harm Operations [San Francisco]   https://jobs.ashbyhq.com/openai/5ebf3a52-0023-484c-a0fd-75f6ec7483ca
+OpenAI Land and Data Center Development [San Francisco]   https://jobs.ashbyhq.com/openai/9878a31f-423b-43cc-b169-8bb7e55b8fc7
+OpenAI Manufacturing Quality Engineer, Data Center Equipment [US - Remote]   https://jobs.ashbyhq.com/openai/2df14230-1cb5-4727-a34e-f480303e4212
