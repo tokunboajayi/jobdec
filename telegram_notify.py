@@ -58,6 +58,7 @@ KNOWN_FACTS_MAP = [
     (r"privacy policy|consent to.*process|candidate privacy", "I agree", r"agree|consent|accept"),
 
     # Experience, Skills & Agreements
+    (r"essential functions.*(role|job)|perform.*essential functions", "Yes", r"^Yes\b"),
     (r"production.*level code|production.*code", "Yes", r"^Yes\b"),
     (r"applied cryptography|cryptographic|security capabilities|security boundaries", "Yes", r"^Yes\b"),
     (r"active on the platform|years.*active", "3", r"3|1-3|2-4"),
