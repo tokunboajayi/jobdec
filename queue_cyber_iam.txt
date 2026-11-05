@@ -231,3 +231,4 @@ Anyscale Customer Engineer, Infrastructure []   https://jobs.ashbyhq.com/anyscal
 Anyscale Site Reliability Engineer, Platform Infrastructure (Foundations) []   https://jobs.ashbyhq.com/anyscale/23733eb9-f839-4209-b191-36cb0ff5b973
 Modal Infrastructure Security Engineer []   https://jobs.ashbyhq.com/modal/8de60620-09bf-4905-910f-a290814a29ee
 Modal Detection and Response Engineer []   https://jobs.ashbyhq.com/modal/e1915603-d9de-4760-b445-c266a1080499
+Leidos Cybersecurity / IAM / IT Operations   https://careers.leidos.com/

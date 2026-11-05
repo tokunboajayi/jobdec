@@ -36,6 +36,7 @@ KNOWN_FACTS_MAP = [
     (r"\bstudent.*status|class standing|academic status\b|sophomore.*junior.*senior", "Senior", r"Senior|Junior|Undergraduate"),
 
     # Work Auth & Clearance
+    (r"\bcitizenship status\b", "U.S. Citizen", r"U\.S\.\s*Citizen|United States Citizen|^Citizen\b|U\.S\.\s*Person"),
     (r"h-?1b", "No", r"^No\b"),
     (r"authori[sz]ed to work|legally eligible|authorized in the (united states|us)|work authorization", "Yes", r"^Yes\b"),
     (r"sponsorship|require.*visa|visa sponsorship|now or in the future require", "No", r"^No\b"),
