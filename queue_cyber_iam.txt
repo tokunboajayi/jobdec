@@ -346,3 +346,11 @@ Poolside Member of Engineering (Infrastructure) []   https://jobs.ashbyhq.com/po
 Poolside Member of Engineering (Inference Infrastructure) []   https://jobs.ashbyhq.com/poolside/1f2a733a-a3fe-48fe-bf61-1425eddb30f6
 Deepgram ML Ops Infrastructure Engineer []   https://jobs.ashbyhq.com/deepgram/7ced4c1f-4126-44fe-9cf1-da427a9e4e3e
 Deepgram Security Engineer []   https://jobs.ashbyhq.com/deepgram/89c0ef18-7433-4c0e-b136-4b03f326c86f
+Flexport Security Engineer, Corporate Security [San Francisco, California, United States]   https://job-boards.greenhouse.io/flexport/jobs/8166038
+Cartesia Research Engineer, Data Infrastructure (Language Modeling) []   https://jobs.ashbyhq.com/cartesia/6ca9b352-6a7b-42a3-a7c4-8f071712db90
+Replit Security Engineer - Vuln Management (Infra) []   https://jobs.ashbyhq.com/replit/4b290489-9ce6-45f9-bbc8-e1baa4bd8b6f
+Replit AI Agent Security Architect []   https://jobs.ashbyhq.com/replit/df7b6d30-9da1-4ace-8121-17c2aa55aa6f
+Replit Security Engineer - Incident Response []   https://jobs.ashbyhq.com/replit/de941de4-b0f2-4de8-a018-af667c67f33e
+Character Machine Learning Infrastructure Engineer []   https://jobs.ashbyhq.com/character/13006848-6a69-4467-9274-5d54e80b965d
+Elevenlabs Research Engineer - Data Infrastructure []   https://jobs.ashbyhq.com/elevenlabs/9fbd9227-57e0-4221-9255-1a1d967be8ed
+Elevenlabs Infrastructure Security Engineer []   https://jobs.ashbyhq.com/elevenlabs/687394d7-fbf8-49ed-822e-c0690191330c
