@@ -333,3 +333,16 @@ SambaNova Systems ML Infrastructure Engineer New Grad [Austin, TXSan Jose, CA]  
 🔥 ByteDance Data Lake Infrastructure & Data Analytics Research Engineer Intern - Applied Machine Learning Ark [Seattle, WA]   https://jobs.bytedance.com/en/position/7672394389001816325/detail?utm_source=Simplify&ref=Simplify
 ↳ Data Lake Infrastructure and Data Analytics Research Engineer Intern - Applied Machine Learning Ark [San Jose, CA]   https://jobs.bytedance.com/en/position/7671109787509213445/detail?utm_source=Simplify&ref=Simplify
 ↳ Research Engineer Intern - Agentic Systems & AI Infrastructure - Generalized Architecture [Seattle, WA]   https://lifeattiktok.com/search/7667934792727906565?utm_source=Simplify&ref=Simplify
+Beyondtrust Cloud Network Engineer [Remote United States]   https://job-boards.greenhouse.io/beyondtrust/jobs/8279128
+Beyondtrust Cyber Defense Engineer [Remote Canada | Remote United States]   https://job-boards.greenhouse.io/beyondtrust/jobs/8185856
+Beyondtrust Cyber Defense Engineer [Hybrid Tel Aviv, Israel]   https://job-boards.greenhouse.io/beyondtrust/jobs/7859213
+Cursor Security GRC Engineer []   https://jobs.ashbyhq.com/cursor/1703501f-53a1-4307-93ec-84b723be92ef
+Cognition GTM Systems Engineer []   https://jobs.ashbyhq.com/cognition/dabc56df-b50a-4056-9e01-14ca3e0b12a4
+Cognition Research Engineer, ML Infrastructure []   https://jobs.ashbyhq.com/cognition/b6f96827-ce14-44f4-98fa-b1b8640858b6
+Cognition Security Engineer []   https://jobs.ashbyhq.com/cognition/71165bb4-9bc8-49df-9eca-49c4232f72ff
+Cognition IT Support Engineer []   https://jobs.ashbyhq.com/cognition/1f3ff659-8106-4041-ab28-56713c1860d0
+Cognition Network Engineer []   https://jobs.ashbyhq.com/cognition/3e384a5e-2ff7-4368-91f8-5972047318b0
+Poolside Member of Engineering (Infrastructure) []   https://jobs.ashbyhq.com/poolside/ade02c95-890f-4f1d-9ca6-05076b6fe687
+Poolside Member of Engineering (Inference Infrastructure) []   https://jobs.ashbyhq.com/poolside/1f2a733a-a3fe-48fe-bf61-1425eddb30f6
+Deepgram ML Ops Infrastructure Engineer []   https://jobs.ashbyhq.com/deepgram/7ced4c1f-4126-44fe-9cf1-da427a9e4e3e
+Deepgram Security Engineer []   https://jobs.ashbyhq.com/deepgram/89c0ef18-7433-4c0e-b136-4b03f326c86f
