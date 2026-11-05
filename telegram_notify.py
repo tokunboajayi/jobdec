@@ -78,6 +78,7 @@ KNOWN_FACTS_MAP = [
     (r"github", "https://github.com/1Zuski", None),
     (r"certify|electronic signature|type your name|signature", "Michael Azuka", None),
     (r"sms|text message|consent to receive", "Yes", r"^Yes\b|Consent"),
+    (r"spacex.*employment.*history|ever.*employed by spacex", "I have never been employed by SpaceX, SpaceXAI, xAI, X, or Twitter", r"never been employed|never worked|not a former|^No\b"),
     (r"previously applied|worked (for|with) us before|employed by.*before", "No", r"^No\b"),
     (r"relative.*work|family.*work|conflict of interest", "No", r"^No\b"),
     (r"non-?compet|non-?solicit", "No", r"^No\b"),
