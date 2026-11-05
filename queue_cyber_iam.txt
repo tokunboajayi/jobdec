@@ -306,3 +306,30 @@ Cloudflare Hardware Systems Engineer, Hardware Tools / Firmware [Hybrid]   https
 Cloudflare Network Security Support Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8028403?gh_jid=8028403
 Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427789008?gh_jid=5427789008
 Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427855008?gh_jid=5427855008
+Databricks Deputy Facility Security Officer [Washington, D.C.]   https://databricks.com/company/careers/open-positions/job?gh_jid=8811713002
+↳ Systems Engineer Intern [Germantown, MD]   https://zebra.wd501.myworkdayjobs.com/Zebra_careers/job/Germantown-Maryland/XMLNAME-2027-Summer-Internship--US----Systems-Engineer_JR103659?utm_source=Simplify&ref=Simplify
+↳ Costco Digital Services Intern - Infosec AI/ML [Issaquah, WA]   https://phf.tbe.taleo.net/phf02/ats/careers/v2/viewRequisition?org=COSTCO&cws=41&rid=10994&utm_source=Simplify&ref=Simplify
+↳ Summer Games Systems Engineer Intern [Lexington, MA]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Lexington-MA/University---2027-Summer-Games-Systems-Engineer-Intern---Lexington--MA_R0252273?utm_source=Simplify&ref=Simplify
+↳ Systems Engineer Intern [Dayton, OH]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Dayton-OH/University---2027-Summer-Games--Systems-Engineer-Intern---Dayton--OH_R0252342?utm_source=Simplify&ref=Simplify
+↳ Systems Engineer Intern - Summer Games [Detroit, MI]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Detroit-MI/University---2027-Summer-Games--Systems-Engineer-Intern---Royal-Oaks--MI_R0252341?utm_source=Simplify&ref=Simplify
+↳ Systems Engineer Intern [Albuquerque, NM]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Albuquerque-NM/University---2027-Summer-Games--Systems-Engineer-Intern---Albuquerque--NM_R0252337?utm_source=Simplify&ref=Simplify
+↳ Systems Engineer Intern - Autonomous Vehicle Networks & Diagnostics 🎓 [Mountain View, CA]   https://careers.withwaymo.com/jobs?gh_jid=8231711&utm_source=Simplify&ref=Simplify
+Booz Allen Systems Engineer Intern - Summer Games [Huntsville, AL]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Huntsville-AL/University---2027-Summer-Games-Systems-Engineer-Intern---Huntsville--AL_R0249188?utm_source=Simplify&ref=Simplify
+↳ Security Workflow Engineer Intern [Vienna, VA]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32382?utm_source=Simplify&ref=Simplify
+Peraton Cyber Research Intern [4 locationsWest Lafayette, INBasking Ridge, Bernards, NJSilver Spring, MDBedford, NH]   https://careers-peraton.icims.com/jobs/170120/job?mobile=true&needsRedirect=false&utm_source=Simplify&ref=Simplify
+Lawrence Livermore National Laboratory (LLNL) Critical Infrastructure Analysis Graduate Intern - Cyber and Critical Infrastructure Summer Institute [Livermore, CA]   https://jobs.smartrecruiters.com/LLNL/3743990016610216?utm_source=Simplify&ref=Simplify
+↳ AI Research Infrastructure – Reinforcement Learning Post-Training Intern 🎓 [Santa Clara, CA]   https://careers.amd.com/jobs/90950?icims=1&utm_source=Simplify&ref=Simplify
+↳ Data Engineer Intern - Enterprise Technology & Security [Plano, TXJohnston, RIPhoenix, AZ]   https://hcgn.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/49285?utm_source=Simplify&ref=Simplify
+Motorola SoC Digital Engineer Intern [Plantation, FL]   https://motorolasolutions.wd5.myworkdayjobs.com/Careers/job/Plantation-FL/XMLNAME-2027-Intern---SoC-Digital-Engineer_R69149?utm_source=Simplify&ref=Simplify
+Dell Technologies Hardware Engineering Intern - Infrastructure Solutions Group [Round Rock, TXHopkinton, MA]   https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/job/297770?utm_source=Simplify&ref=Simplify
+🔥 Amazon Software Developer Engineer 1 - Security Platform [Seattle, WASFIrvine, CA]   https://amazon.jobs/en/jobs/10597112/software-dev-engineer-i-security-platform?utm_source=Simplify&ref=Simplify
+SambaNova Systems ML Infrastructure Engineer New Grad [Austin, TXSan Jose, CA]   https://sambanova.ai/sambanova-available-positions/?gh_jid=6224938004&utm_source=Simplify&ref=Simplify
+↳ Research Scientist New Grad - AI for Infrastructure 🎓 [San Jose, CA]   https://jobs.bytedance.com/en/position/7667291055662811445/detail?utm_source=Simplify&ref=Simplify
+↳ Research Scientist New Grad - Infrastructure System Lab 🎓 [San Jose, CA]   https://jobs.bytedance.com/en/position/7665108869591140613/detail?utm_source=Simplify&ref=Simplify
+↳ Machine Learning Infrastructure Engineer New Grad - Ads Infra [San Jose, CA]   https://lifeattiktok.com/search/7668693662561634613?utm_source=Simplify&ref=Simplify
+🔥 ByteDance AI Network Automation Engineer Intern - Global Physical Network Infrastructure [San Jose, CA]   https://jobs.bytedance.com/en/position/7670690923748870405/detail?utm_source=Simplify&ref=Simplify
+🔥 TikTok AI Infrastructure Engineer Intern - Recommendation & LLM [San Jose, CA]   https://lifeattiktok.com/search/7672671220798818613?utm_source=Simplify&ref=Simplify
+↳ Information Systems Intern - IT - Cyber Engineer & Data Science [United States]   https://ibqbjb.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/Honeywell/job/155554?utm_source=Simplify&ref=Simplify
+🔥 ByteDance Data Lake Infrastructure & Data Analytics Research Engineer Intern - Applied Machine Learning Ark [Seattle, WA]   https://jobs.bytedance.com/en/position/7672394389001816325/detail?utm_source=Simplify&ref=Simplify
+↳ Data Lake Infrastructure and Data Analytics Research Engineer Intern - Applied Machine Learning Ark [San Jose, CA]   https://jobs.bytedance.com/en/position/7671109787509213445/detail?utm_source=Simplify&ref=Simplify
+↳ Research Engineer Intern - Agentic Systems & AI Infrastructure - Generalized Architecture [Seattle, WA]   https://lifeattiktok.com/search/7667934792727906565?utm_source=Simplify&ref=Simplify
