@@ -38,6 +38,7 @@ FACTS = {
     "work_auth": ("Yes", r"^yes\b"),
     "sponsorship": ("No", r"^no\b"),
     "clearance": ("No", r"^no\b|none"),
+    "language": ("English", r"\b(english|eng|en)\b"),
 }
 
 
