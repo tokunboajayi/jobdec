@@ -35,7 +35,11 @@ def get_imap_client(retries=3):
     for attempt in range(max(1, retries)):
         try:
             mail = imaplib.IMAP4_SSL("imap.gmail.com", 993, timeout=15)
+            if hasattr(mail, "sock") and mail.sock:
+                mail.sock.settimeout(15)
             mail.login(GMAIL_USER, GMAIL_APP_PASSWORD)
+            if hasattr(mail, "sock") and mail.sock:
+                mail.sock.settimeout(15)
             return mail, "Connected"
         except Exception as e:
             last_err = str(e)
