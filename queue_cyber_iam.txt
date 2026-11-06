@@ -294,8 +294,6 @@ Astranis Electrical Integration Associate - RF (Summer 2027) [San Francisco, CA]
 Astranis Electrical Reliability Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704793006
 Astranis Electrical Reliability Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704788006
 Astranis Environmental Test Engineer Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4705660006
-Astranis FPGA Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704813006
-Astranis FPGA Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704811006
 Astranis Mission Applications Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4705617006
 Astranis Radiation Effects Associate Engineer (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704282006
 Astranis RF Hardware Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4707945006
