@@ -75,12 +75,10 @@ SpaceX IT Network Administrator [Starbase, TX]   https://boards.greenhouse.io/sp
 SpaceX IT Network Administrator [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8924408002?gh_jid=8924408002
 SpaceX IT Systems Administrator, Launch [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8698618002?gh_jid=8698618002
 SpaceX IT Systems Administrator, Launch [Hawthorne, CA]   https://boards.greenhouse.io/spacex/jobs/8469052002?gh_jid=8469052002
-SpaceX IT Systems Administrator, Manufacturing [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8815130002?gh_jid=8815130002
 SpaceX IT Systems Administrator, Mission Systems [Vandenberg, CA]   https://boards.greenhouse.io/spacex/jobs/8525777002?gh_jid=8525777002
 SpaceX IT Systems Administrator, Test Operations (2nd Shift) [McGregor, TX]   https://boards.greenhouse.io/spacex/jobs/8854361002?gh_jid=8854361002
 SpaceX IT Windows Systems Administrator  [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8924734002?gh_jid=8924734002
 SpaceX IT Windows Systems Administrator  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8924702002?gh_jid=8924702002
-SpaceX Mechanical Engineer (Data Center MEP Systems) [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8623383002?gh_jid=8623383002
 SpaceX Power Projects Development Associate [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8928676002?gh_jid=8928676002
 SpaceX Power Projects Development Associate [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8928573002?gh_jid=8928573002
 SpaceX Product Compliance Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8484568002?gh_jid=8484568002
@@ -168,7 +166,6 @@ OpenAI Network Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/9f78c4
 OpenAI Red Team - Cyber [San Francisco]   https://jobs.ashbyhq.com/openai/badafdf8-116b-4849-b848-2f20a3ff2732
 OpenAI Data Center Controls Engineer (BMS / EPMS) [San Francisco]   https://jobs.ashbyhq.com/openai/a46ffc60-39c6-4b1e-bd0f-9c33a8b06703
 OpenAI Product Engineer, Cyber [San Francisco]   https://jobs.ashbyhq.com/openai/c442eab0-b8b4-40f6-b0f2-0fc91aea294a
-OpenAI Product Designer, Accessibility [San Francisco]   https://jobs.ashbyhq.com/openai/2ace6bbe-a7ac-4930-bcdc-14c618179b1f
 OpenAI AI Infrastructure Engineer, pAGI [San Francisco]   https://jobs.ashbyhq.com/openai/b2250643-bfd0-4ce6-abbf-cb7e8c8123ba
 OpenAI SoC Engineer [San Francisco]   https://jobs.ashbyhq.com/openai/e8e7fd72-bc4e-4717-8a67-81e4798372c7
 OpenAI Enterprise Security Engineer, Vulnerability Management [San Francisco]   https://jobs.ashbyhq.com/openai/f2d8ed04-3c2f-4298-832b-dda7e1644c1b
@@ -179,7 +176,6 @@ OpenAI Data Center Electrical R&D Engineer [San Francisco]   https://jobs.ashbyh
 OpenAI Employer Brand, Communications & Social [San Francisco]   https://jobs.ashbyhq.com/openai/0ed35971-23c6-4723-a5c6-c24ce0ca8350
 OpenAI Trusted Access Specialist, Critical Harm Operations [San Francisco]   https://jobs.ashbyhq.com/openai/5ebf3a52-0023-484c-a0fd-75f6ec7483ca
 OpenAI Land and Data Center Development [San Francisco]   https://jobs.ashbyhq.com/openai/9878a31f-423b-43cc-b169-8bb7e55b8fc7
-OpenAI Manufacturing Quality Engineer, Data Center Equipment [US - Remote]   https://jobs.ashbyhq.com/openai/2df14230-1cb5-4727-a34e-f480303e4212
 DriveWealth AI Consulting Associate Program – AI Engineer Intern [Chicago, IL]   https://jobs.ashbyhq.com/drivewealth/a214dd6c-e3ac-481e-8308-bf74c2032b8a/application?embed=true&utm_source=Simplify&ref=Simplify
 Teledyne Systems Engineering Intern - Summer 2027 [Huntsville, AL]   https://flir.wd1.myworkdayjobs.com/flircareers/job/US---Huntsville-AL/EADSIM-MBSE-Intern--Summer-2027-_REQ36670-1?utm_source=Simplify&ref=Simplify
 NavyFederal Associate Intern - Lending Automation Technology & Solutions [Pensacola, FL Vienna, VA]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32359?utm_source=Simplify&ref=Simplify
@@ -188,16 +184,136 @@ Peraton Cyber Research Intern [4 locations  West Lafayette, IN Basking Ridge, Be
 AmericanExpress Cybersecurity AI Engineer Intern - Enterprise Technology Services [Phoenix, AZ]   https://egug.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/26016065?utm_source=Simplify&ref=Simplify
 TMobile Associate AI Engineer Intern [Frisco, TX Overland Park, KS]   https://tmobile.wd1.myworkdayjobs.com/External/job/Overland-Park-Kansas/Summer-2027-Assoc-AI-Engineer-Internship_REQ380492?utm_source=Simplify&ref=Simplify
 Amazon Associate Delivery Consultant Intern - AWS Professional Services [Arlington County, Arlington, VA NYC]   https://amazon.jobs/en/jobs/10585774/associate-delivery-consultant-intern-aws-professional-services?utm_source=Simplify&ref=Simplify
-LawrenceLivermoreNationalLaboratoryLLNL Critical Infrastructure Analysis Graduate Intern - Cyber and Critical Infrastructure Summer Institute [Livermore, CA]   https://jobs.smartrecruiters.com/LLNL/3743990016610216?utm_source=Simplify&ref=Simplify
 NavyFederal Associate Data Engineer Intern [Vienna, VA]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32292?utm_source=Simplify&ref=Simplify
 NavyFederal Business Intelligence Analyst Summer Associate Intern [Vienna, VA]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32330?utm_source=Simplify&ref=Simplify
 NavyFederal Summer Associate Intern - Business Intelligence & Data Analytics [Winchester, VA Pensacola, FL Vienna, VA]   https://fa-etbx-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/nfcu/job/32107?utm_source=Simplify&ref=Simplify
 ErnstYoung Associate Intern - Multiple Teams [7 locations  Boston, MA SF LA San Jose, CA Dallas, TX Chicago, IL NYC]   https://eyglobal.yello.co/jobs/os6PjvRXE64CjFU87aT3hw?job_board_id=c1riT--B2O-KySgYWsZO1Q&utm_source=Simplify&ref=Simplify
 CACI Systems Engineering Co-op Intern [Rochester, NY]   https://caci.wd1.myworkdayjobs.com/external/job/Rochester-NY-US/Systems-Engineering-Co-op-Intern---Spring-2027_334157?utm_source=Simplify&ref=Simplify
-DellTechnologies Hardware Engineering Intern - Infrastructure Solutions Group [Round Rock, TX Hopkinton, MA]   https://iawmqy.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/careers/job/297770?utm_source=Simplify&ref=Simplify
 IntegrationInnovationi3 Data Analyst - Junior-Associate [Orlando, FL Huntsville, AL]   https://i3-corps.jibeapply.com/jobs/5307?icims=1&utm_source=Simplify&ref=Simplify
 FrontierTechnology Early Career Associate Data Scientist [Norfolk, VA]   https://careers-ftidefense.icims.com/jobs/7093/job?mobile=true&needsRedirect=false&utm_source=Simplify&ref=Simplify
-ByteDance AI Network Automation Engineer Intern - Global Physical Network Infrastructure [San Jose, CA]   https://jobs.bytedance.com/en/position/7670690923748870405/detail?utm_source=Simplify&ref=Simplify
-ByteDance Data Lake Infrastructure & Data Analytics Research Engineer Intern - Applied Machine Learning Ark [Seattle, WA]   https://jobs.bytedance.com/en/position/7672394389001816325/detail?utm_source=Simplify&ref=Simplify
-ByteDance Data Lake Infrastructure and Data Analytics Research Engineer Intern - Applied Machine Learning Ark [San Jose, CA]   https://jobs.bytedance.com/en/position/7671109787509213445/detail?utm_source=Simplify&ref=Simplify
 Montenson System Administrator Intern [Minnesota]   https://fa-esgu-saasfaprod1.fa.ocs.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX_1/job/23368?utm_source=Simplify&ref=Simplify
+Anduril 2027 Early Career Systems Engineer [Boston, Massachusetts, United States; Boulder, Colorado, United States; Costa Mesa, California, United States; Foothill Ranch, California, United States; Huntsville, Alabama, United States; Reston, Virginia, United States; Seattle, Washington, United States; Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5262340007?gh_jid=5262340007
+Anduril 2027 Systems Engineer Intern [Boston, Massachusetts, United States; Costa Mesa, California, United States; Fort Collins, Colorado, United States; Reston, Virginia, United States; Seattle, Washington, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5257690007?gh_jid=5257690007
+Anduril Air Vehicle Systems Engineer, Hardware Verification, Integration & Validation [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5131979007?gh_jid=5131979007
+Anduril Applied LLM Systems Engineer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5197253007?gh_jid=5197253007
+Anduril Assistant Contractor Special Security Officer [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5262829007?gh_jid=5262829007
+Anduril Chief Information Security Officer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5241292007?gh_jid=5241292007
+Anduril Classified Systems Engineer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5267122007?gh_jid=5267122007
+Anduril Contractor Special Security Officer [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5130540007?gh_jid=5130540007
+Anduril Contractor Special Security Officer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5262813007?gh_jid=5262813007
+Anduril Corporate Facility Security Officer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5231329007?gh_jid=5231329007
+Anduril Counterintelligence & Security Risk Analyst [Costa Mesa, California, United States; Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5228709007?gh_jid=5228709007
+Anduril Electrical Integration Systems Engineer, Edge Compute and Communications, Active Clearance [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5233989007?gh_jid=5233989007
+Anduril Engineering Systems Administrator [Abu Dhabi, United Arab Emirates]   https://boards.greenhouse.io/andurilindustries/jobs/5234222007?gh_jid=5234222007
+Anduril Facility Security Officer [McHenry, Mississippi, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5261472007?gh_jid=5261472007
+Anduril Field Logistics Associate [Las Vegas, Nevada, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5277491007?gh_jid=5277491007
+Anduril Fuel Systems Engineer, Air Vehicles [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5220401007?gh_jid=5220401007
+Anduril HPC Systems Engineer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5278381007?gh_jid=5278381007
+Anduril Information System Security Officer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5278928007?gh_jid=5278928007
+Anduril Information Systems Security Officer, Space [Chantilly, Virginia, United States; Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5236276007?gh_jid=5236276007
+Anduril Inventory Associate, Shipping & Receiving [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4917406007?gh_jid=4917406007
+Anduril IT Security Engineer, Space [Chantilly, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5246822007?gh_jid=5246822007
+Anduril Linux System Administrator [Reston, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5152185007?gh_jid=5152185007
+Anduril Material Associate [Ashville, Ohio, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4910799007?gh_jid=4910799007
+Anduril Materials Associate [Morrisville, North Carolina, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5280294007?gh_jid=5280294007
+Anduril Materials Associate - SkillBridge [Costa Mesa, California, United States; Irvine, California, United States; Santa Ana, California, United States; Tustin, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5147998007?gh_jid=5147998007
+Anduril Materials Associate, Warehouse [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4653024007?gh_jid=4653024007
+Anduril Network Engineer, Factory Systems and Operational Technology [Costa Mesa, California, United States; Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5251955007?gh_jid=5251955007
+Anduril Operations and Logistics Associate [Ashville, Ohio, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5221844007?gh_jid=5221844007
+Anduril Operations & Logistics Associate [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5005246007?gh_jid=5005246007
+Anduril Operations & Logistics Associate, AIS [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5239548007?gh_jid=5239548007
+Anduril Orbit Analyst, Space [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242937007?gh_jid=5242937007
+Anduril Personnel Security Specialist [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5266842007?gh_jid=5266842007
+Anduril Production Associate [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5170663007?gh_jid=5170663007
+Anduril Production Associate, Drones [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5234981007?gh_jid=5234981007
+Anduril Production Associate, Missiles [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5221629007?gh_jid=5221629007
+Anduril Production Associate, Sentry [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5191452007?gh_jid=5191452007
+Anduril Product Security Engineer, Programs [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5041620007?gh_jid=5041620007
+Anduril Product Security Engineer, Programs [Quincy, Massachusetts, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5183808007?gh_jid=5183808007
+Anduril Product Security Engineer, Programs [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5042718007?gh_jid=5042718007
+Anduril Quality Compliance Engineer [Fort Collins, Colorado, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5281730007?gh_jid=5281730007
+Anduril Quality Systems Engineer, Battlespace Awareness [Fort Collins, Colorado, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5236058007?gh_jid=5236058007
+Anduril Radar Quality Systems Engineer [Fort Collins, Colorado, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5281720007?gh_jid=5281720007
+Anduril RF Mission Systems Engineer, Air Dominance & Strike, Active Clearance [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5181436007?gh_jid=5181436007
+Anduril Security Operations Analyst [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5201053007?gh_jid=5201053007
+Anduril Security Operations Analyst [Boston, Massachusetts, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5218594007?gh_jid=5218594007
+Anduril Security Operations Analyst [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5218589007?gh_jid=5218589007
+Anduril Security Operations Analyst [Seattle, Washington, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5218586007?gh_jid=5218586007
+Anduril Shipping & Receiving Associate, Warehouse [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4653928007?gh_jid=4653928007
+Anduril Strategic Real Estate, Growth Strategy Associate [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5269054007?gh_jid=5269054007
+Anduril System Administrator (Active Clearance), Intelligence Systems [Reston, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5178011007?gh_jid=5178011007
+Anduril Systems Administrator [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5273142007?gh_jid=5273142007
+Anduril Systems Administrator [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5160980007?gh_jid=5160980007
+Anduril System Security Engineer, Space [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5275224007?gh_jid=5275224007
+Anduril Systems Engineer [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5151191007?gh_jid=5151191007
+Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4843948007?gh_jid=4843948007
+Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5043205007?gh_jid=5043205007
+Anduril Systems Engineer [Huntsville, Alabama, United States; McHenry, Mississippi, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5223625007?gh_jid=5223625007
+Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4929997007?gh_jid=4929997007
+Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4931248007?gh_jid=4931248007
+Anduril Systems Engineer, Advanced Effects, Active Clearance [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4657118007?gh_jid=4657118007
+Anduril Systems Engineer, Air Defense [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4843950007?gh_jid=4843950007
+Anduril Systems Engineer, Air Defense [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242751007?gh_jid=5242751007
+Anduril Systems Engineer, Air Defense  [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242787007?gh_jid=5242787007
+Anduril Systems Engineer, Air Vehicle Systems [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5173154007?gh_jid=5173154007
+Anduril Systems Engineer, Army (CUAS) [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5256907007?gh_jid=5256907007
+Anduril Systems Engineer, C2 Integration, Active Clearance [Ashville, Ohio, United States; Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5233972007?gh_jid=5233972007
+Anduril Systems Engineer, C2 Networking, Edge Compute and Communications, Active Clearance [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5233962007?gh_jid=5233962007
+Anduril Systems Engineer, Decision Advantage  [Waltham, Massachusetts, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5278857007?gh_jid=5278857007
+Anduril Systems Engineer, Decision Advantage  [Broomfield, Colorado, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5278854007?gh_jid=5278854007
+Anduril Systems Engineer, Electro Optical, Space [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5042157007?gh_jid=5042157007
+Anduril Systems Engineer, Enterprise Mesh (Active Clearance) [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5232483007?gh_jid=5232483007
+Anduril Systems Engineer, EW [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5241726007?gh_jid=5241726007
+Anduril Systems Engineer (Integration & Test), Intelligence Systems  [Reston, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5232215007?gh_jid=5232215007
+Anduril Systems Engineer, Intelligence Systems  [Reston, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5232496007?gh_jid=5232496007
+Anduril Systems Engineer, Launched Effects [Atlanta, Georgia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5214985007?gh_jid=5214985007
+Anduril Systems Engineer - Machine Learning [Colorado Springs, Colorado, United States; Huntsville, Alabama, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5272037007?gh_jid=5272037007
+Anduril Systems Engineer, Maritime [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242250007?gh_jid=5242250007
+Anduril Systems Engineer - Missile Defense [Colorado Springs, Colorado, United States; Huntsville, Alabama, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5272035007?gh_jid=5272035007
+Anduril Systems Engineer, Mission Autonomy, Active Clearance [Costa Mesa, California, United States; Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4653705007?gh_jid=4653705007
+Anduril Systems Engineer, Space [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4922336007?gh_jid=4922336007
+Anduril Systems Engineer, Spacecraft Operations (RPO) [Colorado Springs, Colorado, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5250562007?gh_jid=5250562007
+Anduril Systems Engineer, Spacecraft Operations (RPO) [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5250549007?gh_jid=5250549007
+Anduril Systems Engineer, Spacecraft Operations (RPO) [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5034120007?gh_jid=5034120007
+Anduril Systems Engineer, Space Imaging [Waltham, Massachusetts, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5248692007?gh_jid=5248692007
+Anduril Systems Engineer, Space Imaging [Boulder, Colorado, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5248689007?gh_jid=5248689007
+Anduril Systems Engineer, Space Special Programs [Chantilly, Virginia, United States; Herndon, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5208269007?gh_jid=5208269007
+Anduril Systems Security Engineer, Anti-Tamper [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5044386007?gh_jid=5044386007
+Anduril Systems Security Engineer, Programs [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4961987007?gh_jid=4961987007
+Anduril Training Systems Administrator [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5279964007?gh_jid=5279964007
+Anduril Vehicle Battery Systems Engineer [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5267767007?gh_jid=5267767007
+Anduril Veteran & Community Engagement Associate [Costa Mesa, California, United States; Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5187229007?gh_jid=5187229007
+Anduril Warehouse Associate, Supply Chain [Costa Mesa, California, United States; Irvine, California, United States; Santa Ana, California, United States; Tustin, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5241685007?gh_jid=5241685007
+Anduril Warehouse Forklift Associate, Supply Chain [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4653930007?gh_jid=4653930007
+Anduril Winter 2027 Systems Engineer Co-op [Quincy, Massachusetts, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5236599007?gh_jid=5236599007
+Astranis Antenna Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704301006
+Astranis Antenna Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704298006
+Astranis Automation & Controls Engineering Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4718211006
+Astranis Automation & Controls Engineering Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4718209006
+Astranis Business Development Associate [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4716161006
+Astranis CAD Engineer Associate (Spring 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704756006
+Astranis CAD Engineer Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704767006
+Astranis Camera Operator Associate (Fall 2026) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4715207006
+Astranis Electrical Integration Associate - RF (Summer 2027) [San Francisco, CA]   https://job-boards.greenhouse.io/astranis/jobs/4715793006
+Astranis Electrical Reliability Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704793006
+Astranis Electrical Reliability Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704788006
+Astranis Environmental Test Engineer Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4705660006
+Astranis FPGA Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704813006
+Astranis FPGA Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704811006
+Astranis Mission Applications Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4705617006
+Astranis Radiation Effects Associate Engineer (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704282006
+Astranis RF Hardware Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4707945006
+Astranis RF Hardware Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4707943006
+Astranis RF Validation Associate (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4716826006
+Astranis RF Validation Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4716835006
+Astranis Supplier Quality Engineer Associate (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4705665006
+Astranis Thermal Associate Engineer (Summer 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704831006
+Astranis Thermal Associate Engineer (Winter 2027) [San Francisco]   https://job-boards.greenhouse.io/astranis/jobs/4704829006
+SpaceX Infrastructure Engineer (Enterprise Products) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8927289002?gh_jid=8927289002
+SpaceX IT Network Infrastructure Engineer, Outside Plant [College Station, TX]   https://boards.greenhouse.io/spacex/jobs/8932628002?gh_jid=8932628002
+SpaceX Network Engineer (Starlink Maritime) [Redmond, WA]   https://boards.greenhouse.io/spacex/jobs/8927107002?gh_jid=8927107002
+MongoDB Associate, HR Shared Services [Gurugram]   https://www.mongodb.com/careers/job/?gh_jid=8173777
+MongoDB Associate TSE II [Gurugram]   https://www.mongodb.com/careers/job/?gh_jid=8238617
+Verkada GRC Engineer  [San Mateo, CA United States]   https://job-boards.greenhouse.io/verkada/jobs/5234231007
+Flexport Global Operations Associate, Ocean [Milan, Italy]   https://job-boards.greenhouse.io/flexport/jobs/8355885
+Flexport Security Engineer, Corporate Security [U.S. Remote]   https://job-boards.greenhouse.io/flexport/jobs/8166040
