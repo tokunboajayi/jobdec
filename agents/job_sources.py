@@ -87,7 +87,7 @@ INTERN_KEYWORDS = re.compile(
     re.I
 )
 GRAD_ONLY = re.compile(r"\b(phd|postdoc)\b", re.I)
-EXCLUDE_SENIOR = re.compile(r"\b(director|vp\b|vice\s+president|head\s+of|manager|principal|staff\b|staff\+|lead\b|senior\b|sr\.?\b|architect\b)\b", re.I)
+EXCLUDE_SENIOR = re.compile(r"\b(chief\b|ciso\b|cio\b|cto\b|executive\b|director|vp\b|vice\s+president|head\s+of|manager|principal|staff\b|staff\+|lead\b|senior\b|sr\.?\b|architect\b)\b", re.I)
 
 
 def _clean(s):
