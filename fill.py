@@ -2235,6 +2235,7 @@ def main():
 
         submitted = False
         submit_clicked = False
+        submit_count = 0
         final_status, auth_failed = "incomplete", False
         steps, last_sig = 0, None
         pause_retries, no_btn_retries, stuck_retries, auth_retries = 0, 0, 0, 0
@@ -2611,7 +2612,8 @@ def main():
                 print("[Click] Could not click the button - treating as no-advance.")
             if "submit" in label.lower():
                 submit_clicked = True
-                print("[Submit] Submit clicked! Waiting for submission processing...")
+                submit_count += 1
+                print(f"[Submit] Submit clicked (attempt {submit_count}/2)! Waiting for submission processing...")
                 try: page.wait_for_load_state("networkidle", timeout=8000)
                 except Exception: pass
                 # Check if a verification modal or code input appeared immediately post-submit
@@ -2697,6 +2699,9 @@ def main():
                     except Exception:
                         pass
                 if submitted:
+                    break
+                elif submit_count >= 2:
+                    print("\n[Submit Guard] Page did not advance after 2 submit attempts (possible bot challenge or validation lock). Advancing to next job.")
                     break
             else:
                 try: page.wait_for_load_state("domcontentloaded", timeout=15000)
