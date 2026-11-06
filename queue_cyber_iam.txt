@@ -92,12 +92,10 @@ SpaceX Telecommunications Engineer, Data Centers [Starbase, TX]   https://boards
 SpaceX Video & Voice Systems Administrator [Memphis, TN]   https://boards.greenhouse.io/spacex/jobs/8791800002?gh_jid=8791800002
 SpaceX Warehouse Associate (Starlink)  [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8697995002?gh_jid=8697995002
 SpaceX Wifi & RF Compliance Test Engineer (Starlink) [Bastrop, TX]   https://boards.greenhouse.io/spacex/jobs/8892607002?gh_jid=8892607002
-Datadog GTM Strategy/Operations Associate [New York, New York, USA]   https://careers.datadoghq.com/detail/8171303/?gh_jid=8171303
 Tanium Technical Support Engineer (TSE) Intern [Addison, TX (Hybrid)]   https://job-boards.greenhouse.io/tanium/jobs/8176322
 KnowBe4 Compliance Summer Internship (Remote) [Remote]   https://job-boards.greenhouse.io/knowbe4/jobs/8926721002
 KnowBe4 Cybersecurity Threat Researcher (Hybrid) [Arlington, Virginia]   https://job-boards.greenhouse.io/knowbe4/jobs/8856509002
 MongoDB Associate Technical Services Engineer (Tues-Sat Shift) [Milan]   https://www.mongodb.com/careers/job/?gh_jid=8258710
-MongoDB Product Pricing & Monetization Strategy - Associate [New York City]   https://www.mongodb.com/careers/job/?gh_jid=7523751
 Coinbase Broker Dealer Operations, Associate [Remote - USA]   https://www.coinbase.com/careers/positions/8248775?gh_jid=8248775
 Coinbase Social Support Specialist I [Manila, Philippines]   https://www.coinbase.com/careers/positions/8337058?gh_jid=8337058
 Coinbase Social Support Specialist I [Remote - USA]   https://www.coinbase.com/careers/positions/8335618?gh_jid=8335618
@@ -125,7 +123,6 @@ Flexport Ocean Planning Associate [Bangkok, Thailand]   https://job-boards.green
 Flexport Ocean Planning Associate [Jakarta, Indonesia]   https://job-boards.greenhouse.io/flexport/jobs/8330095
 Flexport Operations Associate [Sao Paulo]   https://job-boards.greenhouse.io/flexport/jobs/8225605
 Stripe Cloud Security Engineer [Seattle]   https://stripe.com/jobs/search?gh_jid=7867389
-Stripe Comms Strategy & Operations Associate [NYC, SF]   https://stripe.com/jobs/search?gh_jid=8241857
 Stripe Infrastructure Engineer, Privy [New York]   https://stripe.com/jobs/search?gh_jid=7462961
 Stripe  IT Support Engineer [New York]   https://stripe.com/jobs/search?gh_jid=8265151
 Stripe IT Support Engineer [San Francisco]   https://stripe.com/jobs/search?gh_jid=8328323
@@ -236,7 +233,6 @@ Anduril Security Operations Analyst [Boston, Massachusetts, United States]   htt
 Anduril Security Operations Analyst [Washington, District of Columbia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5218589007?gh_jid=5218589007
 Anduril Security Operations Analyst [Seattle, Washington, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5218586007?gh_jid=5218586007
 Anduril Shipping & Receiving Associate, Warehouse [Santa Ana, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4653928007?gh_jid=4653928007
-Anduril Strategic Real Estate, Growth Strategy Associate [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5269054007?gh_jid=5269054007
 Anduril System Administrator (Active Clearance), Intelligence Systems [Reston, Virginia, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5178011007?gh_jid=5178011007
 Anduril Systems Administrator [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5273142007?gh_jid=5273142007
 Anduril Systems Administrator [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5160980007?gh_jid=5160980007
