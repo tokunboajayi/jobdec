@@ -154,7 +154,6 @@ OpenAI Datacenter Networking Technician, AI Compute Deployment - Stargate [San F
 OpenAI Security Engineer, Infrastructure Security [US - Remote]   https://jobs.ashbyhq.com/openai/f51f750f-a737-4441-8f96-30133a2a8049
 OpenAI Operating Systems Engineer | Consumer Devices [San Francisco]   https://jobs.ashbyhq.com/openai/efed424b-e025-400f-8ac3-73e962b85751
 OpenAI Operating Systems Engineer, Linux Kernel | Consumer Devices [San Francisco]   https://jobs.ashbyhq.com/openai/f0529a1d-fb6a-4229-a590-8caff1785bb3
-OpenAI AI Systems Engineer, Codex Agents [San Francisco]   https://jobs.ashbyhq.com/openai/de06790a-7243-4e33-a6f1-e7bd34009588
 OpenAI Forward Deployed Security Engineer [Washington, DC]   https://jobs.ashbyhq.com/openai/89d61ae8-1ce1-4187-9edd-da8029979e41
 OpenAI Researcher, Frontier Cybersecurity Risks [San Francisco]   https://jobs.ashbyhq.com/openai/66e76c14-bb6e-4e26-a333-744bbe35abbb
 OpenAI Account Associate - SF [San Francisco]   https://jobs.ashbyhq.com/openai/55f36629-8351-41d9-b2f5-3d63c5e26bf7

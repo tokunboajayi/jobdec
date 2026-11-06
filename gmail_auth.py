@@ -282,7 +282,7 @@ def fetch_verification_data(timeout_sec=60, poll_interval=3, search_term="", req
         baseline = uids_since()
         # Look back up to 60 most recent existing UIDs to catch emails delivered right before/during baseline
         sorted_base = sorted(baseline, key=int, reverse=True)
-        recent_check = set(sorted_base[:60])
+        recent_check = set(sorted_base[:5])
     except Exception as e:
         print(f"[Gmail Auth] Could not read inbox: {e}")
         return None, None
