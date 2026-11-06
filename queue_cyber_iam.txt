@@ -15,7 +15,6 @@ Spacex Facilities Technician - Temporary [Starbase, TX]   https://boards.greenho
 Lyft Business Systems Engineer [U.S. Anywhere]   https://app.careerpuck.com/job-board/lyft/job/8772602002?gh_jid=8772602002
 Lyft Investigator, Global Security [Nashville, TN]   https://app.careerpuck.com/job-board/lyft/job/8675426002?gh_jid=8675426002
 Asana Security Risk Engineer [San Francisco]   https://www.asana.com/jobs/apply/7950767?gh_jid=7950767
-Stripe Blockchain Security Engineer, Bridge [Luxembourg]   https://stripe.com/jobs/search?gh_jid=8336819
 ↳ Summer Games Systems Engineer Intern [Lexington, MA]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Lexington-MA/University---2027-Summer-Games-Systems-Engineer-Intern---Lexington--MA_R0252273?utm_source=Simplify&ref=Simplify
 ↳ Systems Engineer Intern [Dayton, OH]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Dayton-OH/University---2027-Summer-Games--Systems-Engineer-Intern---Dayton--OH_R0252342?utm_source=Simplify&ref=Simplify
 ↳ Systems Engineer Intern - Summer Games [Detroit, MI]   https://bah.wd1.myworkdayjobs.com/bah_jobs/job/Detroit-MI/University---2027-Summer-Games--Systems-Engineer-Intern---Royal-Oaks--MI_R0252341?utm_source=Simplify&ref=Simplify
@@ -297,13 +296,10 @@ IberdrolaGroup Technology – Cyber & Data Intern [6 locations  Boston, MA Roche
 SusquehannaInternationalGroupSIG Trading System Engineer Intern [United States]   https://careers-sig.icims.com/jobs/11169/job?mobile=true&needsRedirect=false&utm_source=Simplify&ref=Simplify
 QTS Data Center Infrastructure Management Intern - DCIM [Ashburn, VA Suwanee, GA]   https://qtsdatacenters.wd5.myworkdayjobs.com/qts/job/Suwanee-GA/Summer-2027-Internship--Data-Center-Infrastructure-Management--DCIM-_R2026-1892?utm_source=Simplify&ref=Simplify
 Axon IT Support Technician III [Scottsdale, Arizona, United States]   https://job-boards.greenhouse.io/axon/jobs/8102212003
-Axon IT Support Technician V [Boston, Massachusetts, United States]   https://job-boards.greenhouse.io/axon/jobs/8001410003
 Axon Security Officer II [Arizona, USA]   https://job-boards.greenhouse.io/axon/jobs/6263304003
 Axon Security Operations Engineer II [Scottsdale, Arizona, United States; Washington, United States]   https://job-boards.greenhouse.io/axon/jobs/8033215003
-Axon Technical Support Engineer [Bucharest, Bucharest, Romania]   https://job-boards.greenhouse.io/axon/jobs/7618998003
 Axon Technical Support Engineer I [Scottsdale, Arizona, United States]   https://job-boards.greenhouse.io/axon/jobs/8011724003
 Axon Technical Support Engineer II [Arizona, USA]   https://job-boards.greenhouse.io/axon/jobs/7996270003
-Axon Technical Support Representative (Bilingual – French/English) [Bucharest, Bucharest, Romania]   https://job-boards.greenhouse.io/axon/jobs/7704221003
 LucidMotors Cabin Thermal Systems Engineer, Vehicle Efficiency Engineering [Newark, CA]   https://lucidmotors.com/careers/search/5213971007?gh_jid=5213971007
 LucidMotors Government Regulations & Product Safety Compliance Coordinator [Casa Grande, AZ]   https://lucidmotors.com/careers/search/5198147007?gh_jid=5198147007
 LucidMotors Homologation Engineer II - Product Compliance Engineer [Phoenix, AZ]   https://lucidmotors.com/careers/search/5254760007?gh_jid=5254760007
@@ -312,30 +308,12 @@ LucidMotors QMS & GRC Engineer [Saudi Arabia]   https://lucidmotors.com/careers/
 LucidMotors Security Specialist, SOC [King Abdullah Economic City, 02]   https://lucidmotors.com/careers/search/5207711007?gh_jid=5207711007
 LucidMotors Security Specialist, SOC [King Abdullah Economic City, 02]   https://lucidmotors.com/careers/search/5207709007?gh_jid=5207709007
 Cribl Facility Security Officer [Remote - United States]   https://cribl.io/job-detail/?gh_jid=5746415004
-Tailscale Infrastructure Engineer [Remote (United States)]   https://job-boards.greenhouse.io/tailscale/jobs/4733404005
-Tailscale Infrastructure Engineer [Remote (Canada)]   https://job-boards.greenhouse.io/tailscale/jobs/4733403005
-Tailscale Security Infrastructure Engineer [Remote (United States)]   https://job-boards.greenhouse.io/tailscale/jobs/4726153005
-Tailscale Security Infrastructure Engineer [Remote (Canada)]   https://job-boards.greenhouse.io/tailscale/jobs/4726152005
-BeyondTrust Compliance Analyst - 6 month contract [Remote Canada ]   https://job-boards.greenhouse.io/beyondtrust/jobs/8331813
-Chainguard GRC Analyst (EMEA) [United Kingdom - Remote]   https://job-boards.greenhouse.io/chainguard/jobs/4723154006
-Chainguard Security Analyst, Governance and Trust [Canada - Remote]   https://job-boards.greenhouse.io/chainguard/jobs/4722131006
 Chainguard Security Analyst, Governance and Trust [United States - Remote]   https://job-boards.greenhouse.io/chainguard/jobs/4716920006
-Chainguard Security Analyst, Governance and Trust [United Kingdom - Remote]   https://job-boards.greenhouse.io/chainguard/jobs/4722151006
-Chainguard Security Engineer [United States - Remote]   https://job-boards.greenhouse.io/chainguard/jobs/4725374006
-DefenseUnicorns Business Development Representative - Cyber [United States - Remote]   https://job-boards.greenhouse.io/defenseunicorns/jobs/5084165007
 Epirus Future Opportunities - Systems Engineer   [Torrance, California, United States]   https://www.epirusinc.com/open-roles?gh_jid=5633454004
-VannevarLabs Application Security Engineer [Remote]   https://job-boards.greenhouse.io/vannevarlabs/jobs/5227131007
 Fivetran IT Operations Analyst II [Denver, Colorado, United States, AMER]   https://www.fivetran.com/careers/job?gh_jid=8007247003
 Gusto Security Operations Analyst [Denver, CO - Hybrid; New York, NY - Hybrid; San Francisco, CA - Hybrid]   https://job-boards.greenhouse.io/gusto/jobs/8348189
-Carta Fund Compliance Officer & Responsable du Contrôle  [Luxembourg]   https://job-boards.greenhouse.io/carta/jobs/8173116003
 Carta Junior Inbound Compliance Analyst (KYC) [Sandy, Utah; Seattle, Washington; New York, NY]   https://job-boards.greenhouse.io/carta/jobs/7904721003
-Carta Paralegal, Compliance [Hamilton, NJ; Seattle,WA; Sandy,UT]   https://job-boards.greenhouse.io/carta/jobs/7801331003
 Databricks Specialist Solutions Architect - Security [Seoul, South Korea]   https://databricks.com/company/careers/open-positions/job?gh_jid=8785061002
-Samsara Security Operations Engineer  [London, England, United Kingdom; Remote - London; Remote - UK]   https://www.samsara.com/company/careers/roles/8355097?gh_jid=8355097
-Samsara Technical Support Engineer I - Mexico [Remote - Mexico]   https://www.samsara.com/company/careers/roles/8112694?gh_jid=8112694
-Coinbase Compliance, International Investigations Associate [Remote - UK]   https://www.coinbase.com/careers/positions/8224726?gh_jid=8224726
-Coinbase Offensive Security Engineer, AI  [Remote - Canada]   https://www.coinbase.com/careers/positions/8318599?gh_jid=8318599
-Coinbase Product Security Engineer [Remote - Canada]   https://www.coinbase.com/careers/positions/8165389?gh_jid=8165389
 Palantir Compliance Analyst [Washington, D.C.]   https://jobs.lever.co/palantir/4d3986f0-4c01-4327-a0e4-e7d9bc7bc0c3
 Palantir Compliance Analyst [New York, NY]   https://jobs.lever.co/palantir/c6f9eaaf-b397-476f-8b7d-c511cfb7e5c6
 Palantir Defensive Security Analyst [Washington, D.C.]   https://jobs.lever.co/palantir/bc803bd5-7793-452d-9ae5-9301ee24615a
