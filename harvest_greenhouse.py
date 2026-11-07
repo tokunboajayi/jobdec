@@ -16,23 +16,26 @@ BOARDS = [
     'qualys', 'wiz', 'arcticwolf', 'snyk', 'vanta', 'kaseya', 'jamf',
     'aviatrix', 'virtru', 'klaviyo', 'smartsheet', 'anaplan', 'mongodb',
     'databricks', 'hashicorp', 'elastic', 'confluent', 'couchbase',
-    'okta', 'paloaltonetworks', 'sentinelone', 'fortinet', 'proofpoint'
+    'okta', 'paloaltonetworks', 'sentinelone', 'fortinet', 'proofpoint',
+    'abnormalsecurity', 'recordedfuture', 'catonetworks', 'rubrik',
+    'bishopfox', 'verkada', 'samsara', 'stripe', 'pagerduty',
+    'gitlab', 'canonical', 'cockroachlabs'
 ]
+
+with open('applications.csv', 'r', encoding='utf-8', errors='ignore') as f:
+    app_text = f.read()
+    app_jids = set(re.findall(r'(?:gh_jid=|/jobs/)(\d+)', app_text))
 
 with open('applications.csv', 'r', encoding='utf-8', errors='ignore') as f:
     app_rows = list(csv.DictReader(f))
 
 app_urls = set()
-app_jids = set()
 app_company_roles = set()
 
 for r in app_rows:
     u = r.get('Job URL', '').strip().split('?')[0].rstrip('/')
     if u:
         app_urls.add(u)
-        jids = re.findall(r'/jobs/(\d+)', u)
-        if jids:
-            app_jids.add(jids[0])
     comp = r.get('Company', '').strip().lower()
     role = r.get('Job Title', '').strip().lower()
     role_norm = re.sub(r'\[.*?\]', '', role).strip()
@@ -45,17 +48,12 @@ include_pattern = re.compile(
 )
 
 exclude_pattern = re.compile(
-    r'\b(software engineer|software developer|full stack|backend|frontend|compiler|machine learning|deep learning|data scientist|data engineer|firmware|embedded|robotics|mechanical|thermal|cabin|homologation|hydraulic|optical|hardware|sales executive|account executive|recruiter|counsel|director|vp|vice president|head of|manager|principal|staff|lead|chief)\b',
+    r'\b(senior|sr\b|architect|lead|director|manager|head of|vp|principal|staff|chief|cto|leader|software engineer|software developer|full stack|backend|frontend|compiler|machine learning|deep learning|data scientist|data engineer|firmware|embedded|robotics|mechanical|thermal|cabin|homologation|hydraulic|optical|hardware|sales executive|account executive|recruiter|counsel)\b',
     re.I
 )
 
 non_us_pattern = re.compile(
-    r'\b(canada|ontario|toronto|vancouver|quebec|uk|united kingdom|london|england|germany|berlin|munich|frankfurt|france|paris|ireland|dublin|netherlands|amsterdam|australia|sydney|melbourne|india|bangalore|bengaluru|hyderabad|pune|singapore|japan|tokyo|brazil|paulo|bucharest|romania|luxembourg|saudi|riyadh|arabia|malaysia|spain|madrid|barcelona|poland|warsaw|krakow|czech|prague|israel|tel aviv|costa rica|mexico|colombia|argentina|philippines|manila|emea|apac|latam)\b',
-    re.I
-)
-
-us_pattern = re.compile(
-    r'\b(us|usa|united states|remote|remote - us|remote - usa|remote, us|remote, usa|ca|ny|tx|wa|va|md|ga|fl|nc|co|il|ma|or|az|oh|pa|ut|dc)\b',
+    r'\b(kindom|kingdom|canada|ontario|toronto|vancouver|quebec|uk|united kingdom|london|england|germany|berlin|munich|frankfurt|france|paris|ireland|dublin|netherlands|amsterdam|australia|sydney|melbourne|india|bangalore|bengaluru|hyderabad|pune|gurugram|singapore|japan|tokyo|brazil|paulo|bucharest|romania|luxembourg|saudi|riyadh|arabia|malaysia|spain|madrid|barcelona|poland|warsaw|krakow|czech|prague|israel|tel aviv|costa rica|mexico|colombia|argentina|philippines|manila|emea|apac|latam|taiwan|taipei|sweden|norway|finland|denmark|portugal|italy|switzerland)\b',
     re.I
 )
 
@@ -70,8 +68,7 @@ for board in BOARDS:
         with urllib.request.urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read().decode('utf-8'))
             jobs = data.get('jobs', [])
-    except Exception as e:
-        # Some boards might not be on greenhouse API or disabled
+    except Exception:
         continue
 
     for j in jobs:
@@ -106,7 +103,6 @@ for board in BOARDS:
 
         loc_tag = f'[{loc}]' if loc else '[US]'
         comp_clean = board.capitalize()
-        # Custom nice formatting for known brands
         brand_map = {
             'tenableinc': 'Tenable',
             'nozominetworks': 'NozomiNetworks',
@@ -117,17 +113,20 @@ for board in BOARDS:
             'zoominfo': 'ZoomInfo',
             'paloaltonetworks': 'PaloAltoNetworks',
             'sentinelone': 'SentinelOne',
-            'proofpoint': 'Proofpoint'
+            'proofpoint': 'Proofpoint',
+            'abnormalsecurity': 'AbnormalSecurity',
+            'recordedfuture': 'RecordedFuture',
+            'catonetworks': 'CatoNetworks',
+            'bishopfox': 'BishopFox'
         }
         comp_display = brand_map.get(board.lower(), comp_clean)
         line = f'{comp_display} {title} {loc_tag}   {url}'
         found_jobs.append(line)
 
-print(f'Total pristine new jobs discovered: {len(found_jobs)}')
-for j in found_jobs[:20]:
-    print('  -', j)
+print(f'Total pristine new non-senior US jobs discovered: {len(found_jobs)}')
+for j in found_jobs[:25]:
+    print('  *', j)
 
 with open('discovered_greenhouse.txt', 'w', encoding='utf-8') as out:
     for line in found_jobs:
         out.write(line + '\n')
-
