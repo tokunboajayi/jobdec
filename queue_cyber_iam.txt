@@ -3,8 +3,6 @@ Five9 Data Center Engineer (in Santa Clara, CA) [United States (Remote)]   https
 Five9 Data Center Technician (in Santa Clara, CA) [United States (Remote)]   https://boards.greenhouse.io/five9/jobs/6223750004
 Five9 Network Engineer II [United States (Remote)]   https://boards.greenhouse.io/five9/jobs/6113863004
 ZoomInfo IAM Systems Administrator II [Bethesda, Maryland, United States; Waltham, Massachusetts, United States]   https://boards.greenhouse.io/zoominfo/jobs/8925338002
-PureStorage Consulting Pre-Sales Systems Engineer, Strategics - NYC [New York, New York; Newark, New Jersey]   https://boards.greenhouse.io/purestorage/jobs/8326085
-Betterment Security Engineer, Detect & Respond [Betterment HQ - New York City]   https://boards.greenhouse.io/betterment/jobs/8211928
 Axon IT Support Technician III [Scottsdale, Arizona, United States]   https://boards.greenhouse.io/axon/jobs/8102212003
 Axon Security Officer II [Arizona, USA]   https://boards.greenhouse.io/axon/jobs/6263304003
 Axon Security Operations Engineer II [Scottsdale, Arizona, United States; Washington, United States]   https://boards.greenhouse.io/axon/jobs/8033215003
@@ -14,6 +12,5 @@ Gusto Security Operations Analyst [Denver, CO - Hybrid; New York, NY - Hybrid; S
 Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311376
 Databricks Deputy Facility Security Officer [Washington, D.C.]   https://boards.greenhouse.io/databricks/jobs/8811713002
 Elastic Okta Identity Engineer [United States]   https://boards.greenhouse.io/elastic/jobs/8093275
-NozomiNetworks Go-To-Market Systems Administrator [United States]   https://boards.greenhouse.io/nozominetworks/jobs/4722608005
 Qualtrics Technical Support Analyst [Provo, Utah, United States]   https://boards.greenhouse.io/qualtrics/jobs/8335545
 Qualtrics Technical Support Analyst [Chicago, Illinois, United States]   https://boards.greenhouse.io/qualtrics/jobs/8316957

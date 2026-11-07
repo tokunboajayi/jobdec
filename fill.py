@@ -408,7 +408,7 @@ def find_form_target(page):
     return page
 
 
-OPTION_SEL = "[data-automation-id='promptOption']:not([data-automation-id='selectedItem'] *), [role='listbox'] [role='option'], [role='option'], [role='treeitem'], [role='listbox'] li, .select2-results li, .select2-result, .select2-result-label, [id*='select2-result'], .autocomplete-suggestion, [class*='select__option'], [class*='option']:not(select *), div[id*='react-select'], [class*='menu'] [role='option'], [data-test-id*='option'], .oj-listbox-result, oj-option, [class*='oj-listbox-result'], .oj-select-results li"
+OPTION_SEL = "[data-automation-id='promptOption']:not([data-automation-id='selectedItem'] *), [role='listbox'] [role='option'], [role='option'], [role='treeitem'], [role='listbox'] li, .select2-results li, .select2-result, .select2-result-label, [id*='select2-result'], .autocomplete-suggestion, [class*='select__option'], [class*='option']:not(select *), div[id*='-option-'], [class*='menu'] [role='option'], [data-test-id*='option'], .oj-listbox-result, oj-option, [class*='oj-listbox-result'], .oj-select-results li"
 
 
 def _visible_options(target):
@@ -417,7 +417,7 @@ def _visible_options(target):
     root = target.page if hasattr(target, "page") else target
     try:
         data = root.evaluate("""() => {
-            const sel = "[data-automation-id='promptOption']:not([data-automation-id='selectedItem'] *), [role='listbox'] [role='option'], [role='option'], [role='treeitem'], [role='listbox'] li, .select2-results li, .select2-result, .select2-result-label, [id*='select2-result'], .autocomplete-suggestion, [class*='select__option'], [class*='option']:not(select *), div[id*='react-select'], [class*='menu'] [role='option'], [data-test-id*='option'], .oj-listbox-result, oj-option, [class*='oj-listbox-result'], .oj-select-results li";
+            const sel = "[data-automation-id='promptOption']:not([data-automation-id='selectedItem'] *), [role='listbox'] [role='option'], [role='option'], [role='treeitem'], [role='listbox'] li, .select2-results li, .select2-result, .select2-result-label, [id*='select2-result'], .autocomplete-suggestion, [class*='select__option'], [class*='option']:not(select *), div[id*='-option-'], [class*='menu'] [role='option'], [data-test-id*='option'], .oj-listbox-result, oj-option, [class*='oj-listbox-result'], .oj-select-results li";
             const els = [...document.querySelectorAll(sel)];
             const res = [];
             for (let i = 0; i < els.length && i < 300; i++) {
