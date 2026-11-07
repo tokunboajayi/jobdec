@@ -171,7 +171,7 @@ SCAN_JS = r"""
     if (type === 'file') {
       if (e.files && e.files.length) continue;
     }
-    if (e.closest('#onetrust-consent-sdk, [id*=cookie], [class*=cookie]')) continue;
+    if (e.closest('#onetrust-consent-sdk, [id*=cookie], [class*=cookie], footer, [class*=footer]')) continue;
     out.push({ id: mark(e), tag: e.tagName.toLowerCase(), type, label: lab,
       name: e.name || '', elemId: e.id || '', placeholder: e.placeholder || '',
       required: e.required || e.getAttribute('aria-required') === 'true' || /\*/.test(lab),
@@ -233,7 +233,9 @@ SCAN_JS = r"""
     }
   }
   for (const b of document.querySelectorAll('button[aria-haspopup=listbox], .select2-choice, a.select2-choice, [role=combobox]:not(input)')) {
-    if (!vis(b)) continue; const lab = labelOf(b);
+    if (!vis(b)) continue;
+    if (b.closest('#onetrust-consent-sdk, [id*=cookie], [class*=cookie], footer, [class*=footer]')) continue;
+    const lab = labelOf(b);
     out.push({ id: mark(b), tag: 'listbox', type: 'listbox', label: lab, required: /\*/.test(lab), value: txt(b.innerText), options: null });
   }
   return out;

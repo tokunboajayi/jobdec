@@ -20,6 +20,3 @@ Stripe Security Analyst [US Remote]   https://boards.greenhouse.io/stripe/jobs/8
 Stripe Security Engineer [US Remote]   https://boards.greenhouse.io/stripe/jobs/8174965
 Stripe Security Engineer, Bridge [SF, New York, Seattle]   https://boards.greenhouse.io/stripe/jobs/7776179
 Stripe Security Engineer, Privy [NYC-Privy]   https://boards.greenhouse.io/stripe/jobs/8306475
-Canonical Linux Cryptography and Security Engineer [Home based - Worldwide]   https://boards.greenhouse.io/canonical/jobs/4717512
-Canonical Security Risk Management Specialist [Home based - Worldwide]   https://boards.greenhouse.io/canonical/jobs/5422575
-Canonical Ubuntu Security Engineer [Home based - Worldwide]   https://boards.greenhouse.io/canonical/jobs/2925180
