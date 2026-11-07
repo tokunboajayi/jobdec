@@ -8,7 +8,6 @@ Axon Security Officer II [Arizona, USA]   https://boards.greenhouse.io/axon/jobs
 Axon Security Operations Engineer II [Scottsdale, Arizona, United States; Washington, United States]   https://boards.greenhouse.io/axon/jobs/8033215003
 Cribl Facility Security Officer [Remote - United States]   https://boards.greenhouse.io/cribl/jobs/5746415004
 Chainguard Security Analyst, Governance and Trust [United States - Remote]   https://boards.greenhouse.io/chainguard/jobs/4716920006
-Gusto Security Operations Analyst [Denver, CO - Hybrid; New York, NY - Hybrid; San Francisco, CA - Hybrid]   https://boards.greenhouse.io/gusto/jobs/8348189
 Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311376
 Databricks Deputy Facility Security Officer [Washington, D.C.]   https://boards.greenhouse.io/databricks/jobs/8811713002
 Elastic Okta Identity Engineer [United States]   https://boards.greenhouse.io/elastic/jobs/8093275
