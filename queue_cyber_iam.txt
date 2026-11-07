@@ -1,27 +1,27 @@
-Starburst Technical Support Engineer [US, West]   https://job-boards.greenhouse.io/starburst/jobs/5470188008
-Betterment Compliance Associate [Betterment HQ - New York City]   https://www.betterment.com/careers/current-openings/job?gh_jid=8327765&gh_jid=8327765
-Yugabyte Technical Support Engineer  [Remote, USA]   https://job-boards.greenhouse.io/yugabyte/jobs/4683728006
-Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311376?gh_jid=8311376
-Okta Splunk Infrastructure Engineer  [Bellevue, Washington; Chicago, Illinois; New York, New York; San Francisco, California; Washington, DC]   https://www.okta.com/company/careers/opportunity/7658254?gh_jid=7658254
-Elastic Okta Identity Engineer [United States]   https://jobs.elastic.co/jobs?gh_jid=8093275&gh_jid=8093275
 SpaceX Facilities Technician - Temporary  [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8792136002?gh_jid=8792136002
 SpaceX IT Network Infrastructure Engineer, Launch [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8933928002?gh_jid=8933928002
 SpaceX IT Network Infrastructure Engineer, Outside Plant [Starbase, TX]   https://boards.greenhouse.io/spacex/jobs/8869044002?gh_jid=8869044002
-Stripe Cloud Security Engineer [Seattle]   https://stripe.com/jobs/search?gh_jid=7867389
 Anduril Product Security Engineer, Programs [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5042718007?gh_jid=5042718007
 Anduril Systems Administrator [Costa Mesa, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5160980007?gh_jid=5160980007
-Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5043205007?gh_jid=5043205007
 Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4931248007?gh_jid=4931248007
 Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/4929997007?gh_jid=4929997007
+Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5043205007?gh_jid=5043205007
 Anduril Systems Engineer, Air Defense [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242751007?gh_jid=5242751007
 Anduril Systems Engineer, Air Defense  [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242787007?gh_jid=5242787007
+PureStorage Quality Systems Engineer - FlashBlade and FlashArray [Santa Clara, California]   https://job-boards.greenhouse.io/purestorage/jobs/8210922
+Okta Splunk Infrastructure Engineer  [Bellevue, Washington; Chicago, Illinois; New York, New York; San Francisco, California; Washington, DC]   https://www.okta.com/company/careers/opportunity/7658254?gh_jid=7658254
+NewRelic  Desktop Support Technician  [San Francisco, California, USA]   https://job-boards.greenhouse.io/newrelic/jobs/5444698008
+Backblaze Data Center Technician I (On-site in Chandler, AZ) [Chandler, Arizona, United States]   https://job-boards.greenhouse.io/backblaze/jobs/5400309008
+Backblaze Identity & Access Management (IAM) Engineer [Remote - US]   https://job-boards.greenhouse.io/backblaze/jobs/5451344008
+Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311376?gh_jid=8311376
+Elastic Okta Identity Engineer [United States]   https://jobs.elastic.co/jobs?gh_jid=8093275&gh_jid=8093275
+Stripe Cloud Security Engineer [Seattle]   https://stripe.com/jobs/search?gh_jid=7867389
 Databricks Deputy Facility Security Officer [Washington, D.C.]   https://databricks.com/company/careers/open-positions/job?gh_jid=8811713002
 Samsara Security Operations Engineer I [Remote - CA]   https://www.samsara.com/company/careers/roles/8353283?gh_jid=8353283
 Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427789008?gh_jid=5427789008
 Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427855008?gh_jid=5427855008
 Coinbase Security Engineer, Corporate Security [Remote - USA]   https://www.coinbase.com/careers/positions/8319444?gh_jid=8319444
 Coinbase Threat Intelligence Platform Engineer [Remote - USA]   https://www.coinbase.com/careers/positions/8177619?gh_jid=8177619
-Spotify Security Engineer - Detection and Response [New York, NY]   https://jobs.lever.co/spotify/cb29d857-395b-401d-9749-367e666ff870
 Palantir Compliance Analyst [Washington, D.C.]   https://jobs.lever.co/palantir/4d3986f0-4c01-4327-a0e4-e7d9bc7bc0c3
 Palantir Compliance Analyst [New York, NY]   https://jobs.lever.co/palantir/c6f9eaaf-b397-476f-8b7d-c511cfb7e5c6
 Palantir Defensive Security Analyst [Washington, D.C.]   https://jobs.lever.co/palantir/bc803bd5-7793-452d-9ae5-9301ee24615a
