@@ -130,3 +130,4 @@ for j in found_jobs[:20]:
 with open('discovered_greenhouse.txt', 'w', encoding='utf-8') as out:
     for line in found_jobs:
         out.write(line + '\n')
+
