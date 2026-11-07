@@ -8,21 +8,13 @@ Anduril Systems Engineer [Irvine, California, United States]   https://boards.gr
 Anduril Systems Engineer [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5043205007?gh_jid=5043205007
 Anduril Systems Engineer, Air Defense [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242751007?gh_jid=5242751007
 Anduril Systems Engineer, Air Defense  [Irvine, California, United States]   https://boards.greenhouse.io/andurilindustries/jobs/5242787007?gh_jid=5242787007
-PureStorage Quality Systems Engineer - FlashBlade and FlashArray [Santa Clara, California]   https://job-boards.greenhouse.io/purestorage/jobs/8210922
-Okta Splunk Infrastructure Engineer  [Bellevue, Washington; Chicago, Illinois; New York, New York; San Francisco, California; Washington, DC]   https://www.okta.com/company/careers/opportunity/7658254?gh_jid=7658254
-NewRelic  Desktop Support Technician  [San Francisco, California, USA]   https://job-boards.greenhouse.io/newrelic/jobs/5444698008
-Backblaze Data Center Technician I (On-site in Chandler, AZ) [Chandler, Arizona, United States]   https://job-boards.greenhouse.io/backblaze/jobs/5400309008
-Backblaze Identity & Access Management (IAM) Engineer [Remote - US]   https://job-boards.greenhouse.io/backblaze/jobs/5451344008
+Okta Splunk Infrastructure Engineer  [Bellevue, Washington; Chicago, Illinois; New York, New York; San Francisco, California; Washington, DC]   https://boards.greenhouse.io/okta/jobs/7658254
 Cloudflare Data Center Network Operations Engineer [Hybrid]   https://boards.greenhouse.io/cloudflare/jobs/8311376?gh_jid=8311376
-Elastic Okta Identity Engineer [United States]   https://jobs.elastic.co/jobs?gh_jid=8093275&gh_jid=8093275
-Stripe Cloud Security Engineer [Seattle]   https://stripe.com/jobs/search?gh_jid=7867389
-Databricks Deputy Facility Security Officer [Washington, D.C.]   https://databricks.com/company/careers/open-positions/job?gh_jid=8811713002
-Samsara Security Operations Engineer I [Remote - CA]   https://www.samsara.com/company/careers/roles/8353283?gh_jid=8353283
-Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427789008?gh_jid=5427789008
-Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America]   http://block.xyz/careers/jobs/5427855008?gh_jid=5427855008
-Coinbase Security Engineer, Corporate Security [Remote - USA]   https://www.coinbase.com/careers/positions/8319444?gh_jid=8319444
-Coinbase Threat Intelligence Platform Engineer [Remote - USA]   https://www.coinbase.com/careers/positions/8177619?gh_jid=8177619
-Palantir Compliance Analyst [Washington, D.C.]   https://jobs.lever.co/palantir/4d3986f0-4c01-4327-a0e4-e7d9bc7bc0c3
-Palantir Compliance Analyst [New York, NY]   https://jobs.lever.co/palantir/c6f9eaaf-b397-476f-8b7d-c511cfb7e5c6
-Palantir Defensive Security Analyst [Washington, D.C.]   https://jobs.lever.co/palantir/bc803bd5-7793-452d-9ae5-9301ee24615a
-Palantir Industrial Security Specialist [New York, NY]   https://jobs.lever.co/palantir/12d13a31-5764-4678-8835-809f0deae49b
+Elastic Okta Identity Engineer [United States]   https://boards.greenhouse.io/elastic/jobs/8093275
+Stripe Cloud Security Engineer [Seattle]   https://boards.greenhouse.io/stripe/jobs/7867389
+Databricks Deputy Facility Security Officer [Washington, D.C.]   https://boards.greenhouse.io/databricks/jobs/8811713002
+Samsara Security Operations Engineer I [Remote - CA]   https://boards.greenhouse.io/samsara/jobs/8353283
+Block Security Engineer, Business Continuity & Risk [Bay Area, CA, United States of America]   https://boards.greenhouse.io/block/jobs/5427789008
+Block Security Engineer - Network Edge Security [Bay Area, CA, United States of America]   https://boards.greenhouse.io/block/jobs/5427855008
+Coinbase Security Engineer, Corporate Security [Remote - USA]   https://boards.greenhouse.io/coinbase/jobs/8319444
+Coinbase Threat Intelligence Platform Engineer [Remote - USA]   https://boards.greenhouse.io/coinbase/jobs/8177619
