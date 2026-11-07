@@ -455,8 +455,20 @@ def find_activation_link(tenant, max_age_days=7, wait_sec=0, poll_interval=5):
         time.sleep(poll_interval)
 
 
+_SESSION_CODES = {}
+
+
 def fetch_verification_code(timeout_sec=60, poll_interval=4, search_term=""):
+    key = (search_term or "").lower().strip()
+    now = time.time()
+    if key and key in _SESSION_CODES:
+        cached_code, cached_time = _SESSION_CODES[key]
+        if now - cached_time < 120:
+            print(f"[Gmail Auth] Re-using active session verification code for '{key}': {cached_code}")
+            return cached_code
     code, _ = fetch_verification_data(timeout_sec, poll_interval, search_term, require_code=True)
+    if code and key:
+        _SESSION_CODES[key] = (code, now)
     return code
 
 
