@@ -247,7 +247,9 @@ def rule_for(label):
     lab = label.lower()
     lab_core = re.sub(r"[\s*:?]+$", "", lab.split(";")[0]).strip()
     for r in PROFILE["rules"]:
-        q = r["q"]
+        q = r.get("q") or r.get("question")
+        if not q:
+            continue
         lit = re.sub(r"\\(.)", r"\1", q)
         if re.escape(lit) == q and len(lit) < 25:
             # a short learned label ("Date", "Location") must BE the question, not just appear in it:
