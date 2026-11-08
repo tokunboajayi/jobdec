@@ -455,24 +455,35 @@ async def _delayed_delete_job(context: ContextTypes.DEFAULT_TYPE):
 
 
 async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id: int, trigger_msg_id: int = None):
-    """Deletes all active question messages and wipes pending questions."""
+    """Deletes all active question messages AND all active application messages to eliminate chat buildup."""
     msg_ids = telegram_query_engine.clear_all_pending_questions()
-    deleted = 0
+    app_items = telegram_query_engine.clear_all_application_messages()
+
+    deleted_questions = 0
     for mid in msg_ids:
         if await safe_delete_message(context.bot, chat_id, mid):
-            deleted += 1
+            deleted_questions += 1
 
-    # In private chat, also scan backwards up to 35 messages from trigger to catch any untracked question prompts
+    deleted_apps = 0
+    for mid, cid in app_items:
+        target_cid = cid or chat_id
+        if await safe_delete_message(context.bot, target_cid, mid):
+            deleted_apps += 1
+
+    # In private chat, also scan backwards up to 35 messages from trigger to catch any untracked question prompts or notifications
+    deleted_scan = 0
     if trigger_msg_id:
+        tracked_ids = set(msg_ids) | {mid for mid, _ in app_items}
         for past_id in range(trigger_msg_id - 1, max(1, trigger_msg_id - 35), -1):
-            if past_id not in msg_ids:
+            if past_id not in tracked_ids:
                 if await safe_delete_message(context.bot, chat_id, past_id):
-                    deleted += 1
+                    deleted_scan += 1
 
+    total_deleted = deleted_questions + deleted_apps + deleted_scan
     # Send auto-vanishing confirmation
     confirm = await context.bot.send_message(
         chat_id=chat_id,
-        text=f"🧹 <b>Smart Chat Cleanup Complete!</b>\nCleaned <b>{deleted}</b> question prompt(s) and reset pending questions to 0.\n\n<i>Auto-deleting confirmation in 4s...</i>",
+        text=f"🧹 <b>Smart Chat Cleanup Complete!</b>\nCleaned <b>{total_deleted}</b> message(s) ({deleted_apps} application updates, {deleted_questions} questions) to prevent build-up.\n\n<i>Auto-deleting confirmation in 4s...</i>",
         parse_mode=ParseMode.HTML
     )
     if context.job_queue:
@@ -686,8 +697,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text or ""
     t_lower = text.strip().lower()
 
-    # Quick command shortcuts
-    if t_lower in ["clean", "/clean", "clear", "/clear", "clearchat", "/clearchat", "clean chat", "clear questions"]:
+    if t_lower in ["clean", "/clean", "clear", "/clear", "clearchat", "/clearchat", "clean chat", "clear questions", "clean apps", "clean applications", "clear apps"]:
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
         return
     elif t_lower in ["status", "/status", "update", "metrics"]:
@@ -743,10 +753,25 @@ async def cmd_clean(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):
-    """JobQueue scheduled job: executes every 3 hours."""
+    """JobQueue scheduled job: executes every 3 hours. Deletes all application messages to prevent chat buildup."""
     try:
+        # Clean all application messages accumulated over the 3-hour period
+        app_items = telegram_query_engine.clear_all_application_messages()
+        deleted_apps = 0
+        for mid, cid in app_items:
+            target_chat = cid or AUTHORIZED_USER_ID
+            if target_chat and mid:
+                if await safe_delete_message(context.bot, target_chat, mid):
+                    deleted_apps += 1
+
+        # Also sweep any expired question messages
+        await sweep_expired_questions_job(context)
+
+        print(f"[3-Hour Scheduled Update] Cleaned {deleted_apps} application messages from chat.", flush=True)
+
         m = get_realtime_metrics()
-        msg = format_status_message(header="🕒 <b>3-Hour Scheduled Update</b>", metrics=m)
+        clean_note = f"\n\n🧹 <i>Cleaned {deleted_apps} application updates from chat to prevent message buildup.</i>" if deleted_apps > 0 else ""
+        msg = format_status_message(header="🕒 <b>3-Hour Scheduled Update</b>", metrics=m) + clean_note
         await context.bot.send_message(
             chat_id=AUTHORIZED_USER_ID,
             text=msg,
@@ -767,7 +792,7 @@ def main():
 
     app.add_handler(CommandHandler(["start", "help"], cmd_start))
     app.add_handler(CommandHandler(["status", "update"], cmd_status))
-    app.add_handler(CommandHandler(["clean", "clear", "clearchat"], cmd_clean))
+    app.add_handler(CommandHandler(["clean", "clear", "clearchat", "cleanapps"], cmd_clean))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 

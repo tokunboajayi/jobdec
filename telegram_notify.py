@@ -171,7 +171,20 @@ def notify_applied(company: str, role: str, job_url: str = ""):
         f"💼 <b>Role:</b> {role}"
         f"{url_link}"
     )
-    return send_message(msg)
+    msg_id = send_message(msg)
+    if msg_id and isinstance(msg_id, int):
+        try:
+            import telegram_query_engine
+            telegram_query_engine.record_application_message(
+                message_id=msg_id,
+                company=company,
+                role=role,
+                job_url=job_url,
+                chat_id=CHAT_ID
+            )
+        except Exception:
+            pass
+    return msg_id
 
 
 def notify_urgent_inbox(company: str, subject: str, action: str):

@@ -135,3 +135,4 @@ class TestIntelligentTailor:
         engine_reloaded = TailorLearningEngine(filepath=test_file)
         assert engine_reloaded.get_domain_weights("iam")["okta"] == w2
         assert engine_reloaded.state["domain_stats"]["iam"]["interviews"] == 1
+

@@ -62,6 +62,8 @@ venv/
 ENV/
 telegram_history.json
 pending_questions.json
+question_messages.json
+application_messages.json
 Candidate_Resume.pdf
 *.pdf
 answers.json

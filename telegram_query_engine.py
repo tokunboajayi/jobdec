@@ -19,6 +19,7 @@ load_dotenv(ROOT / ".env")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "").strip()
 PENDING_FILE = ROOT / "pending_questions.json"
 QUESTION_TRACKER_FILE = ROOT / "question_messages.json"
+APPLICATION_TRACKER_FILE = ROOT / "application_messages.json"
 HISTORY_FILE = ROOT / "telegram_history.json"
 MEMORY_FILE = ROOT / "conversation_memory.md"
 PROFILE_PATH = ROOT / "profile.json"
@@ -125,6 +126,52 @@ def clear_all_pending_questions():
     save_question_messages(msgs)
     save_pending_questions([])
     return active_msg_ids
+
+
+def load_application_messages():
+    if APPLICATION_TRACKER_FILE.exists():
+        try:
+            return json.loads(APPLICATION_TRACKER_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+    return []
+
+
+def save_application_messages(msgs):
+    APPLICATION_TRACKER_FILE.write_text(json.dumps(msgs, indent=2), encoding="utf-8")
+
+
+def record_application_message(message_id: int, company: str, role: str, job_url: str = "", chat_id: str = None):
+    """Registers an application submitted notification message for scheduled 3-hour cleanup."""
+    if not message_id:
+        return
+    msgs = load_application_messages()
+    msgs.append({
+        "message_id": int(message_id),
+        "company": company,
+        "role": role,
+        "job_url": job_url,
+        "chat_id": str(chat_id or os.getenv("TELEGRAM_CHAT_ID", "")),
+        "sent_at": datetime.now().timestamp(),
+        "status": "active"
+    })
+    save_application_messages(msgs)
+
+
+def get_active_application_messages():
+    msgs = load_application_messages()
+    return [m for m in msgs if m.get("status") == "active"]
+
+
+def clear_all_application_messages():
+    """Wipes all active application message tracking and returns list of (message_id, chat_id) tuples to delete."""
+    msgs = load_application_messages()
+    active_items = [m for m in msgs if m.get("status") == "active" and m.get("message_id")]
+    for m in msgs:
+        m["status"] = "deleted"
+    save_application_messages(msgs)
+    default_chat_id = os.getenv("TELEGRAM_CHAT_ID", "0").strip()
+    return [(int(m["message_id"]), int(m.get("chat_id") or default_chat_id)) for m in active_items]
 
 
 def load_pending_questions():
