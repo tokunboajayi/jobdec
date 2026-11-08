@@ -92,6 +92,16 @@ def tailor(company, role, url, default_resume):
     if importlib.util.find_spec("reportlab") is None:
         print("     [Resume Tailor] reportlab not installed (pip install reportlab) - using the standard resume")
         return default_resume
+
+    # Primary: Intelligent Adaptive Tailor & Learning Engine
+    try:
+        from . import intelligent_tailor
+        res = intelligent_tailor.tailor_resume(company, role, url, default_resume)
+        if res and os.path.exists(res):
+            return str(res)
+    except Exception as e:
+        print(f"     [Resume Tailor] intelligent tailor error, falling back to local overlay: {e}")
+
     jd, _ = jd_fetch.fetch(url)
     if not jd:
         return default_resume

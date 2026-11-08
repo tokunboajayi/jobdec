@@ -62,6 +62,16 @@ def build(company, role, url):
     out = OUT_DIR / slug / FILENAME
     if out.exists():
         return str(out)
+
+    # Primary: Intelligent Adaptive Cover Letter Creator
+    try:
+        from . import intelligent_tailor
+        res = intelligent_tailor.create_cover_letter(company, role, url)
+        if res and os.path.exists(res):
+            return str(res)
+    except Exception as e:
+        print(f"     [Cover Letter] intelligent creator error, falling back to template: {e}")
+
     try:
         jd, _ = jd_fetch.fetch(url)
     except Exception:

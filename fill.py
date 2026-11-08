@@ -721,8 +721,30 @@ def _fill_file_field(c, st, resume, resume_fields):
     except Exception:
         pass
     # Cover Letter & Transcript Resolution
+    # Dynamic Cover Letter Resolution
+    dyn_cover = None
+    if not os.getenv("AF_COVER") and (getattr(c, "company", None) or getattr(c, "role", None)):
+        try:
+            from agents import intelligent_tailor
+            page_url = getattr(getattr(c, "page", None), "url", "")
+            dyn_cover = intelligent_tailor.create_cover_letter(c.company or "", c.role or "", page_url)
+        except Exception:
+            pass
+
+    # Dynamic Tailored Resume Resolution
+    if resume and (getattr(c, "company", None) or getattr(c, "role", None)):
+        try:
+            from agents import intelligent_tailor
+            page_url = getattr(getattr(c, "page", None), "url", "")
+            tailored_res = intelligent_tailor.tailor_resume(c.company or "", c.role or "", page_url, str(resume))
+            if tailored_res and Path(tailored_res).exists():
+                resume = Path(tailored_res)
+        except Exception:
+            pass
+
     cover_candidates = [
         Path(os.getenv("AF_COVER")) if os.getenv("AF_COVER") else None,
+        Path(dyn_cover) if dyn_cover else None,
         ROOT / "resumes" / "Michael_Azuka_Cover_Letter.pdf",
         ROOT / "resumes" / "cover_letter.pdf",
         ROOT / "resumes" / "Cover_Letter.pdf",
