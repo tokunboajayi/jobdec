@@ -443,7 +443,8 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
         "--delay", str(delay)
     ]
     log_file = open(ROOT / "batch_apply.log", "a", encoding="utf-8")
-    subprocess.Popen(cmd, cwd=str(ROOT), stdout=log_file, stderr=subprocess.STDOUT)
+    flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+    subprocess.Popen(cmd, cwd=str(ROOT), stdout=log_file, stderr=subprocess.STDOUT, creationflags=flags)
 
 
 def halt_runner():
