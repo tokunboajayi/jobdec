@@ -134,3 +134,31 @@ def test_pinned_status_state_and_keyboard():
         PINNED_STATUS_FILE.unlink(missing_ok=True)
 
 
+def test_dynamic_turbo_and_hud_toggle():
+    from telegram_bot_service import (
+        calculate_dynamic_turbo_workers,
+        get_smart_keyboard,
+        ACTIVE_HUD_STATE,
+    )
+    # Test dynamic turbo workers calculation returns reasonable number (2 to 8) and description
+    workers, desc = calculate_dynamic_turbo_workers()
+    assert 2 <= workers <= 8
+    assert "workers auto-tuned" in desc or "workers" in desc
+
+    # Test HUD button toggling label based on active state
+    ACTIVE_HUD_STATE["message_id"] = None
+    kb_off = get_smart_keyboard()
+    hud_btns_off = [btn.text for row in kb_off.inline_keyboard for btn in row if btn.callback_data == "btn_hud"]
+    assert len(hud_btns_off) == 1
+    assert "Live Dynamic HUD" in hud_btns_off[0]
+
+    ACTIVE_HUD_STATE["message_id"] = 55555
+    kb_on = get_smart_keyboard()
+    hud_btns_on = [btn.text for row in kb_on.inline_keyboard for btn in row if btn.callback_data == "btn_hud"]
+    assert len(hud_btns_on) == 1
+    assert "Stop Dynamic HUD" in hud_btns_on[0]
+
+    # Reset
+    ACTIVE_HUD_STATE["message_id"] = None
+
+

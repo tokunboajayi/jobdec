@@ -11,10 +11,10 @@ import csv
 import json
 import glob
 import subprocess
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
-
+from typing import Optional, Tuple, Union
 import psutil
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
@@ -58,6 +58,33 @@ CHAT_ID_STR = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 AUTHORIZED_USER_ID = int(CHAT_ID_STR) if CHAT_ID_STR.isdigit() else 0
 
 PINNED_STATUS_FILE = ROOT / "pinned_status.json"
+ACTIVE_HUD_STATE = {"chat_id": None, "message_id": None}
+
+
+def calculate_dynamic_turbo_workers() -> Tuple[int, str]:
+    """Dynamically computes the highest optimal safe worker concurrency for Turbo mode based on system hardware."""
+    try:
+        mem = psutil.virtual_memory()
+        avail_gb = mem.available / (1024 ** 3)
+        total_gb = mem.total / (1024 ** 3)
+        cpu_cores = psutil.cpu_count(logical=True) or 4
+
+        # Headless Chromium instances use ~350-450MB RSS
+        if avail_gb >= 8.0 and cpu_cores >= 8:
+            workers = min(6, cpu_cores - 2)
+        elif avail_gb >= 4.5 and cpu_cores >= 6:
+            workers = 5
+        elif avail_gb >= 3.0 and cpu_cores >= 4:
+            workers = 4
+        elif avail_gb >= 1.8:
+            workers = 3
+        else:
+            workers = 2
+
+        desc = f"{workers} workers auto-tuned ({avail_gb:.1f}GB free of {total_gb:.1f}GB RAM, {cpu_cores} cores)"
+        return workers, desc
+    except Exception:
+        return 4, "4 workers (standard)"
 
 
 def load_pinned_status_info() -> dict:
@@ -286,15 +313,16 @@ def get_smart_keyboard(metrics=None):
     keyboard.append(row1)
 
     # Row 2: Tactical Application Operations
+    turbo_w, _ = calculate_dynamic_turbo_workers()
     if is_running:
         row2 = [
-            InlineKeyboardButton("⚡ Turbo (4 Workers)", callback_data="btn_turbo"),
+            InlineKeyboardButton(f"⚡ Turbo ({turbo_w} Workers)", callback_data="btn_turbo"),
             InlineKeyboardButton("📋 Recent Apps", callback_data="btn_recent"),
         ]
     else:
         row2 = [
+            InlineKeyboardButton(f"⚡ Turbo ({turbo_w} Workers)", callback_data="btn_turbo"),
             InlineKeyboardButton("🚀 1-Worker Sweep", callback_data="btn_sweep"),
-            InlineKeyboardButton("📋 Recent Apps", callback_data="btn_recent"),
         ]
     keyboard.append(row2)
 
@@ -331,8 +359,10 @@ def get_smart_keyboard(metrics=None):
     keyboard.append(row5)
 
     # Row 6: Live Dynamic HUD & AI Mock Interview
+    hud_active = bool(ACTIVE_HUD_STATE.get("message_id"))
+    hud_label = "📡 Stop Dynamic HUD" if hud_active else "📡 Live Dynamic HUD"
     row6 = [
-        InlineKeyboardButton("📡 Live Dynamic HUD", callback_data="btn_hud"),
+        InlineKeyboardButton(hud_label, callback_data="btn_hud"),
         InlineKeyboardButton("🎙️ Mock Interview", callback_data="btn_interview"),
     ]
     keyboard.append(row6)
@@ -672,24 +702,26 @@ async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id
         if await safe_delete_message(context.bot, target_cid, mid):
             deleted_apps += 1
 
-    # In private chat, also scan backwards up to 35 messages from trigger to catch any untracked question prompts or notifications
+    # In private chat, also scan backwards up to 75 messages to cleanly wipe anything opened except pinned status & dynamic HUD
     deleted_scan = 0
     pinned_info = load_pinned_status_info()
     pinned_mid = pinned_info.get("message_id")
+    hud_mid = ACTIVE_HUD_STATE.get("message_id")
+    protected_ids = {mid for mid in [pinned_mid, hud_mid] if mid}
 
     if trigger_msg_id:
         tracked_ids = set(msg_ids) | {mid for mid, _ in app_items}
-        for past_id in range(trigger_msg_id - 1, max(1, trigger_msg_id - 35), -1):
-            if past_id not in tracked_ids and past_id != pinned_mid:
+        for past_id in range(trigger_msg_id, max(1, trigger_msg_id - 75), -1):
+            if past_id not in protected_ids:
                 if await safe_delete_message(context.bot, chat_id, past_id):
                     deleted_scan += 1
 
     total_deleted = deleted_questions + deleted_apps + deleted_scan
-    # Re-anchor chat with fresh Control Hub and immediately pin it to the top of the chat banner
+    # Re-anchor chat with fresh Control Hub and ensure it is pinned to the top of the chat banner
     await ensure_pinned_live_status(
         context,
         chat_id=chat_id,
-        force_repin=True,
+        force_repin=False,
         header=f"📌 <b>Job Deck Live Control Panel (Pinned)</b> <i>(Cleaned {total_deleted} items)</i>"
     )
 
@@ -820,47 +852,52 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         m = get_realtime_metrics()
         m["is_running"] = True
         m["worker_count"] = 3
-        await query.message.reply_text("🚀 <b>Launched 3 parallel workers!</b> Auto-applying...", reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_edit(query, format_status_message(header="🚀 <b>Launched 3 Parallel Workers! Auto-Applying...</b>", metrics=m), reply_markup=get_smart_keyboard(m))
+        await query.answer("🚀 3 parallel workers active!", show_alert=False)
 
     elif data == "btn_turbo":
-        launch_runner(workers=4)
+        turbo_w, desc = calculate_dynamic_turbo_workers()
+        launch_runner(workers=turbo_w, delay=1.0)
         m = get_realtime_metrics()
         m["is_running"] = True
-        m["worker_count"] = 4
-        await query.message.reply_text("⚡ <b>TURBO MODE ACTIVATED (4 Workers)!</b> Maximum application velocity...", reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        m["worker_count"] = turbo_w
+        await safe_edit(query, format_status_message(header=f"⚡ <b>TURBO VELOCITY ACTIVE ({turbo_w} Workers)!</b>", metrics=m), reply_markup=get_smart_keyboard(m))
+        await query.answer(f"⚡ Turbo: {desc}", show_alert=True)
 
     elif data == "btn_sweep":
-        launch_runner(workers=1)
+        launch_runner(workers=1, delay=3.0)
         m = get_realtime_metrics()
         m["is_running"] = True
         m["worker_count"] = 1
-        await query.message.reply_text("🚀 <b>Single Worker Sweep Launched!</b> Quiet background execution...", reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_edit(query, format_status_message(header="🚀 <b>Single Worker Sweep Launched!</b>", metrics=m), reply_markup=get_smart_keyboard(m))
+        await query.answer("🚀 1-Worker Sweep active!", show_alert=False)
 
     elif data == "btn_stop":
         stopped = halt_runner()
         m = get_realtime_metrics()
         m["is_running"] = False
         m["worker_count"] = 0
-        await query.message.reply_text(f"🛑 <b>Halted {stopped} worker process(es).</b> System idle.", reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+        await safe_edit(query, format_status_message(header=f"🛑 <b>Runner Paused ({stopped} halted).</b> System idle.", metrics=m), reply_markup=get_smart_keyboard(m))
+        await query.answer(f"🛑 Halted {stopped} worker process(es)", show_alert=False)
 
     elif data == "btn_recent":
         m = get_realtime_metrics()
         recent = m["recent"]
         if not recent:
-            await query.message.reply_text("📋 <b>No submissions found yet.</b>", parse_mode=ParseMode.HTML)
+            lines = ["📋 <b>Latest Verified Submissions:</b>\n\n<i>No submissions recorded yet today.</i>"]
         else:
             lines = ["📋 <b>Latest Verified Submissions:</b>\n"]
             for r in reversed(recent):
                 url = r.get("Job URL", "")
                 link_html = f'<a href="{url}">{r.get("Company")}</a>' if url else f"<b>{r.get('Company')}</b>"
                 lines.append(f"• {link_html} — {r.get('Role')} (<i>{r.get('Date Applied')}</i>)")
-            await query.message.reply_text("\n".join(lines), parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
+        await safe_edit(query, "\n".join(lines), reply_markup=kb)
 
     elif data == "btn_stats":
         m = get_realtime_metrics()
         top_co = sorted(m["companies"].items(), key=lambda x: -x[1])[:5]
         top_str = "\n".join(f"  • {c}: {count} applied" for c, count in top_co) if top_co else "  • No data yet"
-        
         cats = m["roles_category"]
         cats_str = "\n".join(f"  • {k}: {v}" for k, v in cats.items())
 
@@ -873,39 +910,40 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             f"🛡️ <b>Specialization Breakdown:</b>\n{cats_str}\n\n"
             f"⚡ <b>Runner Hardware:</b> {m['worker_count']} workers active ({m['total_mem_mb']}MB RSS)"
         )
-        await query.message.reply_text(stats_msg, parse_mode=ParseMode.HTML)
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
+        await safe_edit(query, stats_msg, reply_markup=kb)
 
     elif data == "btn_replenish":
-        await query.message.reply_text("⏳ <i>Scanning 2,000+ job sources for fresh Cyber, IAM & Cloud roles...</i>", parse_mode=ParseMode.HTML)
-        added = replenish_queue_action()
+        await safe_edit(query, "⏳ <i>Scanning 2,000+ job sources for fresh Cyber, IAM & Cloud roles...</i>")
+        added = await asyncio.to_thread(replenish_queue_action)
         m = get_realtime_metrics()
-        await query.message.reply_text(
-            f"🎯 <b>Queue Replenished!</b>\n\nAdded <b>+{added} fresh roles</b>.\nActive queue now has <b>{m['unapplied_count']} unapplied postings</b>.",
-            reply_markup=get_smart_keyboard(m),
-            parse_mode=ParseMode.HTML
+        await safe_edit(
+            query,
+            format_status_message(header=f"🎯 <b>Queue Replenished (+{added} fresh roles)!</b>", metrics=m),
+            reply_markup=get_smart_keyboard(m)
         )
 
     elif data == "btn_questions":
         ans = telegram_query_engine.answer_natural_language_query("pending questions")
-        await safe_reply(query.message, ans)
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
+        await safe_edit(query, ans, reply_markup=kb)
 
     elif data == "btn_alerts":
         m = get_realtime_metrics()
         inbox = m["inbox_actions"]
-        if not inbox:
-            await query.message.reply_text("✅ <b>No urgent recruiter actions pending!</b>", parse_mode=ParseMode.HTML)
-        else:
-            msg = "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(inbox[:10])
-            await safe_reply(query.message, msg)
+        msg = ("📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(inbox[:10])) if inbox else "✅ <b>No urgent recruiter actions pending!</b>"
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
+        await safe_edit(query, msg, reply_markup=kb)
 
     elif data == "btn_target":
-        await query.message.reply_text(
+        target_text = (
             "✈️ <b>Targeted Priority Mode:</b>\n\n"
-            "To target a specific company or URL immediately, simply reply:\n"
+            "To target a specific company or URL immediately, simply reply in chat:\n"
             "<code>target: [Company Name or URL]</code>\n\n"
-            "<i>Example:</i> <code>target: Boeing</code> or <code>target: Lockheed Martin</code>",
-            parse_mode=ParseMode.HTML
+            "<i>Example:</i> <code>target: Boeing</code> or <code>target: Lockheed Martin</code>"
         )
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
+        await safe_edit(query, target_text, reply_markup=kb)
 
     elif data == "btn_resume":
         await send_quickview_doc(query.message, context, is_letter=False)
@@ -915,35 +953,44 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
 
     elif data == "btn_hud":
         await handle_live_hud(query.message, context)
+        m = get_realtime_metrics()
+        await safe_edit(query, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
 
     elif data == "btn_interview":
         session_text = start_interview_session(query.message.chat_id, "Target Employer", "Cybersecurity Specialist")
-        await safe_reply(query.message, session_text)
+        sent = await safe_reply(query.message, session_text)
+        if sent:
+            telegram_query_engine.save_application_message(sent.message_id, query.message.chat_id)
 
     elif data == "btn_decisions":
         summary = get_decision_pipeline_summary()
-        await query.message.reply_text(summary, parse_mode=ParseMode.HTML)
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📬 Scan Decisions Now", callback_data="btn_scan_inbox")],
+            [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
+        ])
+        await safe_edit(query, summary, reply_markup=kb)
 
     elif data == "btn_scan_inbox":
-        await query.message.reply_text("⏳ <i>Scanning Gmail for decision emails and stage advancements...</i>", parse_mode=ParseMode.HTML)
-        new_advs = scan_and_track_decision_emails(days_back=30)
+        await safe_edit(query, "⏳ <i>Scanning Gmail for decision emails, stage advancements & deadlines...</i>")
+        new_advs = await asyncio.to_thread(scan_and_track_decision_emails, 30)
         if new_advs:
             for adv in new_advs:
-                msg = format_advancement_telegram_alert(adv)
-                await query.message.reply_text(msg, parse_mode=ParseMode.HTML)
+                alert_msg = await query.message.reply_text(format_advancement_telegram_alert(adv), parse_mode=ParseMode.HTML)
+                telegram_query_engine.save_application_message(alert_msg.message_id, query.message.chat_id)
         summary = get_decision_pipeline_summary()
-        await query.message.reply_text(summary, parse_mode=ParseMode.HTML)
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📬 Scan Decisions Again", callback_data="btn_scan_inbox")],
+            [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
+        ])
+        await safe_edit(query, summary, reply_markup=kb)
 
     elif data == "btn_pin_status":
         pinned_id = await ensure_pinned_live_status(context, chat_id=query.message.chat_id, force_repin=True)
         await query.answer("📌 Live status pinned to top banner!", show_alert=False)
         m = get_realtime_metrics()
-        await safe_reply(
-            query.message,
-            "📌 <b>Live Status View has been pinned to the top of the chat banner!</b>\n\n"
-            f"• <b>Total Verified:</b> <b>{m['total_applied']} / 3000</b> | <b>Today:</b> +{m['today_applied']}\n"
-            f"• <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n\n"
-            "<i>The pinned banner at the top of your chat updates continuously.</i>",
+        await safe_edit(
+            query,
+            format_status_message(header="📌 <b>Live Status View (Pinned at Top Banner)</b>", metrics=m),
             reply_markup=get_smart_keyboard(m)
         )
 
@@ -981,19 +1028,23 @@ async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_
         keyboard = InlineKeyboardMarkup([
             [InlineKeyboardButton("📥 Download PDF File", callback_data=f"dl_pdf:{pdf_path}")]
         ])
-        await target_msg.reply_photo(
+        sent = await target_msg.reply_photo(
             photo=img_bytes,
             caption=caption,
             parse_mode=ParseMode.HTML,
             reply_markup=keyboard
         )
+        if sent:
+            telegram_query_engine.save_application_message(sent.message_id, target_msg.chat_id)
     except Exception as e:
         with open(pdf_path, "rb") as f:
-            await target_msg.reply_document(
+            sent = await target_msg.reply_document(
                 document=f,
                 caption=f"📄 <b>{doc_type}</b> ({pdf_path.name})",
                 parse_mode=ParseMode.HTML
             )
+            if sent:
+                telegram_query_engine.save_application_message(sent.message_id, target_msg.chat_id)
 
 
 async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
@@ -1007,61 +1058,125 @@ async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
             f"📍 <b>Active Target:</b> <i>{m.get('current_target') or 'None'}</i>\n\n"
             f"<i>Tap [🚀 Launch 3 Workers] below to start active browser automation!</i>"
         )
-        await safe_reply(target_msg, status_text, reply_markup=get_smart_keyboard(m))
+        sent = await safe_reply(target_msg, status_text, reply_markup=get_smart_keyboard(m))
+        if sent:
+            telegram_query_engine.save_application_message(sent.message_id, target_msg.chat_id)
         return
     img_bytes, caption = snap
-    await target_msg.reply_photo(
+    sent = await target_msg.reply_photo(
         photo=img_bytes,
         caption=f"{caption}\n<i>⚡ Live view from active Playwright worker</i>",
         reply_markup=get_smart_keyboard(m),
         parse_mode=ParseMode.HTML
     )
+    if sent:
+        telegram_query_engine.save_application_message(sent.message_id, target_msg.chat_id)
 
 
 async def handle_live_hud(target_msg, context: ContextTypes.DEFAULT_TYPE):
-    """Initializes a live updating single-message ticker."""
+    """Initializes or toggles the live updating single-message ticker ON and OFF without duplicates."""
+    global ACTIVE_HUD_STATE
+    chat_id = target_msg.chat_id
+
+    # If HUD is already active -> TOGGLE OFF
+    if ACTIVE_HUD_STATE.get("message_id"):
+        old_msg_id = ACTIVE_HUD_STATE["message_id"]
+        old_chat_id = ACTIVE_HUD_STATE.get("chat_id") or chat_id
+
+        # Cancel ticker repeating job
+        if context.job_queue:
+            jobs = context.job_queue.get_jobs_by_name("hud_ticker_job")
+            for j in jobs:
+                j.schedule_removal()
+
+        ACTIVE_HUD_STATE["message_id"] = None
+        m = get_realtime_metrics()
+
+        try:
+            await context.bot.edit_message_text(
+                chat_id=old_chat_id,
+                message_id=old_msg_id,
+                text="📡 <b>[AJ Dynamic HUD — Turned OFF]</b>\n\n<i>Live dynamic ticker paused. Tap [📡 Live Dynamic HUD] below or text /hud to restart anytime.</i>",
+                reply_markup=get_smart_keyboard(m),
+                parse_mode=ParseMode.HTML
+            )
+        except Exception:
+            pass
+
+        await safe_reply(target_msg, "📡 <b>Dynamic HUD Ticker Turned OFF.</b>", reply_markup=get_smart_keyboard(m))
+        return
+
+    # If HUD is NOT active -> TOGGLE ON
     m = get_realtime_metrics()
+    now_str = datetime.now().strftime("%I:%M:%S %p")
+    target_str = f"📍 <b>Target:</b> <i>{m['current_target']}</i>\n" if m.get("current_target") else ""
     hud_text = (
-        "📡 <b>[AJ Dynamic HUD] Connecting to live runner...</b>\n\n"
-        f"⚡ <b>Runner:</b> {'🟢 ACTIVE' if m['is_running'] else '⚪ IDLE'}\n"
-        f"📊 <b>Today:</b> +{m['today_applied']} applied | Total: {m['total_applied']}/3000\n"
-        f"🧠 <b>Memory:</b> {m['total_mem_mb']}MB RSS ({m.get('avail_gb', 0):.1f}GB free)\n\n"
-        f"<i>Updating live every 4 seconds...</i>"
+        f"📡 <b>[AJ Dynamic HUD — Live Ticker ACTIVE]</b> <i>({now_str})</i>\n\n"
+        f"⚡ <b>Runner:</b> {'🟢 ' + str(m['worker_count']) + ' Workers Active' if m['is_running'] else '⚪ Idle'}\n"
+        f"{target_str}"
+        f"📊 <b>Today:</b> <b>+{m['today_applied']}</b> applied | Total: <b>{m['total_applied']} / 3000</b>\n"
+        f"🧠 <b>Memory:</b> {m['total_mem_mb']}MB RSS ({m.get('avail_gb', 0):.1f}GB free)\n"
+        f"📋 <b>Priority Queue:</b> {m['unapplied_count']} unapplied roles\n\n"
+        f"<i>⚡ Updating live in-place every 4s • Tap button again to Stop</i>"
     )
+
     sent_msg = await target_msg.reply_text(hud_text, parse_mode=ParseMode.HTML)
+    ACTIVE_HUD_STATE["message_id"] = sent_msg.message_id
+    ACTIVE_HUD_STATE["chat_id"] = chat_id
+
     if context.job_queue:
         context.job_queue.run_repeating(
             _update_hud_tick,
             interval=4.0,
-            first=2.0,
-            data={"chat_id": target_msg.chat_id, "message_id": sent_msg.message_id, "ticks": 0}
+            first=3.0,
+            name="hud_ticker_job",
+            data={"chat_id": chat_id, "message_id": sent_msg.message_id, "ticks": 0}
         )
 
 
 async def _update_hud_tick(context: ContextTypes.DEFAULT_TYPE):
     """Periodic tick updater for live dynamic HUD message."""
+    global ACTIVE_HUD_STATE
     data = context.job.data
     chat_id = data["chat_id"]
     msg_id = data["message_id"]
+
+    # Check if HUD was toggled off externally
+    if ACTIVE_HUD_STATE.get("message_id") != msg_id:
+        context.job.schedule_removal()
+        return
+
     data["ticks"] += 1
 
-    # Auto-stop ticker after 15 ticks (~60 seconds) to conserve resources
-    if data["ticks"] > 15:
+    # Auto-stop ticker after 45 ticks (~3 minutes) if unattended to prevent infinite loop
+    if data["ticks"] > 45:
+        ACTIVE_HUD_STATE["message_id"] = None
         context.job.schedule_removal()
+        try:
+            m = get_realtime_metrics()
+            await context.bot.edit_message_text(
+                chat_id=chat_id,
+                message_id=msg_id,
+                text="📡 <b>[AJ Dynamic HUD — Auto-Paused]</b>\n\n<i>Live ticker paused after 3 minutes of active telemetry. Tap button below to resume anytime!</i>",
+                reply_markup=get_smart_keyboard(m),
+                parse_mode=ParseMode.HTML
+            )
+        except Exception:
+            pass
         return
 
     m = get_realtime_metrics()
     now_str = datetime.now().strftime("%I:%M:%S %p")
     target_str = f"📍 <b>Target:</b> <i>{m['current_target']}</i>\n" if m.get("current_target") else ""
-    
+
     hud_text = (
-        f"📡 <b>[AJ Dynamic HUD — Live Ticker]</b> <i>({now_str})</i>\n\n"
+        f"📡 <b>[AJ Dynamic HUD — Live Ticker ACTIVE]</b> <i>({now_str})</i>\n\n"
         f"⚡ <b>Runner:</b> {'🟢 ' + str(m['worker_count']) + ' Workers Active' if m['is_running'] else '⚪ Idle'}\n"
         f"{target_str}"
         f"📊 <b>Today:</b> <b>+{m['today_applied']}</b> applied | Total: <b>{m['total_applied']} / 3000</b>\n"
         f"🧠 <b>System Health:</b> {m['total_mem_mb']}MB RAM | {m.get('avail_gb', 0):.1f}GB headroom\n"
         f"📋 <b>Queue:</b> {m['unapplied_count']} unapplied roles\n\n"
-        f"<i>Tick {data['ticks']}/15 • Live dynamic updates</i>"
+        f"<i>Tick {data['ticks']}/45 • Updating live in-place</i>"
     )
     try:
         await context.bot.edit_message_text(
@@ -1070,8 +1185,11 @@ async def _update_hud_tick(context: ContextTypes.DEFAULT_TYPE):
             text=hud_text,
             parse_mode=ParseMode.HTML
         )
-    except Exception:
-        pass
+    except Exception as e:
+        err = str(e).lower()
+        if "message to edit not found" in err or "message can't be edited" in err:
+            ACTIVE_HUD_STATE["message_id"] = None
+            context.job.schedule_removal()
 
 
 async def handle_url_drop(url: str, target_msg, context: ContextTypes.DEFAULT_TYPE):
@@ -1311,9 +1429,17 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Priority 8: Speed Shifters (Turbo / Stealth / Nuke)
     elif t_lower in ["/turbo", "turbo"]:
-        launch_runner(workers=4, delay=1.0)
+        turbo_w, desc = calculate_dynamic_turbo_workers()
+        launch_runner(workers=turbo_w, delay=1.0)
         m = get_realtime_metrics()
-        await safe_reply(update.message, "⚡ <b>TURBO VELOCITY ACTIVATED!</b> Launched 4 workers with 1.0s fast-fill delay.", reply_markup=get_smart_keyboard(m))
+        await safe_reply(
+            update.message,
+            f"⚡ <b>TURBO VELOCITY ACTIVATED ({turbo_w} Workers)!</b>\n\n"
+            f"• <b>Auto-Tuned:</b> <i>{desc}</i>\n"
+            f"• <b>Fast-Fill Delay:</b> <code>1.0s</code> (Accelerated)\n\n"
+            f"<i>Headless browser workers running at peak machine velocity!</i>",
+            reply_markup=get_smart_keyboard(m)
+        )
         return
     elif t_lower in ["/stealth", "stealth"]:
         launch_runner(workers=1, delay=8.0)

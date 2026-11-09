@@ -210,8 +210,8 @@ def find_matching_application(sender: str, subject: str, body: str, applications
     return None
 
 
-def update_application_stage(company: str, role: str, new_stage: str, next_action: str, action_date: str = "") -> bool:
-    """Updates the stage and next action of an application in applications.csv."""
+def update_application_stage(company: str, role: str, new_stage: str, next_action: str, action_date: str = "", decision_timestamp: str = "") -> bool:
+    """Updates the stage, next action, deadline, and decision timestamp of an application in applications.csv."""
     app_csv = ROOT / "applications.csv"
     if not app_csv.exists():
         return False
@@ -220,6 +220,9 @@ def update_application_stage(company: str, role: str, new_stage: str, next_actio
         reader = csv.DictReader(f)
         rows = list(reader)
         fieldnames = list(reader.fieldnames or [])
+
+    if "Decision Date" not in fieldnames:
+        fieldnames.append("Decision Date")
 
     updated = False
     new_rank = STAGE_RANK.get(new_stage, 1)
@@ -236,6 +239,8 @@ def update_application_stage(company: str, role: str, new_stage: str, next_actio
                 r["Next Action"] = next_action
                 if action_date:
                     r["Next Action Date"] = action_date
+                if decision_timestamp:
+                    r["Decision Date"] = decision_timestamp
                 updated = True
                 break
 
@@ -314,6 +319,30 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
             comp = matched_app.get("Company", "Employer")
             role = matched_app.get("Role", "Cybersecurity Specialist")
 
+            # Format decision timestamp
+            dec_timestamp = ""
+            if date_raw:
+                try:
+                    from email.utils import parsedate_to_datetime
+                    dt = parsedate_to_datetime(date_raw)
+                    dec_timestamp = dt.strftime("%b %d, %Y %I:%M %p")
+                except Exception:
+                    dec_timestamp = date_raw[:25]
+            if not dec_timestamp:
+                dec_timestamp = datetime.datetime.now().strftime("%b %d, %Y %I:%M %p")
+
+            # Determine deadline date
+            deadline_str = decision["deadline"]
+            if not deadline_str:
+                if "Interview" in decision["stage"]:
+                    deadline_str = (datetime.date.today() + datetime.timedelta(days=2)).strftime("%b %d, %Y")
+                elif "Assessment" in decision["stage"]:
+                    deadline_str = (datetime.date.today() + datetime.timedelta(days=3)).strftime("%b %d, %Y")
+                elif "Offer" in decision["stage"]:
+                    deadline_str = (datetime.date.today() + datetime.timedelta(days=5)).strftime("%b %d, %Y")
+                else:
+                    deadline_str = (datetime.date.today() + datetime.timedelta(days=7)).strftime("%b %d, %Y")
+
             cache[uid] = {
                 "processed": True,
                 "matched": True,
@@ -322,7 +351,8 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                 "subject": subject,
                 "stage": decision["stage"],
                 "is_advancement": decision["is_advancement"],
-                "date": date_raw
+                "date": dec_timestamp,
+                "deadline": deadline_str
             }
 
             # Update stage in ledger
@@ -332,7 +362,8 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                     role=role,
                     new_stage=decision["stage"],
                     next_action=decision["action_needed"],
-                    action_date=datetime.date.today().isoformat()
+                    action_date=deadline_str,
+                    decision_timestamp=dec_timestamp
                 )
 
             # If candidate was selected / advanced to next round, record for Telegram alert
@@ -342,7 +373,8 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                     "role": role,
                     "stage": decision["stage"],
                     "action_needed": decision["action_needed"],
-                    "deadline": decision["deadline"],
+                    "deadline": deadline_str,
+                    "decision_timestamp": dec_timestamp,
                     "subject": subject,
                     "sender": sender
                 }
@@ -367,7 +399,8 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
     icon = "🏆" if is_offer else "🎉"
     title = "FORMAL JOB OFFER EXTENDED!" if is_offer else "STAGE ADVANCEMENT DETECTED!"
 
-    deadline_str = f"\n⏳ <b>Deadline:</b> <code>{adv['deadline']}</code>" if adv.get("deadline") else ""
+    ts = adv.get("decision_timestamp") or datetime.datetime.now().strftime("%b %d, %Y %I:%M %p")
+    deadline = adv.get("deadline") or "Within 48 hours"
 
     return (
         f"{icon} <b>{title}</b>\n\n"
@@ -375,7 +408,9 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
         f"💼 <b>Role:</b> {adv['role']}\n"
         f"🚀 <b>Advancement Status:</b> <b>SELECTED TO MOVE FORWARD!</b>\n"
         f"📍 <b>Current Stage:</b> <code>{stage}</code>\n"
-        f"📋 <b>Next Action:</b> {adv['action_needed']}{deadline_str}\n\n"
+        f"📅 <b>Decision Received:</b> <code>{ts}</code>\n"
+        f"⏰ <b>Action Deadline:</b> <code>{deadline}</code>\n"
+        f"📋 <b>Next Action:</b> {adv['action_needed']}\n\n"
         f"─────────────────────────────\n"
         f"⚔️ <i>Interview Battlecard generated! Tap below to prepare.</i>"
     )
@@ -421,7 +456,16 @@ def get_decision_pipeline_summary() -> str:
     if positive_apps:
         summary.append("<b>Active Stage Advancements:</b>")
         for a in positive_apps[:10]:
-            summary.append(f"• <b>{a.get('Company')}</b> — <code>{a.get('Stage')}</code> ({a.get('Next Action', 'Action pending')})")
+            co = a.get("Company")
+            stg = a.get("Stage")
+            act = a.get("Next Action", "Action pending")
+            dec_date = a.get("Decision Date") or a.get("Date Applied") or "Recent"
+            deadline = a.get("Next Action Date") or "Within 48h"
+            summary.append(
+                f"• <b>{co}</b> — <code>{stg}</code>\n"
+                f"  📅 <i>Decision:</i> <code>{dec_date}</code> | ⏰ <i>Deadline:</i> <code>{deadline}</code>\n"
+                f"  🎯 <i>Action:</i> {act}"
+            )
     else:
         summary.append("<i>Zero stage advancements recorded yet. Automated tracker is actively listening!</i>")
 

@@ -83,7 +83,8 @@ def test_format_advancement_telegram_alert():
         "role": "Security Operations Engineer II",
         "stage": "Interview: Technical Screen",
         "action_needed": "Schedule 45-min technical interview",
-        "deadline": "Friday, Nov 13"
+        "deadline": "Friday, Nov 13",
+        "decision_timestamp": "Nov 09, 2026 09:30 AM"
     }
     msg = format_advancement_telegram_alert(adv)
     assert "STAGE ADVANCEMENT DETECTED" in msg
@@ -91,6 +92,8 @@ def test_format_advancement_telegram_alert():
     assert "Security Operations Engineer II" in msg
     assert "Interview: Technical Screen" in msg
     assert "Friday, Nov 13" in msg
+    assert "Decision Received:" in msg
+    assert "Action Deadline:" in msg
 
 
 def test_get_decision_pipeline_summary():

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-11-09T09:22:02.574922",
+  "last_updated": "2026-11-09T09:54:35.014979",
   "learned_keyword_weights": {
     "iam": {
       "active directory": 3.05,
@@ -33,17 +33,17 @@
       "mitre att&ck": 2.55,
       "nist csf": 2.55,
       "phishing": 2.3,
-      "threat modeling": 2.25,
-      "security+": 2.55,
-      "soc": 2.8,
+      "threat modeling": 3.0,
+      "security+": 3.3,
+      "soc": 3.55,
       "investigation": 2.2,
-      "triage": 2.15
+      "triage": 2.9
     },
     "it_support": {
-      "technical support": 3.1,
+      "technical support": 3.15,
       "troubleshooting": 3.15,
       "hardware": 2.65,
-      "pos": 2.65,
+      "pos": 2.85,
       "software configuration": 2.5,
       "client support": 2.5,
       "active directory": 2.5,
@@ -51,23 +51,23 @@
       "ticketing": 2.25,
       "sop": 2.0,
       "endpoint": 2.25,
-      "windows": 2.3,
+      "windows": 2.5,
       "linux": 2.1,
       "diagnostic": 2.2,
-      "documentation": 2.15
+      "documentation": 2.35
     },
     "cloud_sec_sysadmin": {
       "linux": 2.9,
       "windows server": 2.5,
-      "azure": 3.15,
+      "azure": 4.15,
       "vmware": 2.5,
       "powershell": 2.5,
       "bash": 2.5,
       "python": 2.6,
-      "infrastructure": 2.55,
-      "automation": 2.6,
+      "infrastructure": 2.65,
+      "automation": 2.65,
       "endpoint": 2.0,
-      "cloud security": 2.9,
+      "cloud security": 3.9,
       "systems administration": 2.5
     },
     "network_sec": {
@@ -79,7 +79,7 @@
       "dns": 2.0,
       "vpn": 2.25,
       "ethical hacking": 2.5,
-      "security+": 2.5
+      "security+": 2.55
     },
     "general_cyber": {
       "cybersecurity": 2.5,
@@ -17438,6 +17438,1804 @@
       ],
       "outcome": "applied",
       "timestamp": "2026-11-09T09:22:02.574922"
+    },
+    "RfSmart_Software_Support_Engineer_Intern_Jacksonville_FL_1d_old": {
+      "company": "RfSmart",
+      "role": "Software Support Engineer Intern [Jacksonville, FL; 1d old]",
+      "domain": "it_support",
+      "keywords": [
+        "pos",
+        "windows",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:29:22.393055"
+    },
+    "Astranis_Network_Software_Intern_SF_21d_old": {
+      "company": "Astranis",
+      "role": "Network Software Intern [SF; 21d old]",
+      "domain": "network_sec",
+      "keywords": [
+        "security+"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Technical",
+        "Identity & Access",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:29:31.556352"
+    },
+    "Astranis_Software_Defined_Radio_Hardware_Associate_Intern_SF_22d_old": {
+      "company": "Astranis",
+      "role": "Software Defined Radio Hardware Associate Intern [SF; 22d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:30:32.733828"
+    },
+    "Drivewealth_AI_Consulting_Associate_Program_Brokerage_Intern_Chicago_I": {
+      "company": "Drivewealth",
+      "role": "AI Consulting Associate Program Brokerage Intern [Chicago, IL; 0d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:34:18.143766"
+    },
+    "Str_Data_Analyst_Intern_Arlington_County_Arlington_VA_Woburn_MA_2d_old": {
+      "company": "Str",
+      "role": "Data Analyst Intern [Arlington County, Arlington, VA Woburn, MA; 2d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:36:56.566891"
+    },
+    "Figma_Senior_Order_Management_Analyst_San_Francisco_CA_New_York_NY_Uni": {
+      "company": "Figma",
+      "role": "Senior Order Management Analyst [San Francisco, CA \u2022 New York, NY \u2022 United States; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:37:05.678211"
+    },
+    "ScaleAi_Senior_Data_Analyst_Public_Sector_Washington_DC_1d_old": {
+      "company": "ScaleAi",
+      "role": "Senior Data Analyst, Public Sector [Washington, DC; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:37:51.714296"
+    },
+    "Robinhood_Cashiering_Support_Associate_Clearwater_FL_Westlake_TX_1d_ol": {
+      "company": "Robinhood",
+      "role": "Cashiering Support Associate [Clearwater, FL; Westlake, TX; 1d old]",
+      "domain": "it_support",
+      "keywords": [
+        "pos",
+        "windows",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:40:27.665432"
+    },
+    "Robinhood_Data_Solutions_Analytics_Senior_Analyst_Westlake_TX_1d_old": {
+      "company": "Robinhood",
+      "role": "Data Solutions & Analytics Senior Analyst [Westlake, TX; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:40:35.986773"
+    },
+    "Cloudflare_Infrastructure_Operations_Analyst_Hybrid_1d_old": {
+      "company": "Cloudflare",
+      "role": "Infrastructure Operations Analyst [Hybrid; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "infrastructure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:42:53.238024"
+    },
+    "Cloudflare_Product_Cost_Analyst_Hybrid_1d_old": {
+      "company": "Cloudflare",
+      "role": "Product Cost Analyst [Hybrid; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:43:01.678344"
+    },
+    "Verkada_Senior_Associate_Pricing_Commercial_Operations_San_Mateo_CA_Un": {
+      "company": "Verkada",
+      "role": "Senior Associate, Pricing & Commercial Operations [San Mateo, CA United States; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:43:08.608139"
+    },
+    "Robinhood_Finance_Strategy_Senior_Analyst_Chicago_IL_Menlo_Park_CA_New": {
+      "company": "Robinhood",
+      "role": "Finance & Strategy Senior Analyst [Chicago, IL; Menlo Park, CA; New York, NY; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:43:35.846042"
+    },
+    "Cloudflare_Senior_Cloudflare_One_GTM_Specialist_Distributed_1d_old": {
+      "company": "Cloudflare",
+      "role": "Senior Cloudflare One GTM Specialist [Distributed; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:43:50.273654"
+    },
+    "Verkada_Senior_Leave_of_Absence_Associate_San_Mateo_CA_United_States_1": {
+      "company": "Verkada",
+      "role": "Senior Leave of Absence Associate [San Mateo, CA United States; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:43:54.711445"
+    },
+    "Verkada_Senior_Leave_of_Absence_Associate_Tempe_AZ_United_States_1d_ol": {
+      "company": "Verkada",
+      "role": "Senior Leave of Absence Associate [Tempe, AZ United States; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:44:03.558603"
+    },
+    "Verkada_Senior_Leave_of_Absence_Associate_Salt_Lake_City_UT_United_Sta": {
+      "company": "Verkada",
+      "role": "Senior Leave of Absence Associate [Salt Lake City, UT United States; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:44:11.409000"
+    },
+    "Affirm_Analyst_II_Credit_Remote_UK_1d_old": {
+      "company": "Affirm",
+      "role": "Analyst II, Credit [Remote UK; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:44:21.910161"
+    },
+    "Robinhood_Senior_Compensation_Analyst_Chicago_IL_Menlo_Park_CA_New_Yor": {
+      "company": "Robinhood",
+      "role": "Senior Compensation Analyst [Chicago, IL; Menlo Park, CA; New York, NY; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:44:28.643712"
+    },
+    "Affirm_Senior_Analyst_Remote_US_1d_old": {
+      "company": "Affirm",
+      "role": "Senior Analyst [Remote US; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:45:32.959163"
+    },
+    "Reddit_Senior_Business_Analyst_Revenue_Analytics_Remote_United_States_": {
+      "company": "Reddit",
+      "role": "Senior Business Analyst, Revenue Analytics [Remote - United States; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:45:54.672080"
+    },
+    "Affirm_Senior_Analyst_Remote_Canada_1d_old": {
+      "company": "Affirm",
+      "role": "Senior Analyst [Remote Canada; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:46:13.342677"
+    },
+    "Cloudflare_Senior_Product_Security_Engineer_Hybrid_1d_old": {
+      "company": "Cloudflare",
+      "role": "Senior Product Security Engineer [Hybrid; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:46:57.055492"
+    },
+    "Reddit_Senior_Support_Engineer_Snoo_Operations_Support_New_York_City_N": {
+      "company": "Reddit",
+      "role": "Senior Support Engineer, Snoo Operations & Support [New York City, NY; 1d old]",
+      "domain": "it_support",
+      "keywords": [
+        "pos",
+        "windows",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:46:58.163352"
+    },
+    "Twitch_Software_Development_Engineer_Security_Platform_San_Francisco_C": {
+      "company": "Twitch",
+      "role": "Software Development Engineer, Security Platform [San Francisco, CA; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:47:02.425778"
+    },
+    "Cloudflare_Senior_Specialist_Solutions_Engineer_Cloudflare_One_Russian": {
+      "company": "Cloudflare",
+      "role": "Senior Specialist Solutions Engineer, Cloudflare One - Russian or Hebrew speaking [Distributed; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:47:06.717619"
+    },
+    "Chime_Regional_Physical_Security_Lead_San_Francisco_CA_USA_1d_old": {
+      "company": "Chime",
+      "role": "Regional Physical Security Lead [San Francisco, CA, USA; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:47:07.102014"
+    },
+    "Chime_Senior_Application_Security_Engineer_San_Francisco_CA_USA_1d_old": {
+      "company": "Chime",
+      "role": "Senior Application Security Engineer [San Francisco, CA, USA; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:47:16.929389"
+    },
+    "Robinhood_Customer_Experience_Associate_Pathway_Denver_CO_Westlake_TX_": {
+      "company": "Robinhood",
+      "role": "Customer Experience Associate, Pathway [Denver, CO; Westlake, TX; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:48:36.679267"
+    },
+    "Cloudflare_Forward_Deployed_Engineer_Professional_Services_Application": {
+      "company": "Cloudflare",
+      "role": "Forward Deployed Engineer, Professional Services (Application Security) [Hybrid; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:50:03.379979"
+    },
+    "Affirm_Compensation_Analyst_II_Programs_Partnerships_Remote_Canada_1d_": {
+      "company": "Affirm",
+      "role": "Compensation Analyst II (Programs & Partnerships) [Remote Canada; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:50:12.559790"
+    },
+    "Chime_Senior_Associate_Compliance_Advisory_Chicago_IL_USA_New_York_NY_": {
+      "company": "Chime",
+      "role": "Senior Associate, Compliance Advisory [Chicago, IL, USA; New York, NY, USA; San Francisco, CA, USA; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:50:28.660157"
+    },
+    "Affirm_Compensation_Analyst_II_Programs_Partnerships_Remote_US_1d_old": {
+      "company": "Affirm",
+      "role": "Compensation Analyst II (Programs & Partnerships) [Remote US; 1d old]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:51:01.660625"
+    },
+    "VeeamSoftware_Security_AI_Engineer_Intern": {
+      "company": "VeeamSoftware",
+      "role": "Security AI Engineer Intern",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "infrastructure",
+        "automation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:51:18.027864"
+    },
+    "Robinhood_Customer_Experience_Associate_Prediction_Markets": {
+      "company": "Robinhood",
+      "role": "Customer Experience Associate, Prediction Markets",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:51:27.961276"
+    },
+    "Affirm_Customer_Operations_Associate_I_Remote_US_1d_old": {
+      "company": "Affirm",
+      "role": "Customer Operations Associate I [Remote US; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:52:09.234488"
+    },
+    "Cloudflare_Technical_Support_Engineer_Developer_Platform": {
+      "company": "Cloudflare",
+      "role": "Technical Support Engineer - Developer Platform",
+      "domain": "it_support",
+      "keywords": [
+        "technical support",
+        "pos",
+        "windows",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:52:18.525749"
+    },
+    "Verkada_Channel_Marketing_Associate": {
+      "company": "Verkada",
+      "role": "Channel Marketing Associate",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:53:30.817056"
+    },
+    "Chime_Senior_Associate_Strategic_Finance_San_Francisco_CA_USA_1d_old": {
+      "company": "Chime",
+      "role": "Senior Associate, Strategic Finance [San Francisco, CA, USA; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:53:44.720871"
+    },
+    "Reddit_Business_Analyst": {
+      "company": "Reddit",
+      "role": "Business Analyst",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:53:45.390337"
+    },
+    "The_Brattle_Group_Energy_Analyst_Intern_Economics": {
+      "company": "The",
+      "role": "Brattle Group Energy Analyst Intern - Economics",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:54:35.014979"
     }
   },
   "domain_stats": {
@@ -17448,25 +19246,25 @@
       "confirmations": 0
     },
     "soc_analyst": {
-      "applied": 10,
+      "applied": 25,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
     },
     "it_support": {
-      "applied": 4,
+      "applied": 8,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
     },
     "cloud_sec_sysadmin": {
-      "applied": 12,
+      "applied": 33,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
     },
     "network_sec": {
-      "applied": 1,
+      "applied": 2,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
