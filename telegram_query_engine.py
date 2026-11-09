@@ -389,9 +389,10 @@ def execute_gemini_action(action_dict: dict) -> str:
 
 
 def ask_gemini_ai(user_prompt: str) -> str:
-    """Invokes Google Gemini 3.5 Flash with full session memory, multi-turn context, and active action execution."""
+    """Invokes Google Gemini with session memory, multi-turn context, and active action execution."""
     key = os.getenv("GEMINI_API_KEY", GEMINI_API_KEY).strip()
-    if not key:
+    # Only attempt remote Google AI Studio API if a valid standard AI Studio key is provided
+    if not key or not key.startswith("AIzaSy"):
         return ""
 
     session_mem = load_session_memory()

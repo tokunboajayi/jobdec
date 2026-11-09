@@ -99,3 +99,4 @@ def test_get_decision_pipeline_summary():
     assert "Total Verified Applications:" in summary
     assert "Offers Extended:" in summary
     assert "Interviews & Screens:" in summary
+

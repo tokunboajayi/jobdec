@@ -524,18 +524,20 @@ async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id
                     deleted_scan += 1
 
     total_deleted = deleted_questions + deleted_apps + deleted_scan
-    # Send auto-vanishing confirmation
-    confirm = await context.bot.send_message(
+    # Re-anchor chat with clean, interactive Control Hub so user is never left with an empty void
+    m = get_realtime_metrics()
+    await context.bot.send_message(
         chat_id=chat_id,
-        text=f"🧹 <b>Smart Chat Cleanup Complete!</b>\nCleaned <b>{total_deleted}</b> message(s) ({deleted_apps} application updates, {deleted_questions} questions) to prevent build-up.\n\n<i>Auto-deleting confirmation in 4s...</i>",
+        text=(
+            f"🧹 <b>Smart Chat Cleanup Complete ({total_deleted} messages removed)!</b>\n\n"
+            f"🎯 <b>Autonomous Control Hub Ready:</b>\n"
+            f"• <b>Total Verified:</b> <b>{m['total_applied']} / 3000</b> | <b>Today:</b> +{m['today_applied']}\n"
+            f"• <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n\n"
+            f"<i>Tap any button below or text me to continue:</i>"
+        ),
+        reply_markup=get_smart_keyboard(m),
         parse_mode=ParseMode.HTML
     )
-    if context.job_queue:
-        context.job_queue.run_once(
-            _delayed_delete_job,
-            when=4.0,
-            data={"chat_id": chat_id, "message_id": confirm.message_id}
-        )
 
 
 async def sweep_expired_questions_job(context: ContextTypes.DEFAULT_TYPE):
@@ -802,7 +804,7 @@ async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_
 
     doc_type = "Cover Letter" if is_letter else "Tailored Resume"
     try:
-        img_bytes = render_pdf_to_image_bytes(pdf_path)
+        img_bytes = await asyncio.to_thread(render_pdf_to_image_bytes, pdf_path)
         co_display = pdf_path.parent.name.replace("_", " ") if pdf_path.parent.name != "resumes" else "Master Candidate"
         caption = (
             f"📄 <b>Quick-View {doc_type}:</b> <code>{co_display}</code>\n"
@@ -828,14 +830,22 @@ async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_
 
 async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
     """Captures and sends an instant screenshot of the active browser viewport."""
-    snap = capture_active_worker_screenshot()
+    snap = await asyncio.to_thread(capture_active_worker_screenshot)
+    m = get_realtime_metrics()
     if not snap:
-        await safe_reply(target_msg, "📸 <i>No active browser page or recent snapshot available to capture.</i>")
+        status_text = (
+            "📸 <b>Live Screen Cam:</b> <i>Browser is currently idle or initializing.</i>\n\n"
+            f"⚡ <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n"
+            f"📍 <b>Active Target:</b> <i>{m.get('current_target') or 'None'}</i>\n\n"
+            f"<i>Tap [🚀 Launch 3 Workers] below to start active browser automation!</i>"
+        )
+        await safe_reply(target_msg, status_text, reply_markup=get_smart_keyboard(m))
         return
     img_bytes, caption = snap
     await target_msg.reply_photo(
         photo=img_bytes,
         caption=f"{caption}\n<i>⚡ Live view from active Playwright worker</i>",
+        reply_markup=get_smart_keyboard(m),
         parse_mode=ParseMode.HTML
     )
 
@@ -962,7 +972,7 @@ async def send_daily_morning_brief(context: ContextTypes.DEFAULT_TYPE):
 async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
     """Periodic recruiter radar: scans for decision emails, stage advancements, and urgent interviews."""
     try:
-        new_advs = scan_and_track_decision_emails(days_back=14)
+        new_advs = await asyncio.to_thread(scan_and_track_decision_emails, 14)
         for adv in new_advs:
             msg = format_advancement_telegram_alert(adv)
             comp = adv.get("company", "Target")
@@ -1055,25 +1065,33 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     # Priority 2: Quick-View Resume & Cover Letter
-    elif t_lower.startswith("/resume") or t_lower.startswith("resume:") or t_lower.startswith("/cv") or t_lower == "resume":
+    if any(k in t_lower for k in ["my resume", "show resume", "quick resume", "view resume", "pull up resume", "bring up resume", "see resume"]) or t_lower.startswith("/resume") or t_lower.startswith("resume:") or t_lower in ["/resume", "resume", "/cv", "cv"]:
         parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
-        comp = parts[1].strip() if len(parts) > 1 else ""
+        comp = parts[1].strip() if len(parts) > 1 and not any(p in parts[1].lower() for p in ["resume", "my", "up", "the"]) else ""
         await send_quickview_doc(update.message, context, is_letter=False, query_comp=comp)
         return
-    elif t_lower.startswith("/letter") or t_lower.startswith("letter:") or t_lower.startswith("/cl") or t_lower == "letter":
+    elif any(k in t_lower for k in ["cover letter", "my letter", "show letter", "view letter"]) or t_lower.startswith("/letter") or t_lower.startswith("letter:") or t_lower in ["/letter", "letter", "/cl", "cl"]:
         parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
-        comp = parts[1].strip() if len(parts) > 1 else ""
+        comp = parts[1].strip() if len(parts) > 1 and not any(p in parts[1].lower() for p in ["letter", "my", "up", "the"]) else ""
         await send_quickview_doc(update.message, context, is_letter=True, query_comp=comp)
         return
 
-    # Priority 3: Dynamic Live HUD Ticker
-    elif t_lower in ["/hud", "hud", "/ticker", "ticker", "live"]:
-        await handle_live_hud(update.message, context)
+    # Priority 3: Live Headless Screen Cam (matches conversational requests like "bring up the live view")
+    elif any(k in t_lower for k in [
+        "live view", "screen cam", "screencam", "screenshot", "screen shot",
+        "show screen", "view screen", "browser view", "bring up the view",
+        "bring up the live view", "bring up live view", "see the screen",
+        "what is the browser doing", "show browser", "take a screenshot"
+    ]) or t_lower in ["/view", "view", "/snap", "snap", "/screenshot", "screenshot", "/cam", "cam"]:
+        await send_screen_cam(update.message, context)
         return
 
-    # Priority 4: Live Headless Screen Cam
-    elif t_lower in ["/view", "view", "/snap", "snap", "/screenshot", "screenshot"]:
-        await send_screen_cam(update.message, context)
+    # Priority 4: Dynamic Live HUD Ticker
+    elif any(k in t_lower for k in [
+        "hud", "ticker", "live ticker", "dynamic hud", "live updates",
+        "bring up the hud", "bring up hud", "live dashboard", "ticker card"
+    ]) or t_lower in ["/hud", "hud", "/ticker", "ticker", "live", "/live"]:
+        await handle_live_hud(update.message, context)
         return
 
     # Priority 5: AI Mock Interviewer Initiation
@@ -1147,19 +1165,19 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(update.message, summary)
         return
 
-    if t_lower in ["clean", "/clean", "clear", "/clear", "clearchat", "/clearchat", "clean chat", "clear questions", "clean apps", "clean applications", "clear apps"]:
+    if any(k in t_lower for k in ["clean", "clear", "clearchat", "clean chat", "clear chat", "wipe chat", "reset chat", "clean apps", "clear apps"]) or t_lower in ["/clean", "/clear"]:
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
         return
-    elif t_lower in ["status", "/status", "update", "metrics"]:
+    elif any(k in t_lower for k in ["status", "update", "metrics", "dashboard", "how are things", "how is it going", "how are we doing", "progress", "stats", "give me an update"]) or t_lower in ["/status", "/update"]:
         m = get_realtime_metrics()
         await safe_reply(update.message, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
-    elif t_lower in ["run", "apply", "/apply", "start", "begin", "launch", "initiate"]:
+    elif any(k in t_lower for k in ["start applying", "start runner", "start workers", "launch workers", "keep applying", "run workers", "start", "begin", "launch", "apply", "run"]) or t_lower in ["/run", "/apply", "/start"]:
         launch_runner(workers=3)
         m = get_realtime_metrics()
         m["is_running"] = True
         m["worker_count"] = 3
         await safe_reply(update.message, "🚀 <b>Started 3 headless workers!</b>", reply_markup=get_smart_keyboard(m))
-    elif t_lower in ["stop", "pause", "/stop", "halt", "exit", "quit", "terminate", "end", "close"]:
+    elif any(k in t_lower for k in ["stop applying", "pause runner", "stop workers", "halt workers", "pause", "halt", "freeze", "stop", "terminate", "end", "close"]) or t_lower in ["/stop", "/pause", "/halt"]:
         stopped = halt_runner()
         m = get_realtime_metrics()
         m["is_running"] = False

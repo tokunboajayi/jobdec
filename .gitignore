@@ -32,6 +32,7 @@ site_stats.json
 agents/brain_report.md
 agents/inbox_actions.md
 agents/needs_you.md
+agents/decisions_cache.json
 prep/
 queue_pass1_done.txt
 .pytest_cache/

@@ -426,3 +426,4 @@ def get_decision_pipeline_summary() -> str:
         summary.append("<i>Zero stage advancements recorded yet. Automated tracker is actively listening!</i>")
 
     return "\n".join(summary)
+
