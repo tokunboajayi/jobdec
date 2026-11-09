@@ -57,6 +57,82 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID_STR = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 AUTHORIZED_USER_ID = int(CHAT_ID_STR) if CHAT_ID_STR.isdigit() else 0
 
+PINNED_STATUS_FILE = ROOT / "pinned_status.json"
+
+
+def load_pinned_status_info() -> dict:
+    """Loads saved pinned status message ID and chat ID."""
+    if PINNED_STATUS_FILE.exists():
+        try:
+            return json.loads(PINNED_STATUS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return {}
+    return {}
+
+
+def save_pinned_status_info(chat_id: int, message_id: int):
+    """Persists pinned status message ID so it can be edited live."""
+    try:
+        PINNED_STATUS_FILE.write_text(json.dumps({"chat_id": chat_id, "message_id": message_id}), encoding="utf-8")
+    except Exception as e:
+        print(f"[Pinned Status Save Error] {e}", flush=True)
+
+
+async def ensure_pinned_live_status(context: ContextTypes.DEFAULT_TYPE, chat_id: int = None, force_repin: bool = False, header: str = None) -> int:
+    """Maintains a persistent, pinned live status view at the top of the chat banner."""
+    target_chat = chat_id or AUTHORIZED_USER_ID
+    if not target_chat:
+        return 0
+
+    info = load_pinned_status_info()
+    saved_msg_id = info.get("message_id")
+    saved_chat_id = info.get("chat_id")
+
+    m = get_realtime_metrics()
+    panel_header = header or "📌 <b>Job Deck Live Control Panel (Pinned)</b>"
+    text = format_status_message(header=panel_header, metrics=m)
+    kb = get_smart_keyboard(m)
+
+    # If already pinned and not force_repin, attempt silent in-place update
+    if saved_msg_id and saved_chat_id == target_chat and not force_repin:
+        try:
+            await context.bot.edit_message_text(
+                chat_id=target_chat,
+                message_id=saved_msg_id,
+                text=text,
+                reply_markup=kb,
+                parse_mode=ParseMode.HTML
+            )
+            return saved_msg_id
+        except Exception as e:
+            err_str = str(e).lower()
+            if "message is not modified" in err_str:
+                return saved_msg_id
+            # Message was deleted or unreachable, fall through to post new and pin
+
+    # Otherwise post a fresh pinned control panel
+    try:
+        sent_msg = await context.bot.send_message(
+            chat_id=target_chat,
+            text=text,
+            reply_markup=kb,
+            parse_mode=ParseMode.HTML
+        )
+        try:
+            await context.bot.pin_chat_message(
+                chat_id=target_chat,
+                message_id=sent_msg.message_id,
+                disable_notification=True
+            )
+        except Exception as pin_err:
+            print(f"[Pin Chat Message Warning] {pin_err}", flush=True)
+
+        save_pinned_status_info(target_chat, sent_msg.message_id)
+        return sent_msg.message_id
+    except Exception as e:
+        print(f"[Ensure Pinned Status Error] {e}", flush=True)
+        return 0
+
 
 def get_realtime_metrics():
     """Calculates comprehensive, ultra-accurate metrics from live ledgers and processes."""
@@ -190,9 +266,9 @@ def get_smart_keyboard(metrics=None):
     if metrics is None:
         metrics = get_realtime_metrics()
 
-    is_running = metrics["is_running"]
-    pending_q = metrics["pending_questions"]
-    inbox = metrics["inbox_actions"]
+    is_running = metrics.get("is_running", False)
+    pending_q = metrics.get("pending_questions") or []
+    inbox = metrics.get("inbox_actions") or []
 
     keyboard = []
 
@@ -267,6 +343,13 @@ def get_smart_keyboard(metrics=None):
         InlineKeyboardButton("📬 Scan Decisions Now", callback_data="btn_scan_inbox"),
     ]
     keyboard.append(row7)
+
+    # Row 8: Pin Live Status & Quick Refresh
+    row8 = [
+        InlineKeyboardButton("📌 Pin Live Status", callback_data="btn_pin_status"),
+        InlineKeyboardButton("🔄 Refresh View", callback_data="btn_status"),
+    ]
+    keyboard.append(row8)
 
     return InlineKeyboardMarkup(keyboard)
 
@@ -516,27 +599,23 @@ async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id
 
     # In private chat, also scan backwards up to 35 messages from trigger to catch any untracked question prompts or notifications
     deleted_scan = 0
+    pinned_info = load_pinned_status_info()
+    pinned_mid = pinned_info.get("message_id")
+
     if trigger_msg_id:
         tracked_ids = set(msg_ids) | {mid for mid, _ in app_items}
         for past_id in range(trigger_msg_id - 1, max(1, trigger_msg_id - 35), -1):
-            if past_id not in tracked_ids:
+            if past_id not in tracked_ids and past_id != pinned_mid:
                 if await safe_delete_message(context.bot, chat_id, past_id):
                     deleted_scan += 1
 
     total_deleted = deleted_questions + deleted_apps + deleted_scan
-    # Re-anchor chat with clean, interactive Control Hub so user is never left with an empty void
-    m = get_realtime_metrics()
-    await context.bot.send_message(
+    # Re-anchor chat with fresh Control Hub and immediately pin it to the top of the chat banner
+    await ensure_pinned_live_status(
+        context,
         chat_id=chat_id,
-        text=(
-            f"🧹 <b>Smart Chat Cleanup Complete ({total_deleted} messages removed)!</b>\n\n"
-            f"🎯 <b>Autonomous Control Hub Ready:</b>\n"
-            f"• <b>Total Verified:</b> <b>{m['total_applied']} / 3000</b> | <b>Today:</b> +{m['today_applied']}\n"
-            f"• <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n\n"
-            f"<i>Tap any button below or text me to continue:</i>"
-        ),
-        reply_markup=get_smart_keyboard(m),
-        parse_mode=ParseMode.HTML
+        force_repin=True,
+        header=f"📌 <b>Job Deck Live Control Panel (Pinned)</b> <i>(Cleaned {total_deleted} items)</i>"
     )
 
 
@@ -585,7 +664,8 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• <code>/resume [Company]</code> — Quick-view tailored resume (photo preview, no download!)\n"
         "• <code>/letter [Company]</code> — Quick-view tailored cover letter\n"
         "• <code>/view</code> or <code>/snap</code> — Live screenshot of active browser window\n"
-        "• <code>/hud</code> or <code>/ticker</code> — Single-message live dynamic ticker\n\n"
+        "• <code>/hud</code> or <code>/ticker</code> — Single-message live dynamic ticker\n"
+        "• <code>/pin</code> — Pin the live status control panel to top banner\n\n"
         "🎯 <b>Auto-Apply & Radar:</b>\n"
         "• Paste any job URL directly — Auto-applies on the spot\n"
         "• <code>/inbox</code> — Urgent recruiter replies & interview alerts\n"
@@ -778,6 +858,19 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
                 await query.message.reply_text(msg, parse_mode=ParseMode.HTML)
         summary = get_decision_pipeline_summary()
         await query.message.reply_text(summary, parse_mode=ParseMode.HTML)
+
+    elif data == "btn_pin_status":
+        pinned_id = await ensure_pinned_live_status(context, chat_id=query.message.chat_id, force_repin=True)
+        await query.answer("📌 Live status pinned to top banner!", show_alert=False)
+        m = get_realtime_metrics()
+        await safe_reply(
+            query.message,
+            "📌 <b>Live Status View has been pinned to the top of the chat banner!</b>\n\n"
+            f"• <b>Total Verified:</b> <b>{m['total_applied']} / 3000</b> | <b>Today:</b> +{m['today_applied']}\n"
+            f"• <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n\n"
+            "<i>The pinned banner at the top of your chat updates continuously.</i>",
+            reply_markup=get_smart_keyboard(m)
+        )
 
     elif data.startswith("dl_pdf:"):
         pdf_path_str = data.split(":", 1)[1]
@@ -1076,6 +1169,25 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await send_quickview_doc(update.message, context, is_letter=True, query_comp=comp)
         return
 
+    # Priority 2.5: Pinned Live Status View
+    elif any(k in t_lower for k in [
+        "pinned live status", "pinned status", "pin live status", "pin status",
+        "pin live view", "pinned view", "pin live", "pinned live",
+        "dont see the pinned", "don't see the pinned", "where is the pinned",
+        "show pinned", "pin the status", "pin hud", "repin"
+    ]) or t_lower in ["/pin", "pin", "/pinned"]:
+        pinned_id = await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=True)
+        m = get_realtime_metrics()
+        await safe_reply(
+            update.message,
+            "📌 <b>Live Status View has been pinned to the top of your chat banner!</b>\n\n"
+            f"• <b>Total Verified:</b> <b>{m['total_applied']} / 3000</b> | <b>Today:</b> +{m['today_applied']}\n"
+            f"• <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n\n"
+            "<i>The banner at the top of your chat updates continuously and keeps your full controls one tap away at all times.</i>",
+            reply_markup=get_smart_keyboard(m)
+        )
+        return
+
     # Priority 3: Live Headless Screen Cam (matches conversational requests like "bring up the live view")
     elif any(k in t_lower for k in [
         "live view", "screen cam", "screencam", "screenshot", "screen shot",
@@ -1264,6 +1376,16 @@ async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):
         print(f"[3-Hour Update Error] {e}", flush=True)
 
 
+async def refresh_pinned_status_job(context: ContextTypes.DEFAULT_TYPE):
+    """Silently refreshes the pinned live status message so the pinned banner stays real-time."""
+    if not AUTHORIZED_USER_ID:
+        return
+    try:
+        await ensure_pinned_live_status(context, chat_id=AUTHORIZED_USER_ID, force_repin=False)
+    except Exception:
+        pass
+
+
 def main():
     if not BOT_TOKEN or not AUTHORIZED_USER_ID:
         print("[!] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing in .env")
@@ -1274,6 +1396,7 @@ def main():
 
     app.add_handler(CommandHandler(["start", "help"], cmd_start))
     app.add_handler(CommandHandler(["status", "update"], cmd_status))
+    app.add_handler(CommandHandler(["pin", "pinned"], handle_text))
     app.add_handler(CommandHandler(["clean", "clear", "clearchat", "cleanapps"], cmd_clean))
     app.add_handler(CommandHandler(["prep", "battlecard"], handle_text))
     app.add_handler(CommandHandler(["radar", "referrals", "referral"], handle_text))
@@ -1299,7 +1422,8 @@ def main():
         app.job_queue.run_repeating(sweep_expired_questions_job, interval=30, first=10)
         app.job_queue.run_daily(send_daily_morning_brief, time=time(hour=8, minute=0, second=0))
         app.job_queue.run_repeating(check_inbox_radar_job, interval=1800, first=60)
-        print("[Job Deck Control Bot] 3-hour Sweeper, 8:00 AM Morning Brief, and Recruiter Radar scheduled.", flush=True)
+        app.job_queue.run_repeating(refresh_pinned_status_job, interval=45, first=2)
+        print("[Job Deck Control Bot] 3-hour Sweeper, 8:00 AM Morning Brief, Recruiter Radar, and Pinned Status scheduled.", flush=True)
 
     print("[Job Deck Control Bot] Two-way polling active. Ready!", flush=True)
     app.run_polling(drop_pending_updates=True)

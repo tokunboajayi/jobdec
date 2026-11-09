@@ -92,3 +92,45 @@ def test_ats_gap_analyzer():
     assert "ATS Keyword Heatmap" in res["telegram_summary"]
     assert "CompTIA Security+" in res["telegram_summary"] or "Active Directory" in res["telegram_summary"]
 
+
+def test_pinned_status_state_and_keyboard():
+    from telegram_bot_service import (
+        get_smart_keyboard,
+        format_status_message,
+        save_pinned_status_info,
+        load_pinned_status_info,
+        PINNED_STATUS_FILE
+    )
+    # Test keyboard generation contains pin live status button
+    m = {
+        "total_applied": 1074,
+        "today_applied": 15,
+        "is_running": False,
+        "worker_count": 0,
+        "total_mem_mb": 120,
+        "avail_gb": 16.0,
+        "unapplied_count": 1400,
+        "current_target": ""
+    }
+    kb = get_smart_keyboard(m)
+    found_pin_btn = False
+    for row in kb.inline_keyboard:
+        for btn in row:
+            if btn.callback_data == "btn_pin_status":
+                found_pin_btn = True
+                break
+    assert found_pin_btn, "btn_pin_status must be present in keyboard"
+
+    # Test state persistence
+    test_chat = 123456789
+    test_msg = 987654321
+    save_pinned_status_info(test_chat, test_msg)
+    loaded = load_pinned_status_info()
+    assert loaded.get("chat_id") == test_chat
+    assert loaded.get("message_id") == test_msg
+
+    # Cleanup test file
+    if PINNED_STATUS_FILE.exists():
+        PINNED_STATUS_FILE.unlink(missing_ok=True)
+
+
