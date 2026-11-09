@@ -1,83 +1,83 @@
 {
   "version": "1.0",
-  "last_updated": "2026-11-08T18:40:23.044023",
+  "last_updated": "2026-11-08T21:35:44.452677",
   "learned_keyword_weights": {
     "iam": {
-      "active directory": 3.0,
-      "entra id": 3.0,
-      "azure ad": 3.0,
+      "active directory": 3.05,
+      "entra id": 3.05,
+      "azure ad": 3.05,
       "gpo": 2.5,
       "group policy": 2.5,
-      "powershell": 2.8,
-      "identity": 3.4,
-      "access management": 3.35,
-      "provisioning": 2.5,
+      "powershell": 2.85,
+      "identity": 3.5,
+      "access management": 3.4,
+      "provisioning": 2.6,
       "deprovisioning": 2.5,
-      "lifecycle": 2.2,
+      "lifecycle": 2.3,
       "least privilege": 2.2,
       "rbac": 2.2,
-      "sso": 2.0,
+      "sso": 2.1,
       "pam": 2.0,
-      "okta": 2.85,
-      "security+": 2.0
+      "okta": 2.95,
+      "security+": 2.05
     },
     "soc_analyst": {
-      "sentinel": 3.05,
+      "sentinel": 3.1,
       "azure sentinel": 3.0,
-      "siem": 3.0,
-      "incident response": 2.9,
-      "threat detection": 2.8,
+      "siem": 3.1,
+      "incident response": 3.1,
+      "threat detection": 2.85,
       "wireshark": 2.8,
       "packet analysis": 2.8,
       "alert tuning": 2.5,
-      "mitre att&ck": 2.5,
-      "nist csf": 2.5,
-      "phishing": 2.2,
-      "threat modeling": 2.2,
-      "security+": 2.5,
-      "soc": 2.6,
-      "investigation": 2.0,
-      "triage": 2.0
+      "mitre att&ck": 2.55,
+      "nist csf": 2.55,
+      "phishing": 2.3,
+      "threat modeling": 2.25,
+      "security+": 2.55,
+      "soc": 2.8,
+      "investigation": 2.2,
+      "triage": 2.15
     },
     "it_support": {
-      "technical support": 3.05,
-      "troubleshooting": 3.0,
-      "hardware": 2.5,
-      "pos": 2.5,
+      "technical support": 3.1,
+      "troubleshooting": 3.15,
+      "hardware": 2.65,
+      "pos": 2.65,
       "software configuration": 2.5,
       "client support": 2.5,
       "active directory": 2.5,
       "account access": 2.5,
-      "ticketing": 2.2,
+      "ticketing": 2.25,
       "sop": 2.0,
-      "endpoint": 2.2,
-      "windows": 2.2,
-      "linux": 2.0,
+      "endpoint": 2.25,
+      "windows": 2.3,
+      "linux": 2.1,
       "diagnostic": 2.2,
-      "documentation": 2.0
+      "documentation": 2.15
     },
     "cloud_sec_sysadmin": {
-      "linux": 2.8,
+      "linux": 2.85,
       "windows server": 2.5,
-      "azure": 2.8,
+      "azure": 2.95,
       "vmware": 2.5,
       "powershell": 2.5,
       "bash": 2.5,
-      "python": 2.5,
-      "infrastructure": 2.25,
-      "automation": 2.5,
+      "python": 2.6,
+      "infrastructure": 2.55,
+      "automation": 2.6,
       "endpoint": 2.0,
-      "cloud security": 2.55,
+      "cloud security": 2.7,
       "systems administration": 2.5
     },
     "network_sec": {
       "network defense": 3.0,
       "wireshark": 3.0,
       "packet analysis": 3.0,
-      "firewall": 2.5,
+      "firewall": 2.55,
       "tcp/ip": 2.5,
       "dns": 2.0,
-      "vpn": 2.2,
+      "vpn": 2.25,
       "ethical hacking": 2.5,
       "security+": 2.5
     },
@@ -16326,35 +16326,974 @@
       ],
       "outcome": "applied",
       "timestamp": "2026-11-08T18:40:23.044023"
+    },
+    "Five9_Data_Center_Engineer_in_Santa_Clara_CA_United_States_Remote": {
+      "company": "Five9",
+      "role": "Data Center Engineer (in Santa Clara, CA) [United States (Remote)]",
+      "domain": "it_support",
+      "keywords": [
+        "troubleshooting",
+        "hardware",
+        "pos",
+        "windows",
+        "linux",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:23:45.052683"
+    },
+    "ZoomInfo_IAM_Systems_Administrator_II_Bethesda_Maryland_United_States_": {
+      "company": "ZoomInfo",
+      "role": "IAM Systems Administrator II [Bethesda, Maryland, United States; Waltham, Massachusetts, United States]",
+      "domain": "iam",
+      "keywords": [
+        "active directory",
+        "entra id",
+        "azure ad",
+        "powershell",
+        "identity",
+        "provisioning",
+        "lifecycle",
+        "sso",
+        "okta",
+        "security+"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          1,
+          2
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Identity & Access",
+        "Technical",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:23:46.002177"
+    },
+    "Cribl_Facility_Security_Officer_Remote_United_States": {
+      "company": "Cribl",
+      "role": "Facility Security Officer [Remote - United States]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "infrastructure"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          2,
+          1
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:23:47.304843"
+    },
+    "Chainguard_Security_Analyst_Governance_and_Trust_United_States_Remote": {
+      "company": "Chainguard",
+      "role": "Security Analyst, Governance and Trust [United States - Remote]",
+      "domain": "soc_analyst",
+      "keywords": [],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:24:07.995141"
+    },
+    "Five9_Data_Center_Technician_in_Santa_Clara_CA_United_States_Remote": {
+      "company": "Five9",
+      "role": "Data Center Technician (in Santa Clara, CA) [United States (Remote)]",
+      "domain": "it_support",
+      "keywords": [
+        "troubleshooting",
+        "hardware",
+        "pos",
+        "windows",
+        "linux",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          3,
+          2
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:24:14.234269"
+    },
+    "Databricks_Deputy_Facility_Security_Officer_Washington_D_C": {
+      "company": "Databricks",
+      "role": "Deputy Facility Security Officer [Washington, D.C.]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "soc"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:24:18.798681"
+    },
+    "Five9_Network_Engineer_II_United_States_Remote": {
+      "company": "Five9",
+      "role": "Network Engineer II [United States (Remote)]",
+      "domain": "network_sec",
+      "keywords": [
+        "firewall",
+        "vpn"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          2,
+          1
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Technical",
+        "Identity & Access",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:24:42.225864"
+    },
+    "Elastic_Okta_Identity_Engineer_United_States": {
+      "company": "Elastic",
+      "role": "Okta Identity Engineer [United States]",
+      "domain": "iam",
+      "keywords": [
+        "identity",
+        "access management",
+        "provisioning",
+        "lifecycle",
+        "sso",
+        "okta"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          1,
+          2
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Identity & Access",
+        "Technical",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:24:48.326988"
+    },
+    "AbnormalSecurity_Application_Security_Engineer_II_Remote_USA": {
+      "company": "AbnormalSecurity",
+      "role": "Application Security Engineer II [Remote - USA]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "soc"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:25:07.855239"
+    },
+    "Samsara_Security_Operations_Engineer_I_Remote_CA": {
+      "company": "Samsara",
+      "role": "Security Operations Engineer I [Remote - CA]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "siem",
+        "incident response",
+        "phishing",
+        "soc",
+        "investigation",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:25:16.484849"
+    },
+    "AbnormalSecurity_Compliance_Trust_Analyst_Remote_USA": {
+      "company": "AbnormalSecurity",
+      "role": "Compliance Trust Analyst [Remote - USA]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "nist csf"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:25:23.686086"
+    },
+    "AbnormalSecurity_Threat_Researcher_Remote_USA": {
+      "company": "AbnormalSecurity",
+      "role": "Threat Researcher [Remote - USA]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "incident response",
+        "mitre att&ck",
+        "phishing",
+        "security+",
+        "soc",
+        "investigation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:25:40.253479"
+    },
+    "Stripe_Cloud_Security_Engineer_Seattle": {
+      "company": "Stripe",
+      "role": "Cloud Security Engineer [Seattle]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "linux",
+        "azure",
+        "infrastructure",
+        "automation",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:25:56.811918"
+    },
+    "Stripe_IT_Support_Engineer_San_Francisco": {
+      "company": "Stripe",
+      "role": "IT Support Engineer [San Francisco]",
+      "domain": "it_support",
+      "keywords": [
+        "technical support",
+        "troubleshooting",
+        "hardware",
+        "pos",
+        "ticketing",
+        "endpoint",
+        "documentation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          3,
+          2
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Operations",
+        "Identity & Access",
+        "Security"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:26:28.475374"
+    },
+    "Stripe_Offensive_Security_Engineer_US_Remote": {
+      "company": "Stripe",
+      "role": "Offensive Security Engineer [US - Remote]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "python",
+        "infrastructure",
+        "automation",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:26:58.634193"
+    },
+    "Stripe_People_Operations_Specialist_HR_Compliance_Chicago_US_Remote": {
+      "company": "Stripe",
+      "role": "People Operations Specialist, HR Compliance [Chicago, US-Remote]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "infrastructure"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:27:29.113086"
+    },
+    "Stripe_Security_Analyst_US_Remote": {
+      "company": "Stripe",
+      "role": "Security Analyst [US Remote]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "sentinel",
+        "siem",
+        "incident response",
+        "threat detection",
+        "investigation",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:27:59.117416"
+    },
+    "Stripe_Security_Engineer_US_Remote": {
+      "company": "Stripe",
+      "role": "Security Engineer [US Remote]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "python",
+        "infrastructure"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:28:29.777054"
+    },
+    "Stripe_Security_Engineer_Bridge_SF_New_York_Seattle": {
+      "company": "Stripe",
+      "role": "Security Engineer, Bridge [SF, New York, Seattle]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "infrastructure"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:28:59.747536"
+    },
+    "Stripe_Security_Engineer_Privy_NYC_Privy": {
+      "company": "Stripe",
+      "role": "Security Engineer, Privy [NYC-Privy]",
+      "domain": "soc_analyst",
+      "keywords": [
+        "incident response",
+        "investigation",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:29:29.588897"
+    },
+    "Tenable_Information_Security_Engineer": {
+      "company": "Tenable",
+      "role": "Information Security Engineer",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:35:44.452677"
     }
   },
   "domain_stats": {
     "iam": {
-      "applied": 2,
+      "applied": 4,
       "interviews": 1,
       "assessments": 0,
       "confirmations": 0
     },
     "soc_analyst": {
-      "applied": 2,
+      "applied": 10,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
     },
     "it_support": {
-      "applied": 1,
+      "applied": 4,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
     },
     "cloud_sec_sysadmin": {
-      "applied": 1,
+      "applied": 8,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
     },
     "network_sec": {
-      "applied": 0,
+      "applied": 1,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0

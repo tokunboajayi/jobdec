@@ -116,6 +116,10 @@ def parse_queue(queue_path: pathlib.Path) -> List[Dict[str, Any]]:
         return []
     jobs = RE.parse_queue_file(queue_path)
     for j in jobs:
+        if j.get("url") and "greenhouse.io" in j["url"]:
+            m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", j["url"])
+            if m_gh:
+                j["url"] = f"https://job-boards.greenhouse.io/embed/job_app?for={m_gh.group(1)}&token={m_gh.group(2)}"
         if j["resume"] and not (ROOT / j["resume"]).exists():
             j["resume"] = None
     return jobs

@@ -2066,7 +2066,7 @@ def page_state(page):
         return "done"
     if re.search(r"page you are looking for doesn't exist|job is no longer available|position has been closed|this job has expired|no longer accepting applications|job requisition is closed|posting is no longer active|this posting has closed", body, re.I):
         return "closed"
-    if "error=true" in u or (("greenhouse.io" in u or "boards.greenhouse.io" in u) and not any(k in u for k in ["/jobs/", "/applications/"])):
+    if "error=true" in u or (("greenhouse.io" in u or "boards.greenhouse.io" in u) and not any(k in u for k in ["/jobs/", "/applications/", "job_app", "embed"])):
         return "closed"
 
     # Allow form elements a brief moment to mount if still loading
@@ -2137,6 +2137,12 @@ def main():
     ap.add_argument("--block-assets", action="store_true", default=True, help="Block heavy images/media and tracking scripts for 3x speedup")
     ap.add_argument("--no-block-assets", action="store_false", dest="block_assets", help="Disable asset blocking")
     a = ap.parse_args()
+
+    # Normalize Greenhouse URLs to direct embed application endpoint (bypasses marketing wrappers & captchas)
+    if "greenhouse.io" in a.url:
+        m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", a.url)
+        if m_gh:
+            a.url = f"https://job-boards.greenhouse.io/embed/job_app?for={m_gh.group(1)}&token={m_gh.group(2)}"
     auto = not a.review
     resume = (ROOT / a.resume).resolve() if a.resume and not pathlib.Path(a.resume).is_absolute() else (pathlib.Path(a.resume) if a.resume else None)
     if resume and not resume.exists(): sys.exit(f"Resume not found: {resume}")
