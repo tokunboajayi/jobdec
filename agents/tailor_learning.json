@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-11-08T21:35:44.452677",
+  "last_updated": "2026-11-08T22:08:45.834144",
   "learned_keyword_weights": {
     "iam": {
       "active directory": 3.05,
@@ -57,9 +57,9 @@
       "documentation": 2.15
     },
     "cloud_sec_sysadmin": {
-      "linux": 2.85,
+      "linux": 2.9,
       "windows server": 2.5,
-      "azure": 2.95,
+      "azure": 3.1,
       "vmware": 2.5,
       "powershell": 2.5,
       "bash": 2.5,
@@ -67,7 +67,7 @@
       "infrastructure": 2.55,
       "automation": 2.6,
       "endpoint": 2.0,
-      "cloud security": 2.7,
+      "cloud security": 2.85,
       "systems administration": 2.5
     },
     "network_sec": {
@@ -17265,6 +17265,136 @@
       ],
       "outcome": "applied",
       "timestamp": "2026-11-08T21:35:44.452677"
+    },
+    "Canonical_Linux_Cryptography_and_Security_Engineer_Home_based_Worldwid": {
+      "company": "Canonical",
+      "role": "Linux Cryptography and Security Engineer [Home based - Worldwide]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "linux",
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T21:59:29.599054"
+    },
+    "Canonical_Security_Risk_Management_Specialist_Home_based_Worldwide": {
+      "company": "Canonical",
+      "role": "Security Risk Management Specialist [Home based - Worldwide]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T22:04:01.204774"
+    },
+    "Canonical_Ubuntu_Security_Engineer_Home_based_Worldwide": {
+      "company": "Canonical",
+      "role": "Ubuntu Security Engineer [Home based - Worldwide]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-08T22:08:45.834144"
     }
   },
   "domain_stats": {
@@ -17287,7 +17417,7 @@
       "confirmations": 0
     },
     "cloud_sec_sysadmin": {
-      "applied": 8,
+      "applied": 11,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0

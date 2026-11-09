@@ -1901,9 +1901,18 @@ def _upsert_applied_row(path, target_url, company, role, resume):
         r_u = ""
         t_u = ""
         if r.get("Job URL") and target_url:
-            r_u = re.sub(r"^https?://", "", r["Job URL"]).split("?")[0].strip().rstrip("/")
-            t_u = re.sub(r"^https?://", "", target_url).split("?")[0].strip().rstrip("/")
-            if r_u and t_u and (r_u == t_u or r_u in t_u or t_u in r_u):
+            def _clean_job_url(u):
+                if not u: return ""
+                u_c = re.sub(r"^https?://", "", u).strip().rstrip("/")
+                if "embed" in u_c or "token=" in u_c or "gh_jid=" in u_c:
+                    # Strip tracking parameters only; preserve unique job tokens
+                    u_c = re.sub(r"[?&](utm_[^&]+|ref=[^&]+|gh_src=[^&]+)", "", u_c)
+                    return u_c.rstrip("?&")
+                return u_c.split("?")[0].rstrip("/")
+
+            r_u = _clean_job_url(r["Job URL"])
+            t_u = _clean_job_url(target_url)
+            if r_u and t_u and (r_u == t_u or (("embed" not in r_u and "token=" not in r_u) and (r_u in t_u or t_u in r_u))):
                 if "completed" not in r_u.lower() and "jobtasks" not in r_u.lower():
                     url_matches = True
 
