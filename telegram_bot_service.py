@@ -11,7 +11,7 @@ import csv
 import json
 import glob
 import subprocess
-from datetime import datetime, date
+from datetime import datetime, date, time
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -28,6 +28,21 @@ from telegram.ext import (
 )
 
 import telegram_query_engine
+from agents.telegram_visuals import (
+    find_latest_tailored_resume,
+    find_latest_tailored_letter,
+    render_pdf_to_image_bytes,
+    capture_active_worker_screenshot,
+)
+from agents.voice_transcriber import transcribe_voice_bytes
+from agents.interview_simulator import (
+    start_interview_session,
+    evaluate_and_advance_interview,
+    is_in_interview,
+    INTERVIEW_SESSIONS,
+)
+from agents.offer_negotiator import analyze_offer_and_strategize
+from agents.ats_gap_analyzer import analyze_ats_gap
 
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
@@ -226,6 +241,20 @@ def get_smart_keyboard(metrics=None):
     ]
     keyboard.append(row4)
 
+    # Row 5: Quick-View Resume & Live Screen Cam
+    row5 = [
+        InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
+        InlineKeyboardButton("📸 Screen Cam", callback_data="btn_view"),
+    ]
+    keyboard.append(row5)
+
+    # Row 6: Live Dynamic HUD & AI Mock Interview
+    row6 = [
+        InlineKeyboardButton("📡 Live Dynamic HUD", callback_data="btn_hud"),
+        InlineKeyboardButton("🎙️ Mock Interview", callback_data="btn_interview"),
+    ]
+    keyboard.append(row6)
+
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -284,7 +313,7 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     return "\n".join(lines)
 
 
-def launch_runner(workers=None, queue="queue_cyber_iam.txt"):
+def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
     # Clear stale lock files before launching
     for lock in ROOT.glob(".batch_apply*.lock"):
         try:
@@ -307,7 +336,9 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt"):
         "--workers", str(target_w),
         "--adaptive",
         "--no-triage",
-        "--resume", "resumes/resume.pdf"
+        "--use-tailored",
+        "--resume", "resumes/Candidate_Resume.pdf",
+        "--delay", str(delay)
     ]
     subprocess.Popen(cmd, cwd=str(ROOT))
 
@@ -529,10 +560,27 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != AUTHORIZED_USER_ID:
         return
     text = (
-        "👋 <b>Welcome to Job Deck Dynamic AI Control!</b>\n\n"
-        "• <b>Live Adaptive Buttons:</b> Automatically shift based on active workers and pending tasks.\n"
-        "• <b>Conversational AI:</b> Ask anything about your applications, stats, or target companies.\n"
-        "• <b>Real-Time Screening:</b> Known facts are auto-resolved silently; novel personal questions appear right here!"
+        "👋 <b>Welcome to Job Deck Autonomous Headquarters!</b>\n\n"
+        "⚡ <b>Autonomous Speed & Workers:</b>\n"
+        "• <code>/apply</code> or <code>run</code> — Launch 3 workers with auto-scaling\n"
+        "• <code>/turbo</code> — Max velocity (4 workers, fast 1.0s delay)\n"
+        "• <code>/stealth</code> — Ultra-stealth human emulation (8s jitter)\n"
+        "• <code>/stop</code> or <code>/nuke</code> — Immediate pause / emergency kill\n\n"
+        "📄 <b>Tailored Documents & Screen Cam:</b>\n"
+        "• <code>/resume [Company]</code> — Quick-view tailored resume (photo preview, no download!)\n"
+        "• <code>/letter [Company]</code> — Quick-view tailored cover letter\n"
+        "• <code>/view</code> or <code>/snap</code> — Live screenshot of active browser window\n"
+        "• <code>/hud</code> or <code>/ticker</code> — Single-message live dynamic ticker\n\n"
+        "🎯 <b>Auto-Apply & Radar:</b>\n"
+        "• Paste any job URL directly — Auto-applies on the spot\n"
+        "• <code>/inbox</code> — Urgent recruiter replies & interview alerts\n"
+        "• <code>/gap [Company]</code> — ATS keyword heatmap & missing skills\n"
+        "• <code>/prep [Company]</code> — Complete Interview Battlecard\n"
+        "• <code>/radar [Company]</code> — Recruiter & warm referral dossiers\n\n"
+        "🎙️ <b>AI Mock Interview & Negotiation:</b>\n"
+        "• <code>/interview [Company]</code> — Interactive technical mock interview (Voice or Text!)\n"
+        "• <code>/negotiate [Details]</code> — Market salary counter-offer packages\n"
+        "• 🗣️ <i>Send any voice memo to execute commands hands-free!</i>"
     )
     m = get_realtime_metrics()
     await update.message.reply_text(text, reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
@@ -689,6 +737,252 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             parse_mode=ParseMode.HTML
         )
 
+    elif data == "btn_resume":
+        await send_quickview_doc(query.message, context, is_letter=False)
+
+    elif data == "btn_view":
+        await send_screen_cam(query.message, context)
+
+    elif data == "btn_hud":
+        await handle_live_hud(query.message, context)
+
+    elif data == "btn_interview":
+        session_text = start_interview_session(query.message.chat_id, "Target Employer", "Cybersecurity Specialist")
+        await safe_reply(query.message, session_text)
+
+    elif data.startswith("dl_pdf:"):
+        pdf_path_str = data.split(":", 1)[1]
+        pdf_p = Path(pdf_path_str)
+        if pdf_p.exists():
+            with open(pdf_p, "rb") as f:
+                await query.message.reply_document(
+                    document=f,
+                    caption=f"📄 <b>Document:</b> <code>{pdf_p.name}</code>",
+                    parse_mode=ParseMode.HTML
+                )
+        else:
+            await query.message.reply_text("❌ PDF file not found on disk.")
+
+
+async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_letter: bool = False, query_comp: str = ""):
+    """Renders the first page of a tailored PDF to PNG image for instant mobile preview without downloading."""
+    comp = query_comp.strip() if query_comp else None
+    finder = find_latest_tailored_letter if is_letter else find_latest_tailored_resume
+    pdf_path = finder(comp)
+    if not pdf_path or not pdf_path.exists():
+        await safe_reply(target_msg, f"❌ No tailored {'cover letter' if is_letter else 'resume'} found" + (f" for '{comp}'." if comp else "."))
+        return
+
+    doc_type = "Cover Letter" if is_letter else "Tailored Resume"
+    try:
+        img_bytes = render_pdf_to_image_bytes(pdf_path)
+        co_display = pdf_path.parent.name.replace("_", " ") if pdf_path.parent.name != "resumes" else "Master Candidate"
+        caption = (
+            f"📄 <b>Quick-View {doc_type}:</b> <code>{co_display}</code>\n"
+            f"🎯 <i>Tap photo above to view full-screen without downloading!</i>"
+        )
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📥 Download PDF File", callback_data=f"dl_pdf:{pdf_path}")]
+        ])
+        await target_msg.reply_photo(
+            photo=img_bytes,
+            caption=caption,
+            parse_mode=ParseMode.HTML,
+            reply_markup=keyboard
+        )
+    except Exception as e:
+        with open(pdf_path, "rb") as f:
+            await target_msg.reply_document(
+                document=f,
+                caption=f"📄 <b>{doc_type}</b> ({pdf_path.name})",
+                parse_mode=ParseMode.HTML
+            )
+
+
+async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
+    """Captures and sends an instant screenshot of the active browser viewport."""
+    snap = capture_active_worker_screenshot()
+    if not snap:
+        await safe_reply(target_msg, "📸 <i>No active browser page or recent snapshot available to capture.</i>")
+        return
+    img_bytes, caption = snap
+    await target_msg.reply_photo(
+        photo=img_bytes,
+        caption=f"{caption}\n<i>⚡ Live view from active Playwright worker</i>",
+        parse_mode=ParseMode.HTML
+    )
+
+
+async def handle_live_hud(target_msg, context: ContextTypes.DEFAULT_TYPE):
+    """Initializes a live updating single-message ticker."""
+    m = get_realtime_metrics()
+    hud_text = (
+        "📡 <b>[AJ Dynamic HUD] Connecting to live runner...</b>\n\n"
+        f"⚡ <b>Runner:</b> {'🟢 ACTIVE' if m['is_running'] else '⚪ IDLE'}\n"
+        f"📊 <b>Today:</b> +{m['today_applied']} applied | Total: {m['total_applied']}/3000\n"
+        f"🧠 <b>Memory:</b> {m['total_mem_mb']}MB RSS ({m.get('avail_gb', 0):.1f}GB free)\n\n"
+        f"<i>Updating live every 4 seconds...</i>"
+    )
+    sent_msg = await target_msg.reply_text(hud_text, parse_mode=ParseMode.HTML)
+    if context.job_queue:
+        context.job_queue.run_repeating(
+            _update_hud_tick,
+            interval=4.0,
+            first=2.0,
+            data={"chat_id": target_msg.chat_id, "message_id": sent_msg.message_id, "ticks": 0}
+        )
+
+
+async def _update_hud_tick(context: ContextTypes.DEFAULT_TYPE):
+    """Periodic tick updater for live dynamic HUD message."""
+    data = context.job.data
+    chat_id = data["chat_id"]
+    msg_id = data["message_id"]
+    data["ticks"] += 1
+
+    # Auto-stop ticker after 15 ticks (~60 seconds) to conserve resources
+    if data["ticks"] > 15:
+        context.job.schedule_removal()
+        return
+
+    m = get_realtime_metrics()
+    now_str = datetime.now().strftime("%I:%M:%S %p")
+    target_str = f"📍 <b>Target:</b> <i>{m['current_target']}</i>\n" if m.get("current_target") else ""
+    
+    hud_text = (
+        f"📡 <b>[AJ Dynamic HUD — Live Ticker]</b> <i>({now_str})</i>\n\n"
+        f"⚡ <b>Runner:</b> {'🟢 ' + str(m['worker_count']) + ' Workers Active' if m['is_running'] else '⚪ Idle'}\n"
+        f"{target_str}"
+        f"📊 <b>Today:</b> <b>+{m['today_applied']}</b> applied | Total: <b>{m['total_applied']} / 3000</b>\n"
+        f"🧠 <b>System Health:</b> {m['total_mem_mb']}MB RAM | {m.get('avail_gb', 0):.1f}GB headroom\n"
+        f"📋 <b>Queue:</b> {m['unapplied_count']} unapplied roles\n\n"
+        f"<i>Tick {data['ticks']}/15 • Live dynamic updates</i>"
+    )
+    try:
+        await context.bot.edit_message_text(
+            chat_id=chat_id,
+            message_id=msg_id,
+            text=hud_text,
+            parse_mode=ParseMode.HTML
+        )
+    except Exception:
+        pass
+
+
+async def handle_url_drop(url: str, target_msg, context: ContextTypes.DEFAULT_TYPE):
+    """Handles an instant URL drop, canonicalizes Greenhouse embeds, and launches isolated priority worker."""
+    import re
+    clean_url = url.strip()
+    m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", clean_url)
+    if m_gh:
+        board, token = m_gh.groups()
+        canonical_url = f"https://job-boards.greenhouse.io/embed/job_app?for={board}&token={token}"
+        comp_name = board.capitalize()
+    else:
+        canonical_url = clean_url
+        comp_name = "Target Employer"
+
+    await safe_reply(
+        target_msg,
+        f"🎯 <b>Auto-Apply Triggered!</b>\n"
+        f"<b>Employer:</b> {comp_name}\n"
+        f"<b>URL:</b> <code>{canonical_url}</code>\n\n"
+        f"⚡ <i>Launching isolated priority worker in headless mode...</i>"
+    )
+
+    cmd = [
+        str(ROOT / ".venv" / "Scripts" / "python.exe"),
+        str(ROOT / "fill.py"),
+        canonical_url,
+        "--headless",
+        "--company", comp_name,
+        "--resume", "resumes/Candidate_Resume.pdf"
+    ]
+    subprocess.Popen(cmd, cwd=str(ROOT))
+
+
+async def send_daily_morning_brief(context: ContextTypes.DEFAULT_TYPE):
+    """Delivers an executive morning brief at 8:00 AM daily."""
+    m = get_realtime_metrics()
+    today_applied = m["today_applied"]
+    total = m["total_applied"]
+    unapplied = m["unapplied_count"]
+    now_str = datetime.now().strftime("%A, %B %d, %Y")
+
+    brief = (
+        f"🌅 <b>GOOD MORNING MICHAEL — EXECUTIVE BRIEFING</b>\n"
+        f"📅 <i>{now_str}</i>\n"
+        f"─────────────────────────────\n"
+        f"🎯 <b>Milestone Progress:</b> <b>{total} / 3000</b> ({(total/3000)*100:.1f}%)\n"
+        f"⚡ <b>Verified Submissions (Today):</b> +{today_applied}\n"
+        f"📋 <b>Queue Inventory:</b> {unapplied} unapplied cybersecurity & IAM roles ready\n\n"
+        f"🛡️ <b>Recommended Morning Actions:</b>\n"
+        f"• Tap <code>/apply</code> or <b>[🚀 Launch 3 Workers]</b> to kick off submissions.\n"
+        f"• Type <code>/inbox</code> to review recruiter responses or assessment requests.\n"
+        f"• Type <code>/interview &lt;Company&gt;</code> to run a 5-minute mock interview screen."
+    )
+    try:
+        await context.bot.send_message(
+            chat_id=AUTHORIZED_USER_ID,
+            text=brief,
+            reply_markup=get_smart_keyboard(m),
+            parse_mode=ParseMode.HTML
+        )
+    except Exception as e:
+        print(f"[Morning Briefing Error] {e}", flush=True)
+
+
+async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
+    """Periodic recruiter radar: checks for urgent interview invitations or assessments."""
+    try:
+        m = get_realtime_metrics()
+        inbox = m.get("inbox_actions", [])
+        if inbox:
+            urgent_items = "\n".join(f"• {item}" for item in inbox[:5])
+            alert = (
+                f"🚨 <b>RECRUITER & INTERVIEW RADAR ALERT</b>\n\n"
+                f"{urgent_items}\n\n"
+                f"💡 <i>Type /prep &lt;Company&gt; for an instant Interview Battlecard!</i>"
+            )
+            await context.bot.send_message(
+                chat_id=AUTHORIZED_USER_ID,
+                text=alert,
+                parse_mode=ParseMode.HTML
+            )
+    except Exception:
+        pass
+
+
+async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Voice Memo Control: downloads Telegram voice note, transcribes via Google Web Speech, and executes."""
+    if update.effective_user.id != AUTHORIZED_USER_ID:
+        return
+    if not update.message or not update.message.voice:
+        return
+
+    status_msg = await update.message.reply_text("🎙️ <i>Transcribing voice memo...</i>", parse_mode=ParseMode.HTML)
+    try:
+        voice_file = await update.message.voice.get_file()
+        voice_bytes = await voice_file.download_as_bytearray()
+        transcribed_text = transcribe_voice_bytes(bytes(voice_bytes))
+        await safe_delete_message(context.bot, update.effective_chat.id, status_msg.message_id)
+
+        if not transcribed_text:
+            await update.message.reply_text(
+                "⚠️ <i>Could not transcribe audio clearly. Please try speaking closer or send a text command.</i>",
+                parse_mode=ParseMode.HTML
+            )
+            return
+
+        await update.message.reply_text(
+            f"🗣️ <b>Voice Command Heard:</b> <i>\"{transcribed_text}\"</i>",
+            parse_mode=ParseMode.HTML
+        )
+        update.message.text = transcribed_text
+        await handle_text(update, context)
+    except Exception as e:
+        await safe_reply(update.message, f"⚠️ Voice memo error: {e}")
+
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != AUTHORIZED_USER_ID:
@@ -696,6 +990,99 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text or ""
     t_lower = text.strip().lower()
+
+    # Priority 0: Active Mock Interview Session
+    if is_in_interview(update.effective_chat.id):
+        if t_lower in ["/exit", "exit", "/quit", "quit", "cancel", "stop", "/stop"]:
+            INTERVIEW_SESSIONS.pop(update.effective_chat.id, None)
+            await safe_reply(update.message, "🚪 <b>Mock interview session cancelled.</b> Type <code>/interview &lt;Company&gt;</code> anytime to restart!")
+            return
+        eval_text = evaluate_and_advance_interview(update.effective_chat.id, text)
+        await safe_reply(update.message, eval_text)
+        return
+
+    # Priority 1: Instant URL Drop & Auto-Apply
+    if text.startswith("http://") or text.startswith("https://") or t_lower.startswith("/add") or t_lower.startswith("add:"):
+        url = text.split(":", 1)[1].strip() if (t_lower.startswith("add:") or t_lower.startswith("/add")) else text.strip()
+        await handle_url_drop(url, update.message, context)
+        return
+
+    # Priority 2: Quick-View Resume & Cover Letter
+    elif t_lower.startswith("/resume") or t_lower.startswith("resume:") or t_lower.startswith("/cv") or t_lower == "resume":
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        comp = parts[1].strip() if len(parts) > 1 else ""
+        await send_quickview_doc(update.message, context, is_letter=False, query_comp=comp)
+        return
+    elif t_lower.startswith("/letter") or t_lower.startswith("letter:") or t_lower.startswith("/cl") or t_lower == "letter":
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        comp = parts[1].strip() if len(parts) > 1 else ""
+        await send_quickview_doc(update.message, context, is_letter=True, query_comp=comp)
+        return
+
+    # Priority 3: Dynamic Live HUD Ticker
+    elif t_lower in ["/hud", "hud", "/ticker", "ticker", "live"]:
+        await handle_live_hud(update.message, context)
+        return
+
+    # Priority 4: Live Headless Screen Cam
+    elif t_lower in ["/view", "view", "/snap", "snap", "/screenshot", "screenshot"]:
+        await send_screen_cam(update.message, context)
+        return
+
+    # Priority 5: AI Mock Interviewer Initiation
+    elif t_lower.startswith("/interview") or t_lower.startswith("interview:") or t_lower.startswith("/mock") or t_lower.startswith("mock:"):
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
+        prompt = start_interview_session(update.effective_chat.id, comp, "Cybersecurity Specialist")
+        await safe_reply(update.message, prompt)
+        return
+
+    # Priority 6: Autonomous Compensation & Offer Negotiator
+    elif t_lower.startswith("/negotiate") or t_lower.startswith("negotiate:") or t_lower.startswith("/offer") or t_lower.startswith("offer:"):
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        rest = parts[1].strip() if len(parts) > 1 else "Axon $85,000 US"
+        subparts = rest.split()
+        comp = subparts[0] if len(subparts) > 0 else "Employer"
+        amount = subparts[1] if len(subparts) > 1 else "$85,000"
+        loc = " ".join(subparts[2:]) if len(subparts) > 2 else "US"
+        strat = analyze_offer_and_strategize(comp, amount, loc)
+        await safe_reply(update.message, strat["telegram_summary"])
+        return
+
+    # Priority 7: ATS Keyword Gap & Resume Heatmap
+    elif t_lower.startswith("/gap") or t_lower.startswith("gap:") or t_lower.startswith("/heatmap") or t_lower.startswith("heatmap:"):
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
+        gap_res = analyze_ats_gap(comp, "Cybersecurity Specialist")
+        await safe_reply(update.message, gap_res["telegram_summary"])
+        return
+
+    # Priority 8: Speed Shifters (Turbo / Stealth / Nuke)
+    elif t_lower in ["/turbo", "turbo"]:
+        launch_runner(workers=4, delay=1.0)
+        m = get_realtime_metrics()
+        await safe_reply(update.message, "⚡ <b>TURBO VELOCITY ACTIVATED!</b> Launched 4 workers with 1.0s fast-fill delay.", reply_markup=get_smart_keyboard(m))
+        return
+    elif t_lower in ["/stealth", "stealth"]:
+        launch_runner(workers=1, delay=8.0)
+        m = get_realtime_metrics()
+        await safe_reply(update.message, "🕵️ <b>STEALTH MODE ACTIVATED!</b> Launched 1 worker with human jitter (8s delay).", reply_markup=get_smart_keyboard(m))
+        return
+    elif t_lower in ["/nuke", "nuke", "/halt", "halt"]:
+        stopped = halt_runner()
+        m = get_realtime_metrics()
+        await safe_reply(update.message, f"💥 <b>SYSTEM NUKED!</b> Halted {stopped} worker process(es) and purged lock files.", reply_markup=get_smart_keyboard(m))
+        return
+
+    # Priority 9: Recruiter Inbox Radar
+    elif t_lower in ["/inbox", "inbox"]:
+        m = get_realtime_metrics()
+        inbox = m.get("inbox_actions", [])
+        if not inbox:
+            await safe_reply(update.message, "✅ <b>No urgent recruiter actions pending in your inbox!</b>")
+        else:
+            await safe_reply(update.message, "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(f"• {item}" for item in inbox[:10]))
+        return
 
     if t_lower in ["clean", "/clean", "clear", "/clear", "clearchat", "/clearchat", "clean chat", "clear questions", "clean apps", "clean applications", "clear apps"]:
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
@@ -809,13 +1196,27 @@ def main():
     app.add_handler(CommandHandler(["clean", "clear", "clearchat", "cleanapps"], cmd_clean))
     app.add_handler(CommandHandler(["prep", "battlecard"], handle_text))
     app.add_handler(CommandHandler(["radar", "referrals", "referral"], handle_text))
+    app.add_handler(CommandHandler(["resume", "cv"], handle_text))
+    app.add_handler(CommandHandler(["letter", "cl", "coverletter"], handle_text))
+    app.add_handler(CommandHandler(["hud", "ticker"], handle_text))
+    app.add_handler(CommandHandler(["view", "snap", "screenshot"], handle_text))
+    app.add_handler(CommandHandler(["interview", "mock"], handle_text))
+    app.add_handler(CommandHandler(["negotiate", "offer"], handle_text))
+    app.add_handler(CommandHandler(["gap", "heatmap"], handle_text))
+    app.add_handler(CommandHandler(["turbo"], handle_text))
+    app.add_handler(CommandHandler(["stealth"], handle_text))
+    app.add_handler(CommandHandler(["nuke", "halt"], handle_text))
+    app.add_handler(CommandHandler(["inbox"], handle_text))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
+    app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 
     if app.job_queue:
         app.job_queue.run_repeating(send_3hour_update, interval=3 * 3600, first=3 * 3600)
         app.job_queue.run_repeating(sweep_expired_questions_job, interval=30, first=10)
-        print("[Job Deck Control Bot] 3-hour JobQueue and 30s Smart Deletion Sweeper scheduled.", flush=True)
+        app.job_queue.run_daily(send_daily_morning_brief, time=time(hour=8, minute=0, second=0))
+        app.job_queue.run_repeating(check_inbox_radar_job, interval=1800, first=60)
+        print("[Job Deck Control Bot] 3-hour Sweeper, 8:00 AM Morning Brief, and Recruiter Radar scheduled.", flush=True)
 
     print("[Job Deck Control Bot] Two-way polling active. Ready!", flush=True)
     app.run_polling(drop_pending_updates=True)
