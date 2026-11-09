@@ -2125,6 +2125,11 @@ def safe_input(prompt):
 
 
 def main():
+    try:
+        from agents.pc_optimizer import set_process_priority
+        set_process_priority(os.getpid(), priority="below_normal")
+    except Exception:
+        pass
     if os.environ.get("AF_DEADLINE", "").isdigit():  # batch run: log the stack 10s before the batch kills this job
         import faulthandler
         faulthandler.dump_traceback_later(max(30, int(os.environ["AF_DEADLINE"]) - 10), exit=False, file=sys.stdout)
@@ -2214,6 +2219,16 @@ def main():
                     "--disable-blink-features=AutomationControlled",
                     "--no-sandbox",
                     "--disable-infobars",
+                    "--disable-gpu",
+                    "--renderer-process-limit=2",
+                    "--disable-background-networking",
+                    "--disable-background-timer-throttling",
+                    "--disable-breakpad",
+                    "--disable-component-update",
+                    "--disable-domain-reliability",
+                    "--disable-sync",
+                    "--mute-audio",
+                    "--js-flags=--max-old-space-size=256",
                 ],
             )
             stealth_js = """

@@ -164,6 +164,16 @@ class StealthEngine:
             "--no-first-run",
             "--no-default-browser-check",
             "--password-store=basic",
+            "--disable-gpu",
+            "--renderer-process-limit=2",
+            "--disable-background-networking",
+            "--disable-background-timer-throttling",
+            "--disable-breakpad",
+            "--disable-component-update",
+            "--disable-domain-reliability",
+            "--disable-sync",
+            "--mute-audio",
+            "--js-flags=--max-old-space-size=256",
         ]
 
         # Use modern new headless mode if headless is requested

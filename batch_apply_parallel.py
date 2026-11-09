@@ -144,6 +144,12 @@ def run_logged_worker(cmd: List[str], timeout: int | float, log_path: pathlib.Pa
     with pids_lock:
         active_pids.append(proc.pid)
 
+    try:
+        from agents.pc_optimizer import set_process_priority
+        set_process_priority(proc.pid, priority="below_normal")
+    except Exception:
+        pass
+
     with open(log_path, "w", encoding="utf-8", errors="ignore") as log:
         def pump():
             if proc.stdout is not None:
@@ -207,6 +213,12 @@ def main():
     args = parser.parse_args()
 
     # Process concurrency lock: prevent multiple batch instances from clashing
+    try:
+        from agents.pc_optimizer import set_process_priority
+        set_process_priority(os.getpid(), priority="below_normal")
+    except Exception:
+        pass
+
     lock_file = HERE / ".batch_apply_parallel.lock"
     if lock_file.exists():
         try:
@@ -482,6 +494,15 @@ def main():
                 time.sleep(1.5)
                 continue
 
+            # PC Optimizer: courteous CPU throttling when user is active on the PC
+            try:
+                from agents.pc_optimizer import get_governor
+                backoff = get_governor().get_throttle_delay()
+                if backoff > 0:
+                    time.sleep(backoff)
+            except Exception:
+                pass
+
             job, idx, attempt_num, resume_to_use = item
             current_total = get_applied_count()
             c_norm = job["company"].strip().lower()
@@ -646,6 +667,12 @@ def main():
                 if c_norm:
                     with state_lock:
                         active_companies.discard(c_norm)
+                # PC Optimizer: Trim working set memory after every attempt
+                try:
+                    from agents.pc_optimizer import trim_process_memory
+                    trim_process_memory(os.getpid(), recursive=False)
+                except Exception:
+                    pass
 
             if not stop_flag:
                 time.sleep(random.uniform(args.delay, args.delay + 1.5))
@@ -657,6 +684,13 @@ def main():
         nonlocal current_target_workers, next_worker_id
         while not stop_flag:
             time.sleep(15)
+            # PC Optimizer: Purge orphaned zombie browsers & trim active memory
+            try:
+                from agents.pc_optimizer import purge_zombie_browsers, trim_process_memory
+                purge_zombie_browsers()
+                trim_process_memory(os.getpid(), recursive=True)
+            except Exception:
+                pass
             if not args.adaptive or stop_flag:
                 continue
             new_target = calculate_optimal_workers(args.min_workers, args.max_workers)

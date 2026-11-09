@@ -292,7 +292,7 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                 continue
 
             # Fetch email headers
-            _, h_rows = mail.uid("fetch", uid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE)])")
+            _, h_rows = mail.uid("fetch", uid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE MESSAGE-ID)])")
             if not h_rows or not isinstance(h_rows[0], tuple):
                 continue
 
@@ -300,6 +300,7 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
             sender = decode_str(hdr.get("From", ""))
             subject = decode_str(hdr.get("Subject", ""))
             date_raw = decode_str(hdr.get("Date", ""))
+            msg_id = decode_str(hdr.get("Message-ID", "")).strip("<> ")
             
             # Match application
             matched_app = find_matching_application(sender, subject, "", applications)
@@ -368,6 +369,12 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
 
             # If candidate was selected / advanced to next round, record for Telegram alert
             if decision["is_advancement"]:
+                import urllib.parse
+                if msg_id:
+                    email_link = f"https://mail.google.com/mail/u/0/#search/rfc822msgid%3A{urllib.parse.quote(msg_id)}"
+                else:
+                    email_link = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(comp + ' ' + role)}"
+
                 advancement_item = {
                     "company": comp,
                     "role": role,
@@ -376,7 +383,8 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                     "deadline": deadline_str,
                     "decision_timestamp": dec_timestamp,
                     "subject": subject,
-                    "sender": sender
+                    "sender": sender,
+                    "email_link": email_link
                 }
                 new_advancements.append(advancement_item)
 
@@ -401,6 +409,7 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
 
     ts = adv.get("decision_timestamp") or datetime.datetime.now().strftime("%b %d, %Y %I:%M %p")
     deadline = adv.get("deadline") or "Within 48 hours"
+    email_link = adv.get("email_link") or "https://mail.google.com/mail/u/0/#inbox"
 
     return (
         f"{icon} <b>{title}</b>\n\n"
@@ -410,9 +419,10 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
         f"📍 <b>Current Stage:</b> <code>{stage}</code>\n"
         f"📅 <b>Decision Received:</b> <code>{ts}</code>\n"
         f"⏰ <b>Action Deadline:</b> <code>{deadline}</code>\n"
-        f"📋 <b>Next Action:</b> {adv['action_needed']}\n\n"
+        f"📋 <b>Next Action:</b> {adv['action_needed']}\n"
+        f"📬 <b>Email Direct Link:</b> <a href=\"{email_link}\">Open Message in Gmail</a>\n\n"
         f"─────────────────────────────\n"
-        f"⚔️ <i>Interview Battlecard generated! Tap below to prepare.</i>"
+        f"⚔️ <i>Interview Battlecard generated! Tap below to view email or prepare.</i>"
     )
 
 

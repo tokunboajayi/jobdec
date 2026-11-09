@@ -383,6 +383,12 @@ def get_smart_keyboard(metrics=None):
     ]
     keyboard.append(row8)
 
+    # Row 9: PC Optimizer & Resource Boost
+    row9 = [
+        InlineKeyboardButton("🧹 Boost & Optimize PC", callback_data="btn_optimize_pc"),
+    ]
+    keyboard.append(row9)
+
     return InlineKeyboardMarkup(keyboard)
 
 
@@ -1044,7 +1050,16 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         new_advs = await asyncio.to_thread(scan_and_track_decision_emails, 30)
         if new_advs:
             for adv in new_advs:
-                alert_msg = await query.message.reply_text(format_advancement_telegram_alert(adv), parse_mode=ParseMode.HTML)
+                comp = adv.get("company", "Target")
+                kb_rows = []
+                if adv.get("email_link"):
+                    kb_rows.append([InlineKeyboardButton("📬 Open Email in Gmail", url=adv["email_link"])])
+                kb_rows.append([
+                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
+                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
+                ])
+                adv_kb = InlineKeyboardMarkup(kb_rows)
+                alert_msg = await query.message.reply_text(format_advancement_telegram_alert(adv), reply_markup=adv_kb, parse_mode=ParseMode.HTML)
                 telegram_query_engine.save_application_message(alert_msg.message_id, query.message.chat_id)
         summary = get_decision_pipeline_summary()
         kb = InlineKeyboardMarkup([
@@ -1052,6 +1067,24 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
         ])
         await safe_edit(query, summary, reply_markup=kb)
+
+    elif data == "btn_optimize_pc":
+        await query.answer("🧹 Optimizing PC memory & priority...", show_alert=False)
+        from agents.pc_optimizer import run_full_system_optimization
+        res = await asyncio.to_thread(run_full_system_optimization)
+        msg = (
+            f"🚀 <b>PC & Memory Optimized!</b>\n\n"
+            f"• <b>RAM Reclaimed:</b> <b>+{res['reclaimed_mb']} MB</b> returned to OS\n"
+            f"• <b>Zombie Browsers Eliminated:</b> <b>{res['zombies_killed']}</b>\n"
+            f"• <b>Processes Set to Low Priority:</b> <b>{res['procs_optimized']}</b>\n"
+            f"• <b>Active Memory Trimmed:</b> <b>{res['procs_trimmed']} processes</b>\n\n"
+            f"✨ <i>Zero PC lag: Windows will now prioritize your foreground applications 100%.</i>"
+        )
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🧹 Boost Again", callback_data="btn_optimize_pc")],
+            [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
+        ])
+        await safe_edit(query, msg, reply_markup=kb)
 
     elif data == "btn_pin_status":
         pinned_id = await ensure_pinned_live_status(context, chat_id=query.message.chat_id, force_repin=True)
@@ -1331,15 +1364,17 @@ async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
         for adv in new_advs:
             msg = format_advancement_telegram_alert(adv)
             comp = adv.get("company", "Target")
-            kb = InlineKeyboardMarkup([
-                [
-                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
-                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
-                ],
-                [
-                    InlineKeyboardButton("🤝 Warm Referrals", callback_data=f"radar:{comp}"),
-                ]
+            kb_rows = []
+            if adv.get("email_link"):
+                kb_rows.append([InlineKeyboardButton("📬 Open Email in Gmail", url=adv["email_link"])])
+            kb_rows.append([
+                InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
+                InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
             ])
+            kb_rows.append([
+                InlineKeyboardButton("🤝 Warm Referrals", callback_data=f"radar:{comp}"),
+            ])
+            kb = InlineKeyboardMarkup(kb_rows)
             await context.bot.send_message(
                 chat_id=AUTHORIZED_USER_ID,
                 text=msg,
@@ -1542,9 +1577,31 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if new_advs:
             for adv in new_advs:
                 msg = format_advancement_telegram_alert(adv)
-                await safe_reply(update.message, msg)
+                comp = adv.get("company", "Target")
+                kb_rows = []
+                if adv.get("email_link"):
+                    kb_rows.append([InlineKeyboardButton("📬 Open Email in Gmail", url=adv["email_link"])])
+                kb_rows.append([
+                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
+                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
+                ])
+                await safe_reply(update.message, msg, reply_markup=InlineKeyboardMarkup(kb_rows))
         summary = get_decision_pipeline_summary()
         await safe_reply(update.message, summary)
+        return
+    elif any(k in t_lower for k in ["optimize", "/optimize", "boost", "clean ram", "optimize pc", "free ram", "boost pc", "lag", "speed up"]):
+        await safe_reply(update.message, "🧹 <i>Running comprehensive PC & Job Deck optimization...</i>")
+        from agents.pc_optimizer import run_full_system_optimization
+        res = await asyncio.to_thread(run_full_system_optimization)
+        msg = (
+            f"🚀 <b>PC & Memory Optimized!</b>\n\n"
+            f"• <b>RAM Reclaimed:</b> <b>+{res['reclaimed_mb']} MB</b> returned to OS\n"
+            f"• <b>Zombie Browsers Eliminated:</b> <b>{res['zombies_killed']}</b>\n"
+            f"• <b>Processes Set to Low Priority:</b> <b>{res['procs_optimized']}</b>\n"
+            f"• <b>Active Memory Trimmed:</b> <b>{res['procs_trimmed']} processes</b>\n\n"
+            f"✨ <i>Zero PC lag: Windows will now prioritize your foreground applications 100%.</i>"
+        )
+        await safe_reply(update.message, msg)
         return
 
     if any(k in t_lower for k in ["clean", "clear", "clearchat", "clean chat", "clear chat", "wipe chat", "reset chat", "clean apps", "clear apps"]) or t_lower in ["/clean", "/clear"]:
@@ -1656,6 +1713,15 @@ async def refresh_pinned_status_job(context: ContextTypes.DEFAULT_TYPE):
         pass
 
 
+async def periodic_pc_optimizer_job(context: ContextTypes.DEFAULT_TYPE):
+    """Silently trims unused memory and clears zombie browsers every 5 minutes."""
+    try:
+        from agents.pc_optimizer import run_full_system_optimization
+        await asyncio.to_thread(run_full_system_optimization)
+    except Exception as e:
+        print(f"[Periodic PC Optimizer] {e}", flush=True)
+
+
 def main():
     if not BOT_TOKEN or not AUTHORIZED_USER_ID:
         print("[!] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing in .env")
@@ -1683,6 +1749,7 @@ def main():
     app.add_handler(CommandHandler(["inbox"], handle_text))
     app.add_handler(CommandHandler(["decisions", "advancements", "stages"], handle_text))
     app.add_handler(CommandHandler(["scan_inbox", "check_inbox", "scan"], handle_text))
+    app.add_handler(CommandHandler(["optimize", "boost", "cleanram"], handle_text))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
@@ -1694,7 +1761,8 @@ def main():
         app.job_queue.run_repeating(check_inbox_radar_job, interval=1800, first=60)
         app.job_queue.run_repeating(refresh_pinned_status_job, interval=45, first=2)
         app.job_queue.run_repeating(runner_watchdog_supervisor_job, interval=20, first=5)
-        print("[Job Deck Control Bot] Autonomous Watchdog Supervisor (20s), 3-hour Sweeper, 8:00 AM Brief, Radar, and Pinned Status scheduled.", flush=True)
+        app.job_queue.run_repeating(periodic_pc_optimizer_job, interval=300, first=60)
+        print("[Job Deck Control Bot] Autonomous Watchdog Supervisor (20s), PC Optimizer (5m), 3-hour Sweeper, 8:00 AM Brief, Radar, and Pinned Status scheduled.", flush=True)
 
     print("[Job Deck Control Bot] Two-way polling active. Ready!", flush=True)
     app.run_polling(drop_pending_updates=True)
