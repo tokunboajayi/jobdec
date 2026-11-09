@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-11-08T22:08:45.834144",
+  "last_updated": "2026-11-09T09:22:02.574922",
   "learned_keyword_weights": {
     "iam": {
       "active directory": 3.05,
@@ -59,7 +59,7 @@
     "cloud_sec_sysadmin": {
       "linux": 2.9,
       "windows server": 2.5,
-      "azure": 3.1,
+      "azure": 3.15,
       "vmware": 2.5,
       "powershell": 2.5,
       "bash": 2.5,
@@ -67,7 +67,7 @@
       "infrastructure": 2.55,
       "automation": 2.6,
       "endpoint": 2.0,
-      "cloud security": 2.85,
+      "cloud security": 2.9,
       "systems administration": 2.5
     },
     "network_sec": {
@@ -17395,6 +17395,49 @@
       ],
       "outcome": "applied",
       "timestamp": "2026-11-08T22:08:45.834144"
+    },
+    "ScaleAi_National_Security_Hackathon_2026_General_Interest_San_Francisc": {
+      "company": "ScaleAi",
+      "role": "National Security Hackathon 2026 - General Interest [San Francisco, CA; New York, NY; Washington, DC; 1d old]",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "cloud security"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T09:22:02.574922"
     }
   },
   "domain_stats": {
@@ -17417,7 +17460,7 @@
       "confirmations": 0
     },
     "cloud_sec_sysadmin": {
-      "applied": 11,
+      "applied": 12,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0

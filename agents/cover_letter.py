@@ -6,6 +6,7 @@ Toggle: strategy.json -> agents.autonomy.cover_letter = "auto" | "off". Off (or 
 generic Ajayi_Olatokunbo_Cover_Letter.pdf as before.
 """
 import importlib.util
+import os
 import re
 
 from . import context, jd_fetch, llm

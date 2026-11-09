@@ -417,6 +417,12 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
         except Exception:
             pass
 
+    # Ensure queue has unapplied jobs available; if low, replenish immediately
+    m = get_realtime_metrics()
+    if m.get("unapplied_count", 0) < 25:
+        print("[Runner Launch] Queue low, automatically replenishing with fresh roles...", flush=True)
+        replenish_queue_action()
+
     try:
         import batch_apply_parallel
         opt_workers = batch_apply_parallel.calculate_optimal_workers()
@@ -436,7 +442,8 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
         "--resume", "resumes/Candidate_Resume.pdf",
         "--delay", str(delay)
     ]
-    subprocess.Popen(cmd, cwd=str(ROOT))
+    log_file = open(ROOT / "batch_apply.log", "a", encoding="utf-8")
+    subprocess.Popen(cmd, cwd=str(ROOT), stdout=log_file, stderr=subprocess.STDOUT)
 
 
 def halt_runner():
@@ -460,28 +467,13 @@ def halt_runner():
     return stopped
 
 
-def replenish_queue_action():
-    """Scrapes external job sources and replenishes queue_cyber_iam.txt with fresh roles."""
+def replenish_queue_action() -> int:
+    """Harvests and replenishes queue_cyber_iam.txt with fresh, highly-targeted unapplied roles."""
     import agents.job_sources as js
     import re
-    
-    jobs = js.fetch(max_age_days=180)
-    
-    csv_path = ROOT / "applications.csv"
-    applied_urls = set()
-    if csv_path.exists():
-        with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
-            applied_urls = {r.get("Job URL", "").strip().rstrip("/") for r in csv.DictReader(f) if r.get("Job URL")}
 
-    q_path = ROOT / "queue_cyber_iam.txt"
-    existing_q = []
-    if q_path.exists():
-        with open(q_path, "r", encoding="utf-8", errors="ignore") as f:
-            existing_q = [l.strip() for l in f if l.strip()]
-    existing_urls = {p.rstrip("/") for l in existing_q for p in l.split() if p.startswith("http")}
-
-    keywords = re.compile(
-        r"security|cyber|iam|identity|cloud|soc|infosec|network|systems|support|infrastructure|devops|threat|vulnerability|incident",
+    kw = re.compile(
+        r"security|cyber|iam|identity|cloud|soc|infosec|network|systems|support|infrastructure|devops|threat|vulnerability|incident|compliance|it\s+support|desktop|sysadmin|analyst",
         re.I
     )
     swe_exclude = re.compile(
@@ -493,31 +485,113 @@ def replenish_queue_action():
         re.I
     )
 
-    matches = []
-    for j in jobs:
-        title = (j.get("role") or j.get("title") or "").encode("ascii", "ignore").decode("ascii").strip()
-        url = (j.get("url") or "").strip().rstrip("/")
-        company = (j.get("company") or "").encode("ascii", "ignore").decode("ascii").strip()
-        if keywords.search(title) and not swe_exclude.search(title) and not senior_exclude.search(title) and url and url not in applied_urls and url not in existing_urls:
-            matches.append((company, title, url))
+    applied_urls = set()
+    applied_pairs = set()
+
+    csv_path = ROOT / "applications.csv"
+    if csv_path.exists():
+        with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
+            for r in csv.DictReader(f):
+                for k in ["Job URL", "job_url", "url"]:
+                    u = r.get(k)
+                    if u:
+                        applied_urls.add(u.strip().rstrip("/"))
+                c = (r.get("Company") or "").strip().lower()
+                ro = (r.get("Role") or "").strip().lower()
+                if c and ro:
+                    applied_pairs.add((c, ro))
+
+    for r in RE.ledger_rows():
+        if r.get("status") == "submitted":
+            u = r.get("url")
+            if u:
+                applied_urls.add(u.strip().rstrip("/"))
+            c = (r.get("company") or "").strip().lower()
+            ro = (r.get("role") or "").strip().lower()
+            if c and ro:
+                applied_pairs.add((c, ro))
+
+    q_path = ROOT / "queue_cyber_iam.txt"
+    existing_urls = set()
+    if q_path.exists():
+        with open(q_path, "r", encoding="utf-8", errors="ignore") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    parts = line.split()
+                    if parts and parts[-1].startswith("http"):
+                        existing_urls.add(parts[-1].strip().rstrip("/"))
+
+    collected = []
+    seen = set()
+
+    def add_candidate(comp, role, url):
+        u_norm = url.strip().rstrip("/")
+        if not u_norm or u_norm in seen or u_norm in existing_urls or u_norm in applied_urls:
+            return
+        c_norm = comp.strip().lower()
+        r_norm = role.strip().lower()
+        if (c_norm, r_norm) in applied_pairs:
+            return
+        if not kw.search(role) or swe_exclude.search(role) or senior_exclude.search(role):
+            return
+        # Greenhouse canonical embed format
+        m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", u_norm)
+        if m_gh:
+            u_norm = f"https://job-boards.greenhouse.io/embed/job_app?for={m_gh.group(1)}&token={m_gh.group(2)}"
+            if u_norm in seen or u_norm in existing_urls or u_norm in applied_urls:
+                return
+
+        seen.add(u_norm)
+        collected.append((comp.strip(), role.strip(), u_norm))
+
+    # 1. Pull from existing large master queues
+    for qf in ["queue.txt", "queue_ranked.txt", "queue_phase2.txt"]:
+        qp = ROOT / qf
+        if not qp.exists():
+            continue
+        for line in qp.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "http" not in line:
+                continue
+            parts = line.split()
+            u = parts[-1]
+            c = parts[0]
+            r = " ".join(parts[1:-1]) if len(parts) > 2 else parts[0]
+            add_candidate(c, r, u)
+
+    # 2. Pull fresh postings from ATS feeds and GitHub boards
+    try:
+        jobs = js.fetch(max_age_days=180)
+        for j in jobs:
+            c = j.get("company") or "Tech"
+            r = j.get("role") or j.get("title") or ""
+            u = j.get("url") or ""
+            add_candidate(c, r, u)
+    except Exception as e:
+        print(f"[Replenish Job Sources Error] {e}", flush=True)
 
     # Sort priority: Greenhouse > Ashby > Workday > Lever > Other
     def sort_prio(item):
         u = item[2].lower()
-        if "greenhouse.io" in u: return 0
-        if "ashbyhq.com" in u: return 1
-        if "myworkdayjobs.com" in u: return 2
-        if "lever.co" in u: return 3
+        if "greenhouse.io" in u:
+            return 0
+        if "ashbyhq.com" in u:
+            return 1
+        if "myworkdayjobs.com" in u:
+            return 2
+        if "lever.co" in u:
+            return 3
         return 4
 
-    matches.sort(key=sort_prio)
+    collected.sort(key=sort_prio)
 
-    if matches:
+    if collected:
         with open(q_path, "a", encoding="utf-8") as f:
-            for c, t, u in matches:
-                f.write(f"{c} {t}   {u}\n")
+            for c, r, u in collected:
+                f.write(f"{c} {r}   {u}\n")
 
-    return len(matches)
+    return len(collected)
 
 
 
