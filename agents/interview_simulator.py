@@ -119,3 +119,4 @@ def evaluate_and_advance_interview(chat_id: int, user_answer: str) -> str:
 
 def is_in_interview(chat_id: int) -> bool:
     return chat_id in INTERVIEW_SESSIONS
+

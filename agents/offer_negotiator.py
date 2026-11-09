@@ -56,3 +56,4 @@ def analyze_offer_and_strategize(company: str, base_amount_str: str, location: s
         "telegram_summary": telegram_summary,
         "email_draft": recruiter_email
     }
+

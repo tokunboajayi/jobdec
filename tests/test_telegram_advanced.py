@@ -91,3 +91,4 @@ def test_ats_gap_analyzer():
     assert len(res["matched"]) > 0
     assert "ATS Keyword Heatmap" in res["telegram_summary"]
     assert "CompTIA Security+" in res["telegram_summary"] or "Active Directory" in res["telegram_summary"]
+

@@ -55,3 +55,4 @@ def transcribe_voice_bytes(voice_bytes: bytes) -> Optional[str]:
                     os.remove(p)
             except Exception:
                 pass
+

@@ -43,6 +43,12 @@ from agents.interview_simulator import (
 )
 from agents.offer_negotiator import analyze_offer_and_strategize
 from agents.ats_gap_analyzer import analyze_ats_gap
+from agents.decision_tracker import (
+    scan_and_track_decision_emails,
+    format_advancement_telegram_alert,
+    get_decision_pipeline_summary,
+    update_application_stage,
+)
 
 ROOT = Path(__file__).resolve().parent
 load_dotenv(ROOT / ".env")
@@ -254,6 +260,13 @@ def get_smart_keyboard(metrics=None):
         InlineKeyboardButton("🎙️ Mock Interview", callback_data="btn_interview"),
     ]
     keyboard.append(row6)
+
+    # Row 7: Decision Stages & Recruiter Scan
+    row7 = [
+        InlineKeyboardButton("🎯 Decision Stages", callback_data="btn_decisions"),
+        InlineKeyboardButton("📬 Scan Decisions Now", callback_data="btn_scan_inbox"),
+    ]
+    keyboard.append(row7)
 
     return InlineKeyboardMarkup(keyboard)
 
@@ -750,6 +763,20 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         session_text = start_interview_session(query.message.chat_id, "Target Employer", "Cybersecurity Specialist")
         await safe_reply(query.message, session_text)
 
+    elif data == "btn_decisions":
+        summary = get_decision_pipeline_summary()
+        await query.message.reply_text(summary, parse_mode=ParseMode.HTML)
+
+    elif data == "btn_scan_inbox":
+        await query.message.reply_text("⏳ <i>Scanning Gmail for decision emails and stage advancements...</i>", parse_mode=ParseMode.HTML)
+        new_advs = scan_and_track_decision_emails(days_back=30)
+        if new_advs:
+            for adv in new_advs:
+                msg = format_advancement_telegram_alert(adv)
+                await query.message.reply_text(msg, parse_mode=ParseMode.HTML)
+        summary = get_decision_pipeline_summary()
+        await query.message.reply_text(summary, parse_mode=ParseMode.HTML)
+
     elif data.startswith("dl_pdf:"):
         pdf_path_str = data.split(":", 1)[1]
         pdf_p = Path(pdf_path_str)
@@ -933,11 +960,31 @@ async def send_daily_morning_brief(context: ContextTypes.DEFAULT_TYPE):
 
 
 async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
-    """Periodic recruiter radar: checks for urgent interview invitations or assessments."""
+    """Periodic recruiter radar: scans for decision emails, stage advancements, and urgent interviews."""
     try:
+        new_advs = scan_and_track_decision_emails(days_back=14)
+        for adv in new_advs:
+            msg = format_advancement_telegram_alert(adv)
+            comp = adv.get("company", "Target")
+            kb = InlineKeyboardMarkup([
+                [
+                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
+                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
+                ],
+                [
+                    InlineKeyboardButton("🤝 Warm Referrals", callback_data=f"radar:{comp}"),
+                ]
+            ])
+            await context.bot.send_message(
+                chat_id=AUTHORIZED_USER_ID,
+                text=msg,
+                reply_markup=kb,
+                parse_mode=ParseMode.HTML
+            )
+
         m = get_realtime_metrics()
         inbox = m.get("inbox_actions", [])
-        if inbox:
+        if inbox and not new_advs:
             urgent_items = "\n".join(f"• {item}" for item in inbox[:5])
             alert = (
                 f"🚨 <b>RECRUITER & INTERVIEW RADAR ALERT</b>\n\n"
@@ -949,8 +996,8 @@ async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
                 text=alert,
                 parse_mode=ParseMode.HTML
             )
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[Inbox Radar Error] {e}", flush=True)
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1084,6 +1131,22 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await safe_reply(update.message, "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(f"• {item}" for item in inbox[:10]))
         return
 
+    # Priority 10: Decision Tracking & Stage Advancements
+    elif t_lower in ["/decisions", "decisions", "/advancements", "advancements", "/stages", "stages"]:
+        summary = get_decision_pipeline_summary()
+        await safe_reply(update.message, summary)
+        return
+    elif t_lower in ["/scan_inbox", "scan_inbox", "/check_inbox", "check_inbox", "/scan"]:
+        await safe_reply(update.message, "⏳ <i>Scanning Gmail for decision emails and stage advancements...</i>")
+        new_advs = scan_and_track_decision_emails(days_back=30)
+        if new_advs:
+            for adv in new_advs:
+                msg = format_advancement_telegram_alert(adv)
+                await safe_reply(update.message, msg)
+        summary = get_decision_pipeline_summary()
+        await safe_reply(update.message, summary)
+        return
+
     if t_lower in ["clean", "/clean", "clear", "/clear", "clearchat", "/clearchat", "clean chat", "clear questions", "clean apps", "clean applications", "clear apps"]:
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
         return
@@ -1207,6 +1270,8 @@ def main():
     app.add_handler(CommandHandler(["stealth"], handle_text))
     app.add_handler(CommandHandler(["nuke", "halt"], handle_text))
     app.add_handler(CommandHandler(["inbox"], handle_text))
+    app.add_handler(CommandHandler(["decisions", "advancements", "stages"], handle_text))
+    app.add_handler(CommandHandler(["scan_inbox", "check_inbox", "scan"], handle_text))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
