@@ -201,3 +201,4 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
         "telegram_summary": telegram_summary,
         "content": content
     }
+

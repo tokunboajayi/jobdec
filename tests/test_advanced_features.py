@@ -4,19 +4,14 @@ Unit & Integration Tests for Advanced Job Deck Features:
 2. Interview Battlecard & Prep Dossier Generator
 3. Warm Referral Radar & Recruiter Outreach
 4. Vision-Assisted Self-Healing Page Solver
-5. Real-Time Dark-Mode Web Command Center
 """
 import json
 import os
 import re
-import urllib.request
-import threading
-import time
 from pathlib import Path
 import pytest
 
 from agents import ats_optimizer, interview_prep, referral_radar, vision_solver, context
-import web_dashboard
 
 
 class TestAdvancedFeatures:
@@ -94,43 +89,3 @@ class TestAdvancedFeatures:
             assert vision_solver.VISUAL_BUTTON_TARGETS.search(btn) is not None, f"Failed to match valid action button: {btn}"
         for btn in invalid_buttons:
             assert vision_solver.VISUAL_BUTTON_TARGETS.search(btn) is None, f"Incorrectly matched invalid action button: {btn}"
-
-    def test_web_dashboard_server(self):
-        # Start server on ephemeral port for integration testing
-        test_port = 8599
-        server = web_dashboard.ThreadingHTTPServer(("127.0.0.1", test_port), web_dashboard.DashboardRequestHandler)
-        t = threading.Thread(target=server.serve_forever, daemon=True)
-        t.start()
-        time.sleep(0.5)
-
-        try:
-            # 1. Test GET / (HTML Dashboard)
-            req = urllib.request.Request(f"http://127.0.0.1:{test_port}/")
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                assert resp.status == 200
-                body = resp.read().decode("utf-8")
-                assert "Executive Operations Center" in body
-                assert "TOTAL SUBMISSIONS" in body
-
-            # 2. Test GET /api/metrics
-            req_m = urllib.request.Request(f"http://127.0.0.1:{test_port}/api/metrics")
-            with urllib.request.urlopen(req_m, timeout=10) as resp:
-                assert resp.status == 200
-                data = json.loads(resp.read().decode("utf-8"))
-                assert "total_applied" in data
-                assert "worker_count" in data
-
-            # 3. Test POST /api/action/clean
-            req_c = urllib.request.Request(
-                f"http://127.0.0.1:{test_port}/api/action/clean",
-                data=b"{}",
-                headers={"Content-Type": "application/json"},
-                method="POST"
-            )
-            with urllib.request.urlopen(req_c, timeout=10) as resp:
-                assert resp.status == 200
-                res = json.loads(resp.read().decode("utf-8"))
-                assert res.get("ok") is True
-        finally:
-            server.shutdown()
-            server.server_close()

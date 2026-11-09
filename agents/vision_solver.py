@@ -110,3 +110,4 @@ def self_heal_stuck_page(page) -> Dict[str, Any]:
         "url_changed": url_changed,
         "new_url": current_url
     }
+

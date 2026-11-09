@@ -190,3 +190,4 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
         "telegram_summary": telegram_summary,
         "file_path": str(dossier_file)
     }
+
