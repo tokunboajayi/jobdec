@@ -2044,7 +2044,16 @@ def click_nav(page, btn):
         btn.evaluate("e => e.click()")
         return True
     except Exception:
-        return False
+        pass
+    # Autonomous Vision-Assisted Self-Healing Fallback
+    try:
+        from agents import vision_solver
+        res = vision_solver.self_heal_stuck_page(page)
+        if res.get("healed"):
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def page_state(page):

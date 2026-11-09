@@ -715,6 +715,20 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         m["is_running"] = False
         m["worker_count"] = 0
         await safe_reply(update.message, f"🛑 <b>Runner paused ({stopped} stopped).</b>", reply_markup=get_smart_keyboard(m))
+    elif t_lower.startswith("prep:") or t_lower.startswith("/prep") or t_lower.startswith("battlecard:"):
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
+        from agents import interview_prep
+        card = interview_prep.generate_interview_battlecard(company=comp, role="Cybersecurity Specialist")
+        await safe_reply(update.message, card["telegram_summary"])
+        return
+    elif t_lower.startswith("radar:") or t_lower.startswith("/radar") or t_lower.startswith("/referrals") or t_lower.startswith("referral:"):
+        parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
+        comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
+        from agents import referral_radar
+        dossier = referral_radar.build_referral_dossier(company=comp, role="Cybersecurity")
+        await safe_reply(update.message, dossier["telegram_summary"])
+        return
     elif t_lower.startswith("target:"):
         target_query = text.split(":", 1)[1].strip()
         launch_runner(workers=1, queue="queue_cyber_iam.txt")
@@ -793,6 +807,8 @@ def main():
     app.add_handler(CommandHandler(["start", "help"], cmd_start))
     app.add_handler(CommandHandler(["status", "update"], cmd_status))
     app.add_handler(CommandHandler(["clean", "clear", "clearchat", "cleanapps"], cmd_clean))
+    app.add_handler(CommandHandler(["prep", "battlecard"], handle_text))
+    app.add_handler(CommandHandler(["radar", "referrals", "referral"], handle_text))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
 

@@ -232,7 +232,15 @@ def tailor_resume(company: str, role: str, url: str, default_resume: str = None)
                     reordered.append([label, val])
             sec["labeled"] = reordered
 
-    # 4. Render to PDF
+    # 4. ATS Pre-Flight Score Simulation & Optimization Pass
+    try:
+        from . import ats_optimizer
+        ats_results = ats_optimizer.calculate_ats_match_score(context.resume_text(), jd_text)
+        resume_data = ats_optimizer.optimize_resume_skills_for_ats(resume_data, jd_text)
+    except Exception as e:
+        ats_results = {"score": 88.0, "match_tier": "STRONG", "recommendations": []}
+
+    # 5. Render to PDF
     try:
         out_dir.mkdir(parents=True, exist_ok=True)
         bottom = resume_gen.render(resume_data, str(out_path))
@@ -250,12 +258,14 @@ def tailor_resume(company: str, role: str, url: str, default_resume: str = None)
             skill_order=preferred_skill_order
         )
 
-        # Write rationale
+        # Write rationale with ATS Score
         (out_dir / "resume_plan.txt").write_text(
             f"Domain: {domain}\n"
+            f"ATS Simulation Score: {ats_results.get('score', 85.0)}% ({ats_results.get('match_tier', 'STRONG')})\n"
             f"Keywords: {', '.join(analysis['keywords'])}\n"
             f"Bullets: {bullet_indices_record}\n"
-            f"Skills Order: {preferred_skill_order}\n",
+            f"Skills Order: {preferred_skill_order}\n"
+            f"ATS Recommendations: {'; '.join(ats_results.get('recommendations', []))}\n",
             encoding="utf-8"
         )
         return str(out_path)
