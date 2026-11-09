@@ -203,6 +203,7 @@ def main():
     parser.add_argument("--include-held", action="store_true", help="Also run queue lines that have a pending-decision note")
     parser.add_argument("--daily-cap", type=int, default=None, help="Max submissions per day (default: strategy.json daily_cap)")
     parser.add_argument("--delay", type=float, default=2.0, help="Jitter delay between tasks per worker (default: 2.0s)")
+    parser.add_argument("--continuous", action="store_true", default=False, help="Run continuously: auto-replenish queue and keep applying without going idle until target reached")
     args = parser.parse_args()
 
     # Process concurrency lock: prevent multiple batch instances from clashing
@@ -293,14 +294,14 @@ def main():
     atexit.register(kill_all_workers)
 
     def get_next_job(worker_id: int):
-        nonlocal job_cursor, attempts, stop_flag
+        nonlocal job_cursor, attempts, stop_flag, jobs
         w_tag = f"W{worker_id}"
 
         with state_lock:
             while job_cursor < len(jobs) and job_cursor in claimed_indices:
                 job_cursor += 1
 
-            if stop_flag or job_cursor >= len(jobs):
+            if stop_flag:
                 return None
 
             current_total = get_applied_count()
@@ -310,14 +311,62 @@ def main():
                 return None
 
             if attempts >= args.limit:
-                print(f"[{w_tag}] Batch limit of {args.limit} attempts reached. Stopping.")
-                stop_flag = True
-                return None
+                if not args.continuous:
+                    print(f"[{w_tag}] Batch limit of {args.limit} attempts reached. Stopping.")
+                    stop_flag = True
+                    return None
+                else:
+                    attempts = 0
 
             if not args.no_triage:
                 if RE.submitted_today() >= daily_cap:
                     print(f"[{w_tag}] Daily cap of {daily_cap} reached for today. Stopping.")
                     stop_flag = True
+                    return None
+
+            # Continuous Mode queue reloading & replenishment
+            if job_cursor >= len(jobs):
+                if args.continuous and not stop_flag and current_total < args.target:
+                    print(f"[{w_tag}] [Continuous Mode] End of queue reached ({len(jobs)} scanned). Checking for refreshed jobs...")
+                    fresh_jobs = parse_queue(queue_file)
+                    if retry_file.exists():
+                        retries = parse_queue(retry_file)
+                        if retries:
+                            fresh_jobs = retries + fresh_jobs
+                            retry_file.unlink(missing_ok=True)
+                    if not args.include_held:
+                        fresh_jobs = [j for j in fresh_jobs if not j["hold"]]
+
+                    # Update applied signatures from disk
+                    ref_urls, ref_pairs = load_applied_signatures()
+                    applied_urls.update(ref_urls)
+                    applied_pairs.update(ref_pairs)
+
+                    unapplied_count = sum(
+                        1 for j in fresh_jobs
+                        if j["url"].strip() not in applied_urls
+                        and not (j["company"].strip().lower() and j["role"].strip().lower() and (j["company"].strip().lower(), j["role"].strip().lower()) in applied_pairs)
+                    )
+
+                    if unapplied_count < 25:
+                        try:
+                            from telegram_bot_service import replenish_queue_action
+                            print(f"[{w_tag}] [Continuous Mode] Queue low ({unapplied_count} unapplied). Auto-harvesting fresh roles...")
+                            replenish_queue_action()
+                            fresh_jobs = parse_queue(queue_file)
+                            if not args.include_held:
+                                fresh_jobs = [j for j in fresh_jobs if not j["hold"]]
+                        except Exception as e:
+                            print(f"[{w_tag}] [Continuous Mode] Auto-harvest note: {e}")
+
+                    if fresh_jobs:
+                        jobs = fresh_jobs
+                        claimed_indices.clear()
+                        job_cursor = 0
+                        print(f"[{w_tag}] [Continuous Mode] Pipeline reset with {len(jobs)} postings. Continuing autonomous pipeline!")
+                    else:
+                        return None
+                else:
                     return None
 
             chosen_idx = None
@@ -384,6 +433,10 @@ def main():
             if chosen_idx is None:
                 while job_cursor < len(jobs) and job_cursor in claimed_indices:
                     job_cursor += 1
+                if args.continuous and not stop_flag and current_total < args.target and not active_companies:
+                    # In continuous mode, if all candidates were scanned/claimed and no worker is active,
+                    # advance job_cursor to len(jobs) so the next get_next_job will reload and replenish
+                    job_cursor = len(jobs)
                 return None
 
             job = jobs[chosen_idx]
@@ -424,9 +477,9 @@ def main():
             item = get_next_job(worker_id)
             if not item:
                 with state_lock:
-                    if stop_flag or (job_cursor >= len(jobs) and not active_companies):
+                    if stop_flag or (job_cursor >= len(jobs) and not active_companies and not args.continuous):
                         break
-                time.sleep(1.0)
+                time.sleep(1.5)
                 continue
 
             job, idx, attempt_num, resume_to_use = item

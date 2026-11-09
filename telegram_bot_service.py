@@ -11,7 +11,7 @@ import csv
 import json
 import glob
 import subprocess
-from datetime import datetime, date, time, timedelta
+from datetime import datetime, date, time as dt_time, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 from typing import Optional, Tuple, Union
@@ -400,8 +400,10 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     mem = metrics["total_mem_mb"]
     if is_running:
         runner_str = f"🟢 <b>RUNNING</b> ({workers} workers active, {mem}MB RAM)"
+    elif RUNNER_SUPERVISOR_STATE.get("desired") == "running":
+        runner_str = "🟡 <b>RE-IGNITING...</b> (Autonomous Supervisor Active)"
     else:
-        runner_str = "⚪ <b>IDLE</b> (Ready to start)"
+        runner_str = "⚪ <b>PAUSED</b> (User Paused)"
 
     now_str = datetime.now().strftime("%I:%M:%S %p")
     lines = [
@@ -439,7 +441,26 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     return "\n".join(lines)
 
 
-def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
+RUNNER_SUPERVISOR_STATE = {
+    "desired": "running",
+    "workers": 3,
+    "delay": 2.0,
+    "queue": "queue_cyber_iam.txt",
+    "last_relaunch": 0.0,
+    "auto_restarts": 0,
+}
+
+
+def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0, user_action=True):
+    global RUNNER_SUPERVISOR_STATE
+    if user_action:
+        RUNNER_SUPERVISOR_STATE["desired"] = "running"
+        if workers is not None:
+            RUNNER_SUPERVISOR_STATE["workers"] = workers
+        RUNNER_SUPERVISOR_STATE["delay"] = delay
+        RUNNER_SUPERVISOR_STATE["queue"] = queue
+        RUNNER_SUPERVISOR_STATE["last_relaunch"] = time_mod.time()
+
     # Clear stale lock files before launching
     for lock in ROOT.glob(".batch_apply*.lock"):
         try:
@@ -467,6 +488,7 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
         "--queue", queue,
         "--workers", str(target_w),
         "--adaptive",
+        "--continuous",
         "--no-triage",
         "--use-tailored",
         "--resume", "resumes/Candidate_Resume.pdf",
@@ -478,6 +500,8 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0):
 
 
 def halt_runner():
+    global RUNNER_SUPERVISOR_STATE
+    RUNNER_SUPERVISOR_STATE["desired"] = "paused"
     curr_pid = os.getpid()
     stopped = 0
     for p in psutil.process_iter(["pid", "name", "cmdline"]):
@@ -496,6 +520,49 @@ def halt_runner():
         except Exception:
             pass
     return stopped
+
+
+async def runner_watchdog_supervisor_job(context: ContextTypes.DEFAULT_TYPE):
+    """
+    Autonomous Supervisor Watchdog:
+    Ensures the applicator NEVER prematurely goes idle.
+    If desired state is 'running' and no worker is active, replenishes queue if low
+    and autonomously relaunches the parallel runner until 3,000 target is reached.
+    """
+    global RUNNER_SUPERVISOR_STATE
+    if RUNNER_SUPERVISOR_STATE.get("desired") != "running":
+        return
+
+    m = get_realtime_metrics()
+    if m.get("total_applied", 0) >= 3000:
+        print("[Supervisor Watchdog] 3,000 milestone reached! Pausing continuous runner.", flush=True)
+        RUNNER_SUPERVISOR_STATE["desired"] = "paused"
+        return
+
+    if m.get("is_running"):
+        return
+
+    now = time_mod.time()
+    if now - RUNNER_SUPERVISOR_STATE.get("last_relaunch", 0.0) < 15.0:
+        return
+
+    RUNNER_SUPERVISOR_STATE["last_relaunch"] = now
+    RUNNER_SUPERVISOR_STATE["auto_restarts"] = RUNNER_SUPERVISOR_STATE.get("auto_restarts", 0) + 1
+    restart_num = RUNNER_SUPERVISOR_STATE["auto_restarts"]
+    print(f"[Supervisor Watchdog] Detected IDLE runner (desired=running). Auto-restarting #{restart_num}...", flush=True)
+
+    # Replenish if queue inventory is low
+    if m.get("unapplied_count", 0) < 25:
+        try:
+            added = await asyncio.to_thread(replenish_queue_action)
+            print(f"[Supervisor Watchdog] Auto-replenished +{added} fresh target roles.", flush=True)
+        except Exception as e:
+            print(f"[Supervisor Watchdog] Auto-replenish error: {e}", flush=True)
+
+    w = RUNNER_SUPERVISOR_STATE.get("workers", 3)
+    d = RUNNER_SUPERVISOR_STATE.get("delay", 2.0)
+    q = RUNNER_SUPERVISOR_STATE.get("queue", "queue_cyber_iam.txt")
+    launch_runner(workers=w, queue=q, delay=d, user_action=False)
 
 
 def replenish_queue_action() -> int:
@@ -1621,10 +1688,11 @@ def main():
     if app.job_queue:
         app.job_queue.run_repeating(send_3hour_update, interval=3 * 3600, first=3 * 3600)
         app.job_queue.run_repeating(sweep_expired_questions_job, interval=30, first=10)
-        app.job_queue.run_daily(send_daily_morning_brief, time=time(hour=8, minute=0, second=0))
+        app.job_queue.run_daily(send_daily_morning_brief, time=dt_time(hour=8, minute=0, second=0))
         app.job_queue.run_repeating(check_inbox_radar_job, interval=1800, first=60)
         app.job_queue.run_repeating(refresh_pinned_status_job, interval=45, first=2)
-        print("[Job Deck Control Bot] 3-hour Sweeper, 8:00 AM Morning Brief, Recruiter Radar, and Pinned Status scheduled.", flush=True)
+        app.job_queue.run_repeating(runner_watchdog_supervisor_job, interval=20, first=5)
+        print("[Job Deck Control Bot] Autonomous Watchdog Supervisor (20s), 3-hour Sweeper, 8:00 AM Brief, Radar, and Pinned Status scheduled.", flush=True)
 
     print("[Job Deck Control Bot] Two-way polling active. Ready!", flush=True)
     app.run_polling(drop_pending_updates=True)
