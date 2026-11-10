@@ -162,3 +162,38 @@ def test_dynamic_turbo_and_hud_toggle():
     ACTIVE_HUD_STATE["message_id"] = None
 
 
+def test_onboarding_wizard_steps_and_keyboard():
+    from telegram_bot_service import get_onboarding_step_message, get_smart_keyboard
+
+    # Test all 6 steps generate valid HTML messages and keyboards
+    for step in range(1, 7):
+        text, kb = get_onboarding_step_message(step)
+        assert f"Step {step} of 6" in text
+        assert kb is not None
+        assert len(kb.inline_keyboard) >= 1
+
+    # Step 1 should contain mission and guardrails
+    t1, _ = get_onboarding_step_message(1)
+    assert "Cybersecurity" in t1
+    assert "Zero Software Engineering" in t1
+
+    # Step 3 should contain candidate identity
+    t3, _ = get_onboarding_step_message(3)
+    assert "Michael Azuka" in t3
+    assert "3.35" in t3
+    assert "Security+" in t3
+
+    # Step 6 should have the final launch button
+    t6, kb6 = get_onboarding_step_message(6)
+    launch_btns = [btn for row in kb6.inline_keyboard for btn in row if btn.callback_data == "onboard:launch"]
+    assert len(launch_btns) == 1
+    assert "Launch" in launch_btns[0].text
+
+    # Main dashboard smart keyboard must include [🧭 Setup Wizard]
+    kb_main = get_smart_keyboard()
+    setup_btns = [btn for row in kb_main.inline_keyboard for btn in row if btn.callback_data == "btn_setup_wizard"]
+    assert len(setup_btns) == 1
+    assert "Setup Wizard" in setup_btns[0].text
+
+
+
