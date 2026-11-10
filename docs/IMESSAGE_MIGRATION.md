@@ -61,3 +61,4 @@ When using iMessage, instead of tapping inline buttons, you simply reply with in
 - `prep Company`: Generates and returns an Interview Battlecard.
 - `optimize`: Trims memory, lowers process priority, and kills zombie browsers.
 - Paste any job URL: Immediately auto-applies on the spot.
+

@@ -387,6 +387,11 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                     "email_link": email_link
                 }
                 new_advancements.append(advancement_item)
+                try:
+                    from agents.imessage_bridge import forward_advancement_to_imessage
+                    forward_advancement_to_imessage(advancement_item)
+                except Exception:
+                    pass
 
         save_decisions_cache(cache)
     except Exception as e:

@@ -442,6 +442,13 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     if len(metrics["inbox_actions"]) > 0:
         lines.append(f"📬 <b>Recruiter Inbox:</b> {len(metrics['inbox_actions'])} urgent recruiter item(s)!")
 
+    try:
+        from agents.imessage_bridge import is_imessage_available, IMESSAGE_TARGET_HANDLE
+        im_active = is_imessage_available()
+        lines.append(f"📱 <b>iMessage Dual-Channel Pager:</b> {'🟢 Connected' if im_active else '⚪ Inactive'} <code>({IMESSAGE_TARGET_HANDLE})</code>")
+    except Exception:
+        pass
+
     if metrics["recent"]:
         lines.append("\n<b>Recent Submissions:</b>")
         for r in metrics["recent"][-3:]:
@@ -1527,6 +1534,12 @@ async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=kb,
                 parse_mode=ParseMode.HTML
             )
+            # Forward advancement directly to iMessage pager
+            try:
+                from agents.imessage_bridge import forward_advancement_to_imessage
+                forward_advancement_to_imessage(adv)
+            except Exception:
+                pass
 
         m = get_realtime_metrics()
         inbox = m.get("inbox_actions", [])
@@ -1542,6 +1555,12 @@ async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
                 text=alert,
                 parse_mode=ParseMode.HTML
             )
+            try:
+                from agents.imessage_bridge import send_imessage, is_imessage_available
+                if is_imessage_available():
+                    send_imessage(f"🚨 RECRUITER & INTERVIEW ALERT:\n\n{urgent_items}\n\nReply 'status' or check your email.")
+            except Exception:
+                pass
     except Exception as e:
         print(f"[Inbox Radar Error] {e}", flush=True)
 
@@ -1755,6 +1774,25 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(update.message, text_out, reply_markup=kb)
         return
 
+    elif any(k in t_lower for k in ["imessage", "/imessage", "test imessage", "ping imessage"]):
+        from agents.imessage_bridge import send_imessage, is_imessage_available, IMESSAGE_TARGET_HANDLE
+        res = send_imessage(
+            "🔔 Test Alert from Job Deck Autonomous Cockpit: Your dual-channel iMessage Pager is live and connected! "
+            "You will receive instant blue-bubble notifications here for all interview invitations, assessments, and offers.",
+            recipient=IMESSAGE_TARGET_HANDLE
+        )
+        if res.get("success"):
+            await safe_reply(
+                update.message,
+                f"📱 <b>iMessage Notification Dispatched!</b>\n\n"
+                f"• <b>Target:</b> <code>{IMESSAGE_TARGET_HANDLE}</code>\n"
+                f"• <b>Transport:</b> <code>{res.get('method')}</code>\n\n"
+                f"<i>Your dual-channel pager is active. Critical recruiter alerts will ping your iPhone instantly.</i>"
+            )
+        else:
+            await safe_reply(update.message, f"⚠️ <b>iMessage Notice:</b>\n{res.get('error', 'Check configuration in .env')}")
+        return
+
     if any(k in t_lower for k in ["clean", "clear", "clearchat", "clean chat", "clear chat", "wipe chat", "reset chat", "clean apps", "clear apps"]) or t_lower in ["/clean", "/clear"]:
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
         return
@@ -1902,9 +1940,18 @@ def main():
     app.add_handler(CommandHandler(["decisions", "advancements", "stages"], handle_text))
     app.add_handler(CommandHandler(["scan_inbox", "check_inbox", "scan"], handle_text))
     app.add_handler(CommandHandler(["optimize", "boost", "cleanram"], handle_text))
+    app.add_handler(CommandHandler(["imessage", "sms"], handle_text))
     app.add_handler(CallbackQueryHandler(handle_callback_query))
     app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
+
+    # Initialize iMessage background webhook listener for incoming commands
+    try:
+        from agents.imessage_bridge import start_imessage_webhook_listener, is_imessage_available
+        if is_imessage_available():
+            start_imessage_webhook_listener()
+    except Exception as e:
+        print(f"[iMessage Listener Notice] {e}", flush=True)
 
     if app.job_queue:
         app.job_queue.run_repeating(send_3hour_update, interval=3 * 3600, first=3 * 3600)
