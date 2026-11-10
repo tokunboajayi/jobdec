@@ -63,3 +63,4 @@ def test_advancement_email_link_formatting():
     assert "CrowdStrike" in alert
     assert "https://mail.google.com/mail/u/0/#search/rfc822msgid%3Atest12345" in alert
     assert "Open Message in Gmail" in alert
+
