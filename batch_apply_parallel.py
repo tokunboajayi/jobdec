@@ -288,6 +288,7 @@ def main():
     site_failures = {}
     active_companies = set()
     claimed_indices = set()
+    in_flight_urls = set()
 
     active_pids: List[int] = []
     pids_lock = threading.Lock()
@@ -306,7 +307,7 @@ def main():
     atexit.register(kill_all_workers)
 
     def get_next_job(worker_id: int):
-        nonlocal job_cursor, attempts, stop_flag, jobs
+        nonlocal job_cursor, attempts, stop_flag, jobs, applied_urls, applied_pairs
         w_tag = f"W{worker_id}"
 
         with state_lock:
@@ -349,10 +350,10 @@ def main():
                     if not args.include_held:
                         fresh_jobs = [j for j in fresh_jobs if not j["hold"]]
 
-                    # Update applied signatures from disk
+                    # Fresh reload of applied signatures from applications.csv
                     ref_urls, ref_pairs = load_applied_signatures()
-                    applied_urls.update(ref_urls)
-                    applied_pairs.update(ref_pairs)
+                    applied_urls = ref_urls
+                    applied_pairs = ref_pairs
 
                     unapplied_count = sum(
                         1 for j in fresh_jobs
@@ -368,14 +369,23 @@ def main():
                             fresh_jobs = parse_queue(queue_file)
                             if not args.include_held:
                                 fresh_jobs = [j for j in fresh_jobs if not j["hold"]]
+                            unapplied_count = sum(
+                                1 for j in fresh_jobs
+                                if j["url"].strip() not in applied_urls
+                                and not (j["company"].strip().lower() and j["role"].strip().lower() and (j["company"].strip().lower(), j["role"].strip().lower()) in applied_pairs)
+                            )
                         except Exception as e:
                             print(f"[{w_tag}] [Continuous Mode] Auto-harvest note: {e}")
+
+                    if unapplied_count == 0:
+                        print(f"[{w_tag}] [Continuous Mode] All {len(fresh_jobs)} queue postings already applied. Waiting 20s for new postings...")
+                        time.sleep(20.0)
 
                     if fresh_jobs:
                         jobs = fresh_jobs
                         claimed_indices.clear()
                         job_cursor = 0
-                        print(f"[{w_tag}] [Continuous Mode] Pipeline reset with {len(jobs)} postings. Continuing autonomous pipeline!")
+                        print(f"[{w_tag}] [Continuous Mode] Pipeline reset with {len(jobs)} postings ({unapplied_count} unapplied). Continuing autonomous pipeline!")
                     else:
                         return None
                 else:
@@ -392,6 +402,9 @@ def main():
 
                 if u in applied_urls or (c_norm and r_norm and (c_norm, r_norm) in applied_pairs):
                     claimed_indices.add(scan_idx)
+                    continue
+
+                if u in in_flight_urls:
                     continue
 
                 if c_norm and c_norm in active_companies:
@@ -457,9 +470,7 @@ def main():
             c_norm = job["company"].strip().lower()
             r_norm = job["role"].strip().lower()
 
-            applied_urls.add(u)
-            if c_norm and r_norm:
-                applied_pairs.add((c_norm, r_norm))
+            in_flight_urls.add(u)
             if c_norm:
                 active_companies.add(c_norm)
 
@@ -589,6 +600,9 @@ def main():
                 if ret == 0:
                     with state_lock:
                         completed_this_session += 1
+                        applied_urls.add(job["url"].strip())
+                        if c_norm and r_norm:
+                            applied_pairs.add((c_norm, r_norm))
                         tot = get_applied_count()
                         print(f"[{w_prefix}] *** SUCCESS: {job['company']} submitted! Total verified: {tot}/{args.target} ({dur}s) ***")
 
@@ -664,8 +678,9 @@ def main():
             except Exception as ex:
                 print(f"[{w_prefix}] Worker error: {ex}")
             finally:
-                if c_norm:
-                    with state_lock:
+                with state_lock:
+                    in_flight_urls.discard(job["url"].strip())
+                    if c_norm:
                         active_companies.discard(c_norm)
                 # PC Optimizer: Trim working set memory after every attempt
                 try:

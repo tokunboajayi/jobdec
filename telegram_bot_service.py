@@ -577,6 +577,7 @@ def replenish_queue_action() -> int:
     """Harvests and replenishes queue_cyber_iam.txt with fresh, highly-targeted unapplied roles."""
     import agents.job_sources as js
     import re
+    import results_engine as RE
 
     kw = re.compile(
         r"security|cyber|iam|identity|cloud|soc|infosec|network|systems|support|infrastructure|devops|threat|vulnerability|incident|compliance|it\s+support|desktop|sysadmin|analyst",

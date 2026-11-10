@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-11-09T11:31:15.113165",
+  "last_updated": "2026-11-09T23:38:01.794982",
   "learned_keyword_weights": {
     "iam": {
       "active directory": 3.05,
@@ -33,11 +33,11 @@
       "mitre att&ck": 2.75,
       "nist csf": 2.6,
       "phishing": 2.4,
-      "threat modeling": 3.1,
-      "security+": 3.4,
-      "soc": 6.4,
+      "threat modeling": 3.15,
+      "security+": 3.45,
+      "soc": 6.5,
       "investigation": 3.3,
-      "triage": 3.75
+      "triage": 3.8
     },
     "it_support": {
       "technical support": 3.75,
@@ -59,13 +59,13 @@
     "cloud_sec_sysadmin": {
       "linux": 3.1,
       "windows server": 2.5,
-      "azure": 4.4,
+      "azure": 4.45,
       "vmware": 2.5,
       "powershell": 2.5,
       "bash": 2.5,
-      "python": 4.05,
-      "infrastructure": 5.3,
-      "automation": 5.0,
+      "python": 4.1,
+      "infrastructure": 5.4,
+      "automation": 5.05,
       "endpoint": 2.2,
       "cloud security": 5.25,
       "systems administration": 2.5
@@ -36847,6 +36847,180 @@
       ],
       "outcome": "applied",
       "timestamp": "2026-11-09T11:31:15.113165"
+    },
+    "The_New_York_Times_Data_Analyst_Intern": {
+      "company": "The",
+      "role": "New York Times Data Analyst Intern",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T23:37:03.462853"
+    },
+    "Ramp_Legal_Privacy_Operations_Associate": {
+      "company": "Ramp",
+      "role": "Legal & Privacy Operations Associate",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "python",
+        "infrastructure",
+        "automation"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T23:37:15.864463"
+    },
+    "Kyndryl_Early_Career_Consult_Program_Associate_Data_Engineer": {
+      "company": "Kyndryl",
+      "role": "Early Career Consult Program - Associate Data Engineer",
+      "domain": "cloud_sec_sysadmin",
+      "keywords": [
+        "azure",
+        "infrastructure"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Technical",
+        "Identity & Access",
+        "Security",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T23:37:36.982138"
+    },
+    "Paccar_Greenhouse_Gas_Data_Analyst_Intern": {
+      "company": "Paccar",
+      "role": "Greenhouse Gas Data Analyst Intern",
+      "domain": "soc_analyst",
+      "keywords": [
+        "soc"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          3,
+          1
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-09T23:38:01.794982"
     }
   },
   "domain_stats": {
@@ -36857,7 +37031,7 @@
       "confirmations": 0
     },
     "soc_analyst": {
-      "applied": 221,
+      "applied": 223,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
@@ -36869,7 +37043,7 @@
       "confirmations": 0
     },
     "cloud_sec_sysadmin": {
-      "applied": 127,
+      "applied": 129,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
