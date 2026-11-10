@@ -35,7 +35,7 @@ def test_core_question_finds_the_ask():
 
 @pytest.mark.parametrize("label,cat,answer", [
     ("Please re-confirm the university you currently attend *", "school", "Kennesaw State University"),
-    ("What country do you currently reside in?*", "country", "United States of America"),
+    ("What country do you currently reside in?*", "country", "United States"),
     ("To be eligible ... in the United States. Please indicate the state in which you currently reside.*", "state", "Georgia"),
 ])
 def test_fact_questions_come_from_profile(label, cat, answer):

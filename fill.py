@@ -1038,7 +1038,8 @@ def _fill_checkbox(c):
         # a text answer on a checkbox list ("Discipline(s) * Agriculture"): tick only the box that matches it
         opt_text = " ".join(label.rsplit(" * ", 1)[-1].split()).lower()
         a_text = " ".join(ans.split()).lower()
-        if len(opt_text) > 3 and (opt_text in a_text or a_text in opt_text) and f["value"] != "true":
+        matched = (len(opt_text) > 3 and (opt_text in a_text or a_text in opt_text)) or any(opt_text in grp and a_text in grp for grp in OPTS.ALIASES)
+        if matched and f["value"] != "true":
             try: loc.check(timeout=1200)
             except Exception:
                 try: loc.click(force=True, timeout=1200)
@@ -1909,8 +1910,7 @@ def _upsert_applied_row(path, target_url, company, role, resume):
         raw_rows = list(reader)
         cols = [c.lstrip("\ufeff") for c in (reader.fieldnames or [])]
     if not cols:
-        cols = ["ID", "Company", "Role", "Stage", "Date Applied", "Job URL", "Resume Version", "Next Action", "Next Action Date"]
-        raw_rows = []
+        raise RuntimeError("applications.csv has no header; refusing to overwrite it")
     rows = [{k.lstrip("\ufeff"): v for k, v in r.items()} for r in raw_rows]
     today = datetime.date.today().isoformat()
     host = re.sub(r"^https?://", "", target_url).split("?")[0][:60]

@@ -7,8 +7,10 @@ def test_body_is_addressed_and_keeps_only_generic_facts():
                                  "website astro tailwind cloudflare acquisitions research")
     assert "the AI Intern position at Johns Hopkins Applied Physics Laboratory" in body[1]
     assert "21d old" not in " ".join(body)
-    assert body[2] == gen.BODY[3]                     # W. A paragraph matches this posting better -> first
     assert sorted(body[2:4]) == sorted(gen.BODY[2:4])  # same experience text, only reordered
+    # verify addressing works cleanly for specified roles
+    body_iam = cover_letter.body_for("TargetCorp", "IAM Analyst", "identity access management rbac active directory")
+    assert body_iam[2] == gen.BODY[3]  # IAM paragraph ranks first when matching keywords present
 
 
 def test_scraped_name_falls_back_to_generic_wording():

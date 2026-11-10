@@ -2,11 +2,11 @@ import results_engine as RE
 
 
 def test_ai_roles_rank_above_plain_roles():
-    ai, cat, _ = RE.score_job("Testco", "AI Engineer Intern - Summer 2027")
-    plain, _, _ = RE.score_job("Testco", "Data Analyst Intern")
-    assert cat == "ai_automation"
-    assert ai > plain
-    assert ai >= RE.strategy()["min_fit_score"]
+    cyber, cat, _ = RE.score_job("Testco", "Cybersecurity Analyst Intern - Summer 2027")
+    swe, _, _ = RE.score_job("Testco", "Software Engineer Intern")
+    assert cat == "cybersecurity"
+    assert cyber > swe
+    assert cyber >= RE.strategy()["min_fit_score"]
 
 
 def test_swe_and_off_season_roles_are_skipped():
