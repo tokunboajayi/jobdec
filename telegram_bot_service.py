@@ -459,11 +459,11 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
 
 def get_onboarding_step_message(step: int = 1):
     """Generates an interactive, step-by-step onboarding walkthrough for new users."""
-    step = max(1, min(6, step))
+    step = max(1, min(8, step))
 
     if step == 1:
         text = (
-            "🧭 <b>Job Deck Setup Wizard (Step 1 of 6)</b>\n"
+            "🧭 <b>Job Deck Setup Wizard (Step 1 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "👋 <b>Welcome to Job Deck Autonomous Headquarters!</b>\n\n"
             "Job Deck is a high-velocity, fully autonomous agentic application pipeline that scouts, "
@@ -475,35 +475,34 @@ def get_onboarding_step_message(step: int = 1):
             "<i>Tap below to walk through your system setup and candidate parameters!</i>"
         )
         kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Next: System Health Check ➡️", callback_data="onboard:step:2")],
+            [InlineKeyboardButton("Next: Automation Engine ➡️", callback_data="onboard:step:2")],
             [InlineKeyboardButton("🏠 Exit to Control Panel", callback_data="btn_status")]
         ])
 
     elif step == 2:
         py_ver = sys.version.split()[0]
         text = (
-            "🧭 <b>Job Deck Setup Wizard (Step 2 of 6)</b>\n"
+            "🧭 <b>Job Deck Setup Wizard (Step 2 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "⚙️ <b>Environment & System Health Check</b>\n\n"
+            "⚙️ <b>Environment & Headless Browser Automation</b>\n\n"
             f"• <b>Python Runtime:</b> <code>v{py_ver}</code> (3.10+ Verified ✅)\n"
-            "• <b>Playwright Chromium:</b> Headless Browser Engine Active ✅\n"
-            "• <b>Background PC Optimizer:</b> Low-Priority Daemon Active ✅\n"
-            "• <b>Autonomous Supervisor:</b> Zero-Crash Watchdog Active ✅\n\n"
-            "💡 <b>PC Optimizer Feature:</b>\n"
-            "Job Deck runs background browser automation at below-normal CPU priority and performs memory trimming "
-            "every 5 minutes. You can game, code, or stream without noticing any PC lag!"
+            "• <b>Playwright Chromium:</b> Multi-Page Headless Browser Engine Active ✅\n"
+            "• <b>Supported Job Portals:</b> Workday, Greenhouse, Lever, Ashby, BambooHR, SmartRecruiters, Jobvite\n"
+            "• <b>Form Automation:</b> Solves text fields, complex multi-selects, address autocompletes, and file uploads.\n\n"
+            "💡 <b>Full Resilience:</b>\n"
+            "If a portal requires human verification or CAPTCHA, Job Deck cleanly isolates that job, captures a diagnostic screenshot, and continues applying to the next queued position seamlessly."
         )
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("⬅️ Prev", callback_data="onboard:step:1"),
-             InlineKeyboardButton("Next: Profile & Facts ➡️", callback_data="onboard:step:3")],
+             InlineKeyboardButton("Next: Candidate Shield ➡️", callback_data="onboard:step:3")],
             [InlineKeyboardButton("🏠 Exit to Control Panel", callback_data="btn_status")]
         ])
 
     elif step == 3:
         text = (
-            "🧭 <b>Job Deck Setup Wizard (Step 3 of 6)</b>\n"
+            "🧭 <b>Job Deck Setup Wizard (Step 3 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "👤 <b>Candidate Identity & Rule-Based Facts</b>\n\n"
+            "👤 <b>Candidate Identity & Rule-Based Shield</b>\n\n"
             "• <b>Candidate:</b> Michael Azuka\n"
             "• <b>Education:</b> B.S. Cybersecurity, Kennesaw State University (Dec 2026)\n"
             "• <b>GPA:</b> 3.35 | Accepted to M.S. Cybersecurity\n"
@@ -521,7 +520,7 @@ def get_onboarding_step_message(step: int = 1):
 
     elif step == 4:
         text = (
-            "🧭 <b>Job Deck Setup Wizard (Step 4 of 6)</b>\n"
+            "🧭 <b>Job Deck Setup Wizard (Step 4 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "📄 <b>Master Resume & Dynamic Tailoring Engine</b>\n\n"
             "• <b>Master File:</b> <code>resumes/Candidate_Resume.pdf</code>\n"
@@ -537,7 +536,7 @@ def get_onboarding_step_message(step: int = 1):
 
     elif step == 5:
         text = (
-            "🧭 <b>Job Deck Setup Wizard (Step 5 of 6)</b>\n"
+            "🧭 <b>Job Deck Setup Wizard (Step 5 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "📬 <b>Recruiter Radar & 1-Tap Gmail Direct Links</b>\n\n"
             "• <b>Real-Time Inbox Scanner:</b> Continuously monitors your inbox for confirmation emails, interview invitations, coding/security assessments, and offers.\n"
@@ -547,15 +546,54 @@ def get_onboarding_step_message(step: int = 1):
         )
         kb = InlineKeyboardMarkup([
             [InlineKeyboardButton("⬅️ Prev", callback_data="onboard:step:4"),
-             InlineKeyboardButton("Next: Touch Controls ➡️", callback_data="onboard:step:6")],
+             InlineKeyboardButton("Next: iMessage Pager ➡️", callback_data="onboard:step:6")],
             [InlineKeyboardButton("🏠 Exit to Control Panel", callback_data="btn_status")]
         ])
 
     elif step == 6:
         text = (
-            "🧭 <b>Job Deck Setup Wizard (Step 6 of 6)</b>\n"
+            "🧭 <b>Job Deck Setup Wizard (Step 6 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-            "🎮 <b>Touch Controls, Dynamic HUD & Launch!</b>\n\n"
+            "📱 <b>Apple iMessage Dual-Channel Emergency Pager</b>\n\n"
+            "Job Deck bridges directly to Apple iMessage on your phone (<code>+14046450373</code>)!\n\n"
+            "✨ <b>How it works:</b>\n"
+            "• <b>Critical Pager:</b> Interview requests, assessment deadlines, and job offers ping your iPhone instantly via native blue bubbles.\n"
+            "• <b>2-Way Text Commands:</b> Text your Job Deck bridge anytime from iMessage:\n"
+            "  - <code>status</code> — Live submission counts & worker state\n"
+            "  - <code>run</code> / <code>turbo</code> — Launch background workers\n"
+            "  - <code>stop</code> — Pause all workers\n"
+            "  - <code>prep &lt;Company&gt;</code> — Instant Interview Battlecard\n"
+            "  - <code>boost</code> — Optimize PC RAM\n"
+            "• <b>Test Command:</b> Type <code>/imessage</code> in Telegram to trigger a live test ping to your iPhone!"
+        )
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("⬅️ Prev", callback_data="onboard:step:5"),
+             InlineKeyboardButton("Next: PC Optimizer ➡️", callback_data="onboard:step:7")],
+            [InlineKeyboardButton("🏠 Exit to Control Panel", callback_data="btn_status")]
+        ])
+
+    elif step == 7:
+        text = (
+            "🧭 <b>Job Deck Setup Wizard (Step 7 of 8)</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "🧹 <b>Zero-Lag PC Optimizer & RAM Trimmer</b>\n\n"
+            "• <b>Below-Normal CPU Priority:</b> All headless browser instances run with below-normal scheduling so Windows prioritizes your foreground applications 100%.\n"
+            "• <b>5-Minute Memory Trimmer:</b> Runs silently every 5 minutes to sweep unused working sets back to the OS.\n"
+            "• <b>Zombie Cleaner:</b> Automatically cleans up orphaned browser processes.\n"
+            "• <b>Zero Stutter:</b> You can game, code, or watch 4K video while Job Deck applies in the background with zero lag!\n\n"
+            "Tap <code>[🧹 Boost PC]</code> or type <code>/optimize</code> anytime to manually reclaim RAM."
+        )
+        kb = InlineKeyboardMarkup([
+            [InlineKeyboardButton("⬅️ Prev", callback_data="onboard:step:6"),
+             InlineKeyboardButton("Next: Touch Controls ➡️", callback_data="onboard:step:8")],
+            [InlineKeyboardButton("🏠 Exit to Control Panel", callback_data="btn_status")]
+        ])
+
+    elif step == 8:
+        text = (
+            "🧭 <b>Job Deck Setup Wizard (Step 8 of 8)</b>\n"
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+            "🎮 <b>Cockpit Controls, Dynamic HUD & Ready to Launch!</b>\n\n"
             "You are all set! Here is how to control Job Deck like a pro:\n\n"
             "• <b>Smart Touch Buttons:</b> Run workers, trigger Turbo velocity, view recent submissions, or boost PC performance.\n"
             "• <b>Dynamic Live HUD:</b> Tap <code>[📡 Live Dynamic HUD]</code> to start a single, live-updating 4-second ticker with zero chat bloat.\n"
@@ -564,10 +602,12 @@ def get_onboarding_step_message(step: int = 1):
             "Ready to conquer your job hunt?"
         )
         kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("⬅️ Prev", callback_data="onboard:step:5"),
+            [InlineKeyboardButton("⬅️ Prev", callback_data="onboard:step:7"),
              InlineKeyboardButton("🚀 Launch 3 Workers Now!", callback_data="onboard:launch")],
             [InlineKeyboardButton("🏠 Back to Control Panel", callback_data="btn_status")]
         ])
+
+    return text, kb
 
     return text, kb
 

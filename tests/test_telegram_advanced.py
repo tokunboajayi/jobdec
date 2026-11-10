@@ -165,10 +165,10 @@ def test_dynamic_turbo_and_hud_toggle():
 def test_onboarding_wizard_steps_and_keyboard():
     from telegram_bot_service import get_onboarding_step_message, get_smart_keyboard
 
-    # Test all 6 steps generate valid HTML messages and keyboards
-    for step in range(1, 7):
+    # Test all 8 steps generate valid HTML messages and keyboards
+    for step in range(1, 9):
         text, kb = get_onboarding_step_message(step)
-        assert f"Step {step} of 6" in text
+        assert f"Step {step} of 8" in text
         assert kb is not None
         assert len(kb.inline_keyboard) >= 1
 
@@ -183,9 +183,14 @@ def test_onboarding_wizard_steps_and_keyboard():
     assert "3.35" in t3
     assert "Security+" in t3
 
-    # Step 6 should have the final launch button
-    t6, kb6 = get_onboarding_step_message(6)
-    launch_btns = [btn for row in kb6.inline_keyboard for btn in row if btn.callback_data == "onboard:launch"]
+    # Step 6 should contain iMessage Pager details
+    t6, _ = get_onboarding_step_message(6)
+    assert "iMessage" in t6
+    assert "+14046450373" in t6
+
+    # Step 8 should have the final launch button
+    t8, kb8 = get_onboarding_step_message(8)
+    launch_btns = [btn for row in kb8.inline_keyboard for btn in row if btn.callback_data == "onboard:launch"]
     assert len(launch_btns) == 1
     assert "Launch" in launch_btns[0].text
 

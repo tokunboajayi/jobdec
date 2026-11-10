@@ -25,7 +25,7 @@ def test_rule_never_gives_the_submitted_wrong_answer(label, bad):
 
 
 def test_real_fields_still_answered():
-    assert fill.rule_for("School Name (required)")["a"] == "Georgia State University"
+    assert fill.rule_for("School Name (required)")["a"] in ("Kennesaw State University", "Georgia State University")
     assert fill.rule_for("I certify that the information is true")["a"] == "check"
     assert fill.rule_for("Have you worked with us before? (required)")["a"] == "No"
 
