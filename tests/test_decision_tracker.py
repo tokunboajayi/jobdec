@@ -102,4 +102,7 @@ def test_get_decision_pipeline_summary():
     assert "Total Verified Applications:" in summary
     assert "Offers Extended:" in summary
     assert "Interviews & Screens:" in summary
+    assert "Recent Decisions & Application URLs:" in summary
+    assert "Job / Portal URL" in summary or "🔗" in summary
+
 

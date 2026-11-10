@@ -201,4 +201,95 @@ def test_onboarding_wizard_steps_and_keyboard():
     assert "Setup Wizard" in setup_btns[0].text
 
 
+def test_decision_tab_lifecycle_and_auto_disappear():
+    import asyncio
+    from unittest.mock import AsyncMock, MagicMock
+    from telegram_bot_service import (
+        open_or_refresh_decision_tab,
+        ACTIVE_DECISION_TAB,
+        _auto_close_decision_tab_job,
+    )
+
+    async def _run():
+        ACTIVE_DECISION_TAB["message_id"] = None
+        ACTIVE_DECISION_TAB["chat_id"] = None
+
+        # Mock context and bot
+        bot_mock = MagicMock()
+        bot_mock.send_message = AsyncMock(return_value=MagicMock(message_id=77777))
+        bot_mock.edit_message_text = AsyncMock()
+        bot_mock.delete_message = AsyncMock(return_value=True)
+
+        job_queue_mock = MagicMock()
+        job_queue_mock.get_jobs_by_name = MagicMock(return_value=[])
+        job_queue_mock.run_once = MagicMock()
+
+        context_mock = MagicMock()
+        context_mock.bot = bot_mock
+        context_mock.job_queue = job_queue_mock
+
+        # 1. Open tab
+        await open_or_refresh_decision_tab(context_mock, chat_id=12345, is_scan=False)
+        assert ACTIVE_DECISION_TAB["message_id"] == 77777
+        assert ACTIVE_DECISION_TAB["chat_id"] == 12345
+        assert bot_mock.send_message.called
+        sent_args = bot_mock.send_message.call_args[1]
+        assert "Active for 3 minutes" in sent_args["text"]
+        assert "Autonomous Decision & Pipeline Summary" in sent_args["text"]
+        assert "🔗" in sent_args["text"] or "URL" in sent_args["text"]
+        assert job_queue_mock.run_once.called
+        assert job_queue_mock.run_once.call_args[0][1] == 180.0  # 3 minutes
+
+        # 2. Re-open / refresh tab while active: should edit in-place without duplicating
+        await open_or_refresh_decision_tab(context_mock, chat_id=12345, is_scan=False)
+        assert bot_mock.edit_message_text.called
+        assert ACTIVE_DECISION_TAB["message_id"] == 77777
+
+        # 3. Simulate auto-disappear timer expiration
+        job_mock = MagicMock()
+        job_mock.data = {"chat_id": 12345, "message_id": 77777}
+        timer_ctx = MagicMock(bot=bot_mock, job=job_mock)
+        await _auto_close_decision_tab_job(timer_ctx)
+        assert bot_mock.delete_message.called
+        assert ACTIVE_DECISION_TAB["message_id"] is None
+
+    asyncio.run(_run())
+
+
+def test_single_control_panel_invariant():
+    import asyncio
+    from unittest.mock import AsyncMock, MagicMock
+    from telegram_bot_service import (
+        ensure_pinned_live_status,
+        save_pinned_status_info,
+        load_pinned_status_info,
+        PINNED_STATUS_FILE,
+    )
+
+    async def _run():
+        test_chat = 998877
+        existing_panel_id = 445566
+        save_pinned_status_info(test_chat, existing_panel_id)
+
+        bot_mock = MagicMock()
+        bot_mock.edit_message_text = AsyncMock()
+        bot_mock.send_message = AsyncMock(return_value=MagicMock(message_id=99999))
+        bot_mock.pin_chat_message = AsyncMock()
+
+        context_mock = MagicMock(bot=bot_mock)
+
+        # 1. Update existing control panel: must edit in-place and NOT send new message
+        res_id = await ensure_pinned_live_status(context_mock, chat_id=test_chat, force_repin=False)
+        assert res_id == existing_panel_id
+        assert bot_mock.edit_message_text.called
+        assert not bot_mock.send_message.called  # NEVER duplicate!
+
+        # Cleanup
+        if PINNED_STATUS_FILE.exists():
+            PINNED_STATUS_FILE.unlink(missing_ok=True)
+
+    asyncio.run(_run())
+
+
+
 

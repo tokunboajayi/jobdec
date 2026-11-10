@@ -61,6 +61,7 @@ AUTHORIZED_USER_ID = int(CHAT_ID_STR) if CHAT_ID_STR.isdigit() else 0
 
 PINNED_STATUS_FILE = ROOT / "pinned_status.json"
 ACTIVE_HUD_STATE = {"chat_id": None, "message_id": None}
+ACTIVE_DECISION_TAB = {"chat_id": None, "message_id": None}
 
 
 def calculate_dynamic_turbo_workers() -> Tuple[int, str]:
@@ -936,6 +937,150 @@ async def _delayed_delete_job(context: ContextTypes.DEFAULT_TYPE):
         await safe_delete_message(context.bot, chat_id, message_id)
 
 
+async def _delete_after(bot, chat_id: int, message_ids: list, delay_sec: float = 3.0):
+    """Silently deletes messages after a delay without blocking."""
+    try:
+        await asyncio.sleep(delay_sec)
+        for mid in message_ids:
+            if mid:
+                await safe_delete_message(bot, chat_id, mid)
+    except Exception:
+        pass
+
+
+async def _auto_close_decision_tab_job(context: ContextTypes.DEFAULT_TYPE):
+    """JobQueue callback: automatically removes the decision tab after 3 minutes."""
+    data = context.job.data or {}
+    cid = data.get("chat_id")
+    mid = data.get("message_id")
+    if cid and mid:
+        await safe_delete_message(context.bot, cid, mid)
+        if ACTIVE_DECISION_TAB.get("message_id") == mid:
+            ACTIVE_DECISION_TAB["message_id"] = None
+        print(f"[Decision Tab] Auto-disappeared after 3-minute active window (chat {cid}, msg {mid}).", flush=True)
+
+
+async def _async_delete_tab_after(bot, chat_id: int, message_id: int, delay_sec: float = 180.0):
+    """Async task fallback: deletes the decision tab after 3 minutes (180s)."""
+    try:
+        await asyncio.sleep(delay_sec)
+        await safe_delete_message(bot, chat_id, message_id)
+        if ACTIVE_DECISION_TAB.get("message_id") == message_id:
+            ACTIVE_DECISION_TAB["message_id"] = None
+        print(f"[Decision Tab] Auto-disappeared after {delay_sec}s (chat {chat_id}, msg {message_id}).", flush=True)
+    except Exception:
+        pass
+
+
+async def open_or_refresh_decision_tab(context: ContextTypes.DEFAULT_TYPE, chat_id: int, is_scan: bool = False, query=None):
+    """
+    Opens or refreshes the dedicated Decision Stages & Recruiter Radar Tab.
+    The tab displays live stage advancements, deadlines, decision timestamps, and direct clickable URLs.
+    It stays active for 3 minutes (180s) and automatically disappears from chat.
+    """
+    global ACTIVE_DECISION_TAB
+
+    tab_mid = ACTIVE_DECISION_TAB.get("message_id")
+    tab_cid = ACTIVE_DECISION_TAB.get("chat_id") or chat_id
+
+    # If is_scan, perform scanning
+    if is_scan:
+        if query and query.message and query.message.message_id == tab_mid:
+            try:
+                await safe_edit(query, "⏳ <i>Scanning Gmail for decision emails, stage advancements & deadlines...</i>")
+            except Exception:
+                pass
+        elif query:
+            try:
+                await query.answer("⏳ Scanning Gmail for decision emails & stage advancements...", show_alert=False)
+            except Exception:
+                pass
+
+        new_advs = await asyncio.to_thread(scan_and_track_decision_emails, 30)
+        if new_advs:
+            for adv in new_advs:
+                comp = adv.get("company", "Target")
+                kb_rows = []
+                if adv.get("email_link"):
+                    kb_rows.append([InlineKeyboardButton("📬 Open Email in Gmail", url=adv["email_link"])])
+                if adv.get("job_url") and adv["job_url"].startswith("http"):
+                    kb_rows.append([InlineKeyboardButton("🔗 View Job Portal", url=adv["job_url"])])
+                kb_rows.append([
+                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
+                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
+                ])
+                alert_msg = await context.bot.send_message(
+                    chat_id=chat_id,
+                    text=format_advancement_telegram_alert(adv),
+                    reply_markup=InlineKeyboardMarkup(kb_rows),
+                    parse_mode=ParseMode.HTML,
+                    disable_web_page_preview=True
+                )
+                telegram_query_engine.save_application_message(alert_msg.message_id, chat_id)
+
+    summary = get_decision_pipeline_summary()
+    now_time = datetime.now().strftime("%I:%M:%S %p")
+    tab_text = (
+        f"🎯 <b>[Decision Stages & Recruiter Radar Tab]</b> <i>({now_time})</i>\n"
+        f"<i>⏱️ Active for 3 minutes • Auto-disappears automatically</i>\n\n"
+        f"{summary}\n\n"
+        f"<i>Tap [📬 Scan Decisions Now] to re-check Gmail, or [🗑️ Close Tab Now] to dismiss early.</i>"
+    )
+
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton("📬 Scan Decisions Now", callback_data="btn_scan_inbox")],
+        [InlineKeyboardButton("🗑️ Close Tab Now", callback_data="btn_close_decision_tab")]
+    ])
+
+    # If tab is already open and valid, edit in-place
+    updated = False
+    if tab_mid:
+        try:
+            await context.bot.edit_message_text(
+                chat_id=tab_cid,
+                message_id=tab_mid,
+                text=tab_text,
+                reply_markup=kb,
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=True
+            )
+            updated = True
+        except Exception:
+            updated = False
+
+    if not updated:
+        sent = await context.bot.send_message(
+            chat_id=chat_id,
+            text=tab_text,
+            reply_markup=kb,
+            parse_mode=ParseMode.HTML,
+            disable_web_page_preview=True
+        )
+        tab_mid = sent.message_id
+        ACTIVE_DECISION_TAB["message_id"] = tab_mid
+        ACTIVE_DECISION_TAB["chat_id"] = chat_id
+
+    # Reset 3-minute auto-disappear timer (180s)
+    if context.job_queue:
+        for j in context.job_queue.get_jobs_by_name("decision_tab_timer"):
+            j.schedule_removal()
+        context.job_queue.run_once(
+            _auto_close_decision_tab_job,
+            180.0,
+            name="decision_tab_timer",
+            data={"chat_id": chat_id, "message_id": tab_mid}
+        )
+    else:
+        asyncio.create_task(_async_delete_tab_after(context.bot, chat_id, tab_mid, 180.0))
+
+    if query:
+        try:
+            toast = "📬 Decisions scan complete! Tab active for 3 min." if is_scan else "🎯 Decision Stages tab opened! Active for 3 min."
+            await query.answer(toast, show_alert=False)
+        except Exception:
+            pass
+
+
 async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id: int, trigger_msg_id: int = None):
     """Deletes all active question messages AND all active application messages to eliminate chat buildup."""
     msg_ids = telegram_query_engine.clear_all_pending_questions()
@@ -958,6 +1103,15 @@ async def clean_all_questions_action(context: ContextTypes.DEFAULT_TYPE, chat_id
     pinned_mid = pinned_info.get("message_id")
     hud_mid = ACTIVE_HUD_STATE.get("message_id")
     protected_ids = {mid for mid in [pinned_mid, hud_mid] if mid}
+
+    # Also clean active decision tab if open
+    dec_mid = ACTIVE_DECISION_TAB.get("message_id")
+    if dec_mid:
+        await safe_delete_message(context.bot, chat_id, dec_mid)
+        ACTIVE_DECISION_TAB["message_id"] = None
+        if context.job_queue:
+            for j in context.job_queue.get_jobs_by_name("decision_tab_timer"):
+                j.schedule_removal()
 
     if trigger_msg_id:
         tracked_ids = set(msg_ids) | {mid for mid, _ in app_items}
@@ -1010,13 +1164,15 @@ async def sweep_expired_questions_job(context: ContextTypes.DEFAULT_TYPE):
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != AUTHORIZED_USER_ID:
         return
+    # Ensure the single always-active Control Panel is updated and pinned at top of chat
+    await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=False)
     text = (
         "👋 <b>Welcome to Job Deck Autonomous Headquarters!</b>\n\n"
         "🧭 <b>New User Setup:</b>\n"
         "• <code>/setup</code> or tap <b>[🧭 Setup Wizard]</b> below for an interactive 6-step walkthrough!\n\n"
         "⚡ <b>Autonomous Speed & Workers:</b>\n"
         "• <code>/apply</code> or <code>run</code> — Launch 3 workers with auto-scaling\n"
-        "• <code>/turbo</code> — Max velocity (4 workers, fast 1.0s delay)\n"
+        "• <code>/turbo</code> — Max velocity (auto-tuned concurrency, fast 1.0s delay)\n"
         "• <code>/stealth</code> — Ultra-stealth human emulation (8s jitter)\n"
         "• <code>/stop</code> or <code>/nuke</code> — Immediate pause / emergency kill\n\n"
         "📄 <b>Tailored Documents & Screen Cam:</b>\n"
@@ -1036,8 +1192,11 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• <code>/negotiate [Details]</code> — Market salary counter-offer packages\n"
         "• 🗣️ <i>Send any voice memo to execute commands hands-free!</i>"
     )
-    m = get_realtime_metrics()
-    await update.message.reply_text(text, reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+    kb = InlineKeyboardMarkup([
+        [InlineKeyboardButton("📌 View Live Control Panel", callback_data="btn_status")],
+        [InlineKeyboardButton("🧭 Launch Setup Wizard", callback_data="btn_setup_wizard")]
+    ])
+    await update.message.reply_text(text, reply_markup=kb, parse_mode=ParseMode.HTML)
 
 
 async def cmd_setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1050,8 +1209,15 @@ async def cmd_setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != AUTHORIZED_USER_ID:
         return
-    m = get_realtime_metrics()
-    await update.message.reply_text(format_status_message(metrics=m), reply_markup=get_smart_keyboard(m), parse_mode=ParseMode.HTML)
+    target_chat = update.effective_chat.id
+    # Always update the single active control panel in-place! Never duplicate!
+    await ensure_pinned_live_status(context, chat_id=target_chat, force_repin=False)
+    if update.message:
+        notice = await update.message.reply_text(
+            "📌 <b>Job Deck Live Control Panel updated live above!</b>\n<i>(Single always-active control panel)</i>",
+            parse_mode=ParseMode.HTML
+        )
+        asyncio.create_task(_delete_after(context.bot, target_chat, [update.message.message_id, notice.message_id], 3.0))
 
 
 async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1242,35 +1408,27 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             telegram_query_engine.save_application_message(sent.message_id, query.message.chat_id)
 
     elif data == "btn_decisions":
-        summary = get_decision_pipeline_summary()
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("📬 Scan Decisions Now", callback_data="btn_scan_inbox")],
-            [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
-        ])
-        await safe_edit(query, summary, reply_markup=kb)
+        await open_or_refresh_decision_tab(context, chat_id=query.message.chat_id, is_scan=False, query=query)
+        return
 
     elif data == "btn_scan_inbox":
-        await safe_edit(query, "⏳ <i>Scanning Gmail for decision emails, stage advancements & deadlines...</i>")
-        new_advs = await asyncio.to_thread(scan_and_track_decision_emails, 30)
-        if new_advs:
-            for adv in new_advs:
-                comp = adv.get("company", "Target")
-                kb_rows = []
-                if adv.get("email_link"):
-                    kb_rows.append([InlineKeyboardButton("📬 Open Email in Gmail", url=adv["email_link"])])
-                kb_rows.append([
-                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
-                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
-                ])
-                adv_kb = InlineKeyboardMarkup(kb_rows)
-                alert_msg = await query.message.reply_text(format_advancement_telegram_alert(adv), reply_markup=adv_kb, parse_mode=ParseMode.HTML)
-                telegram_query_engine.save_application_message(alert_msg.message_id, query.message.chat_id)
-        summary = get_decision_pipeline_summary()
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("📬 Scan Decisions Again", callback_data="btn_scan_inbox")],
-            [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
-        ])
-        await safe_edit(query, summary, reply_markup=kb)
+        await open_or_refresh_decision_tab(context, chat_id=query.message.chat_id, is_scan=True, query=query)
+        return
+
+    elif data == "btn_close_decision_tab":
+        mid = query.message.message_id
+        cid = query.message.chat_id
+        await safe_delete_message(context.bot, cid, mid)
+        if ACTIVE_DECISION_TAB.get("message_id") == mid:
+            ACTIVE_DECISION_TAB["message_id"] = None
+        if context.job_queue:
+            for j in context.job_queue.get_jobs_by_name("decision_tab_timer"):
+                j.schedule_removal()
+        try:
+            await query.answer("🎯 Decision tab closed.", show_alert=False)
+        except Exception:
+            pass
+        return
 
     elif data == "btn_optimize_pc":
         await query.answer("🧹 Optimizing PC memory & priority...", show_alert=False)
@@ -1690,15 +1848,13 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "show pinned", "pin the status", "pin hud", "repin"
     ]) or t_lower in ["/pin", "pin", "/pinned"]:
         pinned_id = await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=True)
-        m = get_realtime_metrics()
-        await safe_reply(
-            update.message,
-            "📌 <b>Live Status View has been pinned to the top of your chat banner!</b>\n\n"
-            f"• <b>Total Verified:</b> <b>{m['total_applied']} / 3000</b> | <b>Today:</b> +{m['today_applied']}\n"
-            f"• <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n\n"
-            "<i>The banner at the top of your chat updates continuously and keeps your full controls one tap away at all times.</i>",
-            reply_markup=get_smart_keyboard(m)
-        )
+        if update.message:
+            notice = await update.message.reply_text(
+                "📌 <b>Live Status View has been pinned to the top of your chat banner!</b>\n\n"
+                "<i>The banner at the top of your chat updates continuously and keeps your full controls one tap away at all times.</i>",
+                parse_mode=ParseMode.HTML
+            )
+            asyncio.create_task(_delete_after(context.bot, update.effective_chat.id, [update.message.message_id, notice.message_id], 3.0))
         return
 
     # Priority 3: Live Headless Screen Cam (matches conversational requests like "bring up the live view")
@@ -1782,28 +1938,16 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await safe_reply(update.message, "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(f"• {item}" for item in inbox[:10]))
         return
 
-    # Priority 10: Decision Tracking & Stage Advancements
+    # Priority 10: Decision Tracking & Stage Advancements (Active for 3 min tab)
     elif t_lower in ["/decisions", "decisions", "/advancements", "advancements", "/stages", "stages"]:
-        summary = get_decision_pipeline_summary()
-        await safe_reply(update.message, summary)
+        await open_or_refresh_decision_tab(context, chat_id=update.effective_chat.id, is_scan=False)
+        if update.message:
+            asyncio.create_task(_delete_after(context.bot, update.effective_chat.id, [update.message.message_id], 3.0))
         return
-    elif t_lower in ["/scan_inbox", "scan_inbox", "/check_inbox", "check_inbox", "/scan"]:
-        await safe_reply(update.message, "⏳ <i>Scanning Gmail for decision emails and stage advancements...</i>")
-        new_advs = scan_and_track_decision_emails(days_back=30)
-        if new_advs:
-            for adv in new_advs:
-                msg = format_advancement_telegram_alert(adv)
-                comp = adv.get("company", "Target")
-                kb_rows = []
-                if adv.get("email_link"):
-                    kb_rows.append([InlineKeyboardButton("📬 Open Email in Gmail", url=adv["email_link"])])
-                kb_rows.append([
-                    InlineKeyboardButton("⚔️ Prep Battlecard", callback_data=f"prep:{comp}"),
-                    InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
-                ])
-                await safe_reply(update.message, msg, reply_markup=InlineKeyboardMarkup(kb_rows))
-        summary = get_decision_pipeline_summary()
-        await safe_reply(update.message, summary)
+    elif any(k in t_lower for k in ["scan inbox", "check inbox", "/scan_inbox", "scan_inbox", "/check_inbox", "check_inbox", "/scan", "scan decisions", "check decisions", "scan recruiters"]):
+        await open_or_refresh_decision_tab(context, chat_id=update.effective_chat.id, is_scan=True)
+        if update.message:
+            asyncio.create_task(_delete_after(context.bot, update.effective_chat.id, [update.message.message_id], 3.0))
         return
     elif any(k in t_lower for k in ["optimize", "/optimize", "boost", "clean ram", "optimize pc", "free ram", "boost pc", "lag", "speed up"]):
         await safe_reply(update.message, "🧹 <i>Running comprehensive PC & Job Deck optimization...</i>")
@@ -1848,8 +1992,15 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
         return
     elif any(k in t_lower for k in ["status", "update", "metrics", "dashboard", "how are things", "how is it going", "how are we doing", "progress", "stats", "give me an update"]) or t_lower in ["/status", "/update"]:
-        m = get_realtime_metrics()
-        await safe_reply(update.message, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
+        target_chat = update.effective_chat.id
+        await ensure_pinned_live_status(context, chat_id=target_chat, force_repin=False)
+        if update.message:
+            notice = await update.message.reply_text(
+                "📌 <b>Job Deck Live Control Panel updated live above!</b>\n<i>(Single always-active control panel)</i>",
+                parse_mode=ParseMode.HTML
+            )
+            asyncio.create_task(_delete_after(context.bot, target_chat, [update.message.message_id, notice.message_id], 3.0))
+        return
     elif any(k in t_lower for k in ["start applying", "start runner", "start workers", "launch workers", "keep applying", "run workers", "start", "begin", "launch", "apply", "run"]) or t_lower in ["/run", "/apply", "/start"]:
         launch_runner(workers=3)
         m = get_realtime_metrics()
@@ -1931,13 +2082,14 @@ async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):
         print(f"[3-Hour Scheduled Update] Cleaned {deleted_apps} application messages from chat.", flush=True)
 
         m = get_realtime_metrics()
-        clean_note = f"\n\n🧹 <i>Cleaned {deleted_apps} application updates from chat to prevent message buildup.</i>" if deleted_apps > 0 else ""
-        msg = format_status_message(header="🕒 <b>3-Hour Scheduled Update</b>", metrics=m) + clean_note
-        await context.bot.send_message(
+        clean_note = f" (Cleaned {deleted_apps} items)" if deleted_apps > 0 else ""
+        header = f"🕒 <b>Job Deck Live Control Panel (3-Hour Update)</b><i>{clean_note}</i>"
+        # Update the single always-active control panel in-place without duplicating
+        await ensure_pinned_live_status(
+            context,
             chat_id=AUTHORIZED_USER_ID,
-            text=msg,
-            reply_markup=get_smart_keyboard(m),
-            parse_mode=ParseMode.HTML,
+            force_repin=False,
+            header=header
         )
     except Exception as e:
         print(f"[3-Hour Update Error] {e}", flush=True)

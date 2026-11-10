@@ -415,6 +415,8 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
     ts = adv.get("decision_timestamp") or datetime.datetime.now().strftime("%b %d, %Y %I:%M %p")
     deadline = adv.get("deadline") or "Within 48 hours"
     email_link = adv.get("email_link") or "https://mail.google.com/mail/u/0/#inbox"
+    job_url = (adv.get("job_url") or adv.get("url") or "").strip()
+    job_link_line = f"🔗 <b>Job / Portal Link:</b> <a href=\"{job_url}\">Open Application Portal</a>\n" if job_url.startswith("http") else ""
 
     return (
         f"{icon} <b>{title}</b>\n\n"
@@ -425,6 +427,7 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
         f"📅 <b>Decision Received:</b> <code>{ts}</code>\n"
         f"⏰ <b>Action Deadline:</b> <code>{deadline}</code>\n"
         f"📋 <b>Next Action:</b> {adv['action_needed']}\n"
+        f"{job_link_line}"
         f"📬 <b>Email Direct Link:</b> <a href=\"{email_link}\">Open Message in Gmail</a>\n\n"
         f"─────────────────────────────\n"
         f"⚔️ <i>Interview Battlecard generated! Tap below to view email or prepare.</i>"
@@ -433,6 +436,9 @@ def format_advancement_telegram_alert(adv: Dict[str, Any]) -> str:
 
 def get_decision_pipeline_summary() -> str:
     """Generates an executive overview of all current application stages."""
+    import html
+    import urllib.parse
+
     app_csv = ROOT / "applications.csv"
     if not app_csv.exists():
         return "No applications found."
@@ -471,18 +477,51 @@ def get_decision_pipeline_summary() -> str:
     if positive_apps:
         summary.append("<b>Active Stage Advancements:</b>")
         for a in positive_apps[:10]:
-            co = a.get("Company")
-            stg = a.get("Stage")
-            act = a.get("Next Action", "Action pending")
+            raw_co = a.get("Company", "Target")
+            co = html.escape(raw_co)
+            stg = html.escape(a.get("Stage", "Interview"))
+            act = html.escape(a.get("Next Action", "Action pending"))
             dec_date = a.get("Decision Date") or a.get("Date Applied") or "Recent"
             deadline = a.get("Next Action Date") or "Within 48h"
+            job_url = (a.get("Job URL") or a.get("URL") or "").strip()
+            email_search = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(raw_co)}"
+
+            links = []
+            if job_url.startswith("http"):
+                links.append(f'<a href="{html.escape(job_url)}">🔗 Job / Portal URL</a>')
+            links.append(f'<a href="{html.escape(email_search)}">📬 Recruiter Email</a>')
+            links_str = " • ".join(links)
+
             summary.append(
                 f"• <b>{co}</b> — <code>{stg}</code>\n"
                 f"  📅 <i>Decision:</i> <code>{dec_date}</code> | ⏰ <i>Deadline:</i> <code>{deadline}</code>\n"
-                f"  🎯 <i>Action:</i> {act}"
+                f"  🎯 <i>Action:</i> {act}\n"
+                f"  🌐 <b>Decision Links:</b> {links_str}"
             )
     else:
         summary.append("<i>Zero stage advancements recorded yet. Automated tracker is actively listening!</i>")
+
+    # Always show latest decisions / applications with their direct URLs
+    summary.append("\n<b>Recent Decisions & Application URLs:</b>")
+    recent_rows = [r for r in rows if r.get("Job URL")]
+    for a in recent_rows[-5:]:
+        raw_co = a.get("Company", "Target")
+        co = html.escape(raw_co)
+        stg = html.escape(a.get("Stage", "Applied"))
+        dt = a.get("Decision Date") or a.get("Date Applied") or "Recent"
+        job_url = (a.get("Job URL") or a.get("URL") or "").strip()
+        email_search = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(raw_co)}"
+
+        links = []
+        if job_url.startswith("http"):
+            links.append(f'<a href="{html.escape(job_url)}">🔗 Job / Portal URL</a>')
+        links.append(f'<a href="{html.escape(email_search)}">📬 Email</a>')
+        links_str = " • ".join(links)
+
+        summary.append(
+            f"• <b>{co}</b> (<code>{stg}</code> — {dt})\n"
+            f"  🌐 {links_str}"
+        )
 
     return "\n".join(summary)
 
