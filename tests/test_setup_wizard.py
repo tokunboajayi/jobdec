@@ -34,3 +34,4 @@ def test_setup_wizard_steps():
 
     # 7. Preflight & Finish
     setup_wizard.run_preflight_and_finish()
+

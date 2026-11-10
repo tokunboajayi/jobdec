@@ -52,6 +52,7 @@ except ImportError:
     RE = None
 PICK_GUESSED = set()  # labels whose dropdown answer came from a fallback guess, not a rule
 FIX_HINTS = []        # field labels the site flagged as invalid/required after the last Next click
+ACTIVE_JOB_OTP = None # Global verification / OTP code fetched for the current job session
 try:
     from agents import options as OPTS  # answer -> option matching (months, yes/no year logic, aliases, embeddings)
 except Exception:
@@ -804,12 +805,15 @@ def _fill_file_field(c, st, resume, resume_fields):
 
 def _resolve_rule(c, st, sec_code_fields):
     """Pick the answer rule for a field (security code, profile rule, brain, semantic, facts, guess). None = leave the field."""
+    global ACTIVE_JOB_OTP
     f, loc, label, company, role, unanswered = c.f, c.loc, c.label, c.company, c.role, c.unanswered
     is_sec_code = f in sec_code_fields
     m_digit = re.search(r"digit\s*(\d)\s*of\s*(?:six|6)", label, re.I)
     rule = None
     if is_sec_code:
         try:
+            if ACTIVE_JOB_OTP and not st.last_verification_code:
+                st.last_verification_code = ACTIVE_JOB_OTP
             cur_val = loc.evaluate("e => e.value") if loc else ""
             if not cur_val and not st.last_verification_code and not st.otp_attempted:
                 st.otp_attempted = True
@@ -825,9 +829,11 @@ def _resolve_rule(c, st, sec_code_fields):
                 code = fetch_code_fn(timeout_sec=45, poll_interval=3, search_term=clean_search or company)
                 if code:
                     st.last_verification_code = code
+                    ACTIVE_JOB_OTP = code
                     print(f"[Security Code] Successfully retrieved code from Gmail: {code}")
             elif cur_val and not st.last_verification_code:
                 st.last_verification_code = cur_val
+                ACTIVE_JOB_OTP = cur_val
             if st.last_verification_code:
                 if m_digit:
                     d_idx = int(m_digit.group(1)) - 1
@@ -956,7 +962,11 @@ def _prepare_answer(c):
         unanswered.append({**f, "error": "sensitive question - not guessing"})
         return False
     escalate = bool(FIX_HINTS) and _hinted(label)
+    # Never skip re-filling security/verification code fields if they are empty
+    is_sec_input = bool(re.search(r"security-input|verification-input", str(f.get("elemId", "")), re.I))
     has_val = f["value"] not in ("", "false", None) and not f["value"].lower().startswith(("please select", "select"))
+    if is_sec_input and not str(f.get("value", "")).strip():
+        has_val = False
     if len(str(f["value"] or "").strip()) > 80 or str(f["value"] or "").count("+") > 2:
         has_val = False
     if has_val and not overwrite and not escalate:
@@ -1705,15 +1715,25 @@ def _fill_text(c):
             except Exception:
                 pass
         if not filled_ok:
-            try:
-                loc.fill(val, timeout=1500)
-                filled_ok = True
-            except Exception:
+            is_digit_box = bool(re.search(r"security-input|verification-input", str(f.get("elemId", "")), re.I)) or (f.get("maxlength") == 1 or loc.get_attribute("maxlength") == "1")
+            if is_digit_box and val:
                 try:
-                    loc.fill(val, force=True, timeout=1500)
+                    loc.click(timeout=600)
+                    loc.fill("")
+                    loc.press_sequentially(str(val), delay=20)
                     filled_ok = True
                 except Exception:
                     pass
+            if not filled_ok:
+                try:
+                    loc.fill(val, timeout=1500)
+                    filled_ok = True
+                except Exception:
+                    try:
+                        loc.fill(val, force=True, timeout=1500)
+                        filled_ok = True
+                    except Exception:
+                        pass
         if not filled_ok:
             try:
                 loc.evaluate("""(e, v) => {

@@ -639,6 +639,17 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0, user_act
         except Exception:
             pass
 
+    # Terminate any existing batch_apply_parallel processes to prevent duplicate concurrency conflicts
+    curr_pid = os.getpid()
+    for p in psutil.process_iter(["pid", "cmdline"]):
+        try:
+            cmd_str = " ".join(p.info.get("cmdline") or [])
+            if "batch_apply_parallel" in cmd_str and p.info.get("pid") != curr_pid:
+                p.kill()
+        except Exception:
+            pass
+    time_mod.sleep(0.5)
+
     # Ensure queue has unapplied jobs available; if low, replenish immediately
     m = get_realtime_metrics()
     if m.get("unapplied_count", 0) < 25:

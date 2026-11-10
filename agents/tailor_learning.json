@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "last_updated": "2026-11-09T23:38:01.794982",
+  "last_updated": "2026-11-10T01:13:47.658739",
   "learned_keyword_weights": {
     "iam": {
       "active directory": 3.05,
@@ -33,11 +33,11 @@
       "mitre att&ck": 2.75,
       "nist csf": 2.6,
       "phishing": 2.4,
-      "threat modeling": 3.15,
-      "security+": 3.45,
-      "soc": 6.5,
+      "threat modeling": 3.2,
+      "security+": 3.5,
+      "soc": 6.55,
       "investigation": 3.3,
-      "triage": 3.8
+      "triage": 3.85
     },
     "it_support": {
       "technical support": 3.75,
@@ -37021,6 +37021,51 @@
       ],
       "outcome": "applied",
       "timestamp": "2026-11-09T23:38:01.794982"
+    },
+    "Chainguard_Security_Analyst": {
+      "company": "Chainguard",
+      "role": "Security Analyst",
+      "domain": "soc_analyst",
+      "keywords": [
+        "threat modeling",
+        "security+",
+        "soc",
+        "triage"
+      ],
+      "bullet_indices": {
+        "Wolters Kluwer, Tax & Accounting North America": [
+          0,
+          2,
+          1
+        ],
+        "Castles Technology": [
+          0,
+          2,
+          1,
+          3
+        ],
+        "Active Directory Automation Lab": [
+          0,
+          2,
+          1
+        ],
+        "Azure Sentinel SIEM Lab": [
+          0,
+          1,
+          2
+        ],
+        "Mastercard": [
+          0
+        ]
+      },
+      "skill_order": [
+        "Security",
+        "Identity & Access",
+        "Technical",
+        "Operations"
+      ],
+      "outcome": "applied",
+      "timestamp": "2026-11-10T01:13:47.658739"
     }
   },
   "domain_stats": {
@@ -37031,7 +37076,7 @@
       "confirmations": 0
     },
     "soc_analyst": {
-      "applied": 223,
+      "applied": 224,
       "interviews": 0,
       "assessments": 0,
       "confirmations": 0
