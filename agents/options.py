@@ -6,7 +6,7 @@ question, "Yes" for "which state do you live in", "08" where the site lists "Aug
 the field and the filler retried the same answer five times. This module turns (question, answer, options)
 into the option to click - or None, so a wrong option is never picked silently.
 
-Also: fact questions (school, country, state, degree, ...) are answered from AJ's own profile.json facts,
+Also: fact questions (school, country, state, degree, ...) are answered from the candidate's own facts,
 never guessed - a guess once picked "Harvard University".
 """
 import re
@@ -32,10 +32,11 @@ MONTHS = ["january", "february", "march", "april", "may", "june", "july", "augus
           "november", "december"]
 ALIASES = [{"united states", "united states of america", "usa", "us", "u.s.", "u.s.a.", "america", "united states of america (+1)", "(+1) united states of america", "united states (+1)", "(+1) united states"},
            {"georgia", "ga"},
-           {"kennesaw state university", "kennesaw state", "ksu", "kennesaw", "georgia state university", "georgia state", "gsu"},
-           {"bachelor's degree", "bachelors", "bachelor's", "bachelor", "undergraduate", "bachelor's (in progress)", "bachelor of science", "bs", "bachelor of business administration", "bba"},
-           {"senior", "4th year", "fourth year", "junior", "3rd year", "third year"},
-           {"cybersecurity", "cyber security", "information security", "infosec", "computer information systems", "information systems", "cis"}]
+           # true synonyms only: one set = one value. Schools, majors and specific degrees never go here (they are
+           # a person's facts, and merging two of them once picked another school / class year).
+           {"bachelor's degree", "bachelors", "bachelor's", "bachelor", "undergraduate", "bachelor's (in progress)"},
+           {"senior", "4th year", "fourth year"},
+           {"junior", "3rd year", "third year"}]
 YES = re.compile(r"^\s*(yes|y|true|i am|i do|i will|i have|i can|correct|i consent|consent|i agree|agree|accept)\b", re.I)
 NO = re.compile(r"^\s*(no|n|false|i am not|i do not|i don'?t|i will not|i won'?t|i have not|i can'?t|i cannot|i do not consent|decline|opt out|i opt out)\b(?!.*(?:results|matching|options|records|available))", re.I)
 
@@ -156,12 +157,15 @@ def resolve(label, want, options, pattern=None, semantic_ok=True):
             on = norm(o)
             if on in (name, name[:3], str(mi + 1), f"{mi + 1:02d}") or on.startswith(name[:3] + " ") or re.match(rf"^0?{mi + 1}\b(?![/\d])", on):
                 return o
+    cat, _ = fact_category(label)
     # 4. option contained in the answer: "Information Systems" for "Computer Information Systems"
-    inside = [o for o in opts if len(norm(o)) > 3 and re.search(r"(?<![a-z])" + re.escape(norm(o)) + r"(?![a-z])", w)]
+    #    (never for schools: "State University" or "Georgia" inside a school name is a different answer)
+    inside = [] if cat == "school" else [o for o in opts if len(norm(o)) > 3 and re.search(r"(?<![a-z])" + re.escape(norm(o)) + r"(?![a-z])", w)]
     if inside:
         return max(inside, key=lambda o: len(o))
-    # 5. meaning match (local embeddings): "United States" ~ "USA", "Georgia State Univ." ~ "Georgia State University"
-    if semantic_ok and len(opts) <= 300:
+    # 5. meaning match (local embeddings): "Fall semester" ~ "Autumn". Never for fact questions: two different
+    #    schools score 0.90 ("X State University" ~ "X Southern University"), as high as one school's own abbreviation.
+    if semantic_ok and not cat and len(opts) <= 300:
         try:
             from . import semantic
             if semantic.available():
@@ -172,7 +176,6 @@ def resolve(label, want, options, pattern=None, semantic_ok=True):
             pass
 
     # 6. Fallback for fact questions (school, major, degree): if user's fact is not in options, choose 'Other' or 'Not Listed'
-    cat, _ = fact_category(label)
     if cat in ("school", "major", "degree"):
         other_opts = [o for o in opts if re.match(r"^\s*(other|not listed|other\s*[\/\-]\s*not listed|none of the above)\b", str(o), re.I)]
         if other_opts:
@@ -182,7 +185,7 @@ def resolve(label, want, options, pattern=None, semantic_ok=True):
 
 
 # ---------------------------------------------------------------- fact questions: answer from profile, never guess
-FACTS = [  # (category, question pattern on the core question, probe label that AJ's profile.json rules answer)
+FACTS = [  # (category, question pattern on the core question, probe label the candidate's profile.json rules answer)
     ("school", r"\b(university|college|school|institution)\b.*\b(attend|attending|enrolled|currently|confirm|name)\b|"
                r"\b(attend|name of|which)\b.*\b(university|college|school|institution)\b|^(school|university|college|institution)( name)?$",
      "name of school"),
@@ -213,7 +216,7 @@ def fact_category(label):
 
 
 def fact_rule(label, rule_for):
-    """(category, rule) for a fact question. rule is None when AJ's profile has no answer -> leave it empty."""
+    """(category, rule) for a fact question. rule is None when the candidate's profile has no answer -> leave it empty."""
     cat, probe = fact_category(label)
     if not cat:
         return None, None

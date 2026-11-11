@@ -2,6 +2,7 @@
 import pytest
 
 import ai_responder
+import candidate
 import fill
 
 
@@ -13,7 +14,6 @@ def test_address_line_2_never_repeats_street():
 
 @pytest.mark.parametrize("label, bad", [
     ("Company Phone Number (required)", "Delta Air Lines"),
-    ("School Type", "Georgia State University"),
     ("Certifications & Awards Earned", "check"),
     ("Have you applied for a job with us before? (required)", "Yes"),
     ("Have you worked with us before? (required)", "Yes"),
@@ -24,8 +24,17 @@ def test_rule_never_gives_the_submitted_wrong_answer(label, bad):
     assert (fill.rule_for(label) or {}).get("a") != bad
 
 
+def own_school():
+    """From the candidate's .env, else their profile's plain 'School' answer - never a name typed here."""
+    return candidate.fact("UNIVERSITY") or (fill.rule_for("School") or {}).get("a")
+
+
+def test_school_type_is_not_the_school_name():
+    assert own_school() and (fill.rule_for("School Type") or {}).get("a") != own_school()
+
+
 def test_real_fields_still_answered():
-    assert fill.rule_for("School Name (required)")["a"] in ("Kennesaw State University", "Georgia State University")
+    assert own_school() and fill.rule_for("School Name (required)")["a"] == own_school()
     assert fill.rule_for("I certify that the information is true")["a"] == "check"
     assert fill.rule_for("Have you worked with us before? (required)")["a"] == "No"
 

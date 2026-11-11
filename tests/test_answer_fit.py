@@ -3,6 +3,7 @@ import pathlib
 
 import pytest
 
+import candidate
 import fill
 from agents import options as O
 
@@ -33,14 +34,36 @@ def test_core_question_finds_the_ask():
     assert O.core_question(long) == "Please indicate the state in which you currently reside"
 
 
-@pytest.mark.parametrize("label,cat,answer", [
-    ("Please re-confirm the university you currently attend *", "school", "Kennesaw State University"),
-    ("What country do you currently reside in?*", "country", "United States"),
-    ("To be eligible ... in the United States. Please indicate the state in which you currently reside.*", "state", "Georgia"),
+def own(key, plain_label):
+    """The candidate's own answer: CANDIDATE_<key> from their .env, else their profile.json rule. Never a literal:
+    a test that names a person passes for one candidate and certifies another's facts as true."""
+    return candidate.fact(key) or (fill.rule_for(plain_label) or {}).get("a")
+
+
+@pytest.mark.parametrize("label,cat,key,plain", [
+    ("Please re-confirm the university you currently attend *", "school", "UNIVERSITY", "School Name"),
+    ("What country do you currently reside in?*", "country", "COUNTRY", "Country"),
+    ("To be eligible ... in the United States. Please indicate the state in which you currently reside.*", "state", "STATE", "State"),
 ])
-def test_fact_questions_come_from_profile(label, cat, answer):
+def test_fact_questions_come_from_profile(label, cat, key, plain):
+    answer = own(key, plain)
+    assert answer, f"profile has no {cat} answer"
     c, r = O.fact_rule(label, fill.rule_for)
-    assert c == cat and r is not None and r["a"] == answer
+    assert c == cat and r is not None
+    assert O.resolve(label, answer, [r["a"]], semantic_ok=False) == r["a"], (r["a"], answer)  # same value ("USA" = "United States")
+
+
+@pytest.mark.parametrize("opts", [
+    ["Alcorn State University", "Kennesaw State University"],          # B-4: alias merged two schools
+    ["Alcorn State University", "Georgia Southern University", "Auburn University"],  # embeddings: 0.90 "similar"
+    ["State University", "Fixture College"],                           # an option inside the answer
+])
+def test_school_never_resolves_to_another_school(opts):
+    school = own("UNIVERSITY", "School Name")
+    opts = [o for o in opts if o != school]
+    rule = fill.rule_for("School*") or {}
+    assert O.resolve("School*", school, opts, rule.get("option")) is None
+    assert O.resolve("School*", "Fixture State University", opts, "^Fixture State University") is None
 
 
 def test_profile_rules_have_no_backspaces():
@@ -70,9 +93,13 @@ def test_live_form_answers_fit():
         pg.set_content(FIXTURE.read_text(encoding="utf-8"))
         fill.fill_page(pg, None, False, company="Test", role="Test")
         got = {k: pg.eval_on_selector(f"#{k}", "s => s.options[s.selectedIndex].text") for k in ("g28", "st", "uni", "cty", "pt")}
+        listed = {k: pg.eval_on_selector(f"#{k}", "s => [...s.options].map(o => o.text)") for k in ("st", "uni")}
         visa = pg.input_value("#vt")
         b.close()
-    assert got == {"g28": "No", "st": "Georgia", "uni": "Georgia State University", "cty": "United States", "pt": "No"}, got
+    # the candidate's own state / school when the fixture lists it, else left on the placeholder - never another one
+    want = {k: (v if v in listed[k] else "Select...") for k, v in
+            (("st", own("STATE", "State")), ("uni", own("UNIVERSITY", "School Name")))}
+    assert got == {"g28": "No", **want, "cty": "United States", "pt": "No"}, got
     assert visa == "N/A"
 
 

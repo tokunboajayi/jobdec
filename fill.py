@@ -308,6 +308,8 @@ MONTHS_MAP = {
 def pick_option(options, rule, label=""):
     if not options:
         return None
+    # fact field (school, state, degree, ...): only the candidate's own value, never a default or a guess
+    fact = bool(OPTS and OPTS.fact_category(label)[0])
     if rule and OPTS:
         hit = OPTS.resolve(label, rule.get("a"), options, rule.get("option"))
         if hit:
@@ -346,7 +348,7 @@ def pick_option(options, rule, label=""):
                         if mn in ans:
                             m_val = mn_num
                             break
-            if not m_val:
+            if not m_val and not fact:
                 m_val = "8" if "start" in label.lower() else "5"
             if m_val in MONTHS_MAP:
                 for syn in MONTHS_MAP[m_val]:
@@ -363,7 +365,7 @@ def pick_option(options, rule, label=""):
                 y_m = re.search(r"\b(20\d\d)\b", ans)
                 if y_m:
                     y_val = y_m.group(1)
-            if not y_val:
+            if not y_val and not fact:
                 y_val = "2023" if ("start" in label.lower() and "education" in label.lower()) else "2027"
             for o in options:
                 if str(o).strip() == y_val:
@@ -373,7 +375,7 @@ def pick_option(options, rule, label=""):
             for o in options:
                 if o and re.search(rf"^\s*{ans}\b|\b{ans}\s*$", o.strip(), re.I):
                     return o
-        if any(re.search(r"\+1\b|united states", str(o), re.I) for o in options if o):
+        if (not fact or re.search(r"united states|\busa?\b|^\+?1$", ans)) and any(re.search(r"\+1\b|united states", str(o), re.I) for o in options if o):
             us_opt = next((o for o in options if o and re.search(r"united states|\+1\b|\busa?\b", str(o), re.I)), None)
             if us_opt:
                 return us_opt
@@ -384,6 +386,8 @@ def pick_option(options, rule, label=""):
             if dec:
                 return dec
         RE.SENSITIVE_HITS.append(label[:120])
+        return None
+    if fact:  # B-1: a school list without the answer once got its first option ("Alcorn State University")
         return None
     PICK_GUESSED.add(label)
     # Smart guessing fallback
@@ -1653,7 +1657,10 @@ def _fill_text(c):
             val = "United States (+1)"
             rule = {"a": "United States (+1)", "option": "^(?:United States|USA|US|\\+1)\\b"}
         chosen = pick_prompt_option(page, target, loc, val, rule, label=label, escalate=escalate)
-        if not chosen and f.get("tag") in ("input", "textarea"):
+        # typing + Tab into a strict combobox commits whatever option is focused (the first one): leave it unanswered
+        fact_cat = OPTS.fact_category(label)[0] if OPTS else None
+        no_typed_fallback = val.strip().lower() in ("yes", "no") or fact_cat not in (None, "graduation", "gpa", "zip", "city")
+        if not chosen and f.get("tag") in ("input", "textarea") and not no_typed_fallback:
             # Fallback for datepicker / text input with aria-haspopup (e.g. calendar dialog)
             is_date_field = "date" in lab_low or "date" in (f.get("placeholder") or "").lower() or f.get("type") == "date"
             if is_date_field:
