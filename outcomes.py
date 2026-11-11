@@ -16,23 +16,63 @@ import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), s
 ROOT = HERE.parent
 REPORT = CAND.DATA / "outcomes_report.md"
 
-KINDS = [  # (stage, rank, pattern)
-    ("interview", 4, r"\binterview|schedule (a|your) (call|time|conversation)|phone screen|meet with (our|the) team|availability for"),
-    ("assessment", 3, r"assessment|hirevue|codility|hackerrank|codesignal|online test|coding challenge|video interview invitation"),
+CONFIRM_SUBJ_RE = re.compile(
+    r"thank(s| you)( so much)? for (applying|your application|your interest)|"
+    r"application (was |has been )?received|we('ve| have) received your application|"
+    r"application .*is (in|on its way)|application confirmation|your submission for|application complete",
+    re.I,
+)
+INTERVIEW_PAT = (
+    r"interview (invitation|invite|request|confirmation|reminder|schedule)|"
+    r"invite[ds]? (you )?to (an? |our |your )?(phone |video |virtual |first[- ]round |technical |final )?interview|"
+    r"selected (you )?for an? interview|"
+    r"schedule (a|your|an) (interview|call|time|conversation|chat|phone screen)|"
+    r"phone (screen|interview)|meet with (our|the) (team|hiring manager)|"
+    r"availability for (a|an|your) (call|chat|interview|phone screen|conversation)|\bsuperday\b"
+)
+ASSESSMENT_PAT = (
+    r"(invite[ds]? (you )?to|invitation to|complete (the|your|an)|take (the|your|an)|"
+    r"action required.{0,40}|next step.{0,40}|reminder.{0,40})\b(online |pre-interview |coding |skills |technical )?assessment\b|"
+    r"pre-interview assessment|online assessment|hirevue|codility|hackerrank|codesignal|"
+    r"online test|coding challenge|pymetrics|video interview invitation"
+)
+KINDS = [  # (stage, rank, pattern) - rejection checked before interview/assessment so rejections mentioning them aren't misread
     ("rejection", 2, r"unfortunately|not (be )?moving forward|other candidates|no longer (being )?considered|"
                      r"position has been filled|decided to pursue|will not be proceeding|regret to inform"),
-    ("confirmation", 1, r"thank you for (applying|your application|your interest)|application (was |has been )?received|"
-                        r"we('ve| have) received your application"),
+    ("assessment", 3, ASSESSMENT_PAT),
+    ("interview", 4, INTERVIEW_PAT),
+    ("confirmation", 1, r"thank(s| you)( so much)? for (applying|your application|your interest)|application (was |has been )?received|"
+                        r"we('ve| have) received your application|application .*is (in|on its way)|application confirmation|your submission for"),
 ]
 RANK = {k: r for k, r, _ in KINDS}
 RANK["offer"] = 5
 
+SKIP_STAGES = {
+    "Found", "Scored", "Tailored", "Skipped (low fit)", "Needs decision",
+    "Withdrawn", "Started (incomplete)", "Background check complete", "Submitted? (BAD DATA - verify)",
+}
 
-def classify(text):
+
+def classify(text, subject=""):
+    if subject and CONFIRM_SUBJ_RE.search(subject) and not re.search(ASSESSMENT_PAT, subject, re.I) and not re.search(INTERVIEW_PAT, subject, re.I):
+        return "confirmation"
     for kind, _, pat in KINDS:
         if re.search(pat, text, re.I):
             return kind
     return None
+
+
+def _tracker_stage(st):
+    st = (st or "").lower()
+    if "offer" in st:
+        return "offer"
+    if "interview" in st:
+        return "interview"
+    if re.search(r"\boa\b|assessment", st):
+        return "assessment"
+    if "reject" in st:
+        return "rejection"
+    return "submitted"
 
 
 def company_tokens(company):
@@ -47,7 +87,7 @@ def company_tokens(company):
 
 
 def load_applications():
-    """Every submitted application, auto (results.csv) or manual (applications.csv)."""
+    """Every submitted application, auto (results.csv) or manual (applications.csv), labeled from the tracker."""
     apps = {}
     for r in RE.ledger_rows():
         if r["status"] == "submitted":
@@ -59,23 +99,25 @@ def load_applications():
         with open(p, encoding="utf-8") as f:
             for r in csv.DictReader(f):
                 has_outcome = re.search(r"reject|interview|offer|\boa\b|assessment", r.get("Stage", ""), re.I)
-                if (not r.get("Date Applied") and not has_outcome) or \
-                        r.get("Stage") in ("Found", "Scored", "Tailored", "Skipped (low fit)", "Needs decision"):
+                if (not r.get("Date Applied") and not has_outcome) or r.get("Stage") in SKIP_STAGES:
                     continue
                 k = RE.job_key(r["Company"], r["Role"], r.get("Job URL", ""))
+                stage = _tracker_stage(r.get("Stage", ""))
+                m_dt = re.search(r"\d{4}-\d{2}-\d{2}", (r.get("Decision Date") or "") + " " + (r.get("Date Applied") or ""))
+                app_date = m_dt.group(0) if m_dt else ""
+                stage_date = app_date if stage != "submitted" else ""
                 if k in apps:
+                    if RANK.get(stage, 0) > RANK.get(apps[k]["stage"], 0):
+                        apps[k]["stage"] = stage
+                        apps[k]["stage_date"] = stage_date or apps[k]["date"]
                     continue
                 cat, _ = RE.classify_role(r["Role"], r.get("Job URL", ""), r["Company"])
                 # rows logged by fill.py on/after 2026-10-13 with no ledger entry were auto runs before the ledger existed
-                auto = (r.get("Date Applied", "") >= "2026-10-13" and "by AJ" not in r.get("Date Applied", "")
+                auto = (app_date >= "2026-10-13" and "by AJ" not in r.get("Date Applied", "")
                         and (r.get("Resume Version", "").endswith(".pdf")))
-                st = (r.get("Stage") or "").lower()  # outcomes already recorded in the tracker count too
-                stage = ("interview" if "interview" in st or "offer" in st else
-                         "assessment" if re.search(r"\boa\b|assessment", st) else
-                         "rejection" if "reject" in st else "submitted")
                 apps[k] = {"company": r["Company"], "role": r["Role"], "url": r.get("Job URL", ""),
-                           "date": r["Date Applied"][:10], "channel": "auto" if auto else "manual",
-                           "category": cat, "stage": stage, "stage_date": ""}
+                           "date": app_date, "channel": "auto" if auto else "manual",
+                           "category": cat, "stage": stage, "stage_date": stage_date}
     return apps
 
 
@@ -125,7 +167,7 @@ def scan_gmail(apps, since):
                         continue
             except Exception:
                 ai = None
-            kind = kind or classify(text)
+            kind = kind or classify(text, decode_str(hdr.get("Subject", "")))
             if not kind:
                 continue
             for k in matched:
@@ -154,9 +196,9 @@ def report(apps):
         resp = c["rejection"] + c["assessment"] + c["interview"] + c["offer"]
         n = c["applied"]
         lines.append(f"| {ch} | {cat} | {n} | {resp} | {c['assessment']} | {c['interview']} | {c['rejection']} | "
-                     f"{resp / n:.0%} | {(c['assessment'] + c['interview']) / n:.0%} |")
+                     f"{resp / n:.0%} | {(c['interview'] + c['offer']) / n:.0%} |")
     lines += ["", "## Positive signals (assessment / interview)", ""]
-    pos = [a for a in apps.values() if a["stage"] in ("assessment", "interview")]
+    pos = [a for a in apps.values() if a["stage"] in ("assessment", "interview", "offer")]
     lines += [f"- {a['stage_date']} **{a['stage']}**: {a['company']} - {a['role']} ({a['channel']}, {a['category']})" for a in pos] or ["- none yet"]
     lines += ["", "Judge after 2-3 weeks: compare auto vs manual and categories. Shift the queue toward what gets interviews",
               "(edit category_weights / min_fit_score in strategy.json)."]
@@ -168,9 +210,14 @@ def report(apps):
 def update_ledger(apps):
     def mark(rows):
         for r in rows:
+            if r.get("status") != "submitted":
+                r["response"], r["response_date"] = "", ""
+                continue
             a = apps.get(RE.job_key(r["company"], r["role"], r["url"]))
             if a and a["stage"] != "submitted":
                 r["response"], r["response_date"] = a["stage"], a["stage_date"]
+            else:
+                r["response"], r["response_date"] = "", ""
     RE.ledger_update(mark)
 
 
@@ -184,8 +231,13 @@ def main():
     if not a.no_gmail:
         n = scan_gmail(apps, datetime.date.fromisoformat(a.since))
         print(f"{n} status updates found")
-        update_ledger(apps)
+    update_ledger(apps)
     report(apps)
+    try:
+        from agents import smarts
+        print(smarts.learner_train())
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

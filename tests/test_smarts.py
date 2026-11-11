@@ -69,4 +69,25 @@ def test_why_answer_cleans_scraped_titles(sandbox, monkeypatch):
 
 
 def test_learner_waits_for_enough_outcomes(sandbox):
+    smarts._save(smarts.MODEL, {"coef": [1.0], "intercept": 0.0, "n": 690, "pos": 126})
     assert "need" in smarts.learner_train().lower() or "outcomes" in smarts.learner_train().lower()
+    assert not smarts.MODEL.exists()  # stale model is cleared when real outcomes are too few
+
+
+def test_outcomes_relabels_ledger_from_tracker(sandbox):
+    import outcomes
+    url1 = "https://acme.com/jobs/1"
+    url2 = "https://beta.com/jobs/2"
+    RE.ledger_add("Acme", "Data Intern", url1, "submitted")
+    RE.ledger_add("Beta", "AI Intern", url2, "submitted")
+    RE.ledger_update(lambda rows: [r.update(response="interview", response_date="2026-10-20") for r in rows])
+    outcomes.CAND.APPLICATIONS.write_text(
+        "Company,Role,Stage,Date Applied,Job URL,Resume Version\n"
+        f"Acme,Data Intern,Rejected,2026-10-15,{url1},r.pdf\n"
+        f"Beta,AI Intern,Applied,2026-10-15,{url2},r.pdf\n",
+        encoding="utf-8",
+    )
+    apps = outcomes.load_applications()
+    outcomes.update_ledger(apps)
+    by_co = {r["company"]: r["response"] for r in RE.ledger_rows()}
+    assert by_co == {"Acme": "rejection", "Beta": ""}

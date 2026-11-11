@@ -416,9 +416,11 @@ def learner_train():
     rows = [r for r in RE.ledger_rows() if r.get("status") == "submitted"]
     labeled = [r for r in rows if (datetime.date.fromisoformat(r["date"]) <= TODAY() - datetime.timedelta(days=14)) or r.get("response")]
     if len(labeled) < MIN_OUTCOMES:
+        MODEL.unlink(missing_ok=True)
         return f"learning: {len(labeled)}/{MIN_OUTCOMES} applications with outcomes - keeping hand-set weights"
-    y = [1 if r.get("response") in ("assessment", "interview", "offer") else 0 for r in labeled]
+    y = [1 if r.get("response") in ("interview", "offer") else 0 for r in labeled]
     if sum(y) < 5:
+        MODEL.unlink(missing_ok=True)
         return f"learning: only {sum(y)} positive outcomes - need 5+ to learn"
     from sklearn.linear_model import LogisticRegression
     X = [_features(r) for r in labeled]

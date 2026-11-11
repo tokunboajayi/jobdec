@@ -222,14 +222,36 @@ def outreach(company, role, category):
 
 
 # ---------------------------------------------------------------- 5. inbox analyst
+CONFIRM_SUBJ_RE = re.compile(
+    r"thank(s| you)( so much)? for (applying|your application|your interest)|"
+    r"application (was |has been )?received|we('ve| have) received your application|"
+    r"application .*is (in|on its way)|application confirmation|your submission for|application complete",
+    re.I,
+)
+INTERVIEW_RE = re.compile(
+    r"interview (invitation|invite|request|confirmation|reminder|schedule)|"
+    r"invite[ds]? (you )?to (an? |our |your )?(phone |video |virtual |first[- ]round |technical |final )?interview|"
+    r"selected (you )?for an? interview|"
+    r"schedule (a|your|an) (interview|call|time|conversation|chat|phone screen)|"
+    r"phone (screen|interview)|meet with (our|the) (team|hiring manager)|"
+    r"availability for (a|an|your) (call|chat|interview|phone screen|conversation)|\bsuperday\b",
+    re.I,
+)
+ASSESSMENT_RE = re.compile(
+    r"(invite[ds]? (you )?to|invitation to|complete (the|your|an)|take (the|your|an)|"
+    r"action required.{0,40}|next step.{0,40}|reminder.{0,40})\b(online |pre-interview |coding |skills |technical )?assessment\b|"
+    r"pre-interview assessment|online assessment|hirevue|codility|hackerrank|codesignal|"
+    r"online test|coding challenge|pymetrics|video interview invitation|case study",
+    re.I,
+)
 KINDS = [
     ("offer", r"offer (letter|of employment)|pleased to (offer|extend)|we('d| would) like to offer"),
-    ("interview", r"\binterview|schedule (a|your) (call|time|conversation|chat)|phone screen|meet with (our|the) team|availability for|superday"),
-    ("assessment", r"assessment|hirevue|codility|hackerrank|codesignal|online test|coding challenge|pymetrics|case study"),
     ("rejection", r"unfortunately|not (be )?moving forward|other candidates|no longer (being )?considered|position has been filled|"
                   r"decided to pursue|will not be proceeding|regret to inform"),
-    ("confirmation", r"thank you for (applying|your application|your interest)|application (was |has been )?received|"
-                     r"we('ve| have) received your application"),
+    ("assessment", ASSESSMENT_RE.pattern),
+    ("interview", INTERVIEW_RE.pattern),
+    ("confirmation", r"thank(s| you)( so much)? for (applying|your application|your interest)|application (was |has been )?received|"
+                     r"we('ve| have) received your application|application .*is (in|on its way)|application confirmation|your submission for"),
 ]
 MONTHS = "january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec"
 
@@ -259,9 +281,13 @@ def _deadline(text, sent):
 
 def read_email(sender, subject, body, sent=""):
     text = f"{subject}\n{body}"
-    kind = next((k for k, pat in KINDS if re.search(pat, text, re.I)), "other")
+    subj = subject or ""
+    if CONFIRM_SUBJ_RE.search(subj) and not ASSESSMENT_RE.search(subj) and not INTERVIEW_RE.search(subj):
+        kind = "confirmation"
+    else:
+        kind = next((k for k, pat in KINDS if re.search(pat, text, re.I)), "other")
     about = kind != "other" or bool(re.search(r"your application|candidate|recruit|position|role", text, re.I))
-    if re.search(r"unsubscribe|job alert|jobs you may|recommended jobs|newsletter", text, re.I) and kind in ("other", "confirmation"):
+    if re.search(r"unsubscribe|job alert|jobs you may|recommended jobs|newsletter|\bhoa\b|annual meeting notice", text, re.I) and kind in ("other", "confirmation"):
         about, kind = False, "other"
     times = re.findall(rf"(?:(?:mon|tues|wednes|thurs|fri|satur|sun)day,?\s+)?(?:(?:{MONTHS})\.?\s+\d{{1,2}},?\s+)?(?:at\s+)?\d{{1,2}}(?::\d{{2}})?\s?(?:am|pm)(?:\s?(?:et|est|edt|ct|pt))?", text, re.I)
     deadline = _deadline(text, sent)

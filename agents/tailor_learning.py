@@ -241,35 +241,59 @@ class TailorLearningEngine:
         self.save()
         return True
 
-    def sync_from_sources(self, applications_csv_path="applications.csv"):
-        """Scans applications.csv to ensure all applied jobs are registered."""
+    def sync_from_sources(self, applications_csv_path="applications.csv", reset=False):
+        """Scans applications.csv to ensure all applied jobs and their tracker outcomes are registered."""
         csv_file = Path(applications_csv_path)
         if not csv_file.exists():
             return 0
         import csv
+        if reset:
+            self.state = {
+                "version": "1.0",
+                "last_updated": datetime.now().isoformat(),
+                "learned_keyword_weights": copy.deepcopy(DEFAULT_DOMAIN_WEIGHTS),
+                "preferred_skill_orders": copy.deepcopy(DEFAULT_SKILL_ORDERS),
+                "bullet_performance": {},
+                "applications": {},
+                "domain_stats": {k: {"applied": 0, "interviews": 0, "assessments": 0, "confirmations": 0} for k in DEFAULT_DOMAIN_WEIGHTS},
+            }
         synced = 0
+        skip_stages = {"Found", "Scored", "Tailored", "Skipped (low fit)", "Needs decision",
+                       "Withdrawn", "Started (incomplete)", "Background check complete", "Submitted? (BAD DATA - verify)"}
         try:
             with open(csv_file, "r", encoding="utf-8", errors="replace") as f:
                 reader = csv.DictReader(f)
                 for row in reader:
                     comp = row.get("Company", "").strip()
                     role = row.get("Role", "").strip()
-                    if comp and role:
-                        slug = re.sub(r"[^A-Za-z0-9]+", "_", f"{comp}_{role}").strip("_")[:70]
-                        if slug not in self.state["applications"]:
-                            # Baseline registration
-                            self.state["applications"][slug] = {
-                                "company": comp,
-                                "role": role,
-                                "domain": "general_cyber",
-                                "keywords": [],
-                                "bullet_indices": {},
-                                "skill_order": DEFAULT_SKILL_ORDERS["general_cyber"],
-                                "outcome": "applied",
-                                "timestamp": row.get("Date Applied", datetime.now().isoformat())
-                            }
-                            synced += 1
-            if synced > 0:
+                    stage_raw = (row.get("Stage") or "").strip()
+                    if not comp or not role or stage_raw in skip_stages:
+                        continue
+                    st = stage_raw.lower()
+                    has_outcome = bool(re.search(r"reject|interview|offer|\boa\b|assessment", st))
+                    if not row.get("Date Applied") and not has_outcome:
+                        continue
+                    slug = re.sub(r"[^A-Za-z0-9]+", "_", f"{comp}_{role}").strip("_")[:70]
+                    if slug not in self.state["applications"]:
+                        self.state["applications"][slug] = {
+                            "company": comp,
+                            "role": role,
+                            "domain": "general_cyber",
+                            "keywords": [],
+                            "bullet_indices": {},
+                            "skill_order": DEFAULT_SKILL_ORDERS["general_cyber"],
+                            "outcome": "applied",
+                            "timestamp": row.get("Date Applied", datetime.now().isoformat())
+                        }
+                        self.state["domain_stats"]["general_cyber"]["applied"] = self.state["domain_stats"]["general_cyber"].get("applied", 0) + 1
+                        synced += 1
+                    outcome = ("interview" if ("interview" in st or "offer" in st) else
+                               "assessment" if re.search(r"\boa\b|assessment", st) else
+                               "rejection" if "reject" in st else "applied")
+                    if outcome != "applied" and self.state["applications"][slug].get("outcome") != outcome:
+                        self.record_outcome(comp, role, outcome)
+                        synced += 1
+            if synced > 0 or reset:
                 self.save()
         except Exception:
             pass

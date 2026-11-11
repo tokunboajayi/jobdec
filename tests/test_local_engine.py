@@ -32,7 +32,10 @@ def test_outreach_note_follows_playbook(monkeypatch, tmp_path):
 def test_read_email_classifies():
     r = local.read_email("Acme <hr@acme.com>", "Interview invitation", "We'd like to schedule a call. Are you free Tuesday at 2pm ET?")
     assert r["kind"] == "interview" and r["urgent"]
-    assert local.read_email("Acme", "Update", "Unfortunately we are not moving forward.")["kind"] == "rejection"
+    assert local.read_email("Acme", "Update", "Unfortunately we are not moving forward with an interview.")["kind"] == "rejection"
+    assert local.read_email("Acme", "Thank you for applying to Acme!", "If selected for an interview, we will reach out to schedule a call.")["kind"] == "confirmation"
+    assert local.read_email("Acme", "Your application to Summer Intern is in!", "Next steps may include an assessment.")["kind"] == "confirmation"
+    assert local.read_email("Acme", "Pre-Interview Assessment with Acme", "Please complete your pre-interview assessment.")["kind"] == "assessment"
     assert not local.read_email("Board", "Jobs you may like", "Recommended jobs. Unsubscribe")["is_about_application"]
 
 
