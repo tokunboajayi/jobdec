@@ -30,7 +30,7 @@ def test_file_lock_times_out_instead_of_running_unlocked(tmp_path):
 
 
 def test_concurrent_log_applied_keeps_every_row(tmp_path, monkeypatch):
-    monkeypatch.setattr(fill, "ROOT", tmp_path)
+    monkeypatch.setattr(fill.CAND, "APPLICATIONS", tmp_path / "applications.csv")
     monkeypatch.setattr(fill, "RE", None)
     _write_apps(tmp_path / "applications.csv", [{"ID": "1", "Company": "Seed", "Role": "Seed Intern", "Stage": "Found"}])
 
@@ -48,7 +48,7 @@ def test_concurrent_log_applied_keeps_every_row(tmp_path, monkeypatch):
 
 
 def test_log_applied_never_wipes_a_file_it_cannot_read(tmp_path, monkeypatch):
-    monkeypatch.setattr(fill, "ROOT", tmp_path)
+    monkeypatch.setattr(fill.CAND, "APPLICATIONS", tmp_path / "applications.csv")
     monkeypatch.setattr(fill, "RE", None)
     path = tmp_path / "applications.csv"
     path.write_text("", encoding="utf-8")

@@ -18,7 +18,6 @@ from pathlib import Path
 from types import SimpleNamespace
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(line_buffering=True, encoding="utf-8", errors="replace")  # type: ignore # cp1252 pipes crashed on curly quotes
-from dotenv import load_dotenv
 
 try:
     from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
@@ -27,11 +26,8 @@ except ImportError:
 
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent                                   # Job Applications folder
-ENV_PATH = ROOT.parent / ".env"
-if ENV_PATH.exists():
-    load_dotenv(ENV_PATH)
-else:
-    load_dotenv()
+import candidate as CAND  # noqa: E402  # loads this candidate's .env; all person-specific paths come from it
+ENV_PATH = CAND.ENV
 
 try:
     from auth_manager import is_auth_screen, run_auth_flow, handle_workday_landing, dismiss_cookie_banner
@@ -64,7 +60,7 @@ def _hinted(label):
     k = " ".join(label.split()).lower().rstrip("*: ")[:45]
     return bool(k) and any(k in h for h in FIX_HINTS)
 
-PROFILE =json.loads((HERE / "profile.json").read_text(encoding="utf-8"))
+PROFILE = CAND.profile()
 SKIP, ASK = None, "ASK"
 
 SCAN_JS = r"""
@@ -246,7 +242,7 @@ SCAN_JS = r"""
 
 def rule_for(label):
     global PROFILE
-    PROFILE = json.loads((HERE / "profile.json").read_text(encoding="utf-8"))  # live reload: edits apply without restarting
+    PROFILE = CAND.profile()  # live reload: edits apply without restarting
     lab = label.lower()
     lab_core = re.sub(r"[\s*:?]+$", "", lab.split(";")[0]).strip()
     for r in PROFILE["rules"]:
@@ -743,23 +739,18 @@ def _fill_file_field(c, st, resume, resume_fields):
         except Exception:
             pass
 
+    files = CAND.profile().get("files", {})
     cover_candidates = [
         Path(os.getenv("AF_COVER")) if os.getenv("AF_COVER") else None,
         Path(dyn_cover) if dyn_cover else None,
-        ROOT / "resumes" / "Michael_Azuka_Cover_Letter.pdf",
-        ROOT / "resumes" / "cover_letter.pdf",
-        ROOT / "resumes" / "Cover_Letter.pdf",
+        CAND.RESUMES / files["cover_letter"] if files.get("cover_letter") else None,
         resume,  # fallback to resume so required cover letter field is never left empty
     ]
     cover_path = next((p for p in cover_candidates if p and p.exists()), None)
 
-    transcript_candidates = [
-        ROOT / "resumes" / "Michael_Azuka_Academic_Summary.pdf",
-        ROOT / "resumes" / "transcript.pdf",
-        ROOT / "resumes" / "Transcript.pdf",
-        resume,  # fallback to resume so required transcript field is never left empty
-    ]
-    transcript_path = next((p for p in transcript_candidates if p and p.exists()), None)
+    # ONLY the candidate's real transcript, named in profile.json "files" - never a generated one, never the resume.
+    # No real file -> transcript fields stay empty (the job is skipped rather than misfiled).
+    transcript_path = CAND.RESUMES / files["transcript"] if files.get("transcript") else None
 
     if re.search(r"cover\s*letter", label, re.I):
         if not has_existing and cover_path and cover_path.exists():
@@ -792,7 +783,7 @@ def _fill_file_field(c, st, resume, resume_fields):
             except Exception as e:
                 print(f"[File Upload Error] {e}")
     elif (f.get("required") or ("*" in label and "optional" not in label.lower())) and not has_existing:
-        upload_doc = resume or (transcript_path if transcript_path.exists() else None)
+        upload_doc = resume or (transcript_path if transcript_path and transcript_path.exists() else None)
         if upload_doc:
             try:
                 loc.set_input_files(str(upload_doc))
@@ -1860,7 +1851,7 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
     if optional_skipped:
         print("\n(Voluntary EEO questions left for you: " + "; ".join(s[:40] for s in optional_skipped) + ")")
     if unanswered or needs_you:
-        p = HERE / "unanswered.json"
+        p = CAND.DATA / "unanswered.json"
         with FileLock(p):
             data = []
             if p.exists() and p.stat().st_size > 0:
@@ -1873,25 +1864,12 @@ def report(url, filled, unanswered, optional_skipped, needs_you):
             data.append({"url": url, "when": datetime.datetime.now().isoformat(timespec="minutes"),
                          "questions": [{"label": f["label"], "options": f.get("options")} for f in unanswered + needs_you]})
             p.write_text(json.dumps(data, indent=2), encoding="utf-8")
-            try:
-                import telegram_notify
-                from agents import intelligent_resolver
-                for q_item in (unanswered + needs_you):
-                    lab = q_item.get("label", "")
-                    auto_res = intelligent_resolver.resolve_field(lab, options=q_item.get("options"))
-                    if not auto_res:
-                        comp_name = url.split("/")[2] if "//" in url else "Job Portal"
-                        telegram_notify.ask_question_interactive(lab, q_item.get("options") or [], company=comp_name)
-            except Exception:
-                pass
-
+            # the Telegram bot service reads unanswered.json; no network calls from a form-filling worker
 
 def log_applied(url, company, role, resume, job_url=None):
     target_url = job_url or url
-    targets = [HERE / "applications.csv"]
-    if ROOT != HERE and (ROOT / "applications.csv").exists():
-        targets.append(ROOT / "applications.csv")
-    for p in targets:
+    # one ledger per candidate: two copies drifted apart and the tests wrote fake rows into the live one (2026-11-10)
+    for p in [CAND.APPLICATIONS]:
         try:
             with FileLock(p):
                 _upsert_applied_row(p, target_url, company, role, resume)
@@ -1977,11 +1955,6 @@ def _upsert_applied_row(path, target_url, company, role, resume):
     else:
         raise OSError(f"could not write {path.name}")
     print(f"Logged as Applied in applications.csv: {hit['Company']} - {hit['Role']}")
-    try:
-        import telegram_notify
-        telegram_notify.notify_applied(hit.get("Company", ""), hit.get("Role", ""), hit.get("Job URL", ""))
-    except Exception:
-        pass
 
 
 

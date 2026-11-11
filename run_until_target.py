@@ -25,8 +25,9 @@ if sys.platform == "win32":
         pass
 
 HERE = pathlib.Path(__file__).resolve().parent
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 ROOT = HERE.parent
-CSV_FILE = ROOT / "applications.csv"
+CSV_FILE = CAND.APPLICATIONS
 
 
 def get_applied_count() -> int:
@@ -158,7 +159,7 @@ def main():
             break
 
         # Check ranked queue size
-        ranked_file = HERE / "queue_ranked.txt"
+        ranked_file = CAND.DATA / "queue_ranked.txt"
         ranked_count = 0
         if ranked_file.exists():
             ranked_count = len([l for l in ranked_file.read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")])

@@ -17,11 +17,12 @@ import csv, datetime, io, json, os, pathlib, re, time
 from tools.file_lock import FileLock
 
 HERE = pathlib.Path(__file__).resolve().parent
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 ROOT = HERE.parent
 STRATEGY_FILE = HERE / "strategy.json"
-RECORDS_DIR = HERE / "records"
-LEDGER_FILE = HERE / "results.csv"
-AUTH_STATE_FILE = HERE / "auth_state.json"
+RECORDS_DIR = CAND.DATA / "records"
+LEDGER_FILE = CAND.DATA / "results.csv"
+AUTH_STATE_FILE = CAND.DATA / "auth_state.json"
 
 DEFAULT_STRATEGY = {
     "min_fit_score": 6,

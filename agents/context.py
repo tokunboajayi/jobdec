@@ -6,29 +6,31 @@ output against FACT_TEXT so nothing invented reaches an application.
 import ast, importlib.util, json, os, pathlib, re
 
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
-RESUMES = (AUTOFILL / "resumes") if (AUTOFILL / "resumes").exists() else (AUTOFILL.parent / "resumes")
+import sys
+sys.path.insert(0, str(AUTOFILL))
+import candidate as C  # noqa: E402
 
+RESUMES = C.RESUMES
+
+# no resume_gen.py: only the candidate's own .env facts, blank where unknown (never another person's details)
 DEFAULT_MASTER = {
-    "name": os.getenv("CANDIDATE_FULL_NAME", "Michael Azuka"),
-    "contact": f"{os.getenv('CANDIDATE_LOCATION_TEXT', 'Atlanta, GA')} • {os.getenv('CANDIDATE_EMAIL', 'mazuka146@gmail.com')} • {os.getenv('CANDIDATE_PHONE', '404-645-0373')}",
+    "name": C.fact("FULL_NAME"),
+    "contact": " • ".join(x for x in (C.fact("LOCATION_TEXT"), C.fact("EMAIL"), C.fact("PHONE")) if x),
     "sections": [
         {"title": "EDUCATION", "entries": [
-            {"org": os.getenv("CANDIDATE_UNIVERSITY", "Kennesaw State University"), "loc": os.getenv("CANDIDATE_CITY", "Atlanta"), "lines": [
-                f"{os.getenv('CANDIDATE_DEGREE', 'Bachelor of Science')}, {os.getenv('CANDIDATE_MAJOR', 'Cybersecurity')}; Expected Graduation: {os.getenv('CANDIDATE_EXPECTED_GRAD_DATE', 'Dec 2026')}",
-                f"Cumulative GPA: {os.getenv('CANDIDATE_GPA', '3.35')}"
+            {"org": C.fact("UNIVERSITY"), "loc": C.fact("CITY"), "lines": [
+                f"{C.fact('DEGREE')}, {C.fact('MAJOR')}; Expected Graduation: {C.fact('EXPECTED_GRAD_DATE')}",
+                f"Cumulative GPA: {C.fact('GPA')}"
             ]}
         ]},
-        {"title": "TECHNICAL SKILLS", "labeled": [
-            ["Languages & Tools", os.getenv("CANDIDATE_TOP_SKILLS", "Python, SQL, Playwright, Git, Docker")],
-            ["Focus Areas", "Cybersecurity, Identity & Access Management (IAM), Systems Administration, Network Defense"]
-        ]}
+        {"title": "TECHNICAL SKILLS", "labeled": [["Languages & Tools", C.fact("TOP_SKILLS")]]}
     ]
 }
 
 
 def _read_master():
     """MASTER data from resume_gen.py's source, or clean fallback if missing."""
-    for candidate_path in [RESUMES / "resume_gen.py", AUTOFILL / "resumes" / "resume_gen.py"]:
+    for candidate_path in [RESUMES / "resume_gen.py"]:
         if candidate_path.exists():
             try:
                 tree = ast.parse(candidate_path.read_text(encoding="utf-8"))
@@ -42,7 +44,7 @@ def _read_master():
 
 def resume_gen():
     """The PDF renderer module (needs `pip install reportlab`). Raises ImportError if missing."""
-    for candidate_path in [RESUMES / "resume_gen.py", AUTOFILL / "resumes" / "resume_gen.py"]:
+    for candidate_path in [RESUMES / "resume_gen.py"]:
         if candidate_path.exists():
             spec = importlib.util.spec_from_file_location("resume_gen", candidate_path)
             if spec and spec.loader:
@@ -69,9 +71,9 @@ def resume_text():
 
 
 def profile_answers():
-    """Explicit answers AJ has set in profile.json (question pattern -> answer)."""
+    """Explicit answers the candidate set in profile.json (question pattern -> answer)."""
     try:
-        rules = json.loads((AUTOFILL / "profile.json").read_text(encoding="utf-8"))["rules"]
+        rules = C.profile()["rules"]
     except Exception:
         return []
     return [(r["q"], r["a"]) for r in rules if isinstance(r.get("a"), str) and r["a"] not in ("ASK", "TODAY", "check", "uncheck")]
@@ -81,29 +83,12 @@ def facts_block():
     lines = ["# CANDIDATE RESUME (the only work history, skills and numbers you may use)", resume_text(),
              "", "# EXPLICIT ANSWERS SET BY THE CANDIDATE (question pattern -> answer)"]
     lines += [f"- /{q}/ -> {a}" for q, a in profile_answers()]
-    lines += ["", "# STANDING FACTS",
-              "- Undergraduate senior (class of Dec 2026, accepted MS in Cybersecurity Spring 2027), Kennesaw State University, BS in Cybersecurity (Minor in IT).",
-              "- Based in Powder Springs / Atlanta, GA (30127). Open to remote, hybrid, and relocation.",
-              "- Previously worked at Wolters Kluwer (Professional Technical Support Intern) and Castles Technology (Deployment & Technical Support Specialist).",
-              "- Over 18 years of age; legally an adult.",
-              "- Able to provide official or unofficial academic transcripts upon request.",
-              "- No non-compete agreements, non-solicitation, or restrictive covenants with current or former employers.",
-              "- Never held a U.S. security clearance; eligible to obtain security clearance if required.",
-              "- No disability; not a protected veteran; has never served in the U.S. military; not a military spouse.",
-              "- Salary expectation is flexible and open; willing to accept standard company internship rate.",
-              "- Cumulative GPA from candidate profile.",
-              "- No conflict of interest or personal financial interest in vendor firms or competitors.",
-              "- No professional license infractions, misconduct, or disciplinary actions.",
-              "- Will not maintain outside employment or concurrent commitments during internship.",
-              "- Secondary contact number matches primary candidate phone number.",
-              "- Agrees to mandatory arbitration and dispute resolution program terms.",
-              "- Preferred job alert frequency is as frequent as possible (1 day or Daily).",
-              "- U.S. Citizen with no visa requirement: visa type and expiration date are not applicable (N/A)."]
+    lines += ["", "# STANDING FACTS"] + [f"- {f}" for f in C.standing_facts()]
     return "\n".join(lines)
 
 
 FACT_TEXT = facts_block()
-# numbers that may appear in generated text: from the resume and AJ's answers only (not question patterns)
+# numbers that may appear in generated text: from the resume and the candidate's answers only (not question patterns)
 _NUMS = set(re.findall(r"\d[\d,.]*\+?", resume_text() + " " + " ".join(a for _, a in profile_answers())))
 
 

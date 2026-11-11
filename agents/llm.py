@@ -7,12 +7,15 @@ no key, budget spent, refusal, API error, or the agent is switched off in strate
 import datetime, json, os, pathlib, threading
 from typing import Any
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 HERE = pathlib.Path(__file__).resolve().parent
 AUTOFILL = HERE.parent
 LOG_DIR = HERE / "logs"
-CACHE_DIR = HERE / "cache"
-USAGE_FILE = HERE / "usage.json"
-ENV_PATH = AUTOFILL.parent.parent / ".env"
+CACHE_DIR = CAND.path("cache", HERE / "cache")
+USAGE_FILE = CAND.path("usage.json", HERE / "usage.json")
+ENV_PATH = CAND.ENV
 
 try:
     from dotenv import load_dotenv

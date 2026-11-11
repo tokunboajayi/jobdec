@@ -4,7 +4,8 @@ Generates tailored, concise, and recruiter-ready responses grounded in
 the candidate's master resume and candidate playbook.
 """
 import json
-import os
+
+import sys
 import pathlib
 import re
 import urllib.request
@@ -16,37 +17,19 @@ except Exception:
     _FA = None
 
 HERE = pathlib.Path(__file__).resolve().parent
-CACHE_FILE = HERE / "response_cache.json"
+sys.path.insert(0, str(HERE))
+import candidate as C  # noqa: E402  # this candidate's .env, profile and data folder
+CACHE_FILE = C.DATA / "response_cache.json"
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv(HERE / ".env")
-except Exception:
-    pass
+_NAME, _UNI, _GRAD, _GPA = C.fact("FULL_NAME"), C.fact("UNIVERSITY"), C.fact("EXPECTED_GRAD_DATE"), C.fact("GPA")
+_DEG = C.fact("DEGREE_EXACT") or C.fact("DEGREE")
+_LOC = C.fact("LOCATION_TEXT") or ", ".join(x for x in (C.fact("CITY"), C.fact("STATE")) if x)
 
-_NAME = os.getenv("CANDIDATE_FULL_NAME", "Candidate")
-_UNI = os.getenv("CANDIDATE_UNIVERSITY", "Georgia State University")
-_DEG = os.getenv("CANDIDATE_DEGREE_EXACT", os.getenv("CANDIDATE_DEGREE", "BBA Computer Information Systems (AI & Analytics)"))
-_GRAD = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2028")
-_GPA = os.getenv("CANDIDATE_GPA", "3.35")
-_LOC = os.getenv("CANDIDATE_LOCATION_TEXT", f"{os.getenv('CANDIDATE_CITY', 'Atlanta')}, {os.getenv('CANDIDATE_STATE', 'GA')}")
-_PITCH = os.getenv("CANDIDATE_ELEVATOR_PITCH", "Software engineer and automation builder specializing in agentic workflows, data pipelines, and full-stack systems.")
-_EXP = os.getenv("CANDIDATE_PROUDEST_ACHIEVEMENT", "Led the automation of enterprise coordination workflows handling 50,000+ records, cutting manual coordination overhead by 150+ hours.")
-
-CANDIDATE_PROFILE = f"""
-Candidate: {_NAME}
-Education: {_UNI}, {_DEG}. Expected Graduation: {_GRAD}. GPA: {_GPA}.
-Work Authorization: US Citizen, authorized to work in the US, no visa sponsorship required now or in the future.
-Location: {_LOC}. Open to relocation, hybrid, and remote.
-
-Key Experience:
-1. Enterprise Process Automation & Agentic Systems:
-   - {_EXP}
-2. Technical & Functional Skills:
-   - Tools: Python, SQL, Tableau, Power BI, Advanced Excel, Git, Playwright browser automation.
-   - Disciplines: Product management, agentic AI workflows, process automation, requirements documentation, data validation.
-"""
-
+# only this candidate's own facts: .env + profile.json standing_facts (nothing about any person lives in code)
+CANDIDATE_PROFILE = "\n".join([f"Candidate: {_NAME}", f"Education: {_UNI}, {_DEG}. Expected Graduation: {_GRAD}. GPA: {_GPA}.",
+                               f"Location: {_LOC}.", f"Summary: {C.fact('ELEVATOR_PITCH')}",
+                               f"Proudest achievement: {C.fact('PROUDEST_ACHIEVEMENT')}", f"Skills: {C.fact('TOP_SKILLS')}"]
+                              + [f"- {f}" for f in C.standing_facts()])
 
 def load_cache():
     if CACHE_FILE.exists():
@@ -110,6 +93,8 @@ def template_fallback(question, company="", role=""):
     co = company or "your organization"
     rl = role or "this role"
 
+    stories = C.profile().get("stories", {})  # the candidate's own written answers; {company} / {role} are filled in
+    tell = lambda k: (stories.get(k) or "").format(company=co, role=rl)
     if re.search(r"why (do you want to (work|join)|are you interested|this company|join us|us\b)|interest in (this|the) (role|position|company)", q):
         try:  # a real specific from the posting + a matching resume fact
             from agents import smarts
@@ -118,37 +103,17 @@ def template_fallback(question, company="", role=""):
                 return specific
         except Exception:
             pass
-        return (
-            f"I'm interested in {co} because the {rl} role lines up with the work I've enjoyed most. "
-            f"At Delta Air Lines I automated shift-bid workflows handling 50,000+ employee bids, and at W. A Investments "
-            f"I delivered a build-vs-buy analysis of payment platforms. I want to keep doing that kind of product and process work."
-        )
+        return tell("why")
     if re.search(r"(describe|tell us about|example of|share).*(project|accomplishment|achievement)", q):
-        return (
-            "At Delta Air Lines I automated shift-selection and bid-processing workflows handling 50,000+ employee bids, "
-            "which cut manual coordination by 150+ hours. I also built 6 Excel trackers and produced 10+ process maps "
-            "that turned station requirements into product specs and training steps."
-        )
+        return tell("project")
     if re.search(r"(challenge|obstacle|difficult situation|conflict)", q):
-        return (
-            "Before a shift-marketplace platform at Delta Air Lines rolled out more broadly, I cleaned 3,000+ workflow records "
-            "and flagged about 2,500 exceptions that needed fixing first. I tracked them in the issue logs I'd built so they "
-            "could be resolved before adoption."
-        )
+        return tell("challenge")
     if re.search(r"strength|what (skills|do you bring)", q):
-        return (
-            "I'm strongest where product work meets automation and data: turning operational requirements into specs, "
-            "building trackers and analyses in Excel, SQL and Python, and working through review cycles with stakeholders, "
-            "including executive leadership at W. A Investments."
-        )
+        return tell("strength")
     if re.search(r"short-?term goal|career goal", q):
-        return (
-            "In the near term I want an internship where I can apply product, process automation and analytics skills to real "
-            "business problems while I finish my Computer Information Systems degree at Georgia State (May 2028)."
-        )
+        return tell("goal")
     if re.search(r"additional information|anything else", q):
-        return f"Thank you for considering my application. I'd welcome the chance to talk about how my product and automation experience could help {co}."
-
+        return tell("additional")
     return ""
 
 
@@ -339,45 +304,41 @@ def generate_response(question_label, field_type="text", options=None, company="
             else:
                 ans = "Open / Negotiable"
         elif any(k in q for k in ["gpa", "grade point"]):
-            ans = os.getenv("CANDIDATE_GPA", "3.50")
+            ans = C.fact("GPA")
         elif any(k in q for k in ["graduat"]):
-            ans = os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "12/2026")
+            ans = C.fact("EXPECTED_GRAD_DATE")
         elif any(k in q for k in ["start date", "availability", "available"]):
-            ans = os.getenv("CANDIDATE_AVAILABLE_START_DATE", "05/15/2027")
+            ans = C.fact("AVAILABLE_START_DATE")
         elif any(k in q for k in ["notice period", "notice required", "your notice"]):
             ans = "2 weeks"
         elif any(k in q for k in ["year in school", "classification", "class standing", "academic year", "standing in school", "academic standing", "academic level"]):
-            ans = os.getenv("CANDIDATE_CURRENT_YEAR", "Senior")
+            ans = C.fact("CURRENT_YEAR")
         elif any(k in q for k in ["major", "field of study", "degree program", "concentration"]):
-            ans = os.getenv("CANDIDATE_MAJOR", "Cybersecurity")
+            ans = C.fact("MAJOR")
         elif any(k in q for k in ["school", "university", "college", "institution"]):
-            ans = os.getenv("CANDIDATE_UNIVERSITY", "Kennesaw State University")
+            ans = C.fact("UNIVERSITY")
         elif "county" in q:
-            ans = os.getenv("CANDIDATE_COUNTY", "Cobb")
+            ans = C.fact("COUNTY")
         elif "city" in q:
-            ans = os.getenv("CANDIDATE_CITY", "Powder Springs")
+            ans = C.fact("CITY")
         elif re.search(r"\bstate\b", q) or "province" in q:
-            ans = os.getenv("CANDIDATE_STATE", "Georgia")
+            ans = C.fact("STATE")
         elif any(k in q for k in ["zip", "postal"]):
-            ans = os.getenv("CANDIDATE_ZIP_CODE", "30127")
+            ans = C.fact("ZIP_CODE")
         elif any(k in q for k in ["phone", "sms", "mobile", "cell"]):
-            ans = re.sub(r"\D", "", os.getenv("CANDIDATE_PHONE", "5550199"))
-        elif re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar|signature)\b", q) and re.search(r"\bday\b", q) and not re.search(r"day-to-day|day to day|everyday|workday|holiday", q):
-            ans = "01"
-        elif re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar)\b", q) and re.search(r"\bmonth\b", q) and not re.search(r"months? of experience|per month|a month", q):
-            ans = "06"
-        elif re.search(r"\b(?:date|dob|birth|graduation|graduating|calendar)\b", q) and re.search(r"\byear\b", q) and not re.search(r"years? of experience", q):
-            ans = "2027"
+            ans = re.sub(r"\D", "", C.fact("PHONE"))
+        elif re.search(r"\b(?:date|dob|birth|calendar|signature)\b", q) and re.search(r"\b(day|month|year)\b", q):
+            return ""  # "01" / "06" / "2027" were guesses (a birth day, a graduation month): never guess date parts
         elif any(k in q for k in ["signature", "sign here", "type your name", "full legal name"]):
-            ans = os.getenv("CANDIDATE_FULL_NAME", "Candidate")
+            ans = C.fact("FULL_NAME")
         elif any(k in q for k in ["twitter", "x handle", "facebook", "instagram", "social media", "blog"]):
             return ""
         elif any(k in q for k in ["linkedin", "linkedin url"]):
-            ans = os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com")
+            ans = C.fact("LINKEDIN_URL")
         elif any(k in q for k in ["website", "portfolio", "url"]):
-            ans = os.getenv("CANDIDATE_PORTFOLIO_URL", os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com"))
+            ans = C.fact("PORTFOLIO_URL") or C.fact("LINKEDIN_URL")
         elif "github" in q:
-            ans = os.getenv("CANDIDATE_GITHUB_URL", "https://github.com")
+            ans = C.fact("GITHUB_URL")
         elif re.search(r"\b(?:referred by|employee referral|referral name|name of referrer|who referred you)\b", q):
             if company:
                 try:
@@ -429,15 +390,8 @@ def generate_response(question_label, field_type="text", options=None, company="
             # the pitch went into "Reason for Leaving", "May We Contact for Reference?" ... only open questions get it
             ans = ""
         else:
-            pitch = os.getenv("CANDIDATE_ELEVATOR_PITCH")
-            if pitch:
-                ans = f"{pitch} I am eager to contribute my technical and problem-solving skills to {company or 'this role'}."
-            else:
-                ans = (
-                    f"As a Cybersecurity student at Kennesaw State University with hands-on experience in "
-                    f"identity and access management (IAM), technical support, Active Directory automation, and Azure Sentinel, "
-                    f"I am eager to contribute my technical skills and problem-solving mindset to {company or 'this role'}."
-                )
+            pitch = C.fact("ELEVATOR_PITCH")
+            ans = f"{pitch} I am eager to contribute my technical and problem-solving skills to {company or 'this role'}." if pitch else ""
 
     # Clean up output
     ans = (ans or "").strip(' "\'\n\r')

@@ -36,13 +36,20 @@ if sys.platform == "win32":
         pass
 
 HERE = pathlib.Path(__file__).resolve().parent
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 ROOT = HERE.parent
-CSV_FILE = HERE / "applications.csv" if (HERE / "applications.csv").exists() else ROOT / "applications.csv"
+CSV_FILE = CAND.APPLICATIONS
 
 import results_engine as RE
+try:
+    import psutil
+except ImportError:  # optional: without it the scaler keeps the default worker count
+    psutil = None
 
 def calculate_optimal_workers(min_w: int = 1, max_w: int = 6) -> int:
     """Calculates optimal worker concurrency based on real-time memory and CPU pressure."""
+    if psutil is None:
+        return max(min_w, min(max_w, 3))
     try:
         mem = psutil.virtual_memory()
         avail_gb = mem.available / (1024 ** 3)
@@ -56,9 +63,10 @@ def calculate_optimal_workers(min_w: int = 1, max_w: int = 6) -> int:
         elif avail_gb >= 3.8 and pct < 83:
             return min(max_w, 4)
         else:
-            return 3
-    except Exception:
-        return 3
+            return max(min_w, min(max_w, 3))
+    except Exception as e:
+        print(f"[Auto-Scaler] memory check failed, keeping default: {e}")
+        return max(min_w, min(max_w, 3))
 
 
 
@@ -233,14 +241,14 @@ def main():
     lock_file.write_text(str(os.getpid()))
     atexit.register(lambda: lock_file.unlink(missing_ok=True))
 
-    queue_file = HERE / args.queue
-    if not queue_file.exists() and (HERE / "queue.txt").exists():
-        queue_file = HERE / "queue.txt"
+    queue_file = CAND.DATA / args.queue
+    if not queue_file.exists() and (CAND.DATA / "queue.txt").exists():
+        queue_file = CAND.DATA / "queue.txt"
 
     jobs = parse_queue(queue_file)
 
     # Check for healed retries
-    retry_file = HERE / "queue_retry.txt"
+    retry_file = CAND.DATA / "queue_retry.txt"
     retries = parse_queue(retry_file)
     if retries:
         print(f"[Parallel Runner] Prioritizing {len(retries)} healed jobs from queue_retry.txt!")
@@ -517,6 +525,7 @@ def main():
             job, idx, attempt_num, resume_to_use = item
             current_total = get_applied_count()
             c_norm = job["company"].strip().lower()
+            r_norm = job["role"].strip().lower()
             job_timeout: float = float(args.timeout)
             t0 = time.time()
 
@@ -714,16 +723,16 @@ def main():
                     old_target = current_target_workers
                     current_target_workers = new_target
                     try:
-                        mem = psutil.virtual_memory()
+                        mem = psutil.virtual_memory() if psutil else None
                         if new_target > old_target:
-                            print(f"\n[Auto-Scaler] Memory headroom detected ({mem.available/(1024**3):.1f}GB free, {mem.percent}% RAM). Scaling UP: {old_target} -> {new_target} workers.")
+                            print(f"\n[Auto-Scaler] Memory headroom detected ({(mem.available/(1024**3)) if mem else 0:.1f}GB free, {mem.percent if mem else "?"}% RAM). Scaling UP: {old_target} -> {new_target} workers.")
                             for _ in range(new_target - old_target):
                                 next_worker_id += 1
                                 t = threading.Thread(target=worker_loop, args=(next_worker_id,), daemon=True)
                                 threads.append(t)
                                 t.start()
                         else:
-                            print(f"\n[Auto-Scaler] Memory pressure detected ({mem.percent}% RAM). Scaling DOWN: {old_target} -> {new_target} workers to maintain peak efficiency.")
+                            print(f"\n[Auto-Scaler] Memory pressure detected ({mem.percent if mem else "?"}% RAM). Scaling DOWN: {old_target} -> {new_target} workers to maintain peak efficiency.")
                     except Exception:
                         pass
 

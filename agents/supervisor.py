@@ -26,6 +26,9 @@ Architecture:
 import argparse, datetime, json, pathlib, sys, time, traceback
 from typing import Any, Dict, List, Optional, Set
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
 HEAL_LOG = AUTOFILL / "brain" / "heal_log.json"
 RETRY_STATE = AUTOFILL / "brain" / "retry_state.json"
@@ -90,7 +93,7 @@ def pre_submit_check(url: str, company: str, resume_path: str) -> Optional[str]:
         return f"Resume not found: {resume_path}"
 
     # 2. profile.json valid
-    profile = AUTOFILL / "profile.json"
+    profile = CAND.PROFILE
     if not profile.exists():
         return "profile.json missing"
     try:
@@ -172,7 +175,7 @@ def _dispatch_stealth(diag):
 
 
 
-RETRY_QUEUE = AUTOFILL / "queue_retry.txt"
+RETRY_QUEUE = CAND.DATA / "queue_retry.txt"
 
 
 def re_queue(diag):

@@ -9,8 +9,11 @@ from typing import List
 from pydantic import BaseModel
 from . import llm, context, local
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
-DRAFTS = AUTOFILL / "outreach_drafts.csv"
+DRAFTS = CAND.DATA / "outreach_drafts.csv"
 COLS = ["date", "company", "role_applied", "fit", "look_for", "linkedin_search", "note", "hook", "status", "followup"]
 
 _FIRST_NAME = os.getenv("CANDIDATE_FIRST_NAME", "Tokunbo")

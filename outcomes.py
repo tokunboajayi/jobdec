@@ -12,8 +12,9 @@ import argparse, collections, csv, datetime, email, email.utils, pathlib, re, sy
 import results_engine as RE
 
 HERE = pathlib.Path(__file__).resolve().parent
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 ROOT = HERE.parent
-REPORT = HERE / "outcomes_report.md"
+REPORT = CAND.DATA / "outcomes_report.md"
 
 KINDS = [  # (stage, rank, pattern)
     ("interview", 4, r"\binterview|schedule (a|your) (call|time|conversation)|phone screen|meet with (our|the) team|availability for"),
@@ -53,7 +54,7 @@ def load_applications():
             k = RE.job_key(r["company"], r["role"], r["url"])
             apps[k] = {"company": r["company"], "role": r["role"], "url": r["url"], "date": r["date"],
                        "channel": "auto", "category": r["category"], "stage": "submitted", "stage_date": ""}
-    p = ROOT / "applications.csv"
+    p = CAND.APPLICATIONS
     if p.exists():
         with open(p, encoding="utf-8") as f:
             for r in csv.DictReader(f):

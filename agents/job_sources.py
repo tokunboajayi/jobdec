@@ -7,10 +7,13 @@ and everything already applied to, and appends new roles directly into queue.txt
 """
 import html, json, pathlib, re, sys, urllib.request
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
 if str(AUTOFILL) not in sys.path:
     sys.path.insert(0, str(AUTOFILL))
-QUEUE = AUTOFILL / "queue.txt"
+QUEUE = CAND.DATA / "queue.txt"
 
 GITHUB_SOURCES = [
     ("SimplifyJobs 2027", "https://raw.githubusercontent.com/SimplifyJobs/Summer2027-Internships/dev/README.md"),

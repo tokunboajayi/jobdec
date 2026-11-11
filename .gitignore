@@ -69,3 +69,7 @@ pinned_status.json
 Candidate_Resume.pdf
 *.pdf
 answers.json
+
+# per-candidate homes (JOBDEC_HOME): personal data, never committed
+profiles/*
+!profiles/README.md

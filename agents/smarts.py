@@ -15,6 +15,9 @@ Smarter decisions across the pipeline - rule-based + local models, no API needed
 import csv, datetime, json, pathlib, re
 from . import llm, context
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
 SITES = llm.CACHE_DIR / "sites.json"
 POSTED = llm.CACHE_DIR / "posted.json"
@@ -146,7 +149,7 @@ def winner_texts():
     import results_engine as RE
     from . import jd_fetch
     urls = [r["url"] for r in RE.ledger_rows() if r.get("response") in ("assessment", "interview", "offer") and r.get("url")]
-    p = AUTOFILL.parent / "applications.csv"
+    p = CAND.APPLICATIONS
     try:
         with open(p, encoding="utf-8") as f:
             urls += [r["Job URL"] for r in csv.DictReader(f)
@@ -380,7 +383,7 @@ def build_prep_packs():
             m = build_prep_pack(r["company"], r["role"], r["url"], r["response"])
             if m:
                 made.append(m)
-    p = AUTOFILL.parent / "applications.csv"
+    p = CAND.APPLICATIONS
     try:
         with open(p, encoding="utf-8") as f:
             for r in csv.DictReader(f):

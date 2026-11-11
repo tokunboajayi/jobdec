@@ -12,6 +12,7 @@ import argparse, collections, pathlib
 import results_engine as RE
 
 HERE = pathlib.Path(__file__).resolve().parent
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 
 
 def scout_jobs(jobs, applied, min_score):
@@ -49,7 +50,7 @@ def main():
     a = ap.parse_args()
     min_score = a.min_score if a.min_score is not None else RE.strategy()["min_fit_score"]
 
-    jobs = RE.parse_queue_file(HERE / a.inp)
+    jobs = RE.parse_queue_file(CAND.DATA / a.inp)
     applied = RE.already_applied_keys()
     if a.scout:
         scout_jobs(jobs, applied, min_score)
@@ -107,7 +108,7 @@ def main():
     if manual:
         out += ["", "# ---- PROTECTED: apply by hand"] + manual
     out += ["", "# ---- SKIPPED"] + [f"# SKIP ({why}): {t}" for why, t in skipped]
-    (HERE / a.out).write_text("\n".join(out) + "\n", encoding="utf-8")
+    (CAND.DATA / a.out).write_text("\n".join(out) + "\n", encoding="utf-8")
 
     cats = collections.Counter(c for _, _, c, _, _ in run)
     atss = collections.Counter(at for _, _, _, at, _ in run)

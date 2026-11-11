@@ -17,6 +17,9 @@ from pydantic import BaseModel
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 from agents import llm, context, replay, local
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 AUTOFILL = pathlib.Path(__file__).resolve().parent.parent
 FIX_DIR = pathlib.Path(__file__).resolve().parent / "fixes"
 NEEDS_YOU = pathlib.Path(__file__).resolve().parent / "needs_you.md"
@@ -86,7 +89,7 @@ def _rule_ok(fix):
 
 
 def _add_rules(fixes):
-    p = AUTOFILL / "profile.json"
+    p = CAND.PROFILE
     data = json.loads(p.read_text(encoding="utf-8"))
     existing = {r["q"] for r in data["rules"]}
     added = []

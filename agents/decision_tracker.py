@@ -15,6 +15,9 @@ import datetime
 import pathlib
 from typing import Dict, Any, List, Optional, Tuple
 
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
 CACHE_FILE = HERE / "decisions_cache.json"
@@ -212,7 +215,7 @@ def find_matching_application(sender: str, subject: str, body: str, applications
 
 def update_application_stage(company: str, role: str, new_stage: str, next_action: str, action_date: str = "", decision_timestamp: str = "") -> bool:
     """Updates the stage, next action, deadline, and decision timestamp of an application in applications.csv."""
-    app_csv = ROOT / "applications.csv"
+    app_csv = CAND.APPLICATIONS
     if not app_csv.exists():
         return False
 
@@ -267,7 +270,7 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
         print(f"[Decision Tracker] Gmail unavailable: {err}", flush=True)
         return []
 
-    app_csv = ROOT / "applications.csv"
+    app_csv = CAND.APPLICATIONS
     if not app_csv.exists():
         mail.logout()
         return []
@@ -439,7 +442,7 @@ def get_decision_pipeline_summary() -> str:
     import html
     import urllib.parse
 
-    app_csv = ROOT / "applications.csv"
+    app_csv = CAND.APPLICATIONS
     if not app_csv.exists():
         return "No applications found."
 

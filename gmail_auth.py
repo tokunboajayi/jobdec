@@ -16,7 +16,8 @@ from dotenv import load_dotenv
 
 # Load .env from workspace root or current folder
 HERE = pathlib.Path(__file__).resolve().parent
-ENV_PATH = HERE.parent.parent / ".env"
+import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
+ENV_PATH = CAND.ENV
 if ENV_PATH.exists():
     load_dotenv(ENV_PATH)
 else:
@@ -136,8 +137,8 @@ def extract_code(text):
     return None
 
 
-USED_LINKS_FILE = HERE / ".used_auth_links.txt"
-USED_CODES_FILE = HERE / ".used_auth_codes.txt"
+USED_LINKS_FILE = CAND.DATA / ".used_auth_links.txt"
+USED_CODES_FILE = CAND.DATA / ".used_auth_codes.txt"
 
 def is_link_used(link):
     if not USED_LINKS_FILE.exists():
