@@ -303,5 +303,77 @@ def test_single_control_panel_invariant():
     asyncio.run(_run())
 
 
+def test_telegram_bar_targeted_apply_intent_parsing():
+    from telegram_bot_service import parse_targeted_apply_intent
+
+    assert parse_targeted_apply_intent("Apply to this job with Visa") == "Visa"
+    assert parse_targeted_apply_intent("Apply to this job with Goldman") == "Goldman"
+    assert parse_targeted_apply_intent("Apply to this job with Goldman Sachs") == "Goldman Sachs"
+    assert parse_targeted_apply_intent("apply to Palantir Forward Deployed") == "Palantir Forward Deployed"
+    assert parse_targeted_apply_intent("/apply Visa") == "Visa"
+    assert parse_targeted_apply_intent("target: Scale AI") == "Scale AI"
+
+    # Generic commands must return None so they trigger the standard runner/deck
+    assert parse_targeted_apply_intent("apply") is None
+    assert parse_targeted_apply_intent("/apply") is None
+    assert parse_targeted_apply_intent("start applying") is None
+    assert parse_targeted_apply_intent("/deck") is None
+
+
+def test_mid_session_targeted_job_visa_and_goldman():
+    from telegram_bot_service import (
+        resolve_targeted_company_jobs,
+        launch_mid_session_targeted_job,
+        format_targeted_launch_message,
+    )
+
+    visa_jobs = resolve_targeted_company_jobs("Visa", include_applied=True)
+    assert len(visa_jobs) >= 1
+    assert "visa" in visa_jobs[0]["company"].lower()
+    assert visa_jobs[0]["score"] >= 9.0
+
+    goldman_jobs = resolve_targeted_company_jobs("Goldman", include_applied=True)
+    assert len(goldman_jobs) >= 1
+    assert "goldman" in goldman_jobs[0]["company"].lower()
+
+    res_visa = launch_mid_session_targeted_job("Visa", ensure_runner_active=False, max_to_launch=1, dry_run=True)
+    assert res_visa["ok"] is True
+    assert len(res_visa["launched"]) == 1
+    assert 91 <= res_visa["launched"][0]["worker_id"] <= 99
+    msg, kb = format_targeted_launch_message(res_visa)
+    assert "Mid-Session Targeted Job Launched" in msg
+    assert "Visa" in msg
+    assert kb is not None
+
+
+def test_telegram_bar_command_menu_and_start_deck():
+    from telegram_bot_service import (
+        get_smart_keyboard,
+        get_target_customizer_panel,
+        launch_full_job_deck,
+        launch_assessment_solver_from_telegram,
+    )
+
+    kb = get_smart_keyboard()
+    cb_ids = {btn.callback_data for row in kb.inline_keyboard for btn in row}
+    assert "btn_start_deck" in cb_ids
+    assert "btn_target" in cb_ids
+    assert "btn_assessments" in cb_ids
+
+    panel_text, panel_kb = get_target_customizer_panel()
+    assert "Apply to this job with Visa" in panel_text
+    assert "Apply to this job with Goldman" in panel_text
+    panel_cbs = {btn.callback_data for row in panel_kb.inline_keyboard for btn in row}
+    assert "quick_apply|Visa" in panel_cbs
+    assert "quick_apply|Goldman Sachs" in panel_cbs
+
+    deck_res = launch_full_job_deck(workers=3, dry_run=True)
+    assert deck_res["ok"] is True
+
+    oa_res = launch_assessment_solver_from_telegram(dry_run=True)
+    assert oa_res["ok"] is True
+
+
+
 
 

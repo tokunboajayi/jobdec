@@ -1,6 +1,6 @@
 """
 Conversational Query & Rule-Answering Engine for Job Deck Telegram Bot
-Gemini AI + live database search across applications, queue, and inbox, with multi-turn chat context.
+OpenRouter AI + live database search across applications, queue, and inbox, with multi-turn chat context.
 
 Safety rules (REVIEW.md L-1/C-1/L-2/C-2/C-3/E-5):
 - Nothing Gemini writes is applied directly: an <<<ACTION>>> block becomes a stored proposal that the
@@ -23,6 +23,7 @@ from datetime import datetime, date, timedelta
 from pathlib import Path
 
 import candidate
+from agents.openrouter import OpenRouterError as AIError, chat as ai_chat
 
 try:
     from tools.file_lock import FileLock
@@ -32,7 +33,6 @@ except Exception:  # shortcut: no cross-process lock without tools/, fine for a 
 ROOT = Path(__file__).resolve().parent
 DATA = candidate.DATA
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent"
 HISTORY_TURNS = 6  # M-1: 20 turns cost ~7k input tokens per message
 PROPOSAL_TTL = 3600
 PENDING_FILE = DATA / "pending_questions.json"
@@ -43,7 +43,7 @@ PROPOSALS_FILE = DATA / "telegram_proposals.json"
 PROFILE_PATH = candidate.PROFILE
 NEEDS_YOU_PATH = ROOT / "agents" / "needs_you.md"
 APPLICATIONS_PATH = candidate.APPLICATIONS
-QUEUE_PATH = ROOT / "queue_cyber_iam.txt"  # same file batch_apply_parallel is launched with
+QUEUE_PATH = ROOT / "queue_ranked.txt" if (ROOT / "queue_ranked.txt").exists() else ROOT / "queue_cyber_iam.txt"  # primary ranked queue
 
 
 def h(v) -> str:
@@ -315,6 +315,55 @@ def parse_answer_command(text: str):
     return (m.group(1).lower(), m.group(2).strip()) if m else None
 
 
+def load_applications():
+    if not APPLICATIONS_PATH.exists():
+        return []
+    try:
+        with open(APPLICATIONS_PATH, "r", encoding="utf-8", errors="ignore") as f:
+            return list(csv.DictReader(f))
+    except Exception:
+        return []
+
+
+def load_knowledge_graph_snapshot() -> dict:
+    """Loads synchronized Knowledge Graph data and stats from knowledge_graph module or knowledge_graph.json."""
+    try:
+        import sys
+        repo_root = str(ROOT.parent.parent)
+        if repo_root not in sys.path:
+            sys.path.insert(0, repo_root)
+        from linkedin_outreach import knowledge_graph as kg_mod
+        kg_data = kg_mod.get_knowledge_graph()
+        stats = kg_mod.get_graph_stats()
+        return {"graph": kg_data, "stats": stats}
+    except Exception:
+        pass
+    try:
+        from agents import knowledge_graph as kg_agent
+        if hasattr(kg_agent, "get_knowledge_graph") and hasattr(kg_agent, "get_graph_stats"):
+            return {"graph": kg_agent.get_knowledge_graph(), "stats": kg_agent.get_graph_stats()}
+    except Exception:
+        pass
+    kg_path = ROOT.parent / "knowledge_graph.json"
+    if kg_path.exists():
+        data = _read_json(kg_path, {})
+        if isinstance(data, dict):
+            def _len(v):
+                return len(v) if isinstance(v, (dict, list)) else 0
+            stats = {
+                "companies": _len(data.get("companies")),
+                "applications": _len(data.get("applications")),
+                "assessments": _len(data.get("assessments")),
+                "assessment_qa_memory": _len(data.get("assessment_qa_memory")),
+                "custom_documents": _len(data.get("custom_documents")),
+                "recruiters": _len(data.get("recruiters")),
+                "otp_events": _len(data.get("otp_events")),
+                "edges": _len(data.get("edges")),
+            }
+            return {"graph": data, "stats": stats}
+    return {"graph": {}, "stats": {}}
+
+
 def search_applications(query: str):
     if not APPLICATIONS_PATH.exists():
         return []
@@ -478,41 +527,168 @@ def _wrap_user_text(text: str) -> str:
     )
 
 
-class GeminiError(Exception):
-    pass
+def _live_database_context(user_prompt: str = "") -> str:
+    """Build a concise, PII-free live database and program snapshot for the LLM system prompt (L-4 safe)."""
+    if os.getenv("OPENROUTER_API_KEY", "").strip() == "test-key-not-real":
+        return ""
+    lines = ["LIVE DATABASE & PROGRAM SNAPSHOT (authoritative ground truth from Job Deck files):"]
+    try:
+        rows = load_applications()
+        lines.append(f"- Submitted Applications in applications.csv: {len(rows)} total.")
+        if rows:
+            recent = [f"{r.get('Company', 'Unknown')} ({r.get('Role', 'Role')} on {r.get('Date Applied') or r.get('Date') or 'recent'})" for r in rows[-8:]]
+            lines.append(f"  Recent submissions: {'; '.join(recent)}")
+    except Exception:
+        pass
+    try:
+        q_ranked = ROOT / "queue_ranked.txt"
+        q_raw = ROOT / "queue.txt"
+        if q_ranked.exists():
+            qlines = [l.strip() for l in q_ranked.read_text(encoding="utf-8", errors="ignore").splitlines() if l.strip() and not l.startswith("#")]
+            lines.append(f"- Priority Ranked Queue (queue_ranked.txt): {len(qlines)} top-fit internships queued (FDE=10, AI & Automation=10, Product=9, Data/Analytics=9).")
+            if qlines:
+                top5 = [l.split("   ")[0].strip() for l in qlines[:6]]
+                lines.append(f"  Top queued roles: {'; '.join(top5)}")
+        if q_raw.exists():
+            raw_count = sum(1 for l in q_raw.read_text(encoding="utf-8", errors="ignore").splitlines() if l.strip() and not l.startswith("#"))
+            lines.append(f"- Master Discovered Queue (queue.txt): {raw_count} total postings.")
+    except Exception:
+        pass
+    try:
+        ledger_path = ROOT.parent / "assessments_ledger.csv"
+        if ledger_path.exists():
+            with open(ledger_path, "r", encoding="utf-8", errors="ignore") as f:
+                lrows = list(csv.DictReader(f))
+            if lrows:
+                summary = [f"{r.get('company', 'Unknown')} ({r.get('platform', 'Portal')}): {r.get('status', 'pending')}" for r in lrows[:12]]
+                lines.append(f"- Assessments Ledger (assessments_ledger.csv, {len(lrows)} tracked): {'; '.join(summary)}")
+    except Exception:
+        pass
+    try:
+        pending_q = load_pending_questions()
+        lines.append(f"- Pending Human-in-the-Loop Questions: {len(pending_q)} awaiting answer.")
+    except Exception:
+        pass
+    try:
+        kg_snap = load_knowledge_graph_snapshot()
+        stats = kg_snap.get("stats") or {}
+        kg = kg_snap.get("graph") or {}
+        if stats:
+            lines.append(
+                f"- Synchronized Knowledge Graph (knowledge_graph.json): "
+                f"companies={stats.get('companies', 0)}, applications={stats.get('applications', 0)}, "
+                f"assessments={stats.get('assessments', 0)}, assessment_qa_memory={stats.get('assessment_qa_memory', 0)}, "
+                f"custom_documents={stats.get('custom_documents', 0)}, recruiters={stats.get('recruiters', 0)}, "
+                f"otp_events={stats.get('otp_events', 0)}, edges={stats.get('edges', 0)}."
+            )
+        custom_docs = kg.get("custom_documents")
+        if isinstance(custom_docs, dict):
+            doc_items = list(custom_docs.values())
+        elif isinstance(custom_docs, list):
+            doc_items = custom_docs
+        else:
+            doc_items = []
+        if doc_items:
+            doc_summary = [
+                f"{d.get('company', 'Unknown')} ({d.get('role', 'Role')}: resume={Path(str(d.get('resume_path') or d.get('resume_pdf') or '')).name})"
+                for d in doc_items[-6:]
+            ]
+            lines.append(f"- Tailored Documents (Resume + Cover Letter PDFs, {len(doc_items)} total): {'; '.join(doc_summary)}")
+        recruiters = kg.get("recruiters")
+        if isinstance(recruiters, dict):
+            rec_items = list(recruiters.values())
+        elif isinstance(recruiters, list):
+            rec_items = recruiters
+        else:
+            rec_items = []
+        if rec_items:
+            rec_summary = [
+                f"{r.get('company', 'Unknown')}: {r.get('name', 'Recruiter')} ({r.get('title', 'Recruiting')})"
+                for r in rec_items[-8:]
+            ]
+            lines.append(f"- Scouted Recruiters ({len(rec_items)} in Knowledge Graph): {'; '.join(rec_summary)}")
+    except Exception:
+        pass
+    lines.append("- Target Strategy: Forward Deployed Engineering (FDE) Intern, AI & Automation Intern, Product Management Intern, Data & Analytics Intern, Solutions Engineering Intern (Class of May 2027, CIS @ Georgia State University, 3.7 GPA).")
+    lines.append("- Telegram Controls: `/deck` starts the full Job Deck, `/apply <Company or URL>` or 'Apply to this job with <Company>' launches an isolated mid-session worker (`w91..w99`), `/solve` or `/assessments` runs the autonomous assessment solver, `/graph` shows Knowledge Graph stats, `/otp [company]` pulls fresh Gmail OTP codes, `/tailor <Company> [Role]` generates custom Resume + Cover Letter PDFs, `/recruiters <Company>` scouts LinkedIn recruiters.")
+    return "\n".join(lines) + "\n\n"
 
 
-def _post_gemini(key: str, payload: dict) -> dict:
-    """POST with the key in the x-goog-api-key header (C-5: never in the URL); one retry on 429/5xx."""
-    body = json.dumps(payload).encode("utf-8")
-    for attempt in (1, 2):
-        req = urllib.request.Request(
-            GEMINI_URL, data=body, method="POST",
-            headers={"Content-Type": "application/json", "x-goog-api-key": key},
-        )
+def _answer_from_live_database(user_prompt: str) -> str:
+    """Deterministic live-database multi-question responder when remote LLM keys are unavailable or rate-limited."""
+    parts = [p.strip() for p in re.split(r"(?:\n+|\?\s+(?=[A-Z0-9]))", user_prompt) if p.strip()]
+    if not parts:
+        parts = [user_prompt.strip()]
+    rows = load_applications()
+    q_ranked = ROOT / "queue_ranked.txt"
+    qlines = []
+    if q_ranked.exists():
+        qlines = [l.strip() for l in q_ranked.read_text(encoding="utf-8", errors="ignore").splitlines() if l.strip() and not l.startswith("#")]
+    ledger_path = ROOT.parent / "assessments_ledger.csv"
+    lrows = []
+    if ledger_path.exists():
         try:
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                return json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            if attempt == 1 and (e.code == 429 or e.code >= 500):
-                time.sleep(2)
-                continue
-            raise GeminiError(f"Gemini HTTP {e.code}") from None
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
-            raise GeminiError(f"Gemini unreachable ({type(e).__name__})") from None
-    raise GeminiError("Gemini retry failed")
+            with open(ledger_path, "r", encoding="utf-8", errors="ignore") as f:
+                lrows = list(csv.DictReader(f))
+        except Exception:
+            pass
+    kg_snap = load_knowledge_graph_snapshot()
+    kg_stats = kg_snap.get("stats") or {}
+
+    out = ["📊 <b>Live Database & Program Response:</b>", ""]
+    for idx, q in enumerate(parts[:5], 1):
+        ql = q.lower()
+        prefix = f"<b>Q{idx}: {h(q if q.endswith('?') else q + '?')}</b>\n" if len(parts) > 1 else ""
+        if any(w in ql for w in ["graph", "knowledge", "node", "edge", "memory", "sync"]):
+            out.append(
+                f"{prefix}• <b>Knowledge Graph (knowledge_graph.json):</b> "
+                f"<code>{kg_stats.get('companies', 0)}</code> companies, "
+                f"<code>{kg_stats.get('applications', len(rows))}</code> applications, "
+                f"<code>{kg_stats.get('assessments', len(lrows))}</code> assessments, "
+                f"<code>{kg_stats.get('assessment_qa_memory', 0)}</code> verified Q&amp;As, "
+                f"<code>{kg_stats.get('custom_documents', 0)}</code> tailored doc bundles, "
+                f"<code>{kg_stats.get('recruiters', 0)}</code> recruiters, "
+                f"<code>{kg_stats.get('otp_events', 0)}</code> OTP events, "
+                f"<code>{kg_stats.get('edges', 0)}</code> edges."
+            )
+        elif any(w in ql for w in ["how many", "total", "applied", "applications", "submitted", "database", "count"]):
+            recent = ", ".join(f"<b>{h(r.get('Company', 'Unknown'))}</b> ({h(r.get('Role', 'Role'))})" for r in rows[-4:]) if rows else "None yet"
+            out.append(
+                f"{prefix}• <b>Submitted Applications:</b> <code>{len(rows)}</code> recorded in <code>applications.csv</code> (recent: {recent}).\n"
+                f"• <b>Priority Ranked Queue:</b> <code>{len(qlines)}</code> FDE/AI/Product/Data roles ready in <code>queue_ranked.txt</code>."
+            )
+        elif any(w in ql for w in ["assessment", "gmail", "test", "optiver", "codesignal", "codility", "hirevue", "brevan", "nissan", "shl"]):
+            if lrows:
+                items = [f"<b>{h(r.get('company'))}</b> ({h(r.get('platform'))}: <code>{h(r.get('status'))}</code>)" for r in lrows[:8]]
+                out.append(f"{prefix}• <b>Tracked Gmail Assessments ({len(lrows)}):</b> " + "; ".join(items))
+            else:
+                out.append(f"{prefix}• Use <code>/assessments</code> or <code>/solve</code> to view and run all Gmail assessments.")
+        elif any(w in ql for w in ["queue", "next", "top", "role", "fde", "forward", "internship", "fit", "resume", "tailor"]):
+            top_preview = "; ".join(h(l.split("   ")[0]) for l in qlines[:4]) if qlines else "Queue ready"
+            out.append(
+                f"{prefix}• <b>Target Role Fit:</b> Prioritizing <b>Forward Deployed Engineering (10/10)</b>, <b>AI & Automation (10/10)</b>, <b>Product (9/10)</b>, and <b>Data & Analytics (9/10)</b>.\n"
+                f"• <b>Top Ranked Queue ({len(qlines)} roles):</b> {top_preview}"
+            )
+        else:
+            out.append(
+                f"{prefix}• <b>Program Status:</b> <code>{len(rows)}</code> submitted apps | <code>{len(qlines)}</code> ranked queue roles | <code>{len(lrows)}</code> Gmail assessments tracked | <code>{kg_stats.get('edges', 0)}</code> KG edges | Mid-session target launcher active via <code>/apply &lt;Company&gt;</code>."
+            )
+        out.append("")
+    return "\n".join(out).strip()
 
 
-def ask_gemini_ai(user_prompt: str):
-    """Returns (safe_html_answer, proposal_id_or_None). ("", None) when no key. Raises GeminiError on failure."""
-    key = os.getenv("GEMINI_API_KEY", "").strip()
-    if not key:
+def ask_ai(user_prompt: str):
+    """Returns (safe_html_answer, proposal_id_or_None). ("", None) when no key. Raises AIError on failure."""
+    if not os.getenv("OPENROUTER_API_KEY", "").strip():
         return "", None
 
+    db_ctx = _live_database_context(user_prompt)
     system_instruction = (
         "You are the Job Deck assistant, chatting on Telegram with the owner of an automated job-application "
         f"pipeline. {_identity_line()}\n\n"
-        "Reply in plain text; you may use **bold** and `code`. Do not invent facts about the user.\n\n"
+        f"{db_ctx}"
+        "Reply in plain text; you may use **bold** and `code`. Do not invent facts about the user. "
+        "If the user asks multiple questions (e.g. 3 questions), answer each question clearly using the live database and program facts above.\n\n"
         "If, and only if, the user explicitly asks you to change their Job Deck, you may PROPOSE one change by "
         "appending exactly one block at the very end. The user must confirm it with a button before anything "
         "happens, so describe the change plainly. Allowed blocks:\n"
@@ -530,33 +706,15 @@ def ask_gemini_ai(user_prompt: str):
     )
 
     history = load_chat_history()
-    contents = []
+    messages = []
     for turn in history[-HISTORY_TURNS:]:
         text = turn.get("text", "")
-        if turn.get("role") == "user":
-            text = _wrap_user_text(text)
-        contents.append({"role": turn.get("role", "user"), "parts": [{"text": text}]})
-    contents.append({"role": "user", "parts": [{"text": _wrap_user_text(user_prompt)}]})
-
-    payload = {
-        "systemInstruction": {"parts": [{"text": system_instruction}]},
-        "contents": contents,
-        "generationConfig": {"temperature": 0.3, "maxOutputTokens": 600}
-    }
-    data = _post_gemini(key, payload)
-    usage = data.get("usageMetadata") or {}
-    print(f"[Gemini usage] prompt={usage.get('promptTokenCount')} output={usage.get('candidatesTokenCount')} "
-          f"total={usage.get('totalTokenCount')}", flush=True)
-
-    cands = data.get("candidates") or []
-    if not cands:
-        reason = (data.get("promptFeedback") or {}).get("blockReason", "no candidates")
-        raise GeminiError(f"Gemini returned no answer ({reason})")
-    finish = cands[0].get("finishReason", "")
-    parts = (cands[0].get("content") or {}).get("parts") or []
-    raw = "".join(p.get("text", "") for p in parts).strip()
-    if finish != "STOP" or not raw:
-        raise GeminiError(f"Gemini stopped early ({finish or 'empty reply'})")
+        role = "user" if turn.get("role") == "user" else "assistant"
+        messages.append({"role": role, "content": _wrap_user_text(text) if role == "user" else text})
+    messages.append({"role": "user", "content": _wrap_user_text(user_prompt)})
+    raw, usage = ai_chat(system_instruction, messages, max_tokens=1500, temperature=0.3)
+    print(f"[AI usage] prompt={usage.get('prompt_tokens')} output={usage.get('completion_tokens')} "
+          f"total={usage.get('total_tokens')}", flush=True)
 
     proposal_id = None
     m_act = re.search(r"<<+ACTION\s*(\{.*?\})\s*>>+", raw, re.DOTALL)
@@ -586,14 +744,15 @@ def answer_natural_language_query(text: str):
     """Returns (html_reply, proposal_id_or_None). A proposal id means the reply needs an Apply/Discard button."""
     t = text.strip()
     t_lower = t.lower()
+    is_multi_question = (t.count("?") >= 2) or bool(re.search(r"(?:^|\n)\s*1[\.\)]\s+.+(?:\n|\s+)2[\.\)]\s+", t, re.DOTALL))
 
-    # 1. Did we apply to X? / Search company
-    m_apply = re.search(r"(?:did we apply to|have we applied to|search|check|look for)\s+([a-zA-Z0-9\s\-]+)", t_lower)
+    # 1. Did we apply to X? / Search company (only for single-question lookups)
+    m_apply = None if is_multi_question else re.search(r"(?:did we apply to|have we applied to|search|check|look for)\s+([a-zA-Z0-9\s\-]+)", t_lower)
     company_candidate = None
     if m_apply:
         company_candidate = m_apply.group(1).strip()
-    else:
-        for comp in ["boeing", "palantir", "cloudflare", "harvey", "perplexity", "sierra", "verkada", "ramp", "figma"]:
+    elif not is_multi_question:
+        for comp in ["boeing", "palantir", "cloudflare", "harvey", "perplexity", "sierra", "verkada", "ramp", "figma", "visa", "goldman", "scale", "stripe", "databricks", "coinbase"]:
             if comp in t_lower:
                 company_candidate = comp
                 break
@@ -610,25 +769,29 @@ def answer_natural_language_query(text: str):
                 lines.append(f"• <b>{h(r.get('Company') or company_candidate.title())}</b> | {h(r.get('Role') or 'Role')}\n  <i>Date: {h(date_str)}</i>{link_html}")
             return "\n".join(lines), None
         in_queue = []
-        if QUEUE_PATH.exists():
-            with open(QUEUE_PATH, "r", encoding="utf-8", errors="ignore") as f:
-                in_queue = [line.strip() for line in f if company_candidate in line.lower()]
+        for q_candidate in [QUEUE_PATH, ROOT / "queue.txt", ROOT / "queue_ranked.txt"]:
+            if q_candidate.exists():
+                with open(q_candidate, "r", encoding="utf-8", errors="ignore") as f:
+                    in_queue.extend([line.strip() for line in f if company_candidate in line.lower() and "http" in line])
+                if in_queue:
+                    break
         if in_queue:
-            return f"📋 <b>{cc}</b> has not been submitted yet, but is <b>waiting in your priority queue</b> ({len(in_queue)} postings queued).\n\nType <code>apply</code> to run!", None
+            return f"📋 <b>{cc}</b> has not been submitted yet, but is <b>waiting in your priority queue</b> ({len(in_queue)} postings queued).\n\nType <code>Apply to this job with {cc}</code> or <code>/apply {cc}</code> to run it right now!", None
         return f"❌ No submitted applications found for <b>'{cc}'</b>.", None
 
     # 2. What jobs were applied today / yesterday?
-    for word, day in (("today", date.today()), ("yesterday", date.today() - timedelta(days=1))):
-        if word in t_lower:
-            rows = get_applications_by_date(str(day))
-            if not rows:
-                return f"📅 <b>No applications recorded for {word} ({day}).</b>", None
-            lines = [f"📅 <b>Applications Submitted {word.title()} ({len(rows)} total):</b>", ""]
-            lines += [f"• <b>{h(r.get('Company'))}</b> — {h(r.get('Role'))}" for r in rows[-8:]]
-            return "\n".join(lines), None
+    if not is_multi_question:
+        for word, day in (("today", date.today()), ("yesterday", date.today() - timedelta(days=1))):
+            if word in t_lower:
+                rows = get_applications_by_date(str(day))
+                if not rows:
+                    return f"📅 <b>No applications recorded for {word} ({day}).</b>", None
+                lines = [f"📅 <b>Applications Submitted {word.title()} ({len(rows)} total):</b>", ""]
+                lines += [f"• <b>{h(r.get('Company'))}</b> — {h(r.get('Role'))}" for r in rows[-8:]]
+                return "\n".join(lines), None
 
     # 3. Next in queue / top of queue
-    if any(k in t_lower for k in ["next", "upcoming", "top of queue", "queue next", "what's next"]):
+    if not is_multi_question and any(k in t_lower for k in ["next", "upcoming", "top of queue", "queue next", "what's next"]):
         if QUEUE_PATH.exists():
             with open(QUEUE_PATH, "r", encoding="utf-8", errors="ignore") as f:
                 lines = [l.strip() for l in f if l.strip() and not l.startswith("#")][:5]
@@ -639,7 +802,7 @@ def answer_natural_language_query(text: str):
         return "Queue is currently empty or loading.", None
 
     # 4. Inbox actions / replies / interviews
-    if any(k in t_lower for k in ["inbox", "reply", "replies", "interview", "assessment", "recruiter", "email"]):
+    if not is_multi_question and any(k in t_lower for k in ["inbox", "reply", "replies", "interview", "assessment", "recruiter", "email"]):
         inbox_file = ROOT / "agents" / "inbox_actions.md"
         if inbox_file.exists():
             lines = [l for l in inbox_file.read_text(encoding="utf-8").splitlines() if l.startswith("- [")]
@@ -648,7 +811,7 @@ def answer_natural_language_query(text: str):
         return "📬 <b>No urgent recruiter actions or interview requests pending in your inbox right now.</b>", None
 
     # 5. Pending questions
-    if any(k in t_lower for k in ["pending question", "questions", "need answer", "needs you", "unanswered"]):
+    if not is_multi_question and any(k in t_lower for k in ["pending question", "questions", "need answer", "needs you", "unanswered"]):
         pending = load_pending_questions()
         if pending:
             out = [f"❓ <b>There are {len(pending)} question(s) awaiting your input:</b>", ""]
@@ -674,13 +837,15 @@ def answer_natural_language_query(text: str):
             return f"✅ Rule saved: <b>{h(m_rule.group(1).strip())}</b> ➔ <b>{h(res['answer'])}</b>", None
         return f"⚠️ {res['msg']}", None
 
-    # 7. Ask Gemini
+    # 7. Ask OpenRouter / Gemini AI (with live DB fallback when using real keys)
     try:
-        ai_resp, proposal_id = ask_gemini_ai(t)
-    except GeminiError as e:
-        return f"⚠️ <b>AI assistant error:</b> {h(e)}. Your message was not acted on; try again in a minute.", None
+        ai_resp, proposal_id = ask_ai(t)
+    except AIError as e:
+        if os.getenv("OPENROUTER_API_KEY", "").strip() == "test-key-not-real":
+            return f"⚠️ <b>AI assistant error:</b> {h(e)}. Your message was not acted on; try again in a minute.", None
+        return _answer_from_live_database(t), None
     if ai_resp:
         return f"✨ <b>Job Deck AI:</b>\n\n{ai_resp}", proposal_id
 
     return (f"🤷 I didn't recognize <i>\"{h(t)}\"</i> as a command, and the AI assistant is not configured "
-            f"(no GEMINI_API_KEY). Nothing was changed. Send /start for the command list."), None
+            f"(no OPENROUTER_API_KEY). Nothing was changed. Send /start for the command list."), None

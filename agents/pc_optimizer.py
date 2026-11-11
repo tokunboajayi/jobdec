@@ -131,29 +131,23 @@ def purge_zombie_browsers() -> int:
     by browser timeouts or crashed workers.
     """
     killed = 0
-    curr_pid = os.getpid()
-    active_pids = set()
 
     for p in psutil.process_iter(["pid", "ppid", "name"]):
         try:
             name = (p.info.get("name") or "").lower()
-            if not ("chrome" in name or "chromedriver" in name or "python" in name):
+            if not ("chrome" in name or "chromedriver" in name):
                 continue
-            pid = p.info["pid"]
             ppid = p.info["ppid"]
-
             cmd = " ".join(p.cmdline() or [])
-            if ("batch_apply" in cmd or "telegram_bot" in cmd) and pid != curr_pid:
-                active_pids.add(pid)
-
-            if "chrome" in name or "chromedriver" in name:
-                if ".browser-profile" in cmd or "--remote-debugging-port" in cmd:
-                    if ppid not in active_pids and ppid != curr_pid:
-                        try:
-                            p.kill()
-                            killed += 1
-                        except Exception:
-                            pass
+            if ".browser-profile" in cmd or "--remote-debugging-port" in cmd:
+                # orphan = its parent is gone. A live worker's Chrome is parented by fill.py's
+                # Playwright driver, not batch_apply, so the old parent check killed every live browser.
+                if not psutil.pid_exists(ppid):
+                    try:
+                        p.kill()
+                        killed += 1
+                    except Exception:
+                        pass
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
             continue
 

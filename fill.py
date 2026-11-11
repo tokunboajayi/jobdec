@@ -13,7 +13,7 @@ What it does:
   - Lists anything it could not answer (and saves it to unanswered.json) so Claude can answer it later.
   - Detects the confirmation page and logs the application to ../applications.csv automatically.
 """
-import argparse, csv, datetime, difflib, json, os, pathlib, re, sys, time
+import argparse, csv, datetime, difflib, functools, json, os, pathlib, re, sys, time
 from pathlib import Path
 from types import SimpleNamespace
 if hasattr(sys.stdout, "reconfigure"):
@@ -306,6 +306,91 @@ MONTHS_MAP = {
 }
 
 
+JOB = {"company": "", "role": ""}  # set in main(); gives the grounded chooser its context
+
+
+def grounded_choice(label, options):
+    """The one option the candidate's rules / facts / resume support (AI-checked against the real list), or None.
+    Replaces every 'take the first option' fallback: those put false statements on real applications."""
+    opts = [str(o).strip() for o in (options or []) if str(o or "").strip()]
+    opts = [o for o in opts if not (OPTS and OPTS.PLACEHOLDER.search(o))]
+    if not opts or not label:
+        return None
+    try:
+        from agents import intelligent_resolver
+        r = intelligent_resolver.resolve_field(label, field_type="select", options=opts,
+                                               company=JOB["company"], role=JOB["role"])
+    except Exception:
+        return None
+    if not r or not r.get("answer"):
+        return None
+    hit = OPTS.resolve(label, str(r["answer"]), opts, pattern=r.get("option"), semantic_ok=False) if OPTS else None
+    if hit:
+        print(f"  [Grounded] '{label[:50]}' -> '{hit[:40]}' ({r.get('src')})")
+    return hit
+
+
+_MON = {m[:3]: i + 1 for i, m in enumerate(["january", "february", "march", "april", "may", "june", "july", "august",
+                                              "september", "october", "november", "december"])}
+DATE_PART_RE = re.compile(r"\b(start|end|from|to)\b.*\b(month|year)\b|\b(month|year)\b.*\b(start|end|from|to)\b", re.I)
+EXPERIENCE_CTX_RE = re.compile(r"work experience|employment history|employer|company|job title|position title", re.I)
+
+
+@functools.lru_cache(maxsize=1)
+def resume_jobs():
+    """[(company, (start_month, start_year), (end_month, end_year) or None=present)] from the master resume lines
+    'Company | Title | Location | May 2026 - Aug 2026'."""
+    out = []
+    try:
+        from agents import context
+        for line in context.resume_text().splitlines():
+            m = re.search(r"([A-Za-z]{3})[a-z]*\.?\s+(20\d\d)\s*\W+\s*(?:([A-Za-z]{3})[a-z]*\.?\s+(20\d\d)|present)\s*$", line.strip(), re.I)
+            if m and "|" in line and m.group(1).lower() in _MON:
+                end = (_MON[m.group(3).lower()], int(m.group(4))) if m.group(3) and m.group(3).lower() in _MON else None
+                out.append((line.split("|")[0].strip(), (_MON[m.group(1).lower()], int(m.group(2))), end))
+    except Exception:
+        pass
+    return out
+
+
+def experience_date(loc, label):
+    """Answer a work-history date field from the resume entry of the company in the same block.
+    Returns (answer, option_pattern), or ("", None) for a work block with no matching entry (leave it empty),
+    or None when the field isn't in a work-history block (education etc.: normal rules apply).
+    The generic 'start date year -> 2023' rule put school dates on W. A. Investments at Cloudflare (2026-11-11)."""
+    if not DATE_PART_RE.search(label or "") or loc is None:
+        return None
+    try:
+        ctx = loc.evaluate("""e => { let c = e;
+            const lab = x => (x.labels && x.labels[0] && x.labels[0].innerText) || x.getAttribute('aria-label') || x.name || x.id || '';
+            for (let i = 0; i < 8 && c; i++, c = c.parentElement) {
+                const ins = [...c.querySelectorAll('input')].filter(x => x !== e);
+                if (ins.some(x => /school|university|college|institution|degree|field of study/i.test(lab(x)))) return null; // education block
+                const co = ins.find(x => /company|employer|organi[sz]ation/i.test(lab(x)));
+                if (co) return {company: co.value || '', text: (c.innerText || '').slice(0, 400)};
+            }
+            return null; }""")
+    except Exception:
+        return None
+    if not ctx or not EXPERIENCE_CTX_RE.search(ctx.get("text", "") + " company"):
+        return None
+    comp = re.sub(r"[^a-z0-9 ]", "", (ctx.get("company") or "").lower())
+    for name, start, end in resume_jobs():
+        key = re.sub(r"[^a-z0-9 ]", "", name.lower())
+        word = next((w for w in key.split() if len(w) >= 3), key)  # 'investments' for "W. A Investments", not 'w'
+        if comp and (comp in key or word in comp.split()):
+            is_end = re.search(r"\b(end|to)\b", label, re.I)
+            part = end if is_end else start
+            if part is None:
+                return ("", None)  # 'present': the "I currently work here" box covers it
+            mon, yr = part
+            if re.search(r"month", label, re.I):
+                name_m = [k for k, v in _MON.items() if v == mon][0]
+                return (f"{mon:02d}", rf"^(?:{name_m}[a-z]*|0?{mon})\b")
+            return (str(yr), rf"^{yr}\b")
+    return ("", None)
+
+
 def pick_option(options, rule, label=""):
     if not options:
         return None
@@ -390,40 +475,47 @@ def pick_option(options, rule, label=""):
         return None
     if fact:  # B-1: a school list without the answer once got its first option ("Alcorn State University")
         return None
-    PICK_GUESSED.add(label)
-    # Smart guessing fallback
-    if label:
-        best = pick_best_option(label, options)
-        if best:
-            return best
-    # Filter placeholder options
-    valid = [o for o in options if o and not re.match(r"^\s*(select|choose|please select|--\s*select\s*--|month\.\.\.|year\.\.\.|select\s+month|select\s+year)\s*$", str(o), re.I)]
-    return valid[0] if valid else options[0]
+    # no option fits the rule's answer: estimate from the candidate's own facts, never the first option
+    return grounded_choice(label, options)
 
 
 def find_form_target(page):
     """Finds the page or active child iframe that contains the actual form inputs (e.g. iCIMS, Oracle iframes)."""
+    # the frame with the most visible fields wins: iCIMS's outer page has only a language picker, which hid
+    # the application iframe (17 iCIMS jobs stalled on 2026-11-11)
+    best, best_n = page, 0
     try:
         for f in page.frames:
             try:
                 if any(x in f.url.lower() for x in ["captcha", "hcaptcha", "recaptcha", "onetrust", "googletag", "cookie"]):
                     continue
-                if f.locator("input:not([type=hidden]), select, textarea").count() > 0:
-                    return f
+                n = f.locator("input:not([type=hidden]):visible, select:visible, textarea:visible").count()
+                if n > best_n:
+                    best, best_n = f, n
             except Exception:
                 pass
     except Exception:
         pass
-    return page
+    return best
 
 
 OPTION_SEL = "[data-automation-id='promptOption']:not([data-automation-id='selectedItem'] *), [role='listbox'] [role='option'], [role='option'], [role='treeitem'], [role='listbox'] li, .select2-results li, .select2-result, .select2-result-label, [id*='select2-result'], .autocomplete-suggestion, [class*='select__option'], [class*='option']:not(select *), div[id*='-option-'], [class*='menu'] [role='option'], [data-test-id*='option'], .oj-listbox-result, oj-option, [class*='oj-listbox-result'], .oj-select-results li"
 
 
 def _visible_options(target):
+    """Visible dropdown options: in the form's own frame first, then the top page (popups attached to its body).
+    It used to search only the top page, so every dropdown inside an embedded form (Greenhouse on a company site,
+    iCIMS, Oracle iframes) found 0 options: William Blair's Country/School/yes-no fields all failed, 2026-11-11."""
+    top = getattr(target, "page", None) or target
+    for root in ([target, top] if top is not target else [target]):
+        out = _options_in(root)
+        if out:
+            return out
+    return []
+
+
+def _options_in(root):
     out = []
-    # Check page-level for popups attached to body
-    root = target.page if hasattr(target, "page") else target
     try:
         data = root.evaluate("""() => {
             const sel = "[data-automation-id='promptOption']:not([data-automation-id='selectedItem'] *), [role='listbox'] [role='option'], [role='option'], [role='treeitem'], [role='listbox'] li, .select2-results li, .select2-result, .select2-result-label, [id*='select2-result'], .autocomplete-suggestion, [class*='select__option'], [class*='option']:not(select *), div[id*='-option-'], [class*='menu'] [role='option'], [data-test-id*='option'], .oj-listbox-result, oj-option, [class*='oj-listbox-result'], .oj-select-results li";
@@ -552,7 +644,7 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
         try:
             ctrl_id = loc.get_attribute("aria-controls") or loc.get_attribute("aria-owns")
             if ctrl_id:
-                ctrl = (target.page if hasattr(target, "page") else target).locator(f"#{ctrl_id}")
+                ctrl = target.locator(f"#{ctrl_id}")  # an iframe form's popup lives inside that iframe
                 if ctrl.count() > 0:
                     ctrl_opts = ctrl.locator("[role='option'], li, div")
                     opts_tuples = []
@@ -623,15 +715,12 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
                 loc.fill("", timeout=1200)
                 loc.press_sequentially(kw, delay=15, timeout=1500)
                 time.sleep(0.3)
-                try:
+                try:  # Enter only runs a search box; in a combobox it commits the highlighted (often wrong) option
                     if loc.evaluate("e => e.getAttribute('enterkeyhint') === 'search' || e.getAttribute('data-automation-id') === 'searchBox'"):
                         loc.press("Enter", timeout=1000)
                         time.sleep(0.5)
-                    elif not strict:
-                        page.keyboard.press("Enter")
                 except Exception:
-                    if not strict:
-                        page.keyboard.press("Enter")
+                    pass
                 time.sleep(0.4)
                 hit = _best_option(_visible_options(target), val, pat, label)
                 if hit: break
@@ -645,69 +734,59 @@ def pick_prompt_option(page, target, loc, val, rule, label="", escalate=False):
 
     # If still not found by pattern, pick top viable option if available (never for yes/no!).
     # escalate = the site rejected our last answer here: any non-fact, non-sensitive field takes its best option.
-    if not hit and escalate and OPTS and not OPTS.fact_category(label)[0] and not (RE and RE.should_block(label)):
-        vis = [v for v in _visible_options(target) if not OPTS.PLACEHOLDER.match(v[0])]
+    # Still no match: show the full list (clear the search) and pick the option the candidate's facts support.
+    # This replaced "take the first visible option", which answered Anduril's export question with "green card holder".
+    if not hit and not (RE and RE.should_block(label)):
+        try:
+            loc.fill("", timeout=800)
+            time.sleep(0.3)
+        except Exception:
+            pass
+        vis = [v for v in _visible_options(target) if not (OPTS and OPTS.PLACEHOLDER.match(v[0]))]
         if re.search(r"hear|source|referral", label, re.I):
             vis = [v for v in vis if not re.search(r"\+\d+|country|phone|mobile|device", v[0], re.I)]
-        if vis:
-            print(f"  [Repair] '{label[:50]}': site rejected '{val[:30]}' - choosing '{vis[0][0][:30]}'")
-            hit = vis[0]
-    if not hit and rule.get("ai_gen") and not strict:
-        vis = _visible_options(target)
-        if re.search(r"hear|source|referral", label, re.I):
-            vis = [v for v in vis if not re.search(r"\+\d+|country|phone|mobile|device", v[0], re.I)]
-        if vis:
-            hit = vis[0]
+        pick = grounded_choice(label, [t for t, _ in vis]) if vis else None
+        hit = next((v for v in vis if v[0] == pick), None) if pick else None
 
     if hit and click_and_confirm(*hit):
         return hit[0]
 
-    # For Ashby / React-Select / searchable comboboxes, press ArrowDown + Enter to commit filtered selection
-    # never for state / country / yes-no: with nothing matching it committed the first option ("AK" on Paylocity, 2026-10-28)
+    def _fits(v):
+        v = (v or "").strip()
+        if len(v) < 2 or v.count("+") > 2:
+            return False
+        try:
+            if re.search(pat, v, re.I):
+                return True
+        except re.error:
+            pass
+        return bool(OPTS and OPTS.resolve(label, val, [v], semantic_ok=False))
+
+    # Options we can't read (portal lists): commit the filtered option, but keep it only if it IS the answer.
+    # Blind commits once kept the first filtered option ("AK" on Paylocity; a green card on Anduril).
+    if not strict:
+        try:
+            page.keyboard.press("ArrowDown")
+            time.sleep(0.2)
+            page.keyboard.press("Enter")
+            time.sleep(0.3)
+        except Exception:
+            pass
     try:
-        if strict:
-            raise LookupError
-        page.keyboard.press("ArrowDown")
-        time.sleep(0.2)
-        page.keyboard.press("Enter")
-        time.sleep(0.3)
         cur = loc.evaluate("e => { let curr = e; for (let i = 0; i < 4 && curr; i++, curr = curr.parentElement) { const s = curr.querySelector('[id*=\"pill\"], [data-automation-id=\"selectedItem\"], [class*=\"singleValue\"], [class*=\"single-value\"]'); if (s) return s.innerText || s.getAttribute('aria-label') || ''; } return e.value || ''; }")
-        if cur and len(cur.strip()) > 1:
-            return cur
     except Exception:
-        pass
-
-    # If the input already has the valid typed value, retain it rather than clearing
+        cur = ""
+    if _fits(cur):
+        return cur
+    # wrong or empty: remove it so a wrong value is never submitted (reported as unanswered instead)
     try:
-        cur_v = loc.input_value()
-        if cur_v and len(cur_v.strip()) > 1 and (not strict or re.search(pat, cur_v, re.I)):
-            return cur_v
-    except Exception:
-        pass
-
-    if strict:  # leave it empty (reported as unanswered) rather than commit a wrong country / state / yes-no
-        try: page.keyboard.press("Escape")
-        except Exception: pass
-        return None
-    # For React-Select / searchable comboboxes, press Enter to commit filtered selection
-    try:
-        page.keyboard.press("Enter")
-        time.sleep(0.3)
-        cur = loc.evaluate("e => { let curr = e; for (let i = 0; i < 4 && curr; i++, curr = curr.parentElement) { const s = curr.querySelector('[id*=\"pill\"], [data-automation-id=\"selectedItem\"], [class*=\"singleValue\"], [class*=\"single-value\"]'); if (s) return s.innerText || s.getAttribute('aria-label') || ''; } return ''; }")
+        loc.fill("", timeout=800)
         if cur:
-            return cur
+            loc.press("Backspace", timeout=800)  # React-Select / Workday pills clear on Backspace in an empty input
     except Exception:
         pass
-
-    # Greenhouse / generic fallback: if value was typed into input, retain it
     try:
-        cur_v = loc.evaluate("e => e.value")
-        if cur_v and len(cur_v.strip()) > 1:
-            if not is_yesno or cur_v.strip().lower() == val.lower():
-                return cur_v
-        loc.fill(search, timeout=1200)
-        page.keyboard.press("Enter")
-        return search
+        page.keyboard.press("Escape")
     except Exception:
         pass
     return None
@@ -806,6 +885,15 @@ def _resolve_rule(c, st, sec_code_fields):
     """Pick the answer rule for a field (security code, profile rule, brain, semantic, facts, guess). None = leave the field."""
     global ACTIVE_JOB_OTP
     f, loc, label, company, role, unanswered = c.f, c.loc, c.label, c.company, c.role, c.unanswered
+    if not f.get("required") and re.match(r"\s*(search|start your job search|keywords?|filter|search jobs|(select|choose|change) (your )?language|language selector)\b", label, re.I):
+        return None  # the careers site's own search box / language picker is not an application question (changing iCIMS's language reloaded the page)
+    exp = experience_date(loc, label)
+    if exp is not None:  # a date inside a work-history block: that job's own resume dates, never the school dates
+        if not exp[0]:
+            if f.get("required"):
+                unanswered.append({**f, "error": "work-history date with no matching resume entry"})
+            return None
+        return {"q": re.escape(label), "a": exp[0], "option": exp[1], "src": "resume_dates"}
     is_sec_code = f in sec_code_fields
     m_digit = re.search(r"digit\s*(\d)\s*of\s*(?:six|6)", label, re.I)
     rule = None
@@ -914,7 +1002,11 @@ def _resolve_rule(c, st, sec_code_fields):
                 unanswered.append({**f, "error": "yes/no question with no rule - add a profile.json rule"})
                 return None
             elif f.get("options"):
-                rule = {"q": re.escape(label), "a": pick_best_option(label, f["options"]), "ai_gen": True}
+                pick = grounded_choice(label, f["options"])
+                if not pick:
+                    unanswered.append({**f, "error": "no option is supported by the candidate's facts"})
+                    return None
+                rule = {"q": re.escape(label), "a": pick, "src": "grounded"}
             elif f["type"] == "checkbox" and f.get("required"):
                 rule = {"q": re.escape(label), "a": "check", "ai_gen": True}
             elif f.get("required") or f["tag"] == "textarea":
@@ -933,16 +1025,18 @@ def _prepare_answer(c):
     ans = rule.get("a")
     if ans is SKIP:
         if f.get("required") or ("*" in label and "optional" not in label.lower()):
-            if re.search(r"pronoun", label, re.I):
-                ans = "He/Him/His"
-            elif re.search(r"gender|sex\b", label, re.I):
-                ans = "Male"
-            elif re.search(r"race|ethnic", label, re.I):
-                ans = "Black or African American"
-            elif f.get("options"):
-                ans = f["options"][0]
-            else:
-                ans = "N/A"
+            # required but the candidate chose not to answer: decline if offered, else their own fact, never option 1
+            opts_l = f.get("options") or []
+            own = ""  # the candidate's own stated self-ID facts (their .env), never a value written in code
+            for pat, key in ((r"pronoun", "PRONOUNS"), (r"gender|\bsex\b", "GENDER"), (r"race|ethnic", "RACE")):
+                if re.search(pat, label, re.I):
+                    own = CAND.fact(key)
+                    break
+            ans = (own or next((o for o in opts_l if RE and RE.DECLINE_RE.search(str(o))), None)
+                   or (grounded_choice(label, opts_l) if opts_l else "N/A"))
+            if not ans:
+                unanswered.append({**f, "error": "required question the candidate skips, no decline option"})
+                return False
             rule = {**rule, "a": ans}
         else:
             if rule.get("eeo"): optional_skipped.append(label)
@@ -950,9 +1044,12 @@ def _prepare_answer(c):
     if ans == ASK:
         # "scrap 3 and guess": auto-resolve ASK fields instead of pausing
         if f.get("options"):
-            ans = pick_best_option(label, f["options"]) or f["options"][0]
+            ans = grounded_choice(label, f["options"])
         else:
-            ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role) or "Yes"
+            ans = generate_response(label, field_type=f["type"], options=f.get("options"), company=company, role=role)
+        if not ans:  # never a made-up "Yes" or option 1
+            unanswered.append({**f, "error": "ASK question with no grounded answer"})
+            return False
         rule = {**rule, "a": ans, "ai_gen": True}
     src = rule.get("src") or ("guess" if rule.get("ai_gen") else "rule")
     if src == "guess" and RE and RE.should_block(label):
@@ -1235,7 +1332,7 @@ def _fill_listbox(c):
     f, loc, target, page, label = c.f, c.loc, c.target, c.page, c.label
     company, role, filled, unanswered = c.company, c.role, c.filled, c.unanswered
     rule, ans, escalate = c.rule, c.ans, c.escalate
-    root = target.page if hasattr(target, "page") else target
+    root = target  # popups of an iframe form render inside the iframe (top-page lookup found none)
     # Wait for any closing popup from previous question to finish closing
     try:
         closing_lb = root.locator("div[visibility='closing'], [visibility='closing']")
@@ -1466,17 +1563,20 @@ def _fill_listbox(c):
                 pass
     fact_like = bool(OPTS and OPTS.fact_category(label)[0]) or re.search(r"country|territory|phone code|state|province", label, re.I)
     sensitive = bool(RE and (RE.should_block(label) or RE.EEO_RE.search(label)))
-    if not clicked and f.get("required") and not fact_like and not is_yesno and not sensitive:  # never click first option for sensitive/country/state/yes-no
+    if not clicked and f.get("required") and not fact_like and not is_yesno and not sensitive:
+        # the rule's answer isn't listed: pick the option the candidate's facts support (never the first one)
+        vis_idx = []
         for i in range(min(opts.count(), 100)):
-            o = opts.nth(i)
             try:
-                if o.is_visible():
-                    txt = o.inner_text().strip()
-                    if txt and not re.search(r"select|choose|--|^please", txt, re.I):
-                        o.click(force=True)
-                        clicked = True
-                        ans = txt
-                        break
+                if opts.nth(i).is_visible():
+                    vis_idx.append((opts.nth(i).inner_text().strip(), i))
+            except Exception:
+                pass
+        pick = grounded_choice(label, [t for t, _ in vis_idx])
+        if pick:
+            try:
+                opts.nth(next(i for t, i in vis_idx if t == pick)).click(force=True)
+                clicked, ans = True, pick
             except Exception:
                 pass
     if not clicked and is_yesno:
@@ -1998,7 +2098,7 @@ NAV_JS = r"""
     /^confirm$/i,
     /^submit( my)? application$/i, /^submit$/i, /^send application$/i,
     /^save (and|&) continue$/i, /^continue$/i, /^next$/i, /^next step$/i,
-    /^review and submit$/i, /^apply manually$/i, /^apply( now)?$/i, /^start application$/i,
+    /^review and submit$/i, /^apply manually$/i, /^apply for this (job|position)( online)?$/i, /^apply( now)?$/i, /^start application$/i,
     /^apply online$/i, /^begin application$/i, /^proceed$/i, /^i'?m interested$/i, /^i am interested$/i
   ];
   document.querySelectorAll('[data-af-nav]').forEach(e => e.removeAttribute('data-af-nav'));
@@ -2099,6 +2199,14 @@ def page_state(page):
         page.locator("input:not([type=hidden]):visible, select:visible, textarea:visible, [data-automation-id='pageFooterNextButton']:visible").first.wait_for(state="visible", timeout=3000)
     except Exception:
         pass
+    # AWS WAF challenge (iCIMS): its language <select> looked like a one-field form and its "Apply" button like the
+    # apply button, so 17 jobs/day retried it 6 times. It's a CAPTCHA: skip (never solved or evaded).
+    try:
+        if page.locator(".amzn-captcha-lang-apply, [class*='amzn-captcha'], awswaf-captcha, #captcha-container, "
+                        "iframe[src*='captcha-delivery'], iframe[src*='geo.captcha']").count() > 0:
+            return "captcha"  # also DataDome (SmartRecruiters' apply page answers 403 + this frame)
+    except Exception:
+        pass
 
     try:
         from account_verifier import is_verification_waiting_screen
@@ -2160,6 +2268,7 @@ def main():
     ap.add_argument("--company"); ap.add_argument("--role")
     ap.add_argument("--overwrite", action="store_true", help="replace values the site pre-filled")
     ap.add_argument("--review", action="store_true", help="do NOT auto-submit; stop on every page for you")
+    ap.add_argument("--dry-run", action="store_true", help="fill every page hands-free but stop before any Submit click (live testing)")
     ap.add_argument("--headless", action="store_true", help="run browser in headless mode (no UI)")
     ap.add_argument("--headful", action="store_true", help="force visible browser window")
     ap.add_argument("--worker-id", type=int, default=None, help="Worker ID for multi-process parallel execution")
@@ -2167,6 +2276,7 @@ def main():
     ap.add_argument("--block-assets", action="store_true", default=True, help="Block heavy images/media and tracking scripts for 3x speedup")
     ap.add_argument("--no-block-assets", action="store_false", dest="block_assets", help="Disable asset blocking")
     a = ap.parse_args()
+    JOB.update(company=a.company or "", role=a.role or "")
 
     # Normalize Greenhouse URLs to direct embed application endpoint (bypasses marketing wrappers & captchas)
     if "greenhouse.io" in a.url:
@@ -2316,6 +2426,7 @@ def main():
 
         submitted = False
         submit_clicked = False
+        dry_run_reached = False
         submit_count = 0
         final_status, auth_failed = "incomplete", False
         steps, last_sig = 0, None
@@ -2451,6 +2562,7 @@ def main():
                 pause_reason = "CAPTCHA detected on page"
                 if headless_mode:
                     print("\n[CAPTCHA] Can't be solved in headless mode. Skipping automatically.")
+                    final_status = "captcha"  # listed for the candidate to apply by hand
                     break
             else:
                 if "myworkdayjobs.com" in page.url:
@@ -2519,6 +2631,12 @@ def main():
                 if not label and target != page:
                     label = page.evaluate(NAV_JS)
                     click_target = page
+            if os.getenv("JOBDEC_DEBUG_NAV"):
+                try:
+                    el_html = click_target.evaluate("() => (document.querySelector('[data-af-nav]') || {}).outerHTML || ''")
+                    print(f"[NavDebug] frame={getattr(click_target, 'url', '')[:90]} el={el_html[:200]}")
+                except Exception as e:
+                    print(f"[NavDebug] {e}")
 
             if not label:
                 # Re-check if auth screen appeared dynamically
@@ -2619,6 +2737,7 @@ def main():
                                 type: (e.type || '').toLowerCase(),
                                 name: e.name || '',
                                 id: e.dataset.afId || e.id || '',
+                                label: ((e.labels && e.labels[0] && e.labels[0].innerText) || e.getAttribute('aria-label') || e.name || '').trim(),
                                 msg: e.validationMessage || ''
                             }));
                         }""")
@@ -2631,15 +2750,18 @@ def main():
                                 if loc_inv.count() > 0:
                                     if inv["type"] == "checkbox":
                                         loc_inv.check(force=True)
-                                    elif inv["tag"] == "select":
-                                        loc_inv.select_option(index=1)
+                                    elif inv["tag"] == "select":  # was select_option(index=1): a guess
+                                        sel_opts = [o.strip() for o in loc_inv.locator("option").all_inner_texts()]
+                                        pick = grounded_choice(inv.get("label") or "", sel_opts)
+                                        if pick:
+                                            loc_inv.select_option(label=pick)
                                     elif inv["type"] in ("text", "tel", "email", "url"):
                                         if not loc_inv.input_value():
                                             loc_inv.fill("N/A")
                     except Exception:
                         pass
                     if stuck_retries > 5:
-                        if "submit" in label.lower():
+                        if "submit" in label.lower() and not a.dry_run:
                             print("[Submit Force] Attempting emergency direct form submission before advancing...")
                             try:
                                 page.evaluate("""() => {
@@ -2672,6 +2794,7 @@ def main():
                     except Exception:
                         pass
 
+
                     # Re-click nav button in case pointer event was swallowed
                     try:
                         click_nav(page, click_target.locator('[data-af-nav="1"]').first)
@@ -2692,6 +2815,10 @@ def main():
             FIX_HINTS.clear()  # new page: old validation messages no longer apply
             no_btn_retries = 0
             stuck_retries = 0
+            if a.dry_run and re.search(r"submit|send application", label, re.I):
+                print(f"\n[Dry Run] Reached '{label}' with every page filled - stopping before submitting.")
+                dry_run_reached = True
+                break
             print(f"\n>> Clicking '{label}'")
             try: page.keyboard.press("Escape"); time.sleep(0.4)
             except Exception: pass
@@ -2812,6 +2939,8 @@ def main():
                     RE.record_auth(a.url, True)
             elif auth_failed:
                 RE.record_auth(a.url, False)
+            if dry_run_reached:
+                final_status = "dry_run"
             rec = RE.write_record(a.company or "", a.role or "", a.url, final_status)
             g = sum(1 for x in RE.ANSWERS if x["source"] == "guess")
             print(f"[Record] {final_status}: {len(RE.ANSWERS)} answers ({g} guessed) saved to {rec.relative_to(HERE)}")

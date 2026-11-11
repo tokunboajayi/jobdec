@@ -47,6 +47,7 @@ def main():
     ap.add_argument("--min-score", type=float, default=None, help="default: strategy.json min_fit_score")
     ap.add_argument("--scout", action="store_true", help="Agent 1: read full job descriptions and score with AI (cached)")
     ap.add_argument("--check-live", action="store_true", default=True, help="Pre-flight check: filter closed/expired job postings")
+    ap.add_argument("--no-check-live", dest="check_live", action="store_false", help="Skip pre-flight HTTP live check for fast ranking")
     a = ap.parse_args()
     min_score = a.min_score if a.min_score is not None else RE.strategy()["min_fit_score"]
 

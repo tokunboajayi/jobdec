@@ -413,7 +413,9 @@ def _features(r):
 def learner_train():
     """Fit a logistic regression on outcomes once there are enough; saves weights. Returns a status line."""
     import results_engine as RE
-    rows = [r for r in RE.ledger_rows() if r.get("status") == "submitted"]
+    # full-time roles sent before the internships_only gate (246 of them) are not failed internships
+    rows = [r for r in RE.ledger_rows() if r.get("status") == "submitted"
+            and RE.INTERN_TITLE.search(re.sub(r"\[.*?\]", "", r.get("role", "")))]
     labeled = [r for r in rows if (datetime.date.fromisoformat(r["date"]) <= TODAY() - datetime.timedelta(days=14)) or r.get("response")]
     if len(labeled) < MIN_OUTCOMES:
         MODEL.unlink(missing_ok=True)

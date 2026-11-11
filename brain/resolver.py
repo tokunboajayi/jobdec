@@ -185,7 +185,8 @@ OPEN_ENDED_TEMPLATES: List[Tuple[str, str]] = [(p, a) for p, a in [
     (r"(?i)(describe.*project|automation\s+experience|technical\s+achievement)", _fact("PROUDEST_ACHIEVEMENT")),
     (r"(?i)(what\s+are\s+your\s+)?(strengths|greatest\s+strength)\b",
      f"My key strengths are {_fact('TOP_SKILLS')}." if _fact("TOP_SKILLS") else None),
-    (r"(?i)(how\s+did\s+you\s+hear|source|referral)", "LinkedIn"),
+    # only "how did you hear" questions; "referred ... Campus Referral Program?" is a yes/no fact, not a source
+    (r"(?i)(how\s+did\s+you\s+hear|referral\s+source|source\s+of\s+(your\s+)?(application|referral))", "LinkedIn"),
 ] if a is not None]
 
 

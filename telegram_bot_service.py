@@ -177,7 +177,14 @@ def get_realtime_metrics():
     today_str = date.today().isoformat()
     recent = []
     companies = {}
-    roles_category = {"Cybersecurity": 0, "IAM & Identity": 0, "Cloud & Infra": 0, "Systems Eng": 0, "General Tech": 0}
+    roles_category = {
+        "Forward Deployed (FDE)": 0,
+        "AI & Automation": 0,
+        "Product & Delivery": 0,
+        "Data & Analytics": 0,
+        "FinTech & Strategy": 0,
+        "Security & Infra": 0,
+    }
 
     rows = []
     if csv_path.exists():
@@ -192,25 +199,29 @@ def get_realtime_metrics():
                     companies[c] = companies.get(c, 0) + 1
 
                 role_l = (r.get("Role") or "").lower()
-                if "security" in role_l or "cyber" in role_l or "appsec" in role_l:
-                    roles_category["Cybersecurity"] += 1
-                elif "iam" in role_l or "identity" in role_l or "access" in role_l:
-                    roles_category["IAM & Identity"] += 1
-                elif "cloud" in role_l or "devops" in role_l or "infra" in role_l:
-                    roles_category["Cloud & Infra"] += 1
-                elif "systems" in role_l:
-                    roles_category["Systems Eng"] += 1
+                if any(k in role_l for k in ("forward deploy", "deployed", "fde", "deployment strategist", "solutions engineer", "field engineer", "sales engineer", "implementation")):
+                    roles_category["Forward Deployed (FDE)"] += 1
+                elif any(k in role_l for k in ("ai", "agent", "llm", "automation", "machine learning", "genai")):
+                    roles_category["AI & Automation"] += 1
+                elif any(k in role_l for k in ("product", "program manager", "project manager", "tpm", "apm", "delivery")):
+                    roles_category["Product & Delivery"] += 1
+                elif any(k in role_l for k in ("data", "analytics", "business intelligence", "quant", "research")):
+                    roles_category["Data & Analytics"] += 1
+                elif any(k in role_l for k in ("finance", "strategy", "operations", "consulting", "trading", "analyst")):
+                    roles_category["FinTech & Strategy"] += 1
                 else:
-                    roles_category["General Tech"] += 1
+                    roles_category["Security & Infra"] += 1
             recent = rows[-5:]
 
-    # Queue Metrics
+    # Queue Metrics (prefer queue_ranked.txt -> queue.txt -> queue_cyber_iam.txt)
     queue_count = 0
     unapplied_count = 0
-    q_path = ROOT / "queue_cyber_iam.txt"
+    q_path = ROOT / "queue_ranked.txt"
+    if not q_path.exists():
+        q_path = ROOT / "queue.txt" if (ROOT / "queue.txt").exists() else (ROOT / "queue_cyber_iam.txt")
     if q_path.exists():
         with open(q_path, "r", encoding="utf-8", errors="ignore") as f:
-            qlines = [l.strip() for l in f if l.strip() and not l.startswith("#")]
+            qlines = [l.strip() for l in f if l.strip() and not l.startswith("#") and "http" in l]
             queue_count = len(qlines)
             if rows:
                 applied_urls = {r.get("Job URL", "").strip().rstrip("/") for r in rows if r.get("Job URL")}
@@ -227,7 +238,8 @@ def get_realtime_metrics():
     try:
         for p in psutil.process_iter(["pid", "name", "cmdline", "memory_info"]):
             cmd = " ".join(p.info["cmdline"] or [])
-            if ("batch_apply" in cmd or "fill.py" in cmd) and p.info["pid"] != curr_pid:
+            # python running the scripts, not anything that mentions them ("tail -f batch_apply.log" read as a live runner)
+            if "python" in cmd.lower() and re.search(r"batch_apply_parallel\.py|fill\.py", cmd) and p.info["pid"] != curr_pid:
                 active_worker_pids.append(p.info["pid"])
                 if p.info.get("memory_info"):
                     total_mem_mb += p.info["memory_info"].rss / (1024 * 1024)
@@ -317,6 +329,12 @@ def get_smart_keyboard(metrics=None):
         ]
     keyboard.append(row1)
 
+    # Row 1.5: Start Full Job Deck Anywhere & Mid-Session Company Customizer
+    keyboard.append([
+        InlineKeyboardButton("🚀 Start Full Job Deck", callback_data="btn_start_deck"),
+        InlineKeyboardButton("🎯 Mid-Session Target Apply", callback_data="btn_target"),
+    ])
+
     # Row 2: Tactical Application Operations
     turbo_w, _ = calculate_dynamic_turbo_workers()
     if is_running:
@@ -349,9 +367,9 @@ def get_smart_keyboard(metrics=None):
         ]
     keyboard.append(row3)
 
-    # Row 4: Targeted Operations & Analytics
+    # Row 4: Assessments & Analytics
     row4 = [
-        InlineKeyboardButton("✈️ Targeted Priority Run", callback_data="btn_target"),
+        InlineKeyboardButton("🧠 Solve Assessments", callback_data="btn_assessments"),
         InlineKeyboardButton("📈 Stats Breakdown", callback_data="btn_stats"),
     ]
     keyboard.append(row4)
@@ -434,7 +452,8 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     lines.extend([
         "",
         f"🧠 <b>Memory & Auto-Scale:</b> {metrics.get('avail_gb', 0):.1f}GB free ({metrics.get('mem_pct', 0)}% RAM) ➔ Optimal: <b>{metrics.get('optimal_workers', 3)} workers</b>",
-        f"📋 <b>Queue Inventory:</b> {metrics['unapplied_count']} unapplied ({metrics['queue_count']} total in queue)",
+        f"📋 <b>FDE / AI / Product Queue:</b> {metrics['unapplied_count']} unapplied ({metrics['queue_count']} ranked)",
+        f"💬 <b>Telegram Bar Target:</b> <i>Type <code>Apply to this job with Visa</code> or <code>Apply to this job with Goldman</code> anytime!</i>",
     ])
 
     if len(metrics["pending_questions"]) > 0:
@@ -612,21 +631,539 @@ def get_onboarding_step_message(step: int = 1):
 
     return text, kb
 
-    return text, kb
-
-
 RUNNER_SUPERVISOR_STATE = {
     "desired": "running",
     "workers": 3,
     "delay": 2.0,
-    "queue": "queue_cyber_iam.txt",
+    "queue": "queue_ranked.txt",
     "last_relaunch": 0.0,
     "auto_restarts": 0,
 }
 
+# Mid-session isolated worker state (uses worker IDs 91..99 so profiles .browser-profile-w91..w99 never collide with main w1..w6)
+ACTIVE_TARGETED_JOBS = []
+NEXT_TARGET_WORKER_ID = 91
 
-def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0, user_action=True):
+COMPANY_ALIASES = {
+    "visa": ["visa"],
+    "goldman": ["goldman", "goldmansachs", "goldman sachs"],
+    "goldman sachs": ["goldman", "goldmansachs", "goldman sachs"],
+    "palantir": ["palantir"],
+    "scale": ["scaleai", "scale ai", "scale"],
+    "scale ai": ["scaleai", "scale ai", "scale"],
+    "sierra": ["sierra"],
+    "coinbase": ["coinbase"],
+    "cloudflare": ["cloudflare"],
+    "databricks": ["databricks"],
+    "stripe": ["stripe"],
+    "ramp": ["ramp"],
+    "amex": ["americanexpress", "american express", "amex"],
+    "american express": ["americanexpress", "american express", "amex"],
+    "jpmorgan": ["jpmorgan", "jpmorganchase", "jp morgan", "chase"],
+    "blackrock": ["blackrock"],
+    "deloitte": ["deloitte"],
+    "accenture": ["accenture"],
+    "mckinsey": ["mckinsey"],
+    "bcg": ["bcg", "boston consulting"],
+    "bain": ["bain"],
+}
+
+
+def parse_targeted_apply_intent(text: str):
+    """
+    Extracts a targeted company / job query from natural-language Telegram bar messages such as:
+      - 'Apply to this job with Visa'
+      - 'Apply to this job with Goldman'
+      - 'Apply to this job at Palantir'
+      - 'Apply to Visa' / 'Apply with Goldman Sachs'
+      - 'Run job for Visa' / 'Customize job with Goldman'
+      - '/apply Visa' / '/target Goldman' / 'target: Visa'
+    Returns the cleaned target query string (e.g. 'Visa', 'Goldman Sachs'), or None if the message
+    is a general command (like bare '/apply' or 'start applying').
+    """
+    raw = (text or "").strip()
+    if not raw:
+        return None
+    t_lower = raw.lower()
+
+    # Do not intercept generic runner start phrases
+    if t_lower in (
+        "apply", "/apply", "run", "/run", "start", "/start",
+        "start applying", "start runner", "start workers", "launch workers",
+        "keep applying", "run workers", "begin", "launch",
+        "start job deck", "start my job deck", "run job deck", "/deck", "deck",
+    ):
+        return None
+
+    patterns = [
+        r"^(?:/apply|/target|target\s*:)\s+(.+)$",
+        r"^(?:please\s+|can\s+you\s+|let'?s\s+)?(?:apply|run|launch|submit|customize)\s+(?:to\s+|for\s+)?(?:this\s+|the\s+|a\s+)?(?:job|role|internship|position|application)s?\s+(?:with|at|for|from|to|in)\s+(.+)$",
+        r"^(?:please\s+|can\s+you\s+|let'?s\s+)?(?:apply|run|launch)\s+(?:with|to|for|at)\s+(.+)$",
+    ]
+    for pat in patterns:
+        m = re.match(pat, raw, flags=re.I)
+        if m:
+            candidate_q = m.group(1).strip().strip(".!?,;\"'")
+            candidate_q = re.sub(
+                r"\b(?:specifically|mid[\s\-]*session|right\s+now|now|please|immediately|while\s+also\s+running.*|and\s+also\s+run.*)\b",
+                "",
+                candidate_q,
+                flags=re.I,
+            ).strip().strip(".!?,;\"'")
+            if candidate_q.lower() not in ("", "workers", "runner", "all", "queue", "job deck", "my job deck", "jobs"):
+                return candidate_q
+    return None
+
+
+def resolve_targeted_company_jobs(query_str: str, include_applied: bool = False):
+    """
+    Finds matching job postings across queue_ranked.txt, queue.txt, queue_phase2.txt,
+    and # MANUAL (protected company) entries, or builds a direct job entry if a URL is supplied.
+    Ranks FDE (10.0), AI & Automation (10.0), Product (9.0), and Data & Analytics (9.0) first.
+    """
+    import results_engine as RE
+
+    q_clean = (query_str or "").strip()
+    if not q_clean:
+        return []
+
+    # Case 1: Direct URL included in query
+    m_url = re.search(r"(https?://\S+)", q_clean)
+    if m_url:
+        url = m_url.group(1).strip()
+        prefix = (q_clean[:m_url.start()] + " " + q_clean[m_url.end():]).strip()
+        m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", url)
+        if m_gh:
+            board, token = m_gh.groups()
+            url = f"https://job-boards.greenhouse.io/embed/job_app?for={board}&token={token}"
+            comp = prefix.split()[0] if prefix else board.capitalize()
+        else:
+            comp = prefix.split()[0] if prefix else "TargetEmployer"
+        role = " ".join(prefix.split()[1:]) if len(prefix.split()) > 1 else "Targeted Priority Role"
+        score, cat, _ = RE.score_job(comp, role, url)
+        return [{
+            "company": comp,
+            "role": role,
+            "url": url,
+            "score": max(score, 9.5),
+            "category": cat if cat != "other" else "targeted",
+            "applied": False,
+        }]
+
+    # Case 2: Company + optional role filter
+    q_low = q_clean.lower()
+    matched_alias_key = None
+    company_tokens = []
+    role_tokens = []
+
+    for alias_key in sorted(COMPANY_ALIASES.keys(), key=len, reverse=True):
+        if re.search(rf"\b{re.escape(alias_key)}\b", q_low):
+            matched_alias_key = alias_key
+            company_tokens = COMPANY_ALIASES[alias_key]
+            leftover = re.sub(rf"\b{re.escape(alias_key)}\b", " ", q_low)
+            role_tokens = [w for w in re.findall(r"[a-z0-9]+", leftover) if w not in ("with", "at", "for", "to", "job", "role", "intern", "internship", "the", "this", "sachs")]
+            break
+
+    if not company_tokens:
+        words = [w for w in re.findall(r"[a-zA-Z0-9]+", q_low) if w not in ("with", "at", "for", "to", "job", "role", "the", "this")]
+        if not words:
+            return []
+        company_tokens = [words[0], "".join(words[:2])]
+        role_tokens = [w for w in words[1:] if w not in ("intern", "internship")]
+
+    applied_keys = RE.already_applied_keys()
+    seen_urls = set()
+    candidates = []
+
+    queue_files = [
+        ROOT / "queue_ranked.txt",
+        ROOT / "queue.txt",
+        ROOT / "queue_phase2.txt",
+        ROOT / "queue_cyber_iam.txt",
+    ]
+
+    for qf in queue_files:
+        if not qf.exists():
+            continue
+        for raw_line in qf.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = raw_line.strip()
+            if not line or "http" not in line:
+                continue
+            # Also allow # MANUAL (protected company) lines so explicit commands like 'Apply to this job with Goldman' work!
+            if line.startswith("#"):
+                if "MANUAL" in line and "http" in line:
+                    line = re.sub(r"^#\s*MANUAL[^:]*:\s*", "", line).strip()
+                else:
+                    continue
+
+            m = re.search(r"(https?://\S+)", line)
+            if not m:
+                continue
+            url = m.group(1).strip()
+            prefix = line[:m.start()].strip()
+            parts = prefix.split(" ", 1)
+            comp = parts[0].strip() if parts else ""
+            role = parts[1].strip() if len(parts) > 1 else comp
+            after = line[m.end():].strip()
+            resume_hint = None
+            if after:
+                m_res = re.search(r"(?:resume=)?(\S+\.pdf)", after)
+                if m_res:
+                    resume_hint = m_res.group(1)
+
+            comp_norm = re.sub(r"[^a-z0-9]", "", comp.lower())
+            line_low = f"{comp} {role}".lower()
+            if not any(
+                re.sub(r"[^a-z0-9]", "", tok) in comp_norm or re.search(rf"\b{re.escape(tok)}\b", line_low)
+                for tok in company_tokens
+            ):
+                continue
+
+            u_key = url.rstrip("/")
+            if u_key in seen_urls:
+                continue
+            seen_urls.add(u_key)
+
+            score, cat, _ = RE.score_job(comp, role, url)
+            is_app = RE.job_key(comp, role, url) in applied_keys
+            role_kw_hits = sum(1 for rt in role_tokens if rt in role.lower())
+            if matched_alias_key == "sierra" and "sierranevada" in comp_norm and "nevada" not in q_low:
+                score -= 3.0
+
+            candidates.append({
+                "company": comp,
+                "role": role,
+                "url": url,
+                "score": round(score + (2.5 * role_kw_hits), 1),
+                "base_score": score,
+                "category": cat,
+                "applied": is_app,
+                "resume": resume_hint,
+                "ats_prio": RE.ats_priority(url),
+            })
+
+    # Also check live job_sources feed if no candidates found yet
+    if not candidates:
+        try:
+            import agents.job_sources as js
+            for j in js.fetch(max_age_days=60):
+                comp = (j.get("company") or "").strip()
+                role = (j.get("role") or j.get("title") or "").strip()
+                url = (j.get("url") or "").strip()
+                if not url:
+                    continue
+                comp_norm = re.sub(r"[^a-z0-9]", "", comp.lower())
+                if any(re.sub(r"[^a-z0-9]", "", tok) in comp_norm for tok in company_tokens):
+                    score, cat, _ = RE.score_job(comp, role, url)
+                    candidates.append({
+                        "company": comp,
+                        "role": role,
+                        "url": url,
+                        "score": score,
+                        "base_score": score,
+                        "category": cat,
+                        "applied": RE.job_key(comp, role, url) in applied_keys,
+                        "resume": None,
+                        "ats_prio": RE.ats_priority(url),
+                    })
+        except Exception:
+            pass
+
+    if not include_applied:
+        unapplied = [c for c in candidates if not c["applied"]]
+        if unapplied:
+            candidates = unapplied
+
+    # Rank: highest score (including role keyword boost), then FDE/AI/Product/Data track preference, then easiest ATS
+    cat_rank = {"fde": 0, "ai_automation": 0, "product": 1, "analyst_data": 1, "business_systems": 2, "consulting_strategy": 2, "finance_tech": 2}
+    candidates.sort(key=lambda c: (c["applied"], -c["score"], cat_rank.get(c["category"], 5), c["ats_prio"]))
+    return candidates
+
+
+def launch_mid_session_targeted_job(target_query: str, ensure_runner_active: bool = True, max_to_launch: int = 1, role_index: int = 0, dry_run: bool = False) -> dict:
+    """
+    Launches a targeted application for a specific company or job mid-session using an isolated
+    worker profile (.browser-profile-w91..w99) so it NEVER interrupts or conflicts with the active
+    batch runner, while also ensuring the main Job Deck runner is active in parallel.
+    """
+    global NEXT_TARGET_WORKER_ID, ACTIVE_TARGETED_JOBS
+    import results_engine as RE
+
+    # never resubmit, never an excluded company or a non-internship (score_job returns 0 for those)
+    matches = [m for m in resolve_targeted_company_jobs(target_query, include_applied=False)
+               if RE.score_job(m["company"], m["role"], m["url"])[0] > 0]
+    if not matches:
+        return {
+            "ok": False,
+            "query": target_query,
+            "error": f"No eligible internship postings for '{target_query}' (already applied, excluded, or not an internship).",
+            "launched": [],
+            "alternates": [],
+        }
+
+    # Select slice to launch
+    if role_index > 0 and role_index < len(matches):
+        to_launch = [matches[role_index]]
+        alternates = [m for idx, m in enumerate(matches) if idx != role_index][:5]
+    else:
+        to_launch = matches[:max(1, max_to_launch)]
+        alternates = matches[len(to_launch):len(to_launch) + 5]
+
+    m_before = get_realtime_metrics()
+    main_runner_was_active = bool(m_before.get("is_running"))
+    main_runner_started_now = False
+
+    launched_items = []
+    today_str = date.today().isoformat()
+    log_dir = ROOT / "records" / today_str
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    for job in to_launch:
+        comp = job["company"]
+        role = job["role"]
+        url = job["url"]
+        from agents.role_filter import reject_reason
+        _why = reject_reason(role)
+        if _why:
+            print(f"[Targeted Apply] Skipping {comp}: {_why}", flush=True)
+            continue
+
+        # Canonicalize Greenhouse embed URLs
+        m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", url)
+        if m_gh:
+            board, token = m_gh.groups()
+            url = f"https://job-boards.greenhouse.io/embed/job_app?for={board}&token={token}"
+
+        # Tailor resume for this specific target company & role
+        resume_to_use = job.get("resume") or "resumes/Candidate_Resume.pdf"
+        if not (ROOT / resume_to_use).exists() and (ROOT.parent / resume_to_use).exists():
+            resume_to_use = str(ROOT.parent / resume_to_use)
+        elif not Path(resume_to_use).is_absolute():
+            resume_to_use = "resumes/Candidate_Resume.pdf" if (ROOT / "resumes" / "Candidate_Resume.pdf").exists() else "resumes/master_resume.pdf"
+        try:
+            from agents import resume_tailor
+            tailored = resume_tailor.tailor(comp, role, url, resume_to_use)
+            if tailored:
+                resume_to_use = str(tailored)
+        except Exception as e:
+            print(f"[Targeted Apply] Resume tailor fallback ({e})", flush=True)
+
+        wid = NEXT_TARGET_WORKER_ID
+        NEXT_TARGET_WORKER_ID = 91 if NEXT_TARGET_WORKER_ID >= 99 else (NEXT_TARGET_WORKER_ID + 1)
+
+        cmd = [
+            str(ROOT.parent / ".venv" / "Scripts" / "python.exe") if (ROOT.parent / ".venv" / "Scripts" / "python.exe").exists() else sys.executable,
+            "-u",
+            str(ROOT / "fill.py"),
+            url,
+            "--worker-id", str(wid),
+            "--headless",
+            "--block-assets",
+            "--company", comp,
+            "--role", role,
+            "--resume", str(resume_to_use),
+        ]
+
+        env = {**os.environ, "AF_DEADLINE": "260"}
+        try:
+            from agents import cover_letter
+            cover = cover_letter.build(comp, role, url)
+            if cover:
+                env["AF_COVER"] = cover
+        except Exception:
+            pass
+
+        slug = RE._slug(comp, role)
+        log_path = log_dir / f"targeted_{slug}.log"
+        pid = None
+        if not dry_run:
+            log_f = open(log_path, "a", encoding="utf-8", errors="ignore")
+            flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+            proc = subprocess.Popen(cmd, cwd=str(ROOT), env=env, stdout=log_f, stderr=subprocess.STDOUT, creationflags=flags)
+            pid = proc.pid
+
+        item_info = {
+            "company": comp,
+            "role": role,
+            "url": url,
+            "score": job.get("base_score", job.get("score", 9.0)),
+            "category": job.get("category", "targeted"),
+            "resume": str(resume_to_use),
+            "worker_id": wid,
+            "pid": pid,
+            "log_path": str(log_path),
+            "launched_at": datetime.now().strftime("%I:%M:%S %p"),
+        }
+        launched_items.append(item_info)
+        ACTIVE_TARGETED_JOBS.append(item_info)
+        if len(ACTIVE_TARGETED_JOBS) > 15:
+            ACTIVE_TARGETED_JOBS[:] = ACTIVE_TARGETED_JOBS[-15:]
+
+    # Ensure the main Job Deck parallel queue runner is ALSO running alongside the targeted job
+    if ensure_runner_active and not main_runner_was_active and not dry_run:
+        launch_runner(workers=3, queue="queue_ranked.txt", user_action=True)
+        main_runner_started_now = True
+
+    return {
+        "ok": True,
+        "query": target_query,
+        "launched": launched_items,
+        "alternates": alternates,
+        "total_matches": len(matches),
+        "main_runner_active": main_runner_was_active or main_runner_started_now,
+        "main_runner_started_now": main_runner_started_now,
+    }
+
+
+def format_targeted_launch_message(res: dict):
+    """Formats a rich Telegram HTML confirmation card and inline buttons for a mid-session targeted job."""
+    if not res.get("ok"):
+        msg = (
+            f"⚠️ <b>No Queued Match Found for '{h(res.get('query'))}'</b>\n\n"
+            f"💡 <b>Tip:</b> Drop the direct job URL in the Telegram bar or try:\n"
+            f"• <code>Apply to this job with Visa</code>\n"
+            f"• <code>Apply to this job with Goldman</code>\n"
+            f"• <code>Apply to this job with Palantir</code>\n"
+            f"• <code>Apply to this job with Scale AI</code>"
+        )
+        return msg, get_target_customizer_panel()[1]
+
+    launched = res.get("launched") or []
+    first = launched[0]
+    alternates = res.get("alternates") or []
+
+    runner_note = (
+        "🟢 <b>Main Job Deck Auto-Started in Parallel!</b> (3 background workers + your targeted job)"
+        if res.get("main_runner_started_now")
+        else "🟢 <b>Main Job Deck Active in Parallel</b> (Zero interruption to ongoing session)"
+    )
+
+    lines = [
+        f"🎯 <b>Mid-Session Targeted Job Launched!</b>",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+    ]
+    for item in launched:
+        lines.extend([
+            f"🏢 <b>Company:</b> <b>{h(item['company'])}</b>",
+            f"💼 <b>Role:</b> {h(item['role'])}",
+            f"⭐ <b>Fit Score:</b> <code>{item['score']}/10</code> (Track: <code>{h(item['category'])}</code>)",
+            f"📄 <b>Tailored Resume:</b> <code>{h(Path(item['resume']).name)}</code>",
+            f"⚙️ <b>Isolated Worker:</b> <code>W{item['worker_id']}</code> (PID: <code>{item.get('pid') or 'sim'}</code>)",
+            f"🔗 <a href=\"{h(item['url'])}\">Open Target Job Portal</a>",
+            "",
+        ])
+
+    lines.append(f"⚡ <b>Session Status:</b> {runner_note}")
+
+    if alternates:
+        lines.append(f"\n📋 <b>Other Matching {h(first['company'])} Roles Ready ({len(alternates)} more):</b>")
+        for idx, alt in enumerate(alternates[:3], start=1):
+            lines.append(f"  {idx}. {h(alt['role'][:55])} (<code>fit {alt.get('base_score', alt['score'])}</code>)")
+
+    kb_rows = []
+    q_comp = first["company"]
+    if alternates:
+        kb_rows.append([
+            InlineKeyboardButton(f"🚀 Apply Next {q_comp} Role", callback_data=f"target_idx|{q_comp[:24]}|1"),
+            InlineKeyboardButton(f"⚡ Apply Top 3 {q_comp}", callback_data=f"target_all|{q_comp[:24]}"),
+        ])
+    kb_rows.append([
+        InlineKeyboardButton("📸 Live Screen Cam", callback_data="btn_view"),
+        InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
+    ])
+    kb_rows.append([
+        InlineKeyboardButton("🎯 Target Another Company", callback_data="btn_target"),
+        InlineKeyboardButton("📊 Live Control Panel", callback_data="btn_status"),
+    ])
+    return "\n".join(lines), InlineKeyboardMarkup(kb_rows)
+
+
+def get_target_customizer_panel():
+    """Returns the interactive Telegram Bar Company Customizer message & 1-tap keyboard."""
+    text = (
+        "🎯 <b>Telegram Bar — Mid-Session Job Customizer</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+        "Launch a dedicated, isolated browser worker for any specific company <b>mid-session</b> "
+        "while your main Job Deck continues running in the background!\n\n"
+        "💬 <b>Type directly in the Telegram Bar:</b>\n"
+        "• <code>Apply to this job with Visa</code>\n"
+        "• <code>Apply to this job with Goldman</code>\n"
+        "• <code>Apply to this job with Palantir Forward Deployed</code>\n"
+        "• <code>Apply to this job with Scale AI</code>\n"
+        "• <code>/apply [Company Name or Job URL]</code>\n\n"
+        "👇 <b>Or tap a priority target employer below to launch immediately:</b>"
+    )
+    kb = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("💳 Apply: Visa", callback_data="quick_apply|Visa"),
+            InlineKeyboardButton("🏦 Apply: Goldman Sachs", callback_data="quick_apply|Goldman Sachs"),
+        ],
+        [
+            InlineKeyboardButton("🛡️ Apply: Palantir (FDE)", callback_data="quick_apply|Palantir Forward Deployed"),
+            InlineKeyboardButton("🤖 Apply: Scale AI (FDE)", callback_data="quick_apply|Scale AI Forward Deployed"),
+        ],
+        [
+            InlineKeyboardButton("⚡ Apply: Sierra (Agent FDE)", callback_data="quick_apply|Sierra"),
+            InlineKeyboardButton("🪙 Apply: Coinbase (FDE)", callback_data="quick_apply|Coinbase Forward Deployed"),
+        ],
+        [
+            InlineKeyboardButton("☁️ Apply: Cloudflare (PM)", callback_data="quick_apply|Cloudflare Product"),
+            InlineKeyboardButton("📊 Apply: Databricks", callback_data="quick_apply|Databricks"),
+        ],
+        [
+            InlineKeyboardButton("🚀 Start Full Job Deck", callback_data="btn_start_deck"),
+            InlineKeyboardButton("⬅️ Back to Control Panel", callback_data="btn_status"),
+        ],
+    ])
+    return text, kb
+
+
+def launch_full_job_deck(workers: int = 3, dry_run: bool = False) -> dict:
+    """
+    Starts the complete Job Deck pipeline from anywhere via the Telegram bar:
+    1. Immediately launches parallel workers on queue_ranked.txt (prioritizing FDE, AI, Product, Data).
+    2. Runs a non-blocking coordinator refresh (inbox scan + triage ranking) in the background.
+    """
+    q_name = "queue_ranked.txt" if (ROOT / "queue_ranked.txt").exists() else "queue.txt"
+    if not dry_run:
+        launch_runner(workers=workers, queue=q_name, delay=1.8, user_action=True)
+    m = get_realtime_metrics()
+    return {
+        "ok": True,
+        "workers": workers,
+        "queue": q_name,
+        "unapplied_count": m.get("unapplied_count", 0),
+        "total_applied": m.get("total_applied", 0),
+    }
+
+
+def launch_assessment_solver_from_telegram(dry_run: bool = False) -> dict:
+    """Triggers the Autonomous Assessment Solver (linkedin_outreach.assessments) from Telegram."""
+    repo_root = ROOT.parent.parent
+    py_exe = repo_root / ".venv" / "Scripts" / "python.exe"
+    if not py_exe.exists():
+        py_exe = Path(sys.executable)
+
+    cmd = [
+        str(py_exe),
+        "-m",
+        "linkedin_outreach.assessments",
+        "--solve-pending",
+        "--headless",
+    ]
+    pid = None
+    if not dry_run:
+        log_file = open(ROOT / "assessments_solver.log", "a", encoding="utf-8", errors="ignore")
+        flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
+        proc = subprocess.Popen(cmd, cwd=str(repo_root), stdout=log_file, stderr=subprocess.STDOUT, creationflags=flags)
+        pid = proc.pid
+    return {"ok": True, "pid": pid, "cmd": " ".join(cmd)}
+
+
+def launch_runner(workers=None, queue="queue_ranked.txt", delay=2.0, user_action=True):
     global RUNNER_SUPERVISOR_STATE
+    if not (ROOT / queue).exists():
+        queue = "queue_ranked.txt" if (ROOT / "queue_ranked.txt").exists() else ("queue.txt" if (ROOT / "queue.txt").exists() else "queue_cyber_iam.txt")
     if user_action:
         RUNNER_SUPERVISOR_STATE["desired"] = "running"
         if workers is not None:
@@ -647,7 +1184,7 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0, user_act
     for p in psutil.process_iter(["pid", "cmdline"]):
         try:
             cmd_str = " ".join(p.info.get("cmdline") or [])
-            if "batch_apply_parallel" in cmd_str and p.info.get("pid") != curr_pid:
+            if "python" in cmd_str.lower() and "batch_apply_parallel.py" in cmd_str and p.info.get("pid") != curr_pid:
                 p.kill()
         except Exception:
             pass
@@ -666,15 +1203,20 @@ def launch_runner(workers=None, queue="queue_cyber_iam.txt", delay=2.0, user_act
         opt_workers = 3
 
     target_w = workers if workers is not None else opt_workers
+    py_exe = ROOT.parent / ".venv" / "Scripts" / "python.exe"
+    if not py_exe.exists():
+        py_exe = ROOT / ".venv" / "Scripts" / "python.exe"
+    if not py_exe.exists():
+        py_exe = Path(sys.executable)
 
     cmd = [
-        str(ROOT / ".venv" / "Scripts" / "python.exe"),
+        str(py_exe),
+        "-u",  # unbuffered: the log showed nothing for minutes, and a killed runner lost its last lines
         str(ROOT / "batch_apply_parallel.py"),
         "--queue", queue,
         "--workers", str(target_w),
         "--adaptive",
         "--continuous",
-        "--no-triage",
         "--use-tailored",
         "--resume", "resumes/Candidate_Resume.pdf",
         "--delay", str(delay)
@@ -692,7 +1234,7 @@ def halt_runner():
     for p in psutil.process_iter(["pid", "name", "cmdline"]):
         try:
             cmd = " ".join(p.info["cmdline"] or [])
-            if "batch_apply" in cmd or "fill.py" in cmd:
+            if "python" in cmd.lower() and re.search(r"batch_apply_parallel\.py|fill\.py", cmd):
                 if p.info["pid"] != curr_pid:
                     p.kill()
                     stopped += 1
@@ -746,26 +1288,26 @@ async def runner_watchdog_supervisor_job(context: ContextTypes.DEFAULT_TYPE):
 
     w = RUNNER_SUPERVISOR_STATE.get("workers", 3)
     d = RUNNER_SUPERVISOR_STATE.get("delay", 2.0)
-    q = RUNNER_SUPERVISOR_STATE.get("queue", "queue_cyber_iam.txt")
+    q = RUNNER_SUPERVISOR_STATE.get("queue", "queue_ranked.txt")
     launch_runner(workers=w, queue=q, delay=d, user_action=False)
 
 
 def replenish_queue_action() -> int:
-    """Harvests and replenishes queue_cyber_iam.txt with fresh, highly-targeted unapplied roles."""
+    """Harvests and replenishes queue_ranked.txt with fresh, high-fit FDE, AI, Product & Data roles."""
     import agents.job_sources as js
     import re
     import results_engine as RE
 
     kw = re.compile(
-        r"security|cyber|iam|identity|cloud|soc|infosec|network|systems|support|infrastructure|devops|threat|vulnerability|incident|compliance|it\s+support|desktop|sysadmin|analyst",
+        r"forward[\s\-]*deploy|deployed\s+engineer|\bfde\b|deployment\s+strategist|solutions?\s+engineer|field\s+engineer|sales\s+engineer|customer\s+engineer|ai\s+engineer|agent|automation|product|program\s+manager|project\s+manager|data|analytics|quant|business\s+analyst|strategy|operations|fintech|cloud|systems|analyst",
         re.I
     )
     swe_exclude = re.compile(
-        r"\b(software\s+(engineer|developer|dev)|full\s*stack|backend|frontend|mobile\s+dev|ios\s+dev|android\s+dev|ml\s+engineer|machine\s+learning|algorithm|compiler|firmware|embedded\s+software|c\+\+\s+dev|java\s+dev|python\s+dev|react\s+dev|programmer|sde\b|swe\b)\b",
+        r"\b(mobile\s+dev|ios\s+dev|android\s+dev|compiler|firmware|embedded\s+software|kernel|fpga|verilog)\b",
         re.I
     )
     senior_exclude = re.compile(
-        r"\b(director|vp\b|vice\s+president|head\s+of|manager|principal|staff\+)\b",
+        r"\b(director|vp\b|vice\s+president|head\s+of|principal|staff\+)\b",
         re.I
     )
 
@@ -795,7 +1337,7 @@ def replenish_queue_action() -> int:
             if c and ro:
                 applied_pairs.add((c, ro))
 
-    q_path = ROOT / "queue_cyber_iam.txt"
+    q_path = ROOT / "queue_ranked.txt"
     existing_urls = set()
     if q_path.exists():
         with open(q_path, "r", encoding="utf-8", errors="ignore") as f:
@@ -819,6 +1361,12 @@ def replenish_queue_action() -> int:
             return
         if not kw.search(role) or swe_exclude.search(role) or senior_exclude.search(role):
             return
+        from agents.role_filter import reject_reason
+        if reject_reason(role):
+            return
+        score, cat, _ = RE.score_job(comp, role, u_norm)
+        if score < 6.5:
+            return
         # Greenhouse canonical embed format
         m_gh = re.search(r"(?:boards|job-boards)\.greenhouse\.io/(?:embed/job_app\?for=)?([^/&?]+)(?:/jobs/|.*[&?]token=)(\d+)", u_norm)
         if m_gh:
@@ -827,10 +1375,10 @@ def replenish_queue_action() -> int:
                 return
 
         seen.add(u_norm)
-        collected.append((comp.strip(), role.strip(), u_norm))
+        collected.append((comp.strip(), role.strip(), u_norm, score))
 
     # 1. Pull from existing large master queues
-    for qf in ["queue.txt", "queue_ranked.txt", "queue_phase2.txt"]:
+    for qf in ["queue.txt", "queue_phase2.txt"]:
         qp = ROOT / qf
         if not qp.exists():
             continue
@@ -855,24 +1403,25 @@ def replenish_queue_action() -> int:
     except Exception as e:
         print(f"[Replenish Job Sources Error] {e}", flush=True)
 
-    # Sort priority: Greenhouse > Ashby > Workday > Lever > Other
+    # Sort priority: highest fit score first, then Greenhouse > Ashby > Workday > Lever > Other
     def sort_prio(item):
         u = item[2].lower()
+        ats_p = 4
         if "greenhouse.io" in u:
-            return 0
-        if "ashbyhq.com" in u:
-            return 1
-        if "myworkdayjobs.com" in u:
-            return 2
-        if "lever.co" in u:
-            return 3
-        return 4
+            ats_p = 0
+        elif "ashbyhq.com" in u:
+            ats_p = 1
+        elif "myworkdayjobs.com" in u:
+            ats_p = 2
+        elif "lever.co" in u:
+            ats_p = 3
+        return (-item[3], ats_p)
 
     collected.sort(key=sort_prio)
 
     if collected:
         with open(q_path, "a", encoding="utf-8") as f:
-            for c, r, u in collected:
+            for c, r, u, _ in collected:
                 f.write(f"{c} {r}   {u}\n")
 
     return len(collected)
@@ -1170,12 +1719,18 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=False)
     text = (
         "👋 <b>Welcome to Job Deck Autonomous Headquarters!</b>\n\n"
-        "🧭 <b>New User Setup:</b>\n"
-        "• <code>/setup</code> or tap <b>[🧭 Setup Wizard]</b> below for an interactive 6-step walkthrough!\n\n"
-        "⚡ <b>Autonomous Speed & Workers:</b>\n"
-        "• <code>/apply</code> or <code>run</code> — Launch 3 workers with auto-scaling\n"
+        "🚀 <b>Start Your Job Deck From Anywhere:</b>\n"
+        "• <code>/deck</code> or tap <b>[🚀 Start Full Job Deck]</b> — Launches 3 parallel FDE/AI/Product workers from anywhere\n"
+        "• <code>/apply [Company]</code> — Mid-session targeted apply\n"
+        "• Or type naturally in the Telegram bar:\n"
+        "  <i>\"Apply to this job with Visa\"</i>\n"
+        "  <i>\"Apply to this job with Goldman\"</i>\n"
+        "  <i>\"Apply to this job with Palantir\"</i>\n\n"
+        "⚡ <b>Autonomous Speed & Assessments:</b>\n"
+        "• <code>/run</code> — Launch 3 workers with auto-scaling\n"
         "• <code>/turbo</code> — Max velocity (auto-tuned concurrency, fast 1.0s delay)\n"
-        "• <code>/stealth</code> — Ultra-stealth human emulation (8s jitter)\n"
+        "• <code>/assessments</code> or <code>/oa</code> — Run Autonomous Assessment Solver\n"
+        "• <code>/queue</code> — View & customize top queued FDE / AI / Product roles\n"
         "• <code>/stop</code> or <code>/nuke</code> — Immediate pause / emergency kill\n\n"
         "📄 <b>Tailored Documents & Screen Cam:</b>\n"
         "• <code>/resume [Company]</code> — Quick-view tailored resume (photo preview, no download!)\n"
@@ -1184,7 +1739,7 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• <code>/hud</code> or <code>/ticker</code> — Single-message live dynamic ticker\n"
         "• <code>/pin</code> — Pin the live status control panel to top banner\n\n"
         "🎯 <b>Auto-Apply & Radar:</b>\n"
-        "• Paste any job URL directly — Auto-applies on the spot\n"
+        "• Paste any job URL directly — Auto-applies on the spot mid-session\n"
         "• <code>/inbox</code> — Urgent recruiter replies & interview alerts\n"
         "• <code>/gap [Company]</code> — ATS keyword heatmap & missing skills\n"
         "• <code>/prep [Company]</code> — Complete Interview Battlecard\n"
@@ -1195,8 +1750,12 @@ async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• 🗣️ <i>Send any voice memo to execute commands hands-free!</i>"
     )
     kb = InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("🚀 Start Full Job Deck", callback_data="btn_start_deck"),
+            InlineKeyboardButton("🎯 Mid-Session Target Apply", callback_data="btn_target"),
+        ],
         [InlineKeyboardButton("📌 View Live Control Panel", callback_data="btn_status")],
-        [InlineKeyboardButton("🧭 Launch Setup Wizard", callback_data="btn_setup_wizard")]
+        [InlineKeyboardButton("🧭 Launch Setup Wizard", callback_data="btn_setup_wizard")],
     ])
     await update.message.reply_text(text, reply_markup=kb, parse_mode=ParseMode.HTML)
 
@@ -1222,6 +1781,16 @@ async def cmd_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
         asyncio.create_task(_delete_after(context.bot, target_chat, [update.message.message_id, notice.message_id], 3.0))
 
 
+async def handle_bot_error(update, context: ContextTypes.DEFAULT_TYPE):
+    """Any handler crash: log it and tell the owner instead of failing silently."""
+    print(f"[Bot Error] {type(context.error).__name__}: {context.error}", flush=True)
+    try:
+        if isinstance(update, Update) and update.effective_chat and update.effective_chat.id == AUTHORIZED_USER_ID:
+            await context.bot.send_message(update.effective_chat.id, f"⚠️ That didn't work: {h(str(context.error)[:200])}. Try again.", parse_mode=ParseMode.HTML)
+    except Exception:
+        pass
+
+
 async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     if query.from_user.id != AUTHORIZED_USER_ID:
@@ -1229,7 +1798,10 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         return
 
     data = query.data
-    await query.answer()
+    try:
+        await query.answer()
+    except Exception as e:  # a tap answered late still runs its action
+        print(f"[Callback Answer Late] {data}: {e}", flush=True)
 
     # 0. Confirm / discard a Gemini-proposed change: prop|<proposal id>|y|n (only this button applies it)
     if data.startswith("prop|"):
@@ -1266,8 +1838,7 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
                     when=4.0,
                     data={"chat_id": query.message.chat_id, "message_id": query.message.message_id}
                 )
-            else:
-                import asyncio
+            else:  # no local "import asyncio": it made asyncio local to the whole handler and crashed every button
                 async def _del():
                     await asyncio.sleep(4)
                     await safe_delete_message(context.bot, query.message.chat_id, query.message.message_id)
@@ -1393,15 +1964,49 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
         await safe_edit(query, msg, reply_markup=kb)
 
-    elif data == "btn_target":
-        target_text = (
-            "✈️ <b>Targeted Priority Mode:</b>\n\n"
-            "To target a specific company or URL immediately, simply reply in chat:\n"
-            "<code>target: [Company Name or URL]</code>\n\n"
-            "<i>Example:</i> <code>target: Boeing</code> or <code>target: Lockheed Martin</code>"
+    elif data == "btn_start_deck":
+        deck_res = await asyncio.to_thread(launch_full_job_deck, 3)
+        m = get_realtime_metrics()
+        m["is_running"] = True
+        m["worker_count"] = max(3, m.get("worker_count", 3))
+        await safe_edit(
+            query,
+            format_status_message(
+                header=f"🚀 <b>Full Job Deck Started ({deck_res['unapplied_count']} FDE/AI/Product roles queued)!</b>",
+                metrics=m,
+            ),
+            reply_markup=get_smart_keyboard(m),
         )
+        await query.answer("🚀 Full Job Deck pipeline launched!", show_alert=False)
+
+    elif data == "btn_assessments":
+        msg = ASSESSMENTS_MSG
         kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
+        await safe_edit(query, msg, reply_markup=kb)
+
+    elif data == "btn_target":
+        target_text, kb = get_target_customizer_panel()
         await safe_edit(query, target_text, reply_markup=kb)
+
+    elif data.startswith("quick_apply|"):
+        target_q = data.split("|", 1)[1].strip()
+        res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 1)
+        msg, kb = format_targeted_launch_message(res)
+        await safe_edit(query, msg, reply_markup=kb)
+
+    elif data.startswith("target_idx|"):
+        parts = data.split("|")
+        target_q = parts[1].strip() if len(parts) > 1 else "Visa"
+        r_idx = int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else 1
+        res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 1, r_idx)
+        msg, kb = format_targeted_launch_message(res)
+        await safe_edit(query, msg, reply_markup=kb)
+
+    elif data.startswith("target_all|"):
+        target_q = data.split("|", 1)[1].strip()
+        res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 3)
+        msg, kb = format_targeted_launch_message(res)
+        await safe_edit(query, msg, reply_markup=kb)
 
     elif data == "btn_resume":
         await send_quickview_doc(query.message, context, is_letter=False)
@@ -1682,6 +2287,21 @@ async def handle_url_drop(url: str, target_msg, context: ContextTypes.DEFAULT_TY
         canonical_url = clean_url
         comp_name = "Target Employer"
 
+    import results_engine as RE
+    if not re.match(r"^https?://", canonical_url):
+        await safe_reply(target_msg, "⚠️ Only http(s) job links can be applied to. Nothing was started.")
+        return
+    if any(r.get("status") == "submitted" and r.get("url", "").strip() == canonical_url for r in RE.ledger_rows()):
+        await safe_reply(target_msg, f"✅ You already applied to this posting. Nothing was started.\n<code>{h(canonical_url)}</code>")
+        return
+
+    # sys.executable + fill.py's default resume: the old .venv / resumes paths don't exist, so every drop failed silently
+    cmd = [sys.executable, "-u", str(ROOT / "fill.py"), canonical_url, "--headless", "--company", comp_name]
+    try:
+        subprocess.Popen(cmd, cwd=str(ROOT))
+    except OSError as e:
+        await safe_reply(target_msg, f"⚠️ Could not start the application: {h(e)}")
+        return
     await safe_reply(
         target_msg,
         f"🎯 <b>Auto-Apply Triggered!</b>\n"
@@ -1689,16 +2309,6 @@ async def handle_url_drop(url: str, target_msg, context: ContextTypes.DEFAULT_TY
         f"<b>URL:</b> <code>{h(canonical_url)}</code>\n\n"
         f"⚡ <i>Launching isolated priority worker in headless mode...</i>"
     )
-
-    cmd = [
-        str(ROOT / ".venv" / "Scripts" / "python.exe"),
-        str(ROOT / "fill.py"),
-        canonical_url,
-        "--headless",
-        "--company", comp_name,
-        "--resume", "resumes/Candidate_Resume.pdf"
-    ]
-    subprocess.Popen(cmd, cwd=str(ROOT))
 
 
 async def send_daily_morning_brief(context: ContextTypes.DEFAULT_TYPE):
@@ -1843,6 +2453,54 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if text.startswith("http://") or text.startswith("https://") or t_lower.startswith("/add") or t_lower.startswith("add:"):
         url = text.split(":", 1)[1].strip() if (t_lower.startswith("add:") or t_lower.startswith("/add")) else text.strip()
         await handle_url_drop(url, update.message, context)
+        return
+
+    # Priority 1.2: Start Full Job Deck From Anywhere
+    if t_lower in ["/deck", "deck", "/daily", "daily", "/startdeck", "start job deck", "start my job deck", "run job deck", "launch job deck", "open job deck"]:
+        deck_res = await asyncio.to_thread(launch_full_job_deck, 3)
+        m = get_realtime_metrics()
+        m["is_running"] = True
+        m["worker_count"] = max(3, m.get("worker_count", 3))
+        await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=False)
+        await safe_reply(
+            update.message,
+            f"🚀 <b>Job Deck Started From Telegram Bar!</b>\n\n"
+            f"• <b>Active Workers:</b> <b>3 parallel workers</b> on <code>{h(deck_res['queue'])}</code>\n"
+            f"• <b>Ranked Queue:</b> <b>{deck_res['unapplied_count']}</b> unapplied FDE, AI, Product & Data roles\n"
+            f"• <b>Mid-Session Customizer Ready:</b> Type <code>Apply to this job with Visa</code> or <code>Apply to this job with Goldman</code> anytime to run a targeted job alongside your active session!",
+            reply_markup=get_smart_keyboard(m),
+        )
+        return
+
+    # Priority 1.4: Open Mid-Session Target Customizer Menu (/target)
+    if t_lower in ["/target", "target", "customize", "/customize", "customize jobs"]:
+        target_text, kb = get_target_customizer_panel()
+        await safe_reply(update.message, target_text, reply_markup=kb)
+        return
+
+    # Priority 1.5: Mid-Session Targeted Company/Job Execution ("Apply to this job with Visa", "Apply to this job with Goldman", "/apply Visa", etc.)
+    targeted_query = parse_targeted_apply_intent(text)
+    if targeted_query:
+        await confirm_targeted_apply(update.message, targeted_query)
+        return
+
+    # Priority 1.8: assessments (/assessments, /oa)
+    if t_lower in ["/assessments", "assessments", "/oa", "oa", "solve assessments", "run assessments", "complete assessments"]:
+        await safe_reply(update.message, ASSESSMENTS_MSG, reply_markup=get_smart_keyboard(get_realtime_metrics()))
+        return
+
+    # Priority 1.9: Queue Inspector & Customizer (/queue)
+    if t_lower in ["/queue", "queue", "show queue", "view queue", "top queue", "my queue"]:
+        top_jobs = resolve_targeted_company_jobs("Palantir", include_applied=False)[:2] + resolve_targeted_company_jobs("Visa", include_applied=False)[:2] + resolve_targeted_company_jobs("Goldman", include_applied=False)[:1] + resolve_targeted_company_jobs("Scale AI", include_applied=False)[:2]
+        lines = [
+            "📋 <b>Top Priority FDE / AI / Product / Data Queue</b>",
+            "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        ]
+        for idx, j in enumerate(top_jobs[:6], start=1):
+            lines.append(f"{idx}. <b>{h(j['company'])}</b> — {h(j['role'][:48])} (<code>fit {j.get('base_score', j['score'])}</code>)")
+        lines.append("\n💬 <i>Tap a button below or type <code>Apply to this job with [Company]</code> to run any role mid-session!</i>")
+        _, kb = get_target_customizer_panel()
+        await safe_reply(update.message, "\n".join(lines), reply_markup=kb)
         return
 
     # Priority 2: Quick-View Resume & Cover Letter
@@ -2045,11 +2703,34 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(update.message, dossier["telegram_summary"])
         return
     elif t_lower.startswith("target:"):
-        target_query = text.split(":", 1)[1].strip()
-        launch_runner(workers=1, queue="queue_cyber_iam.txt")
-        await safe_reply(update.message, f"🎯 <b>Targeting '{h(target_query)}'!</b> Worker launched in priority mode.")
+        await confirm_targeted_apply(update.message, text.split(":", 1)[1].strip())
     else:
         await reply_with_engine(update, text)
+
+
+ASSESSMENTS_MSG = (
+    "🧠 <b>Assessments are yours to take.</b>\n\n"
+    "Job Deck does not complete online assessments for you: employers and assessment platforms forbid it, "
+    "and a flagged assessment can cost the offer. Open the assessment email and take it yourself."
+)
+
+
+async def confirm_targeted_apply(target_msg, query_str: str):
+    """A typed or spoken request only previews the job; the application starts when Apply now is tapped."""
+    import results_engine as RE
+    q = query_str.strip()[:40]  # Telegram callback_data is limited to 64 bytes
+    matches = [m for m in await asyncio.to_thread(resolve_targeted_company_jobs, q, False)
+               if RE.score_job(m["company"], m["role"], m["url"])[0] > 0]
+    if not matches:
+        await safe_reply(target_msg, f"🤷 No eligible internship postings for <b>{h(q)}</b> (already applied, excluded, or not an internship). Nothing was started.")
+        return
+    top = matches[0]
+    note = "\n⚠️ <i>Protected company: you normally apply here yourself.</i>" if RE.is_protected(top["company"]) else ""
+    kb = InlineKeyboardMarkup([[InlineKeyboardButton("✅ Apply now", callback_data=f"quick_apply|{q}"),
+                                InlineKeyboardButton("✖️ Cancel", callback_data="btn_status")]])
+    await safe_reply(target_msg, f"🎯 <b>Apply to this job?</b>\n\n<b>{h(top['company'])}</b> — {h(top['role'])}\n"
+                                 f"<i>{len(matches)} eligible posting(s). Nothing starts until you tap Apply now.</i>{note}",
+                     reply_markup=kb)
 
 
 async def reply_with_engine(update: Update, text: str):
@@ -2156,17 +2837,48 @@ async def periodic_pc_optimizer_job(context: ContextTypes.DEFAULT_TYPE):
         print(f"[Periodic PC Optimizer] {e}", flush=True)
 
 
+async def register_telegram_bar_commands(app):
+    """Registers the persistent Telegram Command Bar menu so the user can launch & customize jobs from anywhere."""
+    from telegram import BotCommand
+    commands = [
+        BotCommand("deck", "🚀 Start full Job Deck pipeline from anywhere"),
+        BotCommand("apply", "🎯 Apply to a specific company/job mid-session (e.g. /apply Visa)"),
+        BotCommand("target", "✈️ Open Mid-Session Company Customizer (Visa, Goldman, FDE)"),
+        BotCommand("run", "▶️ Launch 3 parallel FDE/AI/Product workers"),
+        BotCommand("turbo", "⚡ Activate hardware-tuned Turbo velocity"),
+        BotCommand("queue", "📋 View & customize top FDE, AI & Product roles in queue"),
+        BotCommand("assessments", "🧠 Run Autonomous Assessment Solver on pending OAs"),
+        BotCommand("status", "📊 Open/refresh Live Job Deck Control Panel"),
+        BotCommand("hud", "📡 Toggle real-time 4s Live Dynamic HUD ticker"),
+        BotCommand("view", "📸 Capture live screenshot of active browser worker"),
+        BotCommand("resume", "📄 Quick-view tailored resume (photo preview)"),
+        BotCommand("decisions", "🎯 View recruiter decision stages & deadlines"),
+        BotCommand("stop", "🛑 Pause active background workers"),
+    ]
+    try:
+        await app.bot.set_my_commands(commands)
+        print("[Job Deck Control Bot] Telegram Command Bar menu registered (13 commands).", flush=True)
+    except Exception as e:
+        print(f"[Telegram Command Bar Notice] {e}", flush=True)
+
+
 def main():
     if not BOT_TOKEN or not AUTHORIZED_USER_ID:
         print("[!] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing in .env")
         sys.exit(1)
 
     print("[Job Deck Control Bot] Initializing two-way AI engine...", flush=True)
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
+    # concurrent_updates: a slow handler (replenish ~15s, Gmail scan, AI reply) must not queue every later tap past Telegram's ~15s answer window
+    app = ApplicationBuilder().token(BOT_TOKEN).concurrent_updates(True).post_init(register_telegram_bar_commands).build()
+    app.add_error_handler(handle_bot_error)
 
     app.add_handler(CommandHandler(["start", "help"], cmd_start))
     app.add_handler(CommandHandler(["setup", "onboarding", "welcome", "wizard"], cmd_setup))
     app.add_handler(CommandHandler(["status", "update"], cmd_status))
+    app.add_handler(CommandHandler(["deck", "daily", "startdeck"], handle_text))
+    app.add_handler(CommandHandler(["apply", "target", "run", "stop", "pause"], handle_text))
+    app.add_handler(CommandHandler(["queue"], handle_text))
+    app.add_handler(CommandHandler(["assessments", "oa"], handle_text))
     app.add_handler(CommandHandler(["pin", "pinned"], handle_text))
     app.add_handler(CommandHandler(["clean", "clear", "clearchat", "cleanapps"], cmd_clean))
     app.add_handler(CommandHandler(["prep", "battlecard"], handle_text))

@@ -2,11 +2,17 @@ import results_engine as RE
 
 
 def test_ai_roles_rank_above_plain_roles():
-    cyber, cat, _ = RE.score_job("Testco", "Cybersecurity Analyst Intern - Summer 2027")
+    # 2026-11-10 strategy: AI / FDE / product / data first; cybersecurity weight 0 (owner's choice)
+    ai, _, _ = RE.score_job("Testco", "AI Engineer Intern")
     swe, _, _ = RE.score_job("Testco", "Software Engineer Intern")
-    assert cat == "cybersecurity"
-    assert cyber > swe
-    assert cyber >= RE.strategy()["min_fit_score"]
+    assert ai > swe and ai >= RE.strategy()["min_fit_score"]
+    assert RE.score_job("Testco", "Cybersecurity Analyst Intern - Summer 2027")[1] == "cybersecurity"  # not analyst_data
+
+
+def test_non_us_and_bare_delivery_titles_are_not_targets():
+    assert RE.score_job("Cloudflare", "Product Manager Intern (2027) - Lisbon, PT [In-Office; 1d old]")[0] == 0
+    assert RE.score_job("Testco", "Delivery Driver Intern")[1] != "product"
+    assert RE.score_job("Visa", "2027 Sophomore Internship Program")[0] == 0  # the candidate is a junior
 
 
 def test_swe_and_off_season_roles_are_skipped():
@@ -49,3 +55,10 @@ def test_ledger_roundtrip(sandbox):
     RE.ledger_add("Acme", "AI Intern", "https://acme.com/jobs/1", "submitted")
     assert RE.submitted_today() == 1
     assert RE.job_key("Acme", "AI Intern", "https://acme.com/jobs/1") in RE.already_applied_keys()
+
+
+def test_internships_only_blocks_full_time_titles():  # 2026-11-10: Cloudflare 'IT Operations Specialist I' was submitted
+    for title in ['IT Operations Specialist I [In-Office; 1d old]', 'International Payroll Analyst', 'Legal Operations Associate']:
+        assert RE.score_job('Cloudflare', title, 'https://x.com/j')[0] == 0, title
+    for title in ['Data Analyst Intern [Remote; 1d old]', 'Summer Analyst 2027', 'AI Engineering Internship']:
+        assert RE.score_job('Acme', title, 'https://x.com/j')[1] != 'ineligible', title

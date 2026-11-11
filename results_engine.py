@@ -43,8 +43,9 @@ DEFAULT_STRATEGY = {
     "home_metro": ["atlanta", "alpharetta", "georgia", "remote"],
     "ai_bonus": 2,
     "category_weights": {
-        "product": 4, "ai_automation": 3, "analyst_data": 3, "business_systems": 3,
-        "consulting_strategy": 2, "finance_tech": 2, "swe": 0, "other": 1,
+        "fde": 10, "ai_automation": 10, "product": 9, "analyst_data": 9,
+        "business_systems": 8, "consulting_strategy": 8, "finance_tech": 8,
+        "early_career": 8, "swe": 4, "cybersecurity": 0, "it_support": 0, "other": 0,
     },
 }
 
@@ -77,34 +78,41 @@ def _url_words(url, company=""):
 
 
 # ---------------------------------------------------------------- 1. targeting
-CATEGORIES = [  # first match wins
-    ("fde", r"\b(fde|forward deployed|forward-deployed)\b"),
+CATEGORIES = [  # first match wins — tailored to Olatokunbo Ajayi's resume (FDE, AI/Automation, Product, Data, Business Systems, FinTech/Strategy)
+    ("fde", r"\b(fde|forward deployed|forward-deployed|deployment strategist|ai deployment|field engineer|"
+            r"solutions engineer|solutions architect|technical solutions|customer engineer|sales engineer|"
+            r"implementation engineer|integration engineer|partner engineer|deployed (?:software )?engineer\w*|deployment engineer\w*|deployed engineering)\b"),
+    ("ai_automation", r"\b(ai|ml|genai|gen ai|llm|machine learning|agentic)[ /-]+(engineer|engineering|developer|solutions|scientist|research|intern|analyst|product|deployment|operations|ops)|"
+                      r"applied (ai|ml|machine learning)|ai solutions|ai enablement|prompt engineer|automation engineer|mlops|llmops|ai ?ops"),
+    ("product", r"\bproduct\b|\bapm\b|\bpm\b|program manag|project manag|technical program"),
+    ("ai_automation", r"\bai\b (business|process|enablement|solutions|product|strategy|analyst|agent)|automation analyst|"
+                      r"business process|intelligent automation|rpa\b|workflow automation"),
+    # before analyst_data, so "Security Analyst" is labeled cybersecurity and gets that category's weight
     ("cybersecurity", r"cyber|security|soc\b|siem|iam\b|identity|access management|threat|vulnerability|infosec|incident response"),
     ("it_support", r"it support|tech support|technical support|helpdesk|desktop support|systems? admin|service desk|it technician"),
-    ("early_career", r"\b(early career|early-career|early talent|emerging talent|campus|university grad|entry[- ]level|associate engineer|associate analyst)\b"),
-    ("swe", r"software (engineer|developer|engineering)"),
-    ("ai_automation", r"\b(ai|ml|genai|gen ai|llm|machine learning)[ /-]+(engineer|engineering|developer|solutions|scientist|research)|"
-                      r"applied (ai|ml|machine learning)|ai solutions|ai enablement|prompt engineer"),
-    ("product", r"\bproduct\b|\bapm\b|\bpm\b|program manag"),
-    ("ai_automation", r"\bai\b (business|process|enablement|solutions|product|strategy|analyst|agent)|automation analyst|"
-                      r"business process"),
-    ("swe", r"software|(web|app|mobile|game) developer|\bsde\b|embedded|firmware|front ?end|back ?end|full ?stack|"
-            r"devops|\bsre\b|hardware|mechanical|electrical|\bios\b|android|network engineer|"
-            r"infrastructure"),
+    ("analyst_data", r"analyst|analytics|data|business intelligence|\bbi\b|insight|research|decision science|quantitative"),
+    ("business_systems", r"business (systems|technology|process|analyst)|\berp\b|technology (ops|operations|analyst)|solutions|enablement|revops|bizops"),
+    ("consulting_strategy", r"consult|strategy|operations|transformation|advisory|chief of staff"),
+    ("finance_tech", r"fintech|finance|treasury|investment|wealth|asset management|banking|acquisitions|real estate|underwriting|capital markets|trading"),
+    ("early_career", r"\b(early career|early-career|early talent|emerging talent|campus|university grad|entry[- ]level|associate engineer|associate analyst|rotational|leadership development|fellowship)\b"),
+    ("swe", r"software (engineer|developer|engineering)|full ?stack|back ?end|front ?end|(web|app|mobile) developer|\bsde\b|platform engineer"),
     ("ai_automation", r"\bai\b|artificial intelligence|automation|gen ?ai|\bllm|prompt|machine learning|agent"),
-    ("analyst_data", r"analyst|analytics|data|business intelligence|\bbi\b|insight|research"),
-    ("business_systems", r"business (systems|technology|process)|\berp\b|\bit\b|technology (ops|operations)|solutions|enablement"),
-    ("consulting_strategy", r"consult|strategy|operations|transformation"),
-    ("finance_tech", r"fintech|finance|treasury|investment|wealth|asset management|banking"),
 ]
 DISQUALIFY = [
     ("grad students only", r"ph\.? ?d|doctoral|master'?s|\(ms\)|\bms\b intern|\bmba\b|\bgraduate\b"),
     ("high school program", r"high school"),
+    ("freshman / sophomore program", r"\b(freshman|freshmen|sophomores?|first[- ]year students?|second[- ]year students?)\b"),
+    ("outside the US", r"\b(lisbon|portugal|canada|toronto|vancouver|montreal|london|united kingdom|ireland|dublin|germany|berlin|"
+                       r"munich|france|paris|netherlands|amsterdam|poland|warsaw|spain|madrid|india|bangalore|bengaluru|hyderabad|"
+                       r"singapore|japan|tokyo|china|shanghai|beijing|hong kong|taiwan|taipei|korea|seoul|australia|sydney|"
+                       r"melbourne|mexico|brazil|sao paulo|israel|tel aviv|switzerland|zurich|apac|emea)\b"),
     ("long co-op (conflicts with school)", r"co-?op|6-8 months|\b(fall|spring) 202[67]\b"),
     ("not an internship (full-time / experienced)", r"\bnew grad|\bsenior\b|\bsr\.?\b|\bstaff\b|\bprincipal\b|"
                                                      r"\bmanager\b(?!.*\b(intern|int|in)\b)|engineer (i|ii|iii)\b|\bfull[- ]time\b|director"),
 ]
 
+
+INTERN_TITLE = re.compile(r"\b(intern|interns|internship|co-?op|summer|student|apprentice(ship)?|fellow(ship)?)\b", re.I)
 
 AI_RE = re.compile(r"\b(ai|a\.i\.|genai|gen ai|llm|machine learning|artificial intelligence|agentic|copilot)\b", re.I)
 
@@ -136,6 +144,9 @@ def score_job(company, role, url=""):
     s = strategy()
     if is_excluded(company, role, url):
         return 0, "ineligible", ["excluded company (AJ)"]
+    title = re.sub(r"\[.*?\]", "", role or "")  # drop the "[location; 1d old]" suffix
+    if s.get("internships_only", True) and not INTERN_TITLE.search(title):
+        return 0, "ineligible", ["not an internship (strategy.json internships_only)"]
     category, why_out = classify_role(role, url, company)
     if category == "ineligible":
         return 0, category, [why_out]
@@ -143,11 +154,13 @@ def score_job(company, role, url=""):
         from agents import job_scout
         sc = job_scout.cached(company, role, url)
         if sc:
-            cat = sc["category"] if sc.get("eligible") else "ineligible"
+            # the scout read the full posting: its "ineligible" (full-time, clearance, grad-only) wins over any title rule
+            cat = "ineligible" if not sc.get("eligible") else ("fde" if category == "fde" else sc["category"])
             why = sc.get("reasons", []) if sc.get("eligible") else [sc.get("ineligible_reason") or "ineligible"]
             if cat == "ineligible":
                 return 0.0, cat, ["scout"] + why
-            sc_score, sc_why = _smart_adjust(company, role, url, cat, float(sc.get("fit_score", 0)), sc.get("deadline", ""))
+            base_sc = max(float(sc.get("fit_score", 0)), 3.0 + s["category_weights"].get(cat, 1)) if cat == "fde" else float(sc.get("fit_score", 0))
+            sc_score, sc_why = _smart_adjust(company, role, url, cat, base_sc, sc.get("deadline", ""))
             return sc_score, cat, ["scout"] + why + sc_why
     except Exception:
         pass
@@ -258,7 +271,9 @@ def write_record(company, role, url, status):
     d = RECORDS_DIR / datetime.date.today().isoformat()
     d.mkdir(parents=True, exist_ok=True)
     path = d / f"{_slug(company, role)}.json"
-    guesses = [a for a in ANSWERS if a["source"] != "rule"]
+    # answers not taken from the candidate's own stated facts (rules, verified facts, their Telegram replies, resume dates)
+    verified = {"rule", "candidate_verified", "fact", "telegram_user", "invariant", "language_invariant", "resume_dates"}
+    guesses = [a for a in ANSWERS if a["source"] not in verified]
     path.write_text(json.dumps({
         "company": company, "role": role, "url": url, "status": status,
         "when": datetime.datetime.now().isoformat(timespec="seconds"),

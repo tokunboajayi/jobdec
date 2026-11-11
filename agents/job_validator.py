@@ -171,8 +171,12 @@ def is_job_active(url: str, timeout: int = 5) -> Tuple[bool, str]:
         return res
 
     if body:
+        # visible text only: William Blair's open posting was "closed" by a JavaScript comment that quotes its
+        # own error message ("this job is no longer available"), 2026-11-11
+        text = re.sub(r"(?is)<script.*?</script>|<style.*?</style>|<!--.*?-->", " ", body)
+        text = re.sub(r"<[^>]+>", " ", text)
         for pat in CLOSED_PATTERNS:
-            if pat.search(body):
+            if pat.search(text):
                 res = (False, f"Page matches closed pattern: {pat.pattern}")
                 _STATUS_CACHE[clean_url] = res
                 return res

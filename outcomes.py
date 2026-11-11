@@ -170,7 +170,7 @@ def scan_gmail(apps, since):
             kind = kind or classify(text, decode_str(hdr.get("Subject", "")))
             if not kind:
                 continue
-            for k in matched:
+            for k in best_role_matches(matched, apps, text):
                 a = apps[k]
                 if when and a["date"] and when < a["date"]:
                     continue  # email predates this application
@@ -205,6 +205,26 @@ def report(apps):
     REPORT.write_text("\n".join(lines) + "\n", encoding="utf-8")
     print("\n".join(lines[4:4 + 2 + len(groups)]))
     print(f"\nWrote {REPORT.name}")
+
+
+ROLE_STOP = {"intern", "internship", "summer", "2026", "2027", "2028", "with", "and", "the", "for", "program"}
+
+
+def best_role_matches(matched, apps, text):
+    """One company email names one role. Matching by company alone stamped a single Ramp assessment on all 6 Ramp
+    applications (2026-10-18). Keep the applications whose role words appear in the email; none if it is ambiguous."""
+    if len(matched) <= 1:
+        return matched
+    t = text.lower()
+
+    def overlap(k):
+        words = [w for w in re.findall(r"[a-z0-9]{3,}", re.sub(r"\[.*?\]", "", apps[k]["role"].lower())) if w not in ROLE_STOP]
+        return sum(w in t for w in words) / max(1, len(words))
+    scores = {k: overlap(k) for k in matched}
+    best = max(scores.values())
+    if best < 0.6 or sum(1 for v in scores.values() if v == best) > 1 and best < 1:
+        return []
+    return [k for k in matched if scores[k] == best]
 
 
 def update_ledger(apps):

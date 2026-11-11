@@ -214,6 +214,8 @@ def main():
     parser.add_argument("--headful", action="store_true", help="Force visible browser window (default: False)")
     parser.add_argument("--no-block-assets", action="store_true", help="Disable asset blocking")
     parser.add_argument("--no-triage", action="store_true", help="Bypass fit score checks and company filters")
+    parser.add_argument("--allow-protected", action="store_true", help="Allow applying to protected companies when explicitly targeted")
+    parser.add_argument("--allow-fulltime", action="store_true", help="Also apply to non-internship roles (overrides strategy.json internships_only)")
     parser.add_argument("--include-held", action="store_true", help="Also run queue lines that have a pending-decision note")
     parser.add_argument("--daily-cap", type=int, default=None, help="Max submissions per day (default: strategy.json daily_cap)")
     parser.add_argument("--delay", type=float, default=2.0, help="Jitter delay between tasks per worker (default: 2.0s)")
@@ -260,6 +262,13 @@ def main():
     if not args.include_held:
         jobs = [j for j in jobs if not j["hold"]]
 
+    # Internships-only gate (strategy.json "internships_only"); --allow-fulltime overrides.
+    from agents.role_filter import reject_reason
+    before = len(jobs)
+    jobs = [j for j in jobs if not reject_reason(j.get("role") or "", args.allow_fulltime)]
+    if before != len(jobs):
+        print(f"[Parallel Runner] Internship gate removed {before - len(jobs)} non-internship postings.")
+
     if not jobs:
         print(f"[Parallel Runner] No jobs found in {queue_file.name}.")
         return
@@ -296,6 +305,7 @@ def main():
     site_failures = {}
     active_companies = set()
     claimed_indices = set()
+    blocked_urls = set()  # skipped for a reason that won't change this run: never re-checked after a queue reset
     in_flight_urls = set()
 
     active_pids: List[int] = []
@@ -365,7 +375,7 @@ def main():
 
                     unapplied_count = sum(
                         1 for j in fresh_jobs
-                        if j["url"].strip() not in applied_urls
+                        if j["url"].strip() not in applied_urls and j["url"].strip() not in blocked_urls  # attemptable, not just unapplied
                         and not (j["company"].strip().lower() and j["role"].strip().lower() and (j["company"].strip().lower(), j["role"].strip().lower()) in applied_pairs)
                     )
 
@@ -379,7 +389,7 @@ def main():
                                 fresh_jobs = [j for j in fresh_jobs if not j["hold"]]
                             unapplied_count = sum(
                                 1 for j in fresh_jobs
-                                if j["url"].strip() not in applied_urls
+                                if j["url"].strip() not in applied_urls and j["url"].strip() not in blocked_urls  # attemptable, not just unapplied
                                 and not (j["company"].strip().lower() and j["role"].strip().lower() and (j["company"].strip().lower(), j["role"].strip().lower()) in applied_pairs)
                             )
                         except Exception as e:
@@ -412,6 +422,10 @@ def main():
                     claimed_indices.add(scan_idx)
                     continue
 
+                if u in blocked_urls:
+                    claimed_indices.add(scan_idx)
+                    continue
+
                 if u in in_flight_urls:
                     continue
 
@@ -420,12 +434,12 @@ def main():
 
                 if not args.no_triage:
                     score, cat, why = RE.score_job(candidate["company"], candidate["role"], candidate["url"])
-                    if RE.is_protected(candidate["company"]):
+                    if RE.is_protected(candidate["company"]) and not args.allow_protected:
                         print(f"[{w_tag}][{scan_idx+1}] PROTECTED: {candidate['company']} requires manual handling. Skipping.")
-                        claimed_indices.add(scan_idx)
+                        claimed_indices.add(scan_idx); blocked_urls.add(u)
                         continue
                     if score < strat.get("min_fit_score", 5.0):
-                        claimed_indices.add(scan_idx)
+                        claimed_indices.add(scan_idx); blocked_urls.add(u)
                         continue
 
                     try:
@@ -434,24 +448,24 @@ def main():
                         dom = urllib.parse.urlparse(candidate["url"]).netloc.lower()
                         if get_vault().is_fast_fail(dom):
                             print(f"[{w_tag}][{scan_idx+1}] [Brain Fast-Fail] {dom} impassable barrier. Skipping.")
-                            claimed_indices.add(scan_idx)
+                            claimed_indices.add(scan_idx); blocked_urls.add(u)
                             continue
                     except Exception as e:
                         print(f"[{w_tag}] [Brain Fast-Fail] check failed, not applied: {e}")
 
                     sk = RE.site_key(candidate["url"])
                     if sk in strat.get("skip_sites", []) or RE.ats_of(candidate["url"])[0] in strat.get("skip_ats", []):
-                        claimed_indices.add(scan_idx)
+                        claimed_indices.add(scan_idx); blocked_urls.add(u)
                         continue
                     if site_failures.get(sk, 0) >= strat.get("max_failures_per_site_per_run", 5):
-                        claimed_indices.add(scan_idx)
+                        claimed_indices.add(scan_idx); blocked_urls.add(u)
                         continue
 
                     try:
                         from agents import smarts
                         ok, why_skip = smarts.should_attempt(candidate["company"], candidate["role"], candidate["url"])
                         if not ok:
-                            claimed_indices.add(scan_idx)
+                            claimed_indices.add(scan_idx); blocked_urls.add(u)
                             continue
                         if score >= 9:
                             from agents import outreach_drafter
@@ -541,6 +555,7 @@ def main():
                     is_live, dead_reason = job_validator.is_job_active(job["url"], timeout=4)
                     if not is_live:
                         print(f"[{w_prefix}] Pre-flight skip: Job closed/inactive ({dead_reason}). Advancing...")
+                        blocked_urls.add(job["url"].strip())
                         continue
                 except Exception as e:
                     print(f"[{w_prefix}] Pre-flight validator failed, continuing: {e}")
@@ -554,10 +569,21 @@ def main():
                 except Exception as e:
                     print(f"[{w_prefix}] Pre-submit guard failed, continuing: {e}")
 
-                # Strict Exclusion: Software Engineering & Heavy Coding
+                # Strict Exclusion: Pure Software Engineering & Heavy Low-Level Coding (exempting FDE, AI, Solutions, and Deployment roles)
                 role_str = (job.get("role") or "").lower()
-                if re.search(r"\b(software\s+(engineer|developer|dev)|full\s*stack|backend|frontend|mobile\s+dev|ios\s+dev|android\s+dev|ml\s+engineer|machine\s+learning\s+engineer|algorithm\s+engineer|compiler|sde\b|swe\b)\b", role_str):
-                    print(f"[{w_prefix}] [Exclusion Guard] Skipping SWE/coding role: {job['role']}")
+                from agents.role_filter import reject_reason as _rr
+                _why = _rr(job.get("role") or "", args.allow_fulltime)
+                if _why:
+                    print(f"[{w_prefix}] [Internship Gate] Skipping {_why}")
+                    blocked_urls.add(job["url"].strip())
+                    continue
+                is_fde_or_ai = bool(re.search(
+                    r"(?:forward[\s\-]*deploy|deployed\s+(?:software\s+)?engineer|\bfde\b|deployment\s+strategist|solutions?\s+engineer|field\s+engineer|sales\s+engineer|customer\s+engineer|ai\s+engineer|agent\s+engineer|automation\s+engineer|integration\s+engineer|implementation)",
+                    role_str
+                ))
+                if not is_fde_or_ai and re.search(r"\b(software\s+(engineer|developer|dev)|full\s*stack|backend|frontend|mobile\s+dev|ios\s+dev|android\s+dev|ml\s+engineer|machine\s+learning\s+engineer|algorithm\s+engineer|compiler|sde\b|swe\b)\b", role_str):
+                    print(f"[{w_prefix}] [Exclusion Guard] Skipping non-FDE SWE/coding role: {job['role']}")
+                    blocked_urls.add(job["url"].strip())  # re-picked every queue pass before (2026-11-11 live review)
                     continue
 
                 cmd = [
@@ -604,7 +630,8 @@ def main():
                 status = "submitted" if ret == 0 else "not_submitted"
                 if smarts:
                     smarts.site_record(job["url"], status, dur)
-                RE.ledger_add(job["company"], job["role"], job["url"], status)
+                if status != "submitted":  # fill.py logs its own submissions; logging here too counted each one twice
+                    RE.ledger_add(job["company"], job["role"], job["url"], status)
 
                 if ret == 0:
                     with state_lock:
@@ -635,6 +662,7 @@ def main():
                     sk = RE.site_key(job["url"])
                     with state_lock:
                         site_failures[sk] = site_failures.get(sk, 0) + 1
+                        blocked_urls.add(job["url"].strip())  # one attempt per run; was retried every queue pass
                     status_lbl = "SKIPPED (blocked/unanswerable)" if ret == 2 else f"EXIT_{ret}"
                     print(f"[{w_prefix}] {status_lbl}: {job['company']} failed after {dur}s.")
 

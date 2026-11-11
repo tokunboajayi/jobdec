@@ -6,14 +6,14 @@ from typing import List, Literal
 from pydantic import BaseModel
 from . import llm, jd_fetch, context, local
 
-CATEGORIES = ("product", "ai_automation", "analyst_data", "business_systems", "consulting_strategy",
-              "finance_tech", "swe", "other")
+CATEGORIES = ("fde", "ai_automation", "product", "analyst_data", "business_systems", "consulting_strategy",
+              "finance_tech", "early_career", "swe", "other")
 
 
 class ScoutResult(BaseModel):
     title: str
-    category: Literal["product", "ai_automation", "analyst_data", "business_systems",
-                      "consulting_strategy", "finance_tech", "swe", "other"]
+    category: Literal["fde", "ai_automation", "product", "analyst_data", "business_systems",
+                      "consulting_strategy", "finance_tech", "early_career", "swe", "other"]
     is_internship: bool
     term: str
     eligible: bool
@@ -30,14 +30,16 @@ SYSTEM = f"""You screen internship postings for one candidate and score how well
 {context.FACT_TEXT}
 
 # SCORING (fit_score is an integer 0-10)
-- 9-10: role is product / AI-automation / analyst / business-systems work AND the posting's must-haves are
-  clearly covered by the resume above.
-- 7-8: right role family, most requirements covered, minor gaps.
-- 5-6: adjacent role (consulting, finance-tech, operations) or notable gaps.
-- 0-4: software-engineering-heavy (writing production code is the core job), hardware, or major gaps.
-eligible=false (and fit_score 0) when the candidate cannot apply: requires a master's/PhD or graduating
-before May 2028 / "new grad", full-time or experienced hire, high school program, co-op that requires leaving
-school for a semester, non-US location without remote option, or a citizenship/clearance the facts rule out.
+- 9-10: role is Forward Deployed Engineering (FDE / Solutions Engineering / Customer-Facing AI Deployment),
+  AI & Automation (LLM/agentic workflows, Claude/Playwright/Python automation), Product & Delivery (PM/APM/TPM),
+  Data & Analytics (SQL, Python, Tableau, Power BI, Excel), Business Systems, or FinTech/Investment Analysis,
+  AND the posting's must-haves are clearly covered by the resume above.
+- 7-8: right role family (FDE, AI, Product, Analytics, Strategy/Consulting, FinTech), most requirements covered, minor gaps.
+- 5-6: adjacent software/engineering or operations role with moderate overlap.
+- 0-4: unrelated domain (helpdesk/IT support, cybersecurity SOC, hardware/embedded, pure low-level systems) or major gaps.
+eligible=false (and fit_score 0) when the candidate cannot apply: requires a master's/PhD, full-time experienced hire,
+high school program, co-op that requires leaving school for a full semester, non-US location without remote option,
+or an active security clearance the facts rule out.
 Use only facts above - never assume skills the resume doesn't show. reasons and gaps: 1-4 short items each.
 keywords: up to 8 skills/terms from the posting that the resume genuinely matches (used to reorder bullets).
 category is the role's main function. term: e.g. "Summer 2027", or "" if not stated."""

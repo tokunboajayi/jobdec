@@ -113,16 +113,16 @@ class FakeResp(io.BytesIO):
         return False
 
 
-def gemini_reply(text, finish="STOP"):
+def gemini_reply(text, finish="stop"):  # OpenRouter (OpenAI-format) reply; name kept for the tests below
     return FakeResp(json.dumps({
-        "candidates": [{"content": {"parts": [{"text": text}]}, "finishReason": finish}],
-        "usageMetadata": {"promptTokenCount": 10, "candidatesTokenCount": 5, "totalTokenCount": 15},
+        "choices": [{"message": {"role": "assistant", "content": text}, "finish_reason": finish}],
+        "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
     }).encode("utf-8"))
 
 
 @pytest.fixture
 def gemini(monkeypatch):
-    monkeypatch.setenv("GEMINI_API_KEY", "test-key-not-real")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key-not-real")
     calls = []
     replies = []
 
@@ -150,9 +150,9 @@ def test_action_is_a_proposal_not_applied_until_confirmed(eng, gemini):
 
     req = calls[0]
     assert "key=" not in req.full_url
-    assert req.get_header("X-goog-api-key") == "test-key-not-real"
+    assert req.get_header("Authorization") == "Bearer test-key-not-real"
     body = json.loads(req.data)
-    assert "<user_message>" in body["contents"][-1]["parts"][0]["text"]
+    assert "<user_message>" in body["messages"][-1]["content"]
 
     assert "Saved rule" in QE.apply_proposal(pid)
     assert rules()[-1]["q"] == re.escape("are you willing to relocate")
@@ -192,7 +192,7 @@ def test_retry_once_on_429_then_success(eng, gemini):
 
 def test_errors_and_blocked_replies_are_reported_honestly(eng, gemini):
     _, replies = gemini
-    replies += [gemini_reply("partial", finish="SAFETY")]
+    replies += [gemini_reply("partial", finish="content_filter")]
     answer, pid = QE.answer_natural_language_query("hello there")
     assert "AI assistant error" in answer and "SAFETY" in answer and pid is None
     replies += [urllib.error.HTTPError("u", 500, "x", {}, None), urllib.error.HTTPError("u", 500, "x", {}, None)]
@@ -209,7 +209,7 @@ def test_history_capped_and_prompt_has_no_contact_details(eng, gemini, monkeypat
         replies.append(gemini_reply(f"reply {i}"))
         QE.answer_natural_language_query(f"message number {i}")
     assert len(QE.load_chat_history()) == QE.HISTORY_TURNS
-    sys_text = json.loads(calls[-1].data)["systemInstruction"]["parts"][0]["text"]
+    sys_text = json.loads(calls[-1].data)["messages"][0]["content"]
     assert "Testy" in sys_text
     assert "555-0100" not in sys_text and "1 Test Street" not in sys_text
 

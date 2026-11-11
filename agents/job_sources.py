@@ -76,6 +76,12 @@ DIRECT_ATS_COMPANIES = [
     ("Toast", "greenhouse", "toast"),
     ("Chime", "greenhouse", "chime"),
     ("SoFi", "greenhouse", "sofi"),
+    ("Palantir", "lever", "palantir"),
+    ("Anduril", "greenhouse", "andurilindustries"),
+    ("C3 AI", "greenhouse", "c3iot"),
+    ("Cohere", "lever", "cohere"),
+    ("Linear", "ashby", "linear"),
+    ("Vercel", "greenhouse", "vercel"),
     ("Glean", "ashby", "glean"),
 ]
 
@@ -86,7 +92,9 @@ NON_US = re.compile(
 )
 
 INTERN_KEYWORDS = re.compile(
-    r"\b(intern|internship|co-op|coop|fellow|fellowship|early talent|early career|student|university|new grad|entry|associate|junior|fde|forward deployed|analyst|specialist|security|cyber|support|technician|administrator)\b",
+    r"\b(intern|internship|co-op|coop|fellow|fellowship|early talent|early career|student|university|new grad|"
+    r"entry|associate|junior|fde|forward deployed|forward-deployed|deployment strategist|solutions engineer|"
+    r"customer engineer|technical solutions|implementation|product|apm|analyst|analytics|automation|ai|agentic|strategy|operations|fintech)\b",
     re.I
 )
 GRAD_ONLY = re.compile(r"\b(phd|postdoc)\b", re.I)

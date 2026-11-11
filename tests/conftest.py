@@ -12,7 +12,7 @@ _TEST_HOME = pathlib.Path(tempfile.mkdtemp(prefix="jobdec-test-home-"))
 if (ROOT / "profile.json").exists():
     shutil.copy(ROOT / "profile.json", _TEST_HOME / "profile.json")
 os.environ["JOBDEC_HOME"] = str(_TEST_HOME)
-for _k in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "GEMINI_API_KEY", "ANTHROPIC_API_KEY"):
+for _k in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "GEMINI_API_KEY", "OPENROUTER_API_KEY", "ANTHROPIC_API_KEY"):
     os.environ.pop(_k, None)  # no test may message anyone or call a paid API
 
 

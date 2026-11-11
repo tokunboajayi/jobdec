@@ -58,7 +58,7 @@ def core_question(label):
 
 def _month_index(want):
     w = norm(want)
-    m = re.match(r"^(\d{1,2})(?:/\d{2,4})?$", w)
+    m = re.match(r"^(\d{1,2})(?:[/-]\d{1,2})?(?:[/-]\d{2,4})?$", w)  # 12, 12/2027, 12/10/2027 (Baird's month list failed on the last)
     if m and 1 <= int(m.group(1)) <= 12:
         return int(m.group(1)) - 1
     for i, name in enumerate(MONTHS):

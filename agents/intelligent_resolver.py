@@ -6,7 +6,7 @@ Grounded in the active candidate's master resume and .env facts (candidate.py).
 Architecture:
 1. Tier 1: Local Fast Vector & Rule Match (0 tokens, <2ms) via profile.json and semantic embeddings.
 2. Tier 2: Candidate Invariant Engine (0 tokens, <1ms) mapping standard ATS screening facts.
-3. Tier 3: DeepMind Gemini 3.5 Flash Reasoning (~0.4s) for novel, behavioral, or complex questions.
+3. Tier 3: OpenRouter model reasoning (agents/openrouter.py) for novel, behavioral, or complex questions.
 4. Tier 4: Resume-Grounded Local Synthesis Fallback (0 tokens) ensuring 100% resilience.
 5. Self-Healing Memory: Automatically persists resolved answers into profile.json and answers.json
    so future occurrences resolve instantly with 0 tokens.
@@ -79,37 +79,14 @@ def load_profile_rules() -> List[Dict[str, Any]]:
 
 
 def save_learned_rule(question: str, answer: str, option_pattern: Optional[str] = None):
-    """Persists a learned answer into profile.json and answers.json for zero-latency future matching."""
+    """Logs an AI-resolved answer to answers.json (audit trail; profile.json holds only the candidate's rules)."""
     try:
         clean_q = question.strip()
         if not clean_q or not answer:
             return
 
-        # 1. Update profile.json
-        if PROFILE_PATH.exists():
-            data = json.loads(PROFILE_PATH.read_text(encoding="utf-8"))
-        else:
-            data = {"rules": []}
-
-        rules = data.get("rules", [])
-        q_norm = clean_q.lower()
-        for r in rules[:50]:
-            if r.get("q", "").lower() == q_norm:
-                return
-
-        new_rule = {
-            "q": re.escape(clean_q) if len(clean_q) > 25 else clean_q,
-            "a": answer,
-            "src": "intelligent_resolver",
-            "added": str(date.today())
-        }
-        if option_pattern:
-            new_rule["option"] = option_pattern
-
-        rules.insert(0, new_rule)
-        data["rules"] = rules
-        PROFILE_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
-
+        # AI answers are logged, not added to profile.json: saved at the top of the rules they outranked the
+        # candidate's verified answers and kept AI mistakes forever ('Winter 2027', 'Search C3 AI' -> name)
         # 2. Append to answers.json
         answers_dict = {}
         if ANSWERS_PATH.exists():
@@ -148,12 +125,7 @@ def pick_best_matching_option(answer_text: str, options: List[str]) -> Optional[
         if re.search(pattern, opt, re.I):
             return opt
 
-    # 3. Starts with match
-    for opt in clean_opts:
-        if opt.lower().startswith(ans_low) or ans_low.startswith(opt.lower()):
-            return opt
-
-    # 4. Yes / No normalization
+    # 3. Yes / No normalization
     if ans_low in ["yes", "true", "y"]:
         for opt in clean_opts:
             if re.match(r"^(yes|authorized|eligible|i agree|agree|consent)\b", opt, re.I):
@@ -163,21 +135,10 @@ def pick_best_matching_option(answer_text: str, options: List[str]) -> Optional[
             if re.match(r"^(no|not|neither|decline|none)\b", opt, re.I):
                 return opt
 
-    # 5. Token overlap match
-    ans_tokens = set(re.findall(r"\w+", ans_low))
-    best_opt = None
-    max_overlap = 0
-    for opt in clean_opts:
-        opt_tokens = set(re.findall(r"\w+", opt.lower()))
-        overlap = len(ans_tokens.intersection(opt_tokens))
-        if overlap > max_overlap:
-            max_overlap = overlap
-            best_opt = opt
-
-    if max_overlap > 0:
-        return best_opt
-
-    return None
+    # 4. The shared strict matcher (aliases, dates, months). No token overlap: one shared word picked
+    #    "A person lawfully admitted for permanent residence" for "U.S. person" on 9 Anduril applications.
+    from agents import options as OPTS
+    return OPTS.resolve("", answer_text, clean_opts, semantic_ok=False)
 
 
 def synthesize_from_resume(
@@ -201,21 +162,32 @@ def synthesize_from_resume(
                     return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
                 return None
 
-        # Affirmative experience/authorization questions
-        if re.search(r"experience|knowledge|familiar|comfortable|proficient|authorized|willing|able|consent|agree", lab_low):
-            m = pick_best_matching_option("Yes", options)
-            if m: return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
+        # Accepting terms is the only option answered without a stated fact. Experience, legal and
+        # employment questions were answered "Yes"/"No"/first option here and went out false (2026-11-10:
+        # "Carnegie Mellon University", "Yes" to a referral program, "Yes" to humanoid-robot experience).
+        if re.search(r"\b(i accept|i agree|i acknowledge|consent to|agree to the)\b", lab_low):
+            m = pick_best_matching_option("Yes", options) or next((o for o in options if re.search(r"accept|agree|acknowledge", str(o), re.I)), None)
+            if m:
+                return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
+        return None
 
-        # Negative restrictions questions
-        if re.search(r"non-?compete|non-?solicit|felon|convict|conflict|previously.*employed", lab_low):
-            m = pick_best_matching_option("No", options)
-            if m: return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
-
-        # Pick best option heuristic
-        first_valid = [o for o in options if not re.match(r"^(select|choose|--)", str(o), re.I)]
-        if first_valid:
-            ans = first_valid[0]
-            return {"answer": ans, "option": f"^{re.escape(ans)}$", "confidence": "medium", "src": "resume_synthesis"}
+    if re.search(r"\b(resume|cv|cover letter|transcript|upload|attach)", lab_low):
+        return None  # a file field's text box never gets prose
+    # site search boxes and "if other / please specify" follow-ups got the pitch on 2026-11-11 ("Search",
+    # "START YOUR JOB SEARCH HERE"): prose only for a real open-ended question
+    if re.search(r"\b(search|keyword|filter)\b|^\s*if\b|please (specify|list)|if other", lab_low):
+        return None
+    if re.search(r"licen[cs]e|certif", lab_low) and not re.match(r"\s*(do|does|are|is|have|has)\b", lab_low):
+        # the candidate's own certificate lines (William Blair's "Licenses/Certifications" got the pitch)
+        certs = [re.split(r"\s*\|\s*", l.strip(" -*•"))[0] for l in get_resume_text().splitlines()
+                 if re.search(r"certificat|certified|license", l, re.I) and len(l.strip()) < 140 and not l.lstrip().startswith("#")]
+        return {"answer": "; ".join(dict.fromkeys(certs)) or "None", "option": None, "confidence": "high", "src": "resume_synthesis"}
+    # yes/no questions ("Do you identify as disabled?") never get prose: William Blair, 2026-11-11
+    if re.match(r"\s*(do|does|are|is|have|has|will|would|can|could|did|were|was|should|if)\b", lab_low):
+        return None
+    if not (field_type == "textarea" or
+            re.match(r"\s*(what|why|how|describe|tell|explain|share|please (describe|explain|tell|share)|in your own words)\b", lab_low)):
+        return None
 
     # Open-ended responses: the candidate's own pitch / skills facts, or a resume bullet quoted as written
     def _said(ans, conf="high"):
@@ -240,27 +212,28 @@ def synthesize_from_resume(
     return _said(C.fact("ELEVATOR_PITCH"), "medium")
 
 
-def resolve_with_gemini(
+def resolve_with_ai(
     label: str,
     field_type: str = "text",
     options: Optional[List[str]] = None,
     company: str = "",
     role: str = ""
 ) -> Optional[Dict[str, Any]]:
-    """Uses Google DeepMind Gemini to reason over the question with multi-model fallback and retries."""
-    key = os.getenv("GEMINI_API_KEY", "").strip()
-    if not key:
+    """Asks the OpenRouter model (agents/openrouter.py) to answer from the resume and facts. None on any failure."""
+    from agents import openrouter
+    if not openrouter.available():
         return None
 
     resume = get_resume_text()
     facts = get_profile_invariants()
-    facts_str = "\n".join(f"- {k}: {v}" for k, v in facts.items())
+    facts_str = "\n".join([f"- {k}: {v}" for k, v in facts.items()] + [f"- {s}" for s in C.standing_facts()])
 
     opts_str = ""
+    valid_opts = []
     if options:
-        valid_opts = [str(o).strip() for o in options if str(o).strip() and not re.match(r"^(select|choose|--)", str(o), re.I)]
+        valid_opts = [str(o).strip() for o in options if str(o).strip() and not re.match(r"^(select|choose|--)", str(o), re.I)][:60]
         if valid_opts:
-            opts_str = f"Available Options (Select EXACTLY ONE):\n" + "\n".join(f"  * {o}" for o in valid_opts[:15])
+            opts_str = f"Available Options (Select EXACTLY ONE, copied verbatim; if none is true for the candidate, answer \"\"):\n" + "\n".join(f"  * {o}" for o in valid_opts)
 
     system_prompt = (
         f"You are an expert AI Form Question Resolver for job applications, representing candidate {facts.get('full_name', 'the candidate')}.\n"
@@ -283,65 +256,31 @@ def resolve_with_gemini(
 
     user_prompt = (
         f"Company: {company or 'Target Company'}\n"
-        f"Role: {role or 'Cybersecurity / IAM / IT Role'}\n"
+        f"Role: {role or 'Internship'}\n"
         f"Field Type: {field_type}\n"
         f"Question Label: {label}\n"
         f"{opts_str}\n"
     )
 
-    models_to_try = ["gemini-3.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite"]
+    try:
+        raw_text, _ = openrouter.chat(system_prompt, [{"role": "user", "content": user_prompt}],
+                                      max_tokens=1200, temperature=0.1, json_mode=True, timeout=15)  # model spends ~200 tokens thinking first
+        parsed = json.loads(raw_text)
+    except (openrouter.OpenRouterError, ValueError):
+        return None
+    ans = str(parsed.get("answer") or "").strip()
+    opt = parsed.get("option")
+    if parsed.get("confidence") == "low":  # the model itself says the facts don't support an answer
+        return None
+    if valid_opts:  # a choice must be one of the real options, never free text the field would reject or misread
+        by_norm = {" ".join(o.split()).lower(): o for o in valid_opts}
+        chosen = by_norm.get(" ".join(str(opt or ans).split()).lower()) or pick_best_matching_option(str(opt or ans), valid_opts)
+        if not chosen:
+            return None
+        ans, opt = chosen, "^" + re.escape(chosen) + "$"
+    return {"answer": ans, "option": opt, "confidence": parsed.get("confidence", "low"),
+            "src": "openrouter", "rationale": parsed.get("rationale", "")}
 
-    for model_name in models_to_try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
-        payload = {
-            "systemInstruction": {"parts": [{"text": system_prompt}]},
-            "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
-            "generationConfig": {
-                "temperature": 0.1,
-                "maxOutputTokens": 300,
-                "responseMimeType": "application/json"
-            }
-        }
-
-        for attempt in range(2):
-            try:
-                req = urllib.request.Request(
-                    url,
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                    method="POST"
-                )
-                with urllib.request.urlopen(req, timeout=6) as resp:
-                    data = json.loads(resp.read().decode("utf-8"))
-                    raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                    parsed = json.loads(raw_text)
-
-                    ans = parsed.get("answer", "").strip()
-                    opt = parsed.get("option")
-                    conf = parsed.get("confidence", "high")
-
-                    if options and not opt:
-                        matched_opt = pick_best_matching_option(ans, options)
-                        if matched_opt:
-                            opt = matched_opt
-                            ans = matched_opt
-
-                    return {
-                        "answer": ans,
-                        "option": opt,
-                        "confidence": conf,
-                        "src": f"gemini_{model_name}",
-                        "rationale": parsed.get("rationale", "")
-                    }
-            except urllib.error.HTTPError as he:
-                if he.code in (503, 429) and attempt == 0:
-                    time.sleep(0.8)
-                    continue
-                break
-            except Exception:
-                break
-
-    return None
 
 
 def resolve_field(
@@ -356,21 +295,8 @@ def resolve_field(
     if not lab or len(lab) < 2:
         return None
 
-    # TIER 1: Check existing profile.json rules
-    rules = load_profile_rules()
-    for r in rules:
-        try:
-            q_pat = r.get("q", "")
-            if q_pat and re.search(q_pat, lab, re.I):
-                ans = r.get("a")
-                opt = r.get("option")
-                if options and opt:
-                    matched_opt = pick_best_matching_option(ans, options)
-                    if matched_opt:
-                        ans = matched_opt
-                return {"answer": ans, "option": opt, "src": r.get("src", "profile_rule"), "confidence": "high"}
-        except Exception:
-            pass
+    # (profile.json rules are matched by fill.rule_for before this is called; a second, unguarded substring
+    #  match here let a learned 'No' rule answer any label containing 'no')
 
     # TIER 2: Fast Invariant Check
     lab_low = lab.lower()
@@ -414,9 +340,11 @@ def resolve_field(
 
     # TIER 3: DeepMind Gemini Reasoning Engine
     print(f"  [AI Brain Reasoning] Evaluating novel field '{lab[:60]}' for {company}...")
-    ai_res = resolve_with_gemini(lab, field_type=field_type, options=options, company=company, role=role)
+    ai_res = resolve_with_ai(lab, field_type=field_type, options=options, company=company, role=role)
     if ai_res and ai_res.get("answer"):
-        save_learned_rule(lab, ai_res["answer"], ai_res.get("option"))
+        # only high-confidence choices become rules: an essay names this company and would be reused at the next one
+        if ai_res.get("confidence") == "high" and options:
+            save_learned_rule(lab, ai_res["answer"], ai_res.get("option"))
         return ai_res
 
     # TIER 4: Local Resume-Grounded Synthesis Fallback

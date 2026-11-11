@@ -22,37 +22,42 @@ def _resume_skills():
 
 
 RESUME_SKILLS = _resume_skills() | {
-    "cybersecurity", "active directory", "entra id", "azure ad", "group policy", "gpo", "user provisioning",
-    "access control", "least privilege", "azure sentinel", "siem", "wireshark", "packet analysis", "threat modeling",
-    "incident response", "mitre att&ck", "nist csf", "powershell", "python", "bash", "c++", "windows", "linux",
-    "vmware", "azure", "endpoint support", "pos terminal support", "technical support", "ticket documentation",
-    "sop documentation", "comptia security+", "security+", "information security", "network security",
-    "process mapping", "requirements", "stakeholder", "product specs", "roadmap", "workflow", "automation",
-    "data validation", "dashboard", "excel", "sql", "tableau", "power bi", "api", "llm", "ai",
-    "machine learning", "prompt", "agentic", "project management", "training", "process improvement",
-    "git", "sharepoint", "microsoft 365",
+    "forward deployed", "solutions engineering", "technical solutions", "customer engineering",
+    "claude api", "llm", "prompt engineering", "agentic", "multi-agent", "mcp", "playwright",
+    "python", "sql", "rust", "astro", "tailwind", "cloudflare", "stripe", "api",
+    "tableau", "power bi", "excel", "pivottables", "xlookup", "sumifs", "power query",
+    "dashboarding", "data validation", "data analysis", "analytics", "business intelligence",
+    "requirements documentation", "process mapping", "workflow mapping", "project tracking",
+    "roadmap", "rollout planning", "stakeholder communication", "product specs", "project management",
+    "workflow", "automation", "process improvement", "build-vs-buy", "competitive analysis",
+    "financial statement analysis", "dcf modeling", "comparable-company analysis",
+    "real estate underwriting", "scenario analysis", "acquisitions", "fintech",
+    "git", "github", "microsoft 365", "sharepoint", "ai", "machine learning",
 }
 # skills a posting may require that the resume does NOT show (become "gaps")
-HARD_SKILLS = {"java", "c#", "javascript", "typescript", "react", "node", "go", "golang", "rust", "kotlin",
-               "swift", "aws", "gcp", "kubernetes", "docker", "spark", "hadoop", "scala", "r programming",
-               "sas", "matlab", "salesforce", "sap", "figma", "jira", "data structures", "algorithms",
-               "cad", "solidworks", "verilog", "embedded", "computer vision", "deep learning"}
+HARD_SKILLS = {"java", "c#", "c++", "go", "golang", "kotlin", "swift", "kubernetes", "spark", "hadoop", "scala",
+               "r programming", "sas", "matlab", "sap", "cad", "solidworks", "verilog", "embedded",
+               "computer vision", "deep learning", "active clearance"}
 CATEGORY_TERMS = {
-    "cybersecurity": ["cybersecurity", "cyber", "information security", "infosec", "soc", "siem", "sentinel", "iam",
-                      "identity", "access control", "threat", "incident response", "vulnerability", "wireshark",
-                      "nist", "mitre", "security+", "network defense", "compliance", "grc", "endpoint"],
-    "it_support": ["technical support", "it support", "help desk", "desktop support", "sysadmin", "systems administrator",
-                   "endpoint", "active directory", "hardware", "software configuration", "pos", "troubleshoot", "deployment"],
+    "fde": ["forward deployed", "forward-deployed", "fde", "deployed engineer", "deployment engineer", "deployed software", "deployment strategist", "solutions engineer",
+            "technical solutions", "customer engineer", "implementation", "integration", "client-facing",
+            "stakeholder", "agentic", "ai deployment", "rollout", "product specs", "workflow", "prototype"],
+    "ai_automation": ["artificial intelligence", "ai operations", "ai ops", "mlops", "llmops", "model deployment", "evaluation", "generative ai", "llm", "machine learning", "automation", "prompt",
+                      "ai tools", "copilot", "agent", "agentic", "multi-agent", "mcp", "claude", "automat", "workflow", "playwright"],
     "product": ["product manag", "product owner", "roadmap", "user research", "prd", "requirements", "product strategy",
-                "go-to-market", "feature", "customer needs", "prioritiz", "product spec", "process map", "stakeholder"],
+                "go-to-market", "feature", "customer needs", "prioritiz", "product spec", "process map", "stakeholder", "program manag", "project manag", "rollout"],
     "analyst_data": ["analytics", "data analysis", "sql", "tableau", "power bi", "dashboard", "insights", "reporting",
-                     "excel", "kpi", "metrics", "data visualization"],
-    "ai_automation": ["artificial intelligence", "generative ai", "llm", "machine learning", "automation", "prompt",
-                      "ai tools", "copilot", "agent", "chatgpt", "claude", "automat", "workflow"],
+                     "excel", "kpi", "metrics", "data visualization", "data validation", "power query", "xlookup"],
     "business_systems": ["business systems", "erp", "process improvement", "business process", "systems analyst",
-                         "implementation", "enablement", "operations"],
-    "swe": ["software engineer", "data structures", "algorithms", "backend", "frontend", "full stack", "java",
-            "distributed systems", "code review", "production code", "computer science degree", "unit test"],
+                         "implementation", "enablement", "operations", "workflow mapping", "automation"],
+    "consulting_strategy": ["consulting", "strategy", "transformation", "competitive analysis", "benchmark",
+                            "build-vs-buy", "stakeholder", "market-entry", "business presentation", "advisory"],
+    "finance_tech": ["fintech", "financial statement", "dcf", "valuation", "underwriting", "acquisitions",
+                     "portfolio", "trading", "investment", "scenario analysis", "comparable-company", "stripe"],
+    "swe": ["software engineer", "data structures", "algorithms", "backend", "frontend", "full stack", "python",
+            "rust", "distributed systems", "code review", "production code", "unit test"],
+    "cybersecurity": ["cybersecurity", "soc", "siem", "sentinel", "incident response", "wireshark"],
+    "it_support": ["help desk", "desktop support", "sysadmin", "pos terminal"],
 }
 
 
@@ -88,7 +93,7 @@ def scout(company, role, url, jd):
     hits = {c: sum(t.count(term) for term in terms) for c, terms in CATEGORY_TERMS.items()}
     title_cat, _ = RE.classify_role(title, url, company)
     cat = title_cat if title_cat not in ("other", "ineligible") else max(hits, key=lambda c: hits[c])
-    if cat != "swe" and hits["swe"] >= 6 and hits["swe"] > 2 * max(hits[c] for c in hits if c != "swe"):
+    if cat not in ("swe", "fde", "ai_automation") and hits["swe"] >= 6 and hits["swe"] > 2 * max(hits[c] for c in hits if c != "swe"):
         cat = "swe"  # the description is really an engineering job
     kws = jd_keywords(jd)
     gaps = [g for g in sorted(HARD_SKILLS) if re.search(rf"(?<![a-z+#]){re.escape(g)}(?![a-z+#])", t)][:6]
@@ -173,8 +178,8 @@ def tailor_overlay(jd, category=""):
         if s.get("labeled"):
             labeled = [k for k, _ in sorted(s["labeled"], key=lambda kv: -rel(kv[1]))]
             labeled = [k for k in labeled if k not in ("Languages", "Interests")] + [k for k in ("Languages", "Interests") if k in dict(s["labeled"])]
-            if category == "ai_automation" or len(re.findall(r"\b(ai|llm|genai|machine learning)\b", t)) >= 8:
-                labeled = ["AI & Automation"] + [k for k in labeled if k != "AI & Automation"]   # lead with AI for AI roles
+            if category in ("fde", "ai_automation") or len(re.findall(r"\b(ai|llm|genai|machine learning|forward deployed|fde)\b", t)) >= 6:
+                labeled = ["AI & Automation", "Product & Delivery"] + [k for k in labeled if k not in ("AI & Automation", "Product & Delivery")]
     return {"bullet_order": bullet_order, "labeled_order": labeled,
             "section_order": [s["title"] for s in context.MASTER["sections"]]}
 
@@ -194,8 +199,9 @@ def _hook(category):
 
 
 LOOK_FOR = {
-    "product": "product manager", "analyst_data": "data / analytics team member", "ai_automation": "AI or automation team member",
-    "business_systems": "business systems analyst", "consulting_strategy": "consultant", "finance_tech": "analyst",
+    "fde": "forward deployed engineer / solutions engineer",
+    "product": "product manager", "analyst_data": "data / analytics team member", "ai_automation": "AI or automation engineer",
+    "business_systems": "business systems analyst", "consulting_strategy": "consultant", "finance_tech": "investment / fintech analyst",
 }
 
 
@@ -245,7 +251,9 @@ ASSESSMENT_RE = re.compile(
     re.I,
 )
 KINDS = [
-    ("offer", r"offer (letter|of employment)|pleased to (offer|extend)|we('d| would) like to offer"),
+    # explicit job offers only: "we'd like to offer you the opportunity to complete an assessment" is not one
+    ("offer", r"offer letter|offer of employment|(pleased|happy|excited) to (offer you|extend (you )?an offer)|"
+              r"(like|want) to (offer you|extend (you )?an offer) (the|a|an|this) (position|role|internship|job)"),
     ("rejection", r"unfortunately|not (be )?moving forward|other candidates|no longer (being )?considered|position has been filled|"
                   r"decided to pursue|will not be proceeding|regret to inform"),
     ("assessment", ASSESSMENT_RE.pattern),
