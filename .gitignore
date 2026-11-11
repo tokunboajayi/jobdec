@@ -1,10 +1,16 @@
 # secrets and personal data
-.env
+.env*
 *.env
+!.env.example
 profile.json
 .browser-profile/
 auth_state.json
-response_cache.json
+response_cache*.json
+*.bak*
+*.backup*
+agents/tailor_learning.json
+conversation_memory.md
+applications*.csv
 # runtime output
 __pycache__/
 *.pyc
@@ -51,8 +57,8 @@ brain/*.json
 .browser-profile*/
 .used_auth_codes.txt
 discovered_*.txt
-resumes/*
-!resumes/*.py
+# resumes live in the candidate home (JOBDEC_HOME) or one folder up, never in the repo
+/resumes/
 logs/
 profile.backup_*.json
 queue_replenished.txt

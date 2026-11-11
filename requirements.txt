@@ -6,8 +6,21 @@ pydantic>=2.13
 sentence-transformers>=5.7
 numpy>=2.5
 scikit-learn>=1.9
-# resume PDFs (resumes/resume_gen.py)
+# resume PDFs (<candidate home>/resumes/resume_gen.py) and reading them back
 reportlab>=5.0
+pypdf>=7.0
+# process / worker management (batch_apply_parallel, telegram bot, pc optimizer)
+psutil>=7.2
+# knowledge graph (brain/knowledge_graph.py)
+networkx>=3.7
+# optional: Telegram control bot (telegram_bot_service.py); job-queue extra for scheduled jobs
+python-telegram-bot[job-queue]>=22.8
+# optional: Telegram PDF previews (agents/telegram_visuals.py)
+Pillow>=12.3
+pypdfium2>=5.15
+# optional: Telegram voice notes (agents/voice_transcriber.py)
+SpeechRecognition>=3.17
+imageio-ffmpeg>=0.8
 # optional: Claude API agents (only used when ANTHROPIC_API_KEY is set)
 anthropic>=1.13
 # tests

@@ -179,7 +179,6 @@ class StealthEngine:
         # Use modern new headless mode if headless is requested
         if requested_headless:
             args.append("--headless=new")
-            args.append("--no-focus-on-init")
 
         # User-Agent matching standard desktop Google Chrome 129
         ua = (
@@ -188,14 +187,9 @@ class StealthEngine:
             "Chrome/129.0.0.0 Safari/537.36"
         )
 
-        # Enforce strict headless execution when requested so background workers never pop GUI windows or steal OS focus
-        effective_headless = requested_headless
-        if not requested_headless and tier == TIER_MANUAL:
-            effective_headless = False
-
         kwargs: Dict[str, Any] = {
             "user_data_dir": user_data_dir,
-            "headless": effective_headless,
+            "headless": False if tier == TIER_MANUAL else requested_headless,
             "viewport": {"width": vp_width, "height": vp_height},
             "user_agent": ua,
             "locale": "en-US",
