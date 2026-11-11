@@ -422,7 +422,9 @@ def resolve_field(
     # TIER 4: Local Resume-Grounded Synthesis Fallback
     fallback_res = synthesize_from_resume(lab, field_type=field_type, options=options, company=company, role=role)
     if fallback_res and fallback_res.get("answer"):
-        save_learned_rule(lab, fallback_res["answer"], fallback_res.get("option"))
+        # Only persist high-confidence grounded answers, never generic fallback text
+        if fallback_res.get("confidence") == "high":
+            save_learned_rule(lab, fallback_res["answer"], fallback_res.get("option"))
         return fallback_res
 
     return None

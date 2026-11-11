@@ -213,8 +213,8 @@ def find_matching_application(sender: str, subject: str, body: str, applications
     return None
 
 
-def update_application_stage(company: str, role: str, new_stage: str, next_action: str, action_date: str = "", decision_timestamp: str = "") -> bool:
-    """Updates the stage, next action, deadline, and decision timestamp of an application in applications.csv."""
+def update_application_stage(company: str, role: str, new_stage: str, next_action: str, action_date: str = "", decision_timestamp: str = "", email_link: str = "") -> bool:
+    """Updates the stage, next action, deadline, decision timestamp, and direct email link of an application in applications.csv."""
     app_csv = CAND.APPLICATIONS
     if not app_csv.exists():
         return False
@@ -226,6 +226,8 @@ def update_application_stage(company: str, role: str, new_stage: str, next_actio
 
     if "Decision Date" not in fieldnames:
         fieldnames.append("Decision Date")
+    if "Email Link" not in fieldnames:
+        fieldnames.append("Email Link")
 
     updated = False
     new_rank = STAGE_RANK.get(new_stage, 1)
@@ -244,6 +246,8 @@ def update_application_stage(company: str, role: str, new_stage: str, next_actio
                     r["Next Action Date"] = action_date
                 if decision_timestamp:
                     r["Decision Date"] = decision_timestamp
+                if email_link:
+                    r["Email Link"] = email_link
                 updated = True
                 break
 
@@ -294,12 +298,24 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
             if uid in cache:
                 continue
 
-            # Fetch email headers
-            _, h_rows = mail.uid("fetch", uid, "(BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE MESSAGE-ID)])")
+            # Fetch email headers and Gmail thread/message metadata
+            _, h_rows = mail.uid("fetch", uid, "(X-GM-THRID X-GM-MSGID BODY.PEEK[HEADER.FIELDS (FROM SUBJECT DATE MESSAGE-ID)])")
             if not h_rows or not isinstance(h_rows[0], tuple):
                 continue
 
-            hdr = email.message_from_bytes(h_rows[0][1])
+            hdr_meta = h_rows[0][0] if len(h_rows[0]) > 0 else b""
+            hdr_bytes = h_rows[0][1] if len(h_rows[0]) > 1 else b""
+            
+            # Extract Gmail thread ID for 1-click direct browser email opening
+            thrid_hex = ""
+            m_thrid = re.search(rb"X-GM-THRID\s+(\d+)", hdr_meta)
+            if m_thrid:
+                try:
+                    thrid_hex = hex(int(m_thrid.group(1)))[2:]
+                except Exception:
+                    thrid_hex = ""
+
+            hdr = email.message_from_bytes(hdr_bytes)
             sender = decode_str(hdr.get("From", ""))
             subject = decode_str(hdr.get("Subject", ""))
             date_raw = decode_str(hdr.get("Date", ""))
@@ -347,6 +363,14 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                 else:
                     deadline_str = (datetime.date.today() + datetime.timedelta(days=7)).strftime("%b %d, %Y")
 
+            import urllib.parse
+            if thrid_hex:
+                email_link = f"https://mail.google.com/mail/u/0/#all/{thrid_hex}"
+            elif msg_id:
+                email_link = f"https://mail.google.com/mail/u/0/#search/rfc822msgid%3A{urllib.parse.quote(msg_id)}"
+            else:
+                email_link = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(comp + ' ' + role)}"
+
             cache[uid] = {
                 "processed": True,
                 "matched": True,
@@ -356,7 +380,8 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                 "stage": decision["stage"],
                 "is_advancement": decision["is_advancement"],
                 "date": dec_timestamp,
-                "deadline": deadline_str
+                "deadline": deadline_str,
+                "email_link": email_link
             }
 
             # Update stage in ledger
@@ -367,17 +392,12 @@ def scan_and_track_decision_emails(days_back: int = 30) -> List[Dict[str, Any]]:
                     new_stage=decision["stage"],
                     next_action=decision["action_needed"],
                     action_date=deadline_str,
-                    decision_timestamp=dec_timestamp
+                    decision_timestamp=dec_timestamp,
+                    email_link=email_link
                 )
 
             # If candidate was selected / advanced to next round, record for Telegram alert
             if decision["is_advancement"]:
-                import urllib.parse
-                if msg_id:
-                    email_link = f"https://mail.google.com/mail/u/0/#search/rfc822msgid%3A{urllib.parse.quote(msg_id)}"
-                else:
-                    email_link = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(comp + ' ' + role)}"
-
                 advancement_item = {
                     "company": comp,
                     "role": role,
@@ -487,7 +507,8 @@ def get_decision_pipeline_summary() -> str:
             dec_date = a.get("Decision Date") or a.get("Date Applied") or "Recent"
             deadline = a.get("Next Action Date") or "Within 48h"
             job_url = (a.get("Job URL") or a.get("URL") or "").strip()
-            email_search = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(raw_co)}"
+            direct_email = (a.get("Email Link") or "").strip()
+            email_search = direct_email if direct_email.startswith("http") else f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(raw_co)}"
 
             links = []
             if job_url.startswith("http"):
@@ -513,7 +534,8 @@ def get_decision_pipeline_summary() -> str:
         stg = html.escape(a.get("Stage", "Applied"))
         dt = a.get("Decision Date") or a.get("Date Applied") or "Recent"
         job_url = (a.get("Job URL") or a.get("URL") or "").strip()
-        email_search = f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(raw_co)}"
+        direct_email = (a.get("Email Link") or "").strip()
+        email_search = direct_email if direct_email.startswith("http") else f"https://mail.google.com/mail/u/0/#search/{urllib.parse.quote(raw_co)}"
 
         links = []
         if job_url.startswith("http"):

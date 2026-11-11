@@ -244,7 +244,8 @@ def rule_for(label):
     global PROFILE
     PROFILE = CAND.profile()  # live reload: edits apply without restarting
     lab = label.lower()
-    lab_core = re.sub(r"[\s*:?]+$", "", lab.split(";")[0]).strip()
+    lab_core = re.sub(r"[\s*:?\u2731\u2217\u002a\uff0a]+$", "", lab.split(";")[0]).strip()
+    lab_clean = re.sub(r"[\s*:?\u2731\u2217\u002a\uff0a]+$", "", lab).strip()
     for r in PROFILE["rules"]:
         q = r.get("q") or r.get("question")
         if not q:
@@ -257,7 +258,7 @@ def rule_for(label):
                 continue
         else:
             try:
-                if not re.search(q, lab, re.I):
+                if not re.search(q, lab, re.I) and not re.search(q, lab_clean, re.I):
                     continue
             except Exception:
                 continue
@@ -402,14 +403,17 @@ def pick_option(options, rule, label=""):
 
 def find_form_target(page):
     """Finds the page or active child iframe that contains the actual form inputs (e.g. iCIMS, Oracle iframes)."""
-    for f in page.frames:
-        try:
-            if any(x in f.url.lower() for x in ["captcha", "hcaptcha", "recaptcha", "onetrust", "googletag", "cookie"]):
-                continue
-            if f.locator("input:not([type=hidden]), select, textarea").count() > 0:
-                return f
-        except Exception:
-            pass
+    try:
+        for f in page.frames:
+            try:
+                if any(x in f.url.lower() for x in ["captcha", "hcaptcha", "recaptcha", "onetrust", "googletag", "cookie"]):
+                    continue
+                if f.locator("input:not([type=hidden]), select, textarea").count() > 0:
+                    return f
+            except Exception:
+                pass
+    except Exception:
+        pass
     return page
 
 
@@ -1754,7 +1758,19 @@ def _fill_text(c):
 
 def fill_page(page, resume, overwrite, company="", role=""):
     target = find_form_target(page)
-    fields = target.evaluate(SCAN_JS)
+    try:
+        fields = target.evaluate(SCAN_JS)
+    except Exception as scan_ex:
+        if "crash" in str(scan_ex).lower() or "target closed" in str(scan_ex).lower() or "context destroyed" in str(scan_ex).lower():
+            print(f"[Fill Warning] Target crashed or navigated during scan ({scan_ex}). Retrying via page...")
+            time.sleep(1)
+            target = page
+            try:
+                fields = page.evaluate(SCAN_JS)
+            except Exception:
+                fields = []
+        else:
+            raise scan_ex
     print(f"[Fill] {len(fields)} fields on this page ({time.strftime('%H:%M:%S')})", flush=True)
     filled, unanswered, optional_skipped, needs_you = [], [], [], []
     st = SimpleNamespace(resume_done=False, last_verification_code=None, otp_attempted=False)
@@ -2305,7 +2321,13 @@ def main():
         steps, last_sig = 0, None
         pause_retries, no_btn_retries, stuck_retries, auth_retries = 0, 0, 0, 0
         while steps < 40:
-            page = ctx.pages[-1]
+            if not ctx.pages:
+                print("\n[Recovery] No open pages found in context - opening new tab...")
+                page = ctx.new_page()
+                page.goto(a.url, wait_until="domcontentloaded", timeout=30000)
+                settle(page, 3)
+            else:
+                page = ctx.pages[-1]
             try:
                 # Do not steal OS window focus during background/headless automation
                 if not headless_mode and getattr(a, "headful", False):
