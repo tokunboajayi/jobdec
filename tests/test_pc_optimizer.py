@@ -25,7 +25,9 @@ def test_pc_optimizer_trim_memory():
 
 def test_pc_optimizer_governor_backoff():
     gov = pco.AdaptiveCPUGovernor()
-    with patch("psutil.cpu_percent", return_value=30.0):
+    # memory is faked too: should_scale_down() reads RAM, and real usage made this flaky
+    with patch("psutil.cpu_percent", return_value=30.0), patch("psutil.virtual_memory") as low_mem:
+        low_mem.return_value.percent = 50.0
         assert gov.get_throttle_delay() == 0.0
         assert not gov.should_scale_down()
 
