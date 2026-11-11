@@ -57,7 +57,7 @@ from agents.decision_tracker import (
 )
 
 ROOT = Path(__file__).resolve().parent
-load_dotenv(ROOT / ".env")
+load_dotenv(candidate.ENV)
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID_STR = os.getenv("TELEGRAM_CHAT_ID", "").strip()

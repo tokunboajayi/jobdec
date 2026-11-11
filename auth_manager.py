@@ -13,10 +13,7 @@ from dotenv import load_dotenv
 HERE = pathlib.Path(__file__).resolve().parent
 import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 ENV_PATH = CAND.ENV
-if ENV_PATH.exists():
-    load_dotenv(ENV_PATH)
-else:
-    load_dotenv()
+load_dotenv(ENV_PATH)  # only this candidate's .env: a bare load_dotenv() found another person's file
 
 GMAIL_USER = os.getenv("GMAIL_EMAIL") or os.getenv("GMAIL_USER") or ""
 # Portal password comes ONLY from PORTAL_PASSWORD in .env. Never fall back to the Gmail password:

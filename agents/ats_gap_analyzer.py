@@ -6,14 +6,11 @@ import re
 from typing import Dict, Any, List
 from agents.ats_optimizer import _tokenize, _extract_phrases, ATS_SYNONYMS
 
-MASTER_SKILLS = [
-    "active directory", "group policy", "gpo", "rbac", "least privilege",
-    "identity and access management", "iam", "comptia security+", "security+",
-    "azure sentinel", "siem", "incident response", "log analysis",
-    "powershell", "python", "technical support", "it support", "hardware",
-    "deployment", "troubleshooting", "ticketing", "kennesaw state university",
-    "cybersecurity", "vulnerability management", "access control"
-]
+def master_skills() -> List[str]:
+    """Skill phrases and words from the active candidate's resume and facts (never a fixed person's list)."""
+    from agents import context
+    text = context.FACT_TEXT
+    return sorted(_extract_phrases(text) | {w for w in _tokenize(text) if len(w) > 3})
 
 
 def analyze_ats_gap(company: str, role: str = "Cybersecurity", jd_text: str = "") -> Dict[str, Any]:
@@ -27,6 +24,7 @@ def analyze_ats_gap(company: str, role: str = "Cybersecurity", jd_text: str = ""
 
     jd_words = list(_extract_phrases(jd_text)) + [w for w in _tokenize(jd_text) if len(w) > 3]
     
+    MASTER_SKILLS = master_skills()
     matched = []
     missing = []
     
@@ -61,7 +59,7 @@ def analyze_ats_gap(company: str, role: str = "Cybersecurity", jd_text: str = ""
         f"🔴 <b>Identified Gaps (Missing from Post):</b>\n"
         f"• " + (", ".join(f"<code>{k}</code>" for k in top_missing) if top_missing else "<i>Zero critical gaps detected!</i>") + "\n\n"
         f"💡 <b>Optimization Advice:</b>\n"
-        f"Resume permutation already emphasizes your CompTIA Security+, Active Directory, and Wolters Kluwer support experience. Ready for instant submission!"
+        + (f"Lead with {', '.join(top_matched[:3])} in your resume summary." if top_matched else "Add the posting's key skills you genuinely have to your resume.")
     )
 
     return {

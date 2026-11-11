@@ -1,6 +1,6 @@
 """
 Autonomous Decision & Stage Advancement Tracker for Job Deck.
-Scans incoming recruiting communications, detects when Michael Azuka is selected / advanced
+Scans incoming recruiting communications, detects when the active candidate is selected / advanced
 to the next stage (Technical Screen, Hiring Manager, Assessment, Final Round, Offer, or Rejection),
 updates applications.csv in real-time, and triggers instant high-priority Telegram alerts.
 """
@@ -20,7 +20,7 @@ _sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import candidate as CAND  # noqa: E402  # whose files these are (JOBDEC_HOME), see candidate.py
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parent
-CACHE_FILE = HERE / "decisions_cache.json"
+CACHE_FILE = CAND.DATA / "decisions_cache.json"
 
 # Stage definitions and precedence ranking (higher rank cannot be downgraded by lower rank)
 STAGE_RANK = {

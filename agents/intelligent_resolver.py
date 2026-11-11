@@ -1,7 +1,7 @@
 """
 Intelligent Autonomous Form Question Resolver (Job Deck AI Brain 2.0)
 Inspired by AIHawk & modern autonomous ATS application agents.
-Grounded in Michael Azuka's verified master resume and candidate profile invariants.
+Grounded in the active candidate's master resume and .env facts (candidate.py).
 
 Architecture:
 1. Tier 1: Local Fast Vector & Rule Match (0 tokens, <2ms) via profile.json and semantic embeddings.
@@ -18,124 +18,54 @@ import time
 import urllib.request
 import urllib.error
 from datetime import date
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-try:
-    from dotenv import load_dotenv
-    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-except Exception:
-    pass
+from . import context
+from .context import C  # the active candidate (JOBDEC_HOME): facts, profile.json, data folder
 
-ROOT = Path(__file__).resolve().parent.parent
-PROFILE_PATH = ROOT / "profile.json"
-ANSWERS_PATH = ROOT / "answers.json"
-RESUME_PATH = ROOT / "resumes" / "resume.pdf"
+PROFILE_PATH = C.PROFILE
+ANSWERS_PATH = C.DATA / "answers.json"
 
-_CACHED_RESUME_TEXT: Optional[str] = None
+# invariant name -> CANDIDATE_<KEY> in the candidate's .env; missing facts are left out, never filled in
+INVARIANT_FACTS = {
+    "full_name": "FULL_NAME", "first_name": "FIRST_NAME", "last_name": "LAST_NAME", "email": "EMAIL",
+    "phone": "PHONE", "phone_device_type": "PHONE_DEVICE_TYPE", "address": "ADDRESS_LINE_1", "city": "CITY",
+    "county": "COUNTY", "state": "STATE", "state_code": "STATE_CODE", "zip_code": "ZIP_CODE", "country": "COUNTRY",
+    "linkedin": "LINKEDIN_URL", "github": "GITHUB_URL", "school": "UNIVERSITY", "degree": "DEGREE", "major": "MAJOR",
+    "current_standing": "CURRENT_YEAR", "graduation_date": "EXPECTED_GRAD_DATE", "gpa": "GPA",
+    "citizenship": "CITIZENSHIP_COUNTRY", "us_citizen": "US_CITIZEN", "work_authorization": "LEGALLY_AUTHORIZED_US",
+    "requires_sponsorship": "REQUIRES_SPONSORSHIP", "future_sponsorship": "WILL_REQUIRE_FUTURE_SPONSORSHIP",
+    "security_clearance": "SECURITY_CLEARANCE", "age_18_or_older": "AGE_18_OR_OLDER", "date_of_birth": "DATE_OF_BIRTH",
+    "non_compete": "NON_COMPETE_RESTRICTIONS", "previous_employment_at_target": "PREVIOUSLY_EMPLOYED_AT_TARGET",
+    "relatives_at_target": "RELATIVES_AT_TARGET", "gender": "GENDER", "pronouns": "PRONOUNS",
+    "hispanic_latino": "HISPANIC_LATINO", "race_ethnicity": "RACE", "veteran_status": "VETERAN_STATUS",
+    "disability_status": "DISABILITY_STATUS", "willing_to_relocate": "WILLING_TO_RELOCATE",
+    "able_to_commute": "ABLE_TO_COMMUTE", "referral_source": "REFERRAL_SOURCE",
+}
 
 
 def get_resume_text() -> str:
-    """Extracts and caches the full plain text of the candidate's master resume."""
-    global _CACHED_RESUME_TEXT
-    if _CACHED_RESUME_TEXT:
-        return _CACHED_RESUME_TEXT
-
-    if RESUME_PATH.exists():
-        try:
-            import pypdf
-            reader = pypdf.PdfReader(str(RESUME_PATH))
-            text = "\n".join(p.extract_text() or "" for p in reader.pages).strip()
-            if len(text) > 200:
-                _CACHED_RESUME_TEXT = text
-                return _CACHED_RESUME_TEXT
-        except Exception:
-            pass
-
-    _CACHED_RESUME_TEXT = """
-Michael Azuka
-404-645-0373 | mazuka146@gmail.com | linkedin.com/in/michael-azuka | Atlanta, GA (Powder Springs, GA 30127)
-
-EDUCATION:
-- Kennesaw State University — B.S. in Cybersecurity, Minor in Information Technology (Expected Graduation: Dec 2026, Senior, GPA: 3.00/4.00)
-- Kennesaw State University — M.S. in Cybersecurity (Accepted, Starting Spring 2027)
-- Relevant Coursework: Network Defense, Ethical Hacking, Applied Cryptography, Wireshark packet analysis, threat modeling, MITRE ATT&CK, NIST CSF.
-
-PROFESSIONAL EXPERIENCE:
-1. Wolters Kluwer, Tax & Accounting North America — Professional Technical Support Intern (Oct 2026 – Feb 2027)
-   - Troubleshoot customer-reported account access issues via phone, chat, and email, restoring login and permissions access for Tax & Accounting customers.
-   - Resolve billing discrepancies and client-end software errors in CCH ProSystem fx (PFX) tax software, working directly with customers to isolate root cause and apply fixes.
-   - Diagnose client-end software configuration issues across the product suite, escalating complex cases while closing routine issues independently.
-2. Castles Technology — Deployment & Technical Support Specialist (Jul 2026 – Sep 2026)
-   - Installed, configured, and tested POS hardware and client-specific software on a multi-technician deployment team shipping ~500 devices per week against client deadlines.
-   - Diagnosed hardware and software configuration faults across simultaneous client deployments in a high-volume environment, keeping delivery cycles on schedule.
-   - Logged device configurations, test results, and issue resolutions in tracking database, maintaining audit-ready records for team and client review.
-
-TECHNICAL PROJECTS:
-- Identity & Access Automation: Active Directory Automation Lab (PowerShell automation for user provisioning and offboarding, GPO configuration, repeatable audit workflows).
-- Security Monitoring: Azure Sentinel SIEM Lab (Threat-detection simulation, alert rule tuning, MITRE ATT&CK mapping and incident documentation).
-
-CERTIFICATIONS & SKILLS:
-- CompTIA Security+ (Sep 2026): Threats, IAM, network security, incident response.
-- NSF BPC AI & Machine Learning Certificate (Jul 2025).
-- Identity & Access: Active Directory, Entra ID (Azure AD), Group Policy Objects, User Provisioning & Deprovisioning, Identity Lifecycle Management, Access Control, Least Privilege.
-- Security Tools: Azure Sentinel, Wireshark, Packet Analysis, Threat Modeling, Incident Response, MITRE ATT&CK, NIST CSF.
-- Technical Tools: PowerShell, Python, Bash, Windows, Linux, VMware, Azure, Endpoint & POS Support.
-"""
-    return _CACHED_RESUME_TEXT
+    """Plain text of the active candidate's master resume (agents/context.py MASTER)."""
+    return context.resume_text()
 
 
 def get_profile_invariants() -> Dict[str, str]:
-    """Returns canonical verified invariants for candidate Michael Azuka."""
-    return {
-        "full_name": "Michael Azuka",
-        "first_name": "Michael",
-        "last_name": "Azuka",
-        "email": "mazuka146@gmail.com",
-        "phone": "404-645-0373",
-        "phone_device_type": "Mobile",
-        "address": "4020 Saint George Walk SW",
-        "city": "Powder Springs",
-        "county": "Cobb",
-        "state": "Georgia",
-        "state_code": "GA",
-        "zip_code": "30127",
-        "country": "United States of America",
-        "linkedin": "https://www.linkedin.com/in/michael-azuka",
-        "github": "https://github.com/1Zuski",
-        "school": "Kennesaw State University",
-        "degree": "Bachelor of Science",
-        "major": "Cybersecurity",
-        "minor": "Information Technology",
-        "current_standing": "Senior",
-        "graduation_date": "December 2026",
-        "gpa": "3.00",
-        "citizenship": "United States of America",
-        "us_citizen": "Yes",
-        "work_authorization": "Yes",
-        "requires_sponsorship": "No",
-        "future_sponsorship": "No",
-        "security_clearance": "None",
-        "age": "24",
-        "age_18_or_older": "Yes",
-        "date_of_birth": "09/20/2002",
-        "birth_month": "September",
-        "birth_day": "20",
-        "birth_year": "2002",
-        "non_compete": "No",
-        "felony_or_convictions": "No",
-        "previous_employment_at_target": "No",
-        "relatives_at_target": "No",
-        "gender": "Male",
-        "pronouns": "He/Him",
-        "hispanic_latino": "No",
-        "race_ethnicity": "Black or African American",
-        "veteran_status": "I am not a protected veteran",
-        "disability_status": "No, I do not have a disability",
-        "willing_to_relocate": "Yes",
-        "able_to_commute": "Yes",
-        "referral_source": "LinkedIn"
-    }
+    """The active candidate's verified facts from their .env; unknown facts are absent."""
+    facts = {k: C.fact(v) for k, v in INVARIANT_FACTS.items()}
+    return {k: v for k, v in facts.items() if v}
+
+
+def _best_resume_line(keywords: List[str]) -> Optional[Tuple[str, str]]:
+    """(org, bullet) of the resume bullet sharing the most keywords, or None when none matches."""
+    best, best_hits = None, 0
+    for sec in context.MASTER.get("sections", []):
+        for e in sec.get("entries", []):
+            for b in e.get("bullets", []):
+                hits = sum(k in b.lower() for k in keywords)
+                if hits > best_hits:
+                    best, best_hits = (re.sub(r"<[^>]+>", "", e.get("org", "")).strip(), b), hits
+    return best
+
 
 
 def load_profile_rules() -> List[Dict[str, Any]]:
@@ -256,24 +186,20 @@ def synthesize_from_resume(
     options: Optional[List[str]] = None,
     company: str = "",
     role: str = ""
-) -> Dict[str, Any]:
-    """Zero-Token Local Resume-Grounded Synthesis Fallback."""
+) -> Optional[Dict[str, Any]]:
+    """Zero-Token Local Resume-Grounded Synthesis Fallback. None when nothing the candidate stated answers it."""
     lab_low = label.lower()
 
     if options:
-        # Check standard selections
-        if re.search(r"gender\b", lab_low):
-            m = pick_best_matching_option("Male", options)
-            if m: return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
-        if re.search(r"race|ethnic", lab_low):
-            m = pick_best_matching_option("Black or African American", options)
-            if m: return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
-        if re.search(r"disabilit", lab_low):
-            m = pick_best_matching_option("No, I do not have a disability", options) or pick_best_matching_option("No", options)
-            if m: return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
-        if re.search(r"veteran", lab_low):
-            m = pick_best_matching_option("I am not a protected veteran", options) or pick_best_matching_option("No", options)
-            if m: return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
+        # Self-identification questions: only the candidate's own stated answer, else leave for a human
+        facts = get_profile_invariants()
+        for pat, key in ((r"gender\b", "gender"), (r"race|ethnic", "race_ethnicity"),
+                         (r"disabilit", "disability_status"), (r"veteran", "veteran_status")):
+            if re.search(pat, lab_low):
+                m = pick_best_matching_option(facts[key], options) if facts.get(key) else None
+                if m:
+                    return {"answer": m, "option": f"^{re.escape(m)}$", "confidence": "high", "src": "resume_synthesis"}
+                return None
 
         # Affirmative experience/authorization questions
         if re.search(r"experience|knowledge|familiar|comfortable|proficient|authorized|willing|able|consent|agree", lab_low):
@@ -291,30 +217,27 @@ def synthesize_from_resume(
             ans = first_valid[0]
             return {"answer": ans, "option": f"^{re.escape(ans)}$", "confidence": "medium", "src": "resume_synthesis"}
 
-    # Open-ended responses grounded in resume
+    # Open-ended responses: the candidate's own pitch / skills facts, or a resume bullet quoted as written
+    def _said(ans, conf="high"):
+        return {"answer": ans, "option": None, "confidence": conf, "src": "resume_synthesis"} if ans else None
+
     if any(k in lab_low for k in ["why", "interest", "seek", "apply for this role"]):
-        ans = f"With hands-on experience in cybersecurity, identity and access management (IAM), and systems automation, I am eager to apply my technical and troubleshooting skills to secure critical infrastructure and drive measurable results at {company or 'your team'}."
-        return {"answer": ans, "option": None, "confidence": "high", "src": "resume_synthesis"}
-
-    if any(k in lab_low for k in ["iam", "identity", "active directory", "provisioning"]):
-        ans = "I automated user provisioning, deprovisioning, and Group Policy configurations in Active Directory using PowerShell, streamlining user lifecycle management into repeatable, audit-ready workflows."
-        return {"answer": ans, "option": None, "confidence": "high", "src": "resume_synthesis"}
-
-    if any(k in lab_low for k in ["siem", "sentinel", "threat", "incident", "detection"]):
-        ans = "In my Azure Sentinel SIEM project, I simulated threat-detection scenarios to generate alerts, tuned Sentinel alert rules, and documented remediation logic mapped to MITRE ATT&CK and NIST CSF standards."
-        return {"answer": ans, "option": None, "confidence": "high", "src": "resume_synthesis"}
-
-    if any(k in lab_low for k in ["troubleshoot", "support", "technical error", "fault"]):
-        ans = "At Wolters Kluwer and Castles Technology, I resolved enterprise customer account access issues, diagnosed complex software configuration faults, and ensured hardware deployments met strict audit standards."
-        return {"answer": ans, "option": None, "confidence": "high", "src": "resume_synthesis"}
+        return _said(C.fact("ELEVATOR_PITCH"))
 
     if any(k in lab_low for k in ["strength", "greatest strength", "skills"]):
-        ans = "My core strengths are systems troubleshooting, identity lifecycle management, and security automation using PowerShell, Python, Active Directory, and Azure Sentinel."
-        return {"answer": ans, "option": None, "confidence": "high", "src": "resume_synthesis"}
+        top = C.fact("TOP_SKILLS")
+        return _said(f"My core strengths are {top}." if top else "")
 
-    # General authentic fallback
-    ans = "I bring hands-on experience in cybersecurity, identity and access management (IAM), and technical support, backed by my CompTIA Security+ certification and KSU Cybersecurity degree."
-    return {"answer": ans, "option": None, "confidence": "medium", "src": "resume_synthesis"}
+    for keys in (["iam", "identity", "active directory", "provisioning", "access"],
+                 ["siem", "sentinel", "threat", "incident", "detection"],
+                 ["troubleshoot", "support", "technical error", "fault"]):
+        if any(k in lab_low for k in keys):
+            hit = _best_resume_line(keys + re.findall(r"[a-z]{4,}", lab_low))
+            if hit:
+                return _said(f"At {hit[0]}, I {hit[1][:1].lower() + hit[1][1:]}." if hit[0] else hit[1])
+
+    # General fallback: the candidate's own pitch, or nothing (a human answers it)
+    return _said(C.fact("ELEVATOR_PITCH"), "medium")
 
 
 def resolve_with_gemini(
@@ -331,7 +254,7 @@ def resolve_with_gemini(
 
     resume = get_resume_text()
     facts = get_profile_invariants()
-    facts_str = "\n".join(f"- {k}: {v}'" for k, v in facts.items())
+    facts_str = "\n".join(f"- {k}: {v}" for k, v in facts.items())
 
     opts_str = ""
     if options:
@@ -340,7 +263,7 @@ def resolve_with_gemini(
             opts_str = f"Available Options (Select EXACTLY ONE):\n" + "\n".join(f"  * {o}" for o in valid_opts[:15])
 
     system_prompt = (
-        "You are an expert AI Form Question Resolver for job applications, representing candidate Michael Azuka.\n"
+        f"You are an expert AI Form Question Resolver for job applications, representing candidate {facts.get('full_name', 'the candidate')}.\n"
         "Your task is to accurately and concisely answer the application question using ONLY the candidate's real resume and verified facts.\n\n"
         "=== CANDIDATE MASTER RESUME ===\n"
         f"{resume}\n"
@@ -351,8 +274,8 @@ def resolve_with_gemini(
         "STRICT ANSWERING RULES:\n"
         "1. Never hallucinate facts or numbers not in the resume.\n"
         "2. If options are provided, your answer MUST match one of the available options exactly.\n"
-        "3. For Yes/No questions: Michael is a US Citizen, authorized without sponsorship, Senior graduating Dec 2026, 24 years old (born Sep 20 2002), has NO criminal record, NO non-compete, and NO relatives at the company.\n"
-        "4. For technical experience: Michael has hands-on experience in Active Directory, PowerShell automation, Azure Sentinel SIEM, packet analysis, and enterprise software support.\n"
+        "3. For Yes/No and personal questions (citizenship, sponsorship, age, demographics, legal history): use ONLY the CANDIDATE INVARIANTS; if the fact is not listed, return an empty answer with confidence \"low\".\n"
+        "4. For technical experience: claim only what the resume shows.\n"
         "5. For open-ended questions: write 1-3 concise, authentic, professional sentences in first person.\n"
         "Output strictly valid JSON with this format:\n"
         '{"answer": "exact answer value", "option": "matching option if dropdown/radio else null", "confidence": "high"|"medium"|"low", "rationale": "one sentence reason"}'
@@ -471,24 +394,23 @@ def resolve_field(
     m_zip_digit = re.search(r"(?:zip|postal).*digit\s*([1-5])\b", lab_low)
     if m_zip_digit:
         digit_idx = int(m_zip_digit.group(1))
-        zip_str = "30127"
-        ans_char = zip_str[digit_idx - 1]
-        return {"answer": ans_char, "option": f"^{ans_char}$", "src": "zip_digit_invariant", "confidence": "high"}
+        zip_str = C.fact("ZIP_CODE")
+        if len(zip_str) >= digit_idx:
+            ans_char = zip_str[digit_idx - 1]
+            return {"answer": ans_char, "option": f"^{ans_char}$", "src": "zip_digit_invariant", "confidence": "high"}
 
-    if re.search(r"authorized.*to.*work|legal(ly)?.*authoriz|right.*to.*work", lab_low):
-        return {"answer": "Yes", "option": r"^Yes\b", "src": "invariant", "confidence": "high"}
-    if re.search(r"require.*sponsor|visa.*sponsor|sponsorship.*future", lab_low):
-        return {"answer": "No", "option": r"^No\b", "src": "invariant", "confidence": "high"}
-    if re.search(r"at least 18|18 or older|over 18|current age|your age", lab_low):
-        if "what" in lab_low or "enter" in lab_low:
-            return {"answer": "24", "option": r"24|18 or older", "src": "invariant", "confidence": "high"}
-        return {"answer": "Yes", "option": r"^Yes\b", "src": "invariant", "confidence": "high"}
-    if re.search(r"date of birth|birth date|dob|birthdate", lab_low):
-        return {"answer": "09/20/2002", "option": r"09/20/2002", "src": "invariant", "confidence": "high"}
-    if re.search(r"non-?compete|non-?solicit", lab_low):
-        return {"answer": "No", "option": r"^No\b", "src": "invariant", "confidence": "high"}
-    if re.search(r"security.*clearance", lab_low):
-        return {"answer": "None", "option": r"None|No clearance", "src": "invariant", "confidence": "high"}
+    # Yes/No screening facts: answered only when the candidate's .env states them (no age is ever derived)
+    for pat, key in ((r"authorized.*to.*work|legal(ly)?.*authoriz|right.*to.*work", "LEGALLY_AUTHORIZED_US"),
+                     (r"require.*sponsor|visa.*sponsor|sponsorship.*future", "REQUIRES_SPONSORSHIP"),
+                     (r"at least 18|18 or older|over 18", "AGE_18_OR_OLDER"),
+                     (r"date of birth|birth date|\bdob\b|birthdate", "DATE_OF_BIRTH"),
+                     (r"non-?compete|non-?solicit", "NON_COMPETE_RESTRICTIONS"),
+                     (r"security.*clearance", "SECURITY_CLEARANCE")):
+        if re.search(pat, lab_low):
+            ans = C.fact(key)
+            if ans:
+                return {"answer": ans, "option": rf"^{re.escape(ans)}\b", "src": "invariant", "confidence": "high"}
+            break
 
     # TIER 3: DeepMind Gemini Reasoning Engine
     print(f"  [AI Brain Reasoning] Evaluating novel field '{lab[:60]}' for {company}...")

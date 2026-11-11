@@ -33,7 +33,7 @@ from dotenv import load_dotenv
 import candidate
 
 ROOT = Path(__file__).resolve().parent.parent
-load_dotenv(ROOT / ".env")
+load_dotenv(candidate.ENV)
 
 # Configuration from .env or defaults
 IMESSAGE_ENABLED = os.getenv("IMESSAGE_ENABLED", "true").lower() in ("true", "1", "yes")

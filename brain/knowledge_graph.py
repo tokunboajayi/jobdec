@@ -16,6 +16,15 @@ HERE = pathlib.Path(__file__).resolve().parent
 AUTOFILL_DIR = HERE.parent
 ROOT_DIR = AUTOFILL_DIR.parent
 
+import sys  # noqa: E402
+sys.path.insert(0, str(AUTOFILL_DIR))
+import candidate  # noqa: E402  # whose data this graph is built from (JOBDEC_HOME)
+
+
+def _data_paths(name: str, legacy: List[pathlib.Path]) -> List[pathlib.Path]:
+    """The candidate's own copy of a runtime file; the original single-user locations when no candidate home is set."""
+    return [candidate.DATA / name] if candidate.HOME else legacy
+
 
 class JobdecKnowledgeGraph:
     """Enterprise Knowledge Graph for candidate facts, referral paths, and ATS intelligence."""
@@ -33,7 +42,7 @@ class JobdecKnowledgeGraph:
 
         # Load profile facts if available
         prof_data = {}
-        prof_path = self.autofill_dir / "profile.json"
+        prof_path = candidate.PROFILE
         if prof_path.exists():
             try:
                 prof_data = json.loads(prof_path.read_text(encoding="utf-8"))
@@ -255,29 +264,27 @@ class JobdecKnowledgeGraph:
 
         # Fallback baseline for test environments only
         if not loaded_any and (os.getenv("PYTEST_CURRENT_TEST") or os.getenv("DEMO_MODE") == "1"):
-            experiences = [
+            experiences = [  # fictional people/companies only: never a real candidate's history
                 {
-                    "id": "Exp:DeltaAirLines",
-                    "org": "Delta Air Lines",
-                    "role": "Project Management Intern, Airport Customer Service",
+                    "id": "Exp:ExampleLogistics",
+                    "org": "Example Logistics Co",
+                    "role": "Operations Automation Intern",
                     "metrics": [
-                        "Automated shift-selection workflows handling 50,000+ employee bids",
-                        "Reduced manual coordination by 150+ hours across frontline operations",
-                        "Built 6 Excel trackers across 8 workstreams for 20,000 workforce",
-                        "Cleaned 3,000+ workflow records remediating 2,500 exceptions",
+                        "Automated shift scheduling workflows for a regional operations team",
+                        "Built Python scripts that cut manual workflow coordination",
+                        "Built Excel trackers for project status across workstreams",
                     ],
-                    "skills": ["Python", "Process Automation", "Excel", "Data Cleaning", "Tableau", "Requirements Specs"],
+                    "skills": ["Python", "Process Automation", "Excel", "Data Cleaning", "Requirements Specs"],
                 },
                 {
-                    "id": "Exp:WAInvestments",
-                    "org": "W. A Investments & Development",
-                    "role": "AI Research & Acquisitions Analyst",
+                    "id": "Exp:SampleVentures",
+                    "org": "Sample Ventures LLC",
+                    "role": "Research Analyst",
                     "metrics": [
-                        "Evaluated rent payment SaaS and Stripe Connect architectures",
-                        "Benchmarked acquisition targets across real estate holding portfolios",
-                        "Built corporate website with modern full-stack architectures",
+                        "Compared SaaS payment platforms for a build-vs-buy decision",
+                        "Benchmarked acquisition targets for firm leadership",
                     ],
-                    "skills": ["Agentic AI", "Market Research", "Financial Benchmarking", "Python", "SQL", "Full Stack"],
+                    "skills": ["Market Research", "Financial Benchmarking", "SQL"],
                 },
             ]
             for exp in experiences:
@@ -298,7 +305,8 @@ class JobdecKnowledgeGraph:
 
     def _ingest_tracker(self, cand_id: str, uni_name: str):
         """Ingests LinkedIn networking contacts, stages, and referral edges from tracker.csv."""
-        tracker_paths = [self.autofill_dir / "tracker.csv", self.autofill_dir.parent / "tracker.csv", self.autofill_dir.parent.parent / "tracker.csv"]
+        alum_key = (uni_name if uni_name != "University" else "").lower()
+        tracker_paths = _data_paths("tracker.csv", [self.autofill_dir / "tracker.csv", self.autofill_dir.parent / "tracker.csv", self.autofill_dir.parent.parent / "tracker.csv"])
         for p in tracker_paths:
             if not p.exists():
                 continue
@@ -320,7 +328,7 @@ class JobdecKnowledgeGraph:
                         comp_id = self.add_company(firm)
 
                         # Determine tags/affiliations
-                        is_gsu = any(k in role.lower() or k in hook.lower() for k in ["robinson", "gsu", "georgia state"])
+                        is_alum = bool(alum_key) and (alum_key in role.lower() or alum_key in hook.lower())
                         is_mlt = "mlt" in role.lower() or "mlt" in hook.lower()
                         is_hm = any(k in role.lower() for k in ["manager", "lead", "director", "head", "vp", "tpm"])
 
@@ -334,14 +342,14 @@ class JobdecKnowledgeGraph:
                             hook=hook,
                             url=url,
                             is_hiring_manager=is_hm,
-                            is_gsu_alum=is_gsu,
+                            is_alum=is_alum,
                             is_mlt_fellow=is_mlt,
                         )
 
                         self.graph.add_edge(contact_id, comp_id, relation="WORKS_AT", role=role)
                         self.graph.add_edge(cand_id, contact_id, relation="NETWORKING_WITH", stage=stage)
 
-                        if is_gsu:
+                        if is_alum:
                             self.graph.add_edge(contact_id, f"Institution:{uni_name}", relation="ALUMNUS_OF")
                         if is_mlt:
                             self.graph.add_edge(contact_id, "Institution:Management Leadership for Tomorrow (MLT)", relation="FELLOW_OF")
@@ -355,7 +363,7 @@ class JobdecKnowledgeGraph:
                 {"name": "Alex Mercer", "firm": "American Express", "role": "Senior Engineering Manager", "stage": "Chat Done", "is_hm": True, "is_alum": True, "hook": "Alumnus & Engineering lead"},
                 {"name": "Sarah Lin", "firm": "American Express", "role": "Product Lead - Fraud Systems", "stage": "Replied", "is_hm": True, "is_alum": False, "hook": "Shared connections in fintech"},
                 {"name": "Marcus Vance", "firm": "American Express", "role": "Staff Cloud Security Architect", "stage": "Accepted", "is_hm": False, "is_alum": True, "hook": "Alumnus in Cyber/Cloud"},
-                {"name": "David Ross", "firm": "Delta Air Lines", "role": "Director of IT Operations", "stage": "Chat Done", "is_hm": True, "is_alum": True, "hook": "Operations automation"},
+                {"name": "David Ross", "firm": "Southwest Airlines", "role": "Director of IT Operations", "stage": "Chat Done", "is_hm": True, "is_alum": True, "hook": "Operations automation"},
                 {"name": "Elena Rostova", "firm": "JPMorgan Chase", "role": "VP Cybersecurity Operations", "stage": "Replied", "is_hm": True, "is_alum": False, "hook": "SIEM & SOC monitoring"},
                 {"name": "James Thornton", "firm": "The Home Depot", "role": "Lead Systems Engineer", "stage": "Chat Done", "is_hm": True, "is_alum": True, "hook": "Store systems infrastructure"},
                 {"name": "Priya Patel", "firm": "Microsoft", "role": "Principal Security Program Manager", "stage": "Replied", "is_hm": True, "is_alum": False, "hook": "Identity & Entra ID workflows"},
@@ -378,7 +386,7 @@ class JobdecKnowledgeGraph:
                     hook=c["hook"],
                     url=f"https://www.linkedin.com/in/{c['name'].lower().replace(' ', '-')}",
                     is_hiring_manager=c["is_hm"],
-                    is_gsu_alum=c["is_alum"],
+                    is_alum=c["is_alum"],
                     is_mlt_fellow=False
                 )
                 self.graph.add_edge(contact_id, comp_id, relation="WORKS_AT", role=c["role"])
@@ -390,7 +398,7 @@ class JobdecKnowledgeGraph:
         Allows new users and active job scouts to instantly populate their Knowledge Graph
         with real-time discovered roles, target companies, ATS platforms, and fit scores.
         """
-        queue_paths = [
+        queue_paths = [candidate.DATA / "queue_ranked.txt", candidate.DATA / "queue.txt"] if candidate.HOME else [
             self.autofill_dir / "queue_ranked.txt",
             self.autofill_dir / "queue.txt",
             self.workspace_root / "queue.txt",
@@ -483,7 +491,7 @@ class JobdecKnowledgeGraph:
 
     def _ingest_applications(self, cand_id: str):
         """Ingests jobs, ATS types, and application outcomes from applications.csv."""
-        app_paths = [self.autofill_dir / "applications.csv", self.autofill_dir.parent / "applications.csv", self.autofill_dir.parent.parent / "applications.csv"]
+        app_paths = [candidate.APPLICATIONS] if candidate.HOME else [self.autofill_dir / "applications.csv", self.autofill_dir.parent / "applications.csv", self.autofill_dir.parent.parent / "applications.csv"]
         for p in app_paths:
             if not p.exists():
                 continue
@@ -541,11 +549,11 @@ class JobdecKnowledgeGraph:
 
     def _ingest_outreach_log(self, cand_id: str):
         """Ingests live LinkedIn outreach campaign pitches, dates sent, and follow-ups from outreach_log.csv."""
-        log_paths = [
+        log_paths = _data_paths("outreach_log.csv", [
             self.workspace_root / "outreach_log.csv",
             self.autofill_dir.parent / "outreach_log.csv",
             self.autofill_dir / "outreach_log.csv",
-        ]
+        ])
         for p in log_paths:
             if not p.exists():
                 continue
@@ -609,7 +617,7 @@ class JobdecKnowledgeGraph:
 
     def _ingest_outreach_drafts(self, cand_id: str):
         """Ingests role-targeted LinkedIn connection drafts from outreach_drafts.csv."""
-        draft_path = self.autofill_dir / "outreach_drafts.csv"
+        draft_path = _data_paths("outreach_drafts.csv", [self.autofill_dir / "outreach_drafts.csv"])[0]
         if not draft_path.exists():
             return
         try:
@@ -657,7 +665,7 @@ class JobdecKnowledgeGraph:
 
     def _ingest_results(self, cand_id: str):
         """Ingests live application execution outcomes, ATS infrastructure, and confirmation logs from results.csv."""
-        res_path = self.autofill_dir / "results.csv"
+        res_path = _data_paths("results.csv", [self.autofill_dir / "results.csv"])[0]
         if not res_path.exists():
             return
         try:
@@ -728,7 +736,7 @@ class JobdecKnowledgeGraph:
 
     def _ingest_profile_rules(self, cand_id: str):
         """Ingests verified candidate form rules, compliance constraints, and answers from profile.json."""
-        prof_path = self.autofill_dir / "profile.json"
+        prof_path = candidate.PROFILE
         if not prof_path.exists():
             return
         try:
@@ -809,9 +817,9 @@ class JobdecKnowledgeGraph:
                     warmth += 25
                     reasons.append("Hiring Manager / Team Lead")
 
-                if c_data.get("is_gsu_alum"):
+                if c_data.get("is_alum"):
                     warmth += 20
-                    reasons.append("Georgia State / Robinson Alum")
+                    reasons.append(f"{candidate.fact('UNIVERSITY') or 'University'} alum")
 
                 if c_data.get("is_mlt_fellow"):
                     warmth += 20

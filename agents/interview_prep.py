@@ -2,7 +2,7 @@
 Interview Battlecard & Prep Dossier Generator.
 Generates comprehensive, targeted interview dossiers for upcoming recruiter screens,
 technical interviews, and team rounds. Tailors technical questions, STAR model answers,
-and reverse-inquiries strictly grounded in Michael Azuka's verified background.
+and reverse-inquiries strictly grounded in the active candidate's master resume.
 """
 import os
 import re
@@ -12,43 +12,27 @@ from typing import Dict, Any, List
 
 from . import context, jd_fetch, intelligent_tailor
 
-INTERVIEWS_DIR = Path(__file__).resolve().parent.parent / "briefings" / "interviews"
+INTERVIEWS_DIR = context.C.DATA / "briefings" / "interviews"
 
-STAR_STORIES = {
-    "iam": {
-        "title": "Active Directory & Identity Lifecycle Automation",
-        "situation": "In my Active Directory Automation Lab, manual user onboarding and offboarding created operational delays and inconsistent permissions.",
-        "task": "Automate user provisioning and deprovisioning to ensure audit-ready compliance and enforce least-privilege access.",
-        "action": "Developed PowerShell scripts to parse incoming user records, provision accounts into specific Organizational Units (OUs), and automatically apply Group Policy Objects (GPOs) for role-based access control.",
-        "result": "Streamlined the identity lifecycle into a repeatable, documented, and fully auditable workflow."
-    },
-    "soc": {
-        "title": "Azure Sentinel SIEM Threat Detection & Alert Tuning",
-        "situation": "In my Azure Sentinel SIEM Lab, raw alert feeds generated excessive noise, making rapid threat triage challenging.",
-        "task": "Simulate real-world attacks, detect threats, and tune alert rules to minimize false positives.",
-        "action": "Configured attack simulation scenarios across monitored endpoints, evaluated trigger frequencies, and tuned KQL-based alert rules mapped to MITRE ATT&CK techniques and NIST CSF standards.",
-        "result": "Documented remediation playbooks and reduced alert fatigue with precise detection logic."
-    },
-    "support": {
-        "title": "High-Volume Enterprise Technical Support & Access Restoration",
-        "situation": "At Wolters Kluwer, tax professionals experienced critical software configuration faults and account lockouts during peak filing periods.",
-        "task": "Quickly isolate root cause, restore system permissions, and close incidents while maintaining customer trust.",
-        "action": "Diagnosed client-end CCH ProSystem fx software errors, restored database access via phone and chat, and drafted standardized troubleshooting notes.",
-        "result": "Independently closed routine access tickets while collaborating smoothly on complex escalations."
-    },
-    "deployment": {
-        "title": "High-Volume Hardware & Software Deployment",
-        "situation": "At Castles Technology, client rollout deadlines required rapid hardware staging and software imaging under tight SLAs.",
-        "task": "Configure, test, and deploy POS hardware and client-specific firmware across simultaneous rollouts.",
-        "action": "Worked on a multi-technician deployment team shipping approximately 500 devices per week, performing hardware diagnostics, database logging, and QA validation before shipment.",
-        "result": "Maintained on-time delivery cycles with zero SLA penalties and audit-ready configuration logs."
+def star_story(analysis: Dict[str, Any]) -> Dict[str, str]:
+    """STAR outline built from the candidate's best-matching resume entry; the wording stays the resume's own."""
+    picks = intelligent_tailor.best_bullets(analysis, 1)
+    if not picks:
+        return {"title": "Your strongest project", "situation": "Pick the resume entry closest to this role.",
+                "task": "", "action": "", "result": ""}
+    top = picks[0]
+    same = [x["bullet"] for x in intelligent_tailor.candidate_brief()["experience"] if x["org"] == top["org"] and x["bullet"] != top["bullet"]]
+    return {
+        "title": top["org"],
+        "situation": f"{top['role']} at {top['org']}." if top["role"] else f"At {top['org']}.",
+        "task": "Say what you were asked to deliver and why it mattered.",
+        "action": top["bullet"],
+        "result": same[0] if same else "State the outcome using only the facts on your resume.",
     }
-}
-
 
 def generate_interview_battlecard(company: str, role: str, url: str = "", jd_text: str = "") -> Dict[str, Any]:
     """
-    Generates an executive-level Interview Battlecard for Michael Azuka.
+    Generates an executive-level Interview Battlecard for the active candidate.
     Saves markdown dossier to briefings/interviews/<slug>_battlecard.md.
     """
     if not jd_text and url:
@@ -61,11 +45,13 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
     comp_clean = analysis["company_clean"]
     role_clean = analysis["role_clean"]
     domain = analysis["domain"]
+    me = intelligent_tailor.candidate_brief()
+    employer = me["employers"][0] if me["employers"] else ""
+    story = star_story(analysis)
 
     # Select domain-specific technical focus
     if domain == "iam":
         domain_title = "Identity & Access Management (IAM) & Directory Services"
-        star_story = STAR_STORIES["iam"]
         core_questions = [
             ("Explain your experience automating user provisioning in Active Directory.",
              "Walk through my PowerShell automation lab: scripting account creation, assigning OUs, applying GPOs, and implementing immediate deprovisioning to eliminate orphaned accounts."),
@@ -74,11 +60,10 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
             ("What is the role of Group Policy Objects (GPOs) in identity governance?",
              "GPOs enforce consistent security baselines across domain-joined machines, such as password complexity, lockout thresholds, and software restriction policies."),
             ("How do you handle customer account access or authentication issues?",
-             "Cite my Wolters Kluwer experience: verifying user identity, checking account lockouts and permissions in identity directories, and documenting root cause."),
+             (f"Cite my {employer} experience: " if employer else "") + "verify user identity, check account lockouts and permissions, and document root cause."),
         ]
     elif domain == "soc_analyst":
         domain_title = "Security Operations (SOC), SIEM & Incident Response"
-        star_story = STAR_STORIES["soc"]
         core_questions = [
             ("How do you approach investigating a potential security incident?",
              "Follow the NIST Incident Response lifecycle: Preparation, Detection & Analysis (triage alert in Sentinel, inspect Wireshark PCAP), Containment, Eradication, and Lessons Learned."),
@@ -87,16 +72,15 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
             ("How do you analyze packet captures in Wireshark?",
              "Filter on suspicious IP/ports (TCP/UDP), examine handshake anomalies, follow TCP streams to inspect payload headers, and flag unencrypted credentials or beaconing."),
             ("How do you evaluate phishing risks?",
-             "Reference my Mastercard job simulation: inspect email headers, SPF/DKIM/DMARC records, malicious attachments, and calculate department-level exposure."),
+             "Inspect email headers, SPF/DKIM/DMARC records and attachments, then estimate which users were exposed."),
         ]
     elif domain == "it_support":
         domain_title = "Technical Support, Systems Diagnostics & Operations"
-        star_story = STAR_STORIES["support"]
         core_questions = [
             ("Tell me about a time you handled a difficult technical issue under pressure.",
-             "At Wolters Kluwer, tax accounting clients faced urgent software crashes near deadlines. I isolated client-end configuration faults, verified permissions, and restored access calmly."),
+             f"Use the STAR story below ({story['title']}): situation, what you did, and the result, in that order."),
             ("How do you ensure audit readiness when managing devices or tickets?",
-             "At Castles Technology, I logged every device serial number, test result, and hardware repair in the tracking database before shipping ~500 devices per week."),
+             "Log every change, test result and fix where the team can audit it, and close tickets with the root cause written down."),
             ("What steps do you take when troubleshooting a network connectivity issue?",
              "Check physical connections, verify IP configuration (ipconfig/ifconfig, DHCP lease), test local gateway reachability with ping, verify DNS resolution (nslookup), and inspect proxy/firewall settings."),
             ("How do you communicate technical issues to non-technical users?",
@@ -104,9 +88,9 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
         ]
     else:
         domain_title = "Cybersecurity Systems & Infrastructure Defense"
-        star_story = STAR_STORIES["iam"]
         core_questions = [
-            ("What does the CompTIA Security+ certification cover that you apply practically?",
+            (f"What does your {me['certs'][0]} certification cover that you apply practically?" if me["certs"]
+             else "Which security fundamentals do you apply most in practice?",
              "Threat landscape analysis, IAM governance, network architecture security, incident response procedures, and vulnerability mitigation."),
             ("How do you automate repetitive administrative or security tasks?",
              "Use PowerShell for Windows/Active Directory environments and Python or Bash for Linux log parsing and system health monitoring."),
@@ -134,7 +118,7 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
     lines = [
         f"# 🎯 Interview Battlecard: {comp_clean} — {role_clean}",
         f"**Date Generated:** {now_str} | **Domain:** {domain_title}",
-        f"**Candidate:** Michael Azuka (B.S. Cybersecurity, CompTIA Security+)",
+        f"**Candidate:** {me['name']}" + (f" ({', '.join(x for x in (me['major'], *me['certs'][:1]) if x)})" if me['major'] or me['certs'] else ""),
         "",
         "---",
         "",
@@ -142,16 +126,19 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
         f"- **Target Company:** {comp_clean}",
         f"- **Position:** {role_clean}",
         f"- **Core Security Focus:** {domain_title}",
-        f"- **Candidate Pitch:** KSU Cybersecurity senior with enterprise technical support experience (Wolters Kluwer, Castles Tech) and hands-on lab automation (Active Directory PowerShell provisioning, Azure Sentinel SIEM tuning).",
+        f"- **Candidate Pitch:** " + " ".join(x for x in (
+            f"{me['major']} student at {me['school']}." if me['school'] else "",
+            f"Experience at {', '.join(me['employers'])}." if me['employers'] else "",
+            f"Certified: {', '.join(me['certs'])}." if me['certs'] else "") if x),
         "",
         "---",
         "",
         "## 🌟 Primary STAR Model Story (Memorize This)",
-        f"### **{star_story['title']}**",
-        f"- **Situation:** {star_story['situation']}",
-        f"- **Task:** {star_story['task']}",
-        f"- **Action:** {star_story['action']}",
-        f"- **Result:** {star_story['result']}",
+        f"### **{story['title']}**",
+        f"- **Situation:** {story['situation']}",
+        f"- **Task:** {story['task']}",
+        f"- **Action:** {story['action']}",
+        f"- **Result:** {story['result']}",
         "",
         "---",
         "",
@@ -176,7 +163,7 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
         "**Pre-Flight Checklist:**",
         "- [ ] Test microphone, webcam, and stable internet connection 15 mins prior.",
         "- [ ] Have Candidate_Resume.pdf and project notes open on second screen.",
-        "- [ ] Re-read Wolters Kluwer and Active Directory automation talking points.",
+        f"- [ ] Re-read the {story['title']} STAR story and the talking points above.",
         "- [ ] Send thank-you note within 12 hours of completing the interview.",
     ])
 
@@ -189,7 +176,7 @@ def generate_interview_battlecard(company: str, role: str, url: str = "", jd_tex
         f"🏢 <b>Company:</b> {comp_clean}\n"
         f"💼 <b>Role:</b> {role_clean}\n"
         f"🛡️ <b>Domain:</b> {domain_title}\n\n"
-        f"⭐ <b>Core STAR Story:</b> <i>{star_story['title']}</i>\n\n"
+        f"⭐ <b>Core STAR Story:</b> <i>{story['title']}</i>\n\n"
         f"📁 <i>Full dossier saved to: <code>briefings/interviews/{out_file.name}</code></i>"
     )
 

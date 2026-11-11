@@ -5,7 +5,7 @@ Same output shapes as the AI versions, so the rest of the pipeline can't tell th
 
 Uses only: the full job description (fetched over plain HTTP), the master resume, profile.json.
 """
-import datetime, os, re
+import datetime, re
 from . import context
 
 # ---------------------------------------------------------------- vocabulary
@@ -180,14 +180,19 @@ def tailor_overlay(jd, category=""):
 
 
 # ---------------------------------------------------------------- 4. outreach drafter
-HOOKS = {
-    "product": "at Delta I turned station requirements into product specs and process maps",
-    "analyst_data": "at Delta I built trackers and cleaned 3,000+ workflow records",
-    "ai_automation": "I build with the Claude API and automated bid workflows at Delta",
-    "business_systems": "at Delta I automated shift-bid workflows for frontline teams",
-    "consulting_strategy": "I've done acquisition research and benchmarking at W. A Investments",
-    "finance_tech": "I built DCF and comparable-company analyses as a JPMorgan extern",
-}
+def _hook(category):
+    """'at <org> I <first clause of the resume bullet that best fits the category>', or "" without bullets."""
+    terms = CATEGORY_TERMS.get(category, [])
+    lines = [(re.sub(r"<[^>]+>", "", e.get("org", "")).strip(), b) for s in context.MASTER["sections"]
+             for e in s.get("entries", []) for b in e.get("bullets", [])]
+    if not lines:
+        return ""
+    org, bullet = max(lines, key=lambda x: sum(t in x[1].lower() for t in terms))
+    clause = re.split(r",\s|;\s| – | — ", bullet)[0].strip().rstrip(".")[:110]
+    clause = clause[:1].lower() + clause[1:] if len(clause) > 1 and clause[1].islower() else clause
+    return f"at {org} I {clause}" if org else clause
+
+
 LOOK_FOR = {
     "product": "product manager", "analyst_data": "data / analytics team member", "ai_automation": "AI or automation team member",
     "business_systems": "business systems analyst", "consulting_strategy": "consultant", "finance_tech": "analyst",
@@ -197,14 +202,23 @@ LOOK_FOR = {
 def outreach(company, role, category):
     short = re.sub(r"\s*[\(\[].*$", "", role).strip()
     short = short[:60]
-    first = os.getenv("CANDIDATE_FIRST_NAME", "Tokunbo")
-    uni = os.getenv("CANDIDATE_UNIVERSITY", "Georgia State")
-    hook = HOOKS.get(category, "at Delta I automated workflows for frontline teams")
-    note = f"Hi! I just applied to the {short} role at {company}. I'm a student at {uni}, and {hook}. I'd like to connect and learn how your team works. - {first}"
+    first = context.C.fact("FIRST_NAME")
+    uni = context.C.fact("UNIVERSITY")
+    hook = _hook(category)
+    sign = f" - {first}" if first else ""
+    me = f"I'm a student at {uni}." if uni else ""
+    if uni and hook:
+        about = f"I'm a student at {uni}, and {hook}."
+    else:
+        about = me or (hook[:1].upper() + hook[1:] + "." if hook else "")
+    ask = f"I'd like to connect and learn how your team works.{sign}"
+    note = " ".join(x for x in (f"Hi! I just applied to the {short} role at {company}.", about, ask) if x)
     if len(note) > 300:
-        note = f"Hi! I just applied to the {short[:40]} role at {company}. I'm a student at {uni} and would like to connect and learn how your team works. - {first}"
-    look = ["campus / university recruiter", f"Georgia State or MLT alum at {company}", LOOK_FOR.get(category, "team member in that function")]
-    return {"look_for": look, "search_keywords": "university recruiter OR \"Georgia State\"", "note": note, "hook": hook}
+        note = " ".join(x for x in (f"Hi! I just applied to the {short[:40]} role at {company}.", me, ask) if x)
+    alum = f"{uni} alum at {company}" if uni else f"alum of your school at {company}"
+    look = ["campus / university recruiter", alum, LOOK_FOR.get(category, "team member in that function")]
+    keywords = f"university recruiter OR \"{uni}\"" if uni else "university recruiter"
+    return {"look_for": look, "search_keywords": keywords, "note": note, "hook": hook}
 
 
 # ---------------------------------------------------------------- 5. inbox analyst
@@ -267,55 +281,66 @@ def _gpa_rule(label):
     if not m:
         return None
     need = float(m.group(1))
-    yes = 3.35 >= need if re.search(r"above|at least|minimum|or (higher|greater|better)|exceed", label, re.I) else None
+    try:
+        gpa = float(context.C.fact("GPA"))
+    except ValueError:
+        return None  # GPA unknown: don't answer
+    yes = gpa >= need if re.search(r"above|at least|minimum|or (higher|greater|better)|exceed", label, re.I) else None
     if yes is None:
         return None
-    return ("Yes" if yes else "No"), ("^Yes" if yes else "^No"), "Cumulative GPA: 3.35"
+    return ("Yes" if yes else "No"), ("^Yes" if yes else "^No"), f"Cumulative GPA: {gpa}"
 
 
-FACT_MAP = [  # (question regex, answer, option regex, fact it comes from)
+_F = context.C.fact  # this candidate's .env facts; a rule whose fact is unknown is dropped below
+_GRAD, _YEAR, _MAJOR, _UNI = _F("EXPECTED_GRAD_DATE"), _F("CURRENT_YEAR"), _F("MAJOR"), _F("UNIVERSITY")
+_GRAD_YEAR = (re.findall(r"\d{4}", _GRAD) or [""])[-1]
+_EMPLOYERS = ", ".join(context.employers())
+_CITIZEN = "U.S. Citizen" if _F("US_CITIZEN").lower().startswith("y") else ""
+
+_FACT_MAP = [  # (question regex, answer, option regex, fact it comes from)
     (r"pursu\w* .{0,30}(bachelor|undergraduate)|currently (an? )?(undergraduate|college) student|currently enrolled",
-     "Yes", "^Yes", "Bachelor of Business Administration"),
-    (r"expected graduation|graduation (date|month|year|term)|when (do|will) you graduate", "May 2028", "May 2028|2028",
-     "Expected Graduation: May 2028"),
+     _F("CURRENTLY_ENROLLED"), "^" + _F("CURRENTLY_ENROLLED"), f"Currently enrolled: {_F('CURRENTLY_ENROLLED')}"),
+    (r"expected graduation|graduation (date|month|year|term)|when (do|will) you graduate", _GRAD,
+     "|".join(re.escape(x) for x in (_GRAD, _GRAD_YEAR) if x), f"Expected Graduation: {_GRAD}"),
     (r"(current )?(year in school|class standing|academic (year|level|standing)|school year|year of study)|what year .{0,25}in (school|college)",
-     "Junior", "Junior|Third|3rd",
-     "Undergraduate junior"),
-    (r"authori[sz]ed to work|legally (eligible|authori[sz]ed)|eligible to work in the (u\.?s|united states)", "Yes", "^Yes",
-     "authorized to work in the US"),
-    (r"sponsor", "No", "^No", "never needs visa sponsorship"),
-    (r"u\.?s\.? citizen|citizen of the united states", "Yes", "^Yes", "US citizen"),
-    (r"at least 18|18 years|over 18|age of 18", "Yes", "^Yes", "Undergraduate junior"),
-    (r"willing to relocate|open to relocat|relocation", "Yes", "^Yes", "Open to relocating"),
-    (r"\b(major|field of study|area of study|concentration)\b", "Cybersecurity",
-     "Cybersecurity|Information Technology|Computer Science|Information Systems", "Cybersecurity"),
-    (r"(school|university|college|institution) (name|attending)|which (school|university)", "Kennesaw State University",
-     "Kennesaw State University|^Kennesaw\\b|Kennesaw", "Kennesaw State University"),
+     _YEAR, re.escape(_YEAR), f"Undergraduate {_YEAR.lower()}"),
+    (r"authori[sz]ed to work|legally (eligible|authori[sz]ed)|eligible to work in the (u\.?s|united states)",
+     _F("LEGALLY_AUTHORIZED_US"), "^" + _F("LEGALLY_AUTHORIZED_US"), "authorized to work in the US"),
+    (r"sponsor", _F("REQUIRES_SPONSORSHIP"), "^" + _F("REQUIRES_SPONSORSHIP"), "visa sponsorship need"),
+    (r"u\.?s\.? citizen|citizen of the united states", _F("US_CITIZEN"), "^" + _F("US_CITIZEN"), "US citizen"),
+    (r"at least 18|18 years|over 18|age of 18", _F("AGE_18_OR_OLDER"), "^" + _F("AGE_18_OR_OLDER"), "18 or older"),
+    (r"willing to relocate|open to relocat|relocation", _F("WILLING_TO_RELOCATE"), "^" + _F("WILLING_TO_RELOCATE"),
+     "Open to relocating"),
+    (r"\b(major|field of study|area of study|concentration)\b", _MAJOR, re.escape(_MAJOR), _MAJOR),
+    (r"(school|university|college|institution) (name|attending)|which (school|university)", _UNI, re.escape(_UNI), _UNI),
     (r"transcript|official or unofficial transcript|provide.*transcript", "Yes", "^Yes", "Able to provide official or unofficial academic transcripts upon request."),
     (r"documentation establishing.*(identity|right to work)|identity and right to work|right to work in the country", "Yes", "^Yes", "authorized to work in the US"),
-    (r"current us status|select your current us status", "U.S. Citizen", "U\\.?S\\.? Citizen|Citizen", "US citizen"),
-    (r"current enrollment class status|enrollment.*class.*status|class status", "Senior", "Senior|Junior|Undergraduate", "Undergraduate senior"),
+    (r"current us status|select your current us status", _CITIZEN, "U\\.?S\\.? Citizen|Citizen", "US citizen"),
+    (r"current enrollment class status|enrollment.*class.*status|class status", _YEAR, re.escape(_YEAR) + "|Undergraduate",
+     f"Undergraduate {_YEAR.lower()}"),
     (r"signed any agreement with a current or former employer|agreement.*not.*compete|restrictive covenant", "No", "^No", "No non-compete agreements"),
     (r"held an active u\\.?s\\.? security clearance|active.*clearance", "No", "^No", "Never held a U.S. security clearance"),
-    (r"need.*sponsorship|immigration support|immigration filing", "No", "^No", "never needs visa sponsorship"),
+    (r"need.*sponsorship|immigration support|immigration filing", _F("REQUIRES_SPONSORSHIP"),
+     "^" + _F("REQUIRES_SPONSORSHIP"), "visa sponsorship need"),
     (r"personal financial interest|financial interest in firms", "No", "^No", "No conflict of interest or personal financial interest"),
     (r"non-?compete agreement|have a non-?compete", "No", "^No", "No non-compete agreements"),
-    (r"^\s*work\s+authorization", "U.S. Citizen", "U\\.?S\\.? Citizen|Citizen|^Yes", "US citizen"),
+    (r"^\s*work\s+authorization", _CITIZEN, "U\\.?S\\.? Citizen|Citizen|^Yes", "US citizen"),
     (r"licensed professional.*license infractions|misconduct.*investigations", "No", "^No", "No professional license infractions"),
     (r"maintain any commitments to another employer|engaged in any other outside employment", "No", "^No", "Will not maintain outside employment"),
     (r"desired (annual )?salary", "60000", "", "Salary expectation is flexible and open"),
-    (r"secondary contact number", re.sub(r"\D", "", os.getenv("CANDIDATE_PHONE", "5550199")), "", "Secondary contact number from candidate profile"),
+    (r"secondary contact number", re.sub(r"\D", "", _F("PHONE")), "", "Secondary contact number from candidate profile"),
     (r"previously worked for (?:this|our|the) organization|previously (?:been )?contracted with|former employee of|previously worked for|ever been employed by|current/former.*contractor.*or former.*employee",
-     "No", "^No", "Previously employed by Delta Air Lines and W. A. Investments. Never previously worked, interned, or contracted for any other company or organization."),
+     "No", "^No", f"Previously employed by {_EMPLOYERS or 'no employer on the resume'}. Never previously worked, interned, or contracted for any other company or organization."),
     (r"dispute resolution program|arbitration and mediation agreement|mandatory arbitration.*agreement",
      "I agree", "^I agree|^I accept|^Yes|Agree", "Agrees to mandatory arbitration and dispute resolution program terms."),
     (r"how often.*(?:in days)?.*receive an alert|alert frequency|job alert.*(?:days|frequency)",
      "1", "^1$|Daily", "Preferred job alert frequency is as frequent as possible (1 day or Daily)."),
     (r"(?:if yes,?\s*)?(?:please provide )?visa type and expiration date|visa type.*expiration",
-     "N/A", "N/A|Not Applicable|U\\.?S\\.? Citizen", "U.S. Citizen with no visa requirement: visa type and expiration date are not applicable (N/A)."),
+     "N/A" if _CITIZEN else "", "N/A|Not Applicable|U\\.?S\\.? Citizen", "U.S. Citizen with no visa requirement: visa type and expiration date are not applicable (N/A)."),
     (r"served.*in any active.*guard.*reserve.*military|currently serving in.*military|military spouse|domestic partner.*military",
      "No", "^No", "has never served in the U.S. military; not a military spouse."),
 ]
+FACT_MAP = [r for r in _FACT_MAP if r[1]]  # unknown fact -> no rule (never another person's value)
 
 
 def rule_for_question(label):

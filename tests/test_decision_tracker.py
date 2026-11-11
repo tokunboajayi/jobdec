@@ -14,7 +14,7 @@ from agents.decision_tracker import (
 
 def test_classify_technical_interview_advancement():
     subject = "Next Steps: Technical Interview for Cloud Security Engineer"
-    body = "Hi Michael, We were impressed with your application and would like to invite you to a 45-minute technical screen with our Security Team."
+    body = "Hi Jordan, We were impressed with your application and would like to invite you to a 45-minute technical screen with our Security Team."
     res = classify_decision_text(subject, body)
     
     assert res["is_advancement"] is True
@@ -25,7 +25,7 @@ def test_classify_technical_interview_advancement():
 
 def test_classify_hiring_manager_screen():
     subject = "Axon Interview Invitation"
-    body = "Hi Michael, We are moving you forward in our process. We would love to set up a hiring manager conversation with our Director of IAM."
+    body = "Hi Jordan, We are moving you forward in our process. We would love to set up a hiring manager conversation with our Director of IAM."
     res = classify_decision_text(subject, body)
     
     assert res["is_advancement"] is True
@@ -45,8 +45,8 @@ def test_classify_assessment_invitation():
 
 
 def test_classify_offer_extended():
-    subject = "Offer of Employment - Wolters Kluwer"
-    body = "Congratulations Michael! We are pleased to offer you the position of Cybersecurity Specialist. Attached is your formal offer letter."
+    subject = "Offer of Employment - Northwind Health"
+    body = "Congratulations Jordan! We are pleased to offer you the position of Cybersecurity Specialist. Attached is your formal offer letter."
     res = classify_decision_text(subject, body)
     
     assert res["is_advancement"] is True
@@ -96,7 +96,16 @@ def test_format_advancement_telegram_alert():
     assert "Action Deadline:" in msg
 
 
-def test_get_decision_pipeline_summary():
+def test_get_decision_pipeline_summary(tmp_path, monkeypatch):
+    import candidate
+    apps = tmp_path / "applications.csv"
+    apps.write_text(
+        "Company,Role,Stage,Next Action,Job URL,Date Applied\n"
+        "Axon,Security Engineer,Interview: Technical Screen,Schedule interview,https://example.com/axon,2026-11-01\n"
+        "Tenable,Analyst,Applied,,https://example.com/tenable,2026-11-02\n"
+        "Okta,IAM Analyst,Offer Extended,Review offer,https://example.com/okta,2026-11-03\n",
+        encoding="utf-8")
+    monkeypatch.setattr(candidate, "APPLICATIONS", apps)  # a fixture ledger, never the candidate's real one
     summary = get_decision_pipeline_summary()
     assert "Autonomous Decision & Pipeline Summary" in summary
     assert "Total Verified Applications:" in summary
@@ -104,5 +113,9 @@ def test_get_decision_pipeline_summary():
     assert "Interviews & Screens:" in summary
     assert "Recent Decisions & Application URLs:" in summary
     assert "Job / Portal URL" in summary or "🔗" in summary
+    assert "<b>Total Verified Applications:</b> 3" in summary
+    assert "<b>Offers Extended:</b> <b>1</b>" in summary
+    assert "<b>Interviews & Screens:</b> <b>1</b>" in summary
+    assert "https://example.com/axon" in summary
 
 

@@ -1,7 +1,7 @@
 """
 Warm Referral Radar & Recruiter Outreach Dossier Generator.
 Identifies target decision makers, constructs Boolean LinkedIn search queries,
-finds potential Kennesaw State University alumni at target employers,
+finds potential alumni of the candidate's university at target employers,
 and drafts hyper-personalized connection notes strictly within LinkedIn's 300-char limit.
 """
 import csv
@@ -14,8 +14,13 @@ from typing import Dict, Any, List
 
 from . import context, intelligent_tailor
 
-OUTREACH_CSV = Path(__file__).resolve().parent.parent / "outreach_drafts.csv"
-DOSSIERS_DIR = Path(__file__).resolve().parent.parent / "briefings" / "referrals"
+OUTREACH_CSV = context.C.DATA / "outreach_drafts.csv"
+DOSSIERS_DIR = context.C.DATA / "briefings" / "referrals"
+
+
+def _fit(note: str, limit: int = 298) -> str:
+    """LinkedIn connection notes cap at 300 characters."""
+    return note if len(note) <= limit else note[:limit - 3].rstrip() + "..."
 
 
 def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[str, Any]:
@@ -26,6 +31,11 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
     comp_clean = analysis["company_clean"]
     role_clean = analysis["role_clean"]
     domain = analysis["domain"]
+    me = intelligent_tailor.candidate_brief()
+    sign = f" - {me['first']}" if me["first"] else ""
+    school = me["school"]
+    cred = f" ({me['certs'][0]})" if me["certs"] else ""
+    student = f"{me['major']} student at {school}" if school and me["major"] else (f"student at {school}" if school else "")
 
     # 1. Targeted LinkedIn Search Queries
     encoded_comp = urllib.parse.quote(f'"{comp_clean}"')
@@ -42,9 +52,9 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
     
     lead_url = f"https://www.linkedin.com/search/results/people/?keywords={encoded_comp}%20{lead_keywords}"
 
-    # Query B: Kennesaw State University Alumni Warm Path
-    ksu_keywords = urllib.parse.quote('("Kennesaw State University" OR "KSU") ("Security" OR "Cyber" OR "IT" OR "Systems")')
-    alumni_url = f"https://www.linkedin.com/search/results/people/?keywords={encoded_comp}%20{ksu_keywords}"
+    # Query B: alumni of the candidate's own university (no university known -> plain company search)
+    alumni_keywords = urllib.parse.quote(f'"{school}"') if school else ""
+    alumni_url = f"https://www.linkedin.com/search/results/people/?keywords={encoded_comp}" + (f"%20{alumni_keywords}" if school else "")
 
     # Query C: Technical Recruiter / Talent Lead
     recruiter_keywords = urllib.parse.quote('("Technical Recruiter" OR "Security Recruiter" OR "University Recruiter")')
@@ -52,15 +62,10 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
 
     # 2. Connection Notes (< 300 characters each)
     # Variant A: Warm Alumni Outreach
-    alumni_note = (
-        f"Hi [Name], I noticed you're at {comp_clean} and went to KSU! I'm a Cybersecurity senior at KSU "
-        f"(CompTIA Security+) and just applied for the {role_clean[:30]} opening. Would love to connect and hear about your team! - Michael Azuka"
+    alumni_note = _fit(
+        f"Hi [Name], I noticed you're at {comp_clean}" + (f" and went to {school}! I'm a {student}{cred}" if school else "! I") +
+        f" and just applied for the {role_clean[:30]} opening. Would love to connect and hear about your team!{sign}"
     )
-    if len(alumni_note) > 298:
-        alumni_note = (
-            f"Hi [Name], I saw you're at {comp_clean} and went to KSU! I'm a KSU Cyber senior with Security+ "
-            f"and just applied for {role_clean[:25]}. Would value connecting! - Michael Azuka"
-        )
 
     # Variant B: Hiring Manager / Lead Note
     if domain == "iam":
@@ -70,38 +75,35 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
     elif domain == "it_support":
         skill_highlight = "enterprise technical support & diagnostics"
     else:
-        skill_highlight = "infrastructure defense & CompTIA Security+"
+        skill_highlight = "infrastructure defense"
 
-    lead_note = (
+    lead_note = _fit(
         f"Hi [Name], I recently applied for {role_clean[:30]} at {comp_clean}. With practical experience in "
-        f"{skill_highlight} and CompTIA Security+, I'm eager to contribute to your security mission. Would love to connect! - Michael Azuka"
+        f"{skill_highlight}{cred}, I'm eager to contribute to your team. Would love to connect!{sign}"
     )
-    if len(lead_note) > 298:
-        lead_note = (
-            f"Hi [Name], I applied for {role_clean[:25]} at {comp_clean}. Bringing hands-on {skill_highlight[:30]} "
-            f"and Security+, I'm eager to support your team. Would love to connect! - Michael Azuka"
-        )
 
     # Variant C: Recruiter Note
-    recruiter_note = (
+    recruiter_note = _fit(
         f"Hi [Name], I saw you support hiring at {comp_clean} and recently applied for the {role_clean[:30]} role. "
-        f"As a KSU Cybersecurity senior with CompTIA Security+ and enterprise support background, I'd value connecting! - Michael Azuka"
+        + (f"As a {student}{cred}, " if student else "") + f"I'd value connecting!{sign}"
     )
 
     # 3. Comprehensive Follow-Up InMail / Email Draft
-    inmail_subject = f"Application Follow-Up: {role_clean} — Michael Azuka"
+    inmail_subject = f"Application Follow-Up: {role_clean}" + (f" — {me['name']}" if me["name"] else "")
+    background = " ".join(x for x in (
+        f"As a {student}" + (f" graduating {me['grad']}" if me["grad"] else "") + "," if student else "",
+        f"with the {', '.join(me['certs'][:2])} credential" + ("," if me["employers"] else "") if me["certs"] else "",
+        f"with experience at {', '.join(me['employers'][:2])}," if me["employers"] else "",
+    ) if x)
+    signature = "\n".join(x for x in (me["name"], " | ".join(y for y in (me["phone"], me["email"], me["linkedin"]) if y)) if x)
     inmail_body = (
         f"Hi [Hiring Manager / Recruiter Name],\n\n"
         f"I hope your week is off to a great start. I recently submitted my application for the {role_clean} "
         f"position at {comp_clean} and wanted to personally reiterate my strong enthusiasm for your team's work.\n\n"
-        f"As a Cybersecurity senior at Kennesaw State University graduating in December 2026 with the CompTIA "
-        f"Security+ credential and enterprise support background at Wolters Kluwer and Castles Technology, I bring "
-        f"hands-on experience in {skill_highlight}.\n\n"
+        f"{background + ' ' if background else ''}I bring hands-on experience in {skill_highlight}.\n\n"
         f"I would welcome the opportunity to connect briefly and share how my technical background and disciplined "
         f"work ethic can support {comp_clean}'s objectives.\n\n"
-        f"Thank you for your time and leadership,\n"
-        f"Michael Azuka\n"
-        f"404-645-0373 | mazuka146@gmail.com | linkedin.com/in/michael-azuka"
+        f"Thank you for your time and leadership,\n{signature}"
     )
 
     # 4. Save to outreach_drafts.csv
@@ -127,20 +129,20 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
     dossier_file = DOSSIERS_DIR / f"{slug}_radar.md"
 
     md_content = f"""# 👥 Warm Referral Radar: {comp_clean} — {role_clean}
-**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M')} | **Candidate:** Michael Azuka
+**Generated:** {datetime.now().strftime('%Y-%m-%d %H:%M')} | **Candidate:** {me['name']}
 
 ---
 
 ## 🔍 Instant LinkedIn Search Targets
 1. **[Hiring Managers & Security Leads]({lead_url})**
-2. **[KSU Alumni at {comp_clean}]({alumni_url})** *(Highest Response Rate!)*
+2. **[{school or 'University'} Alumni at {comp_clean}]({alumni_url})** *(Highest Response Rate!)*
 3. **[Technical & Campus Recruiters]({recruiter_url})**
 
 ---
 
 ## 💬 Connection Notes (Under 300 Characters)
 
-### 🎓 1. KSU Alumni Connection Note:
+### 🎓 1. Alumni Connection Note:
 ```text
 {alumni_note}
 ```
@@ -171,7 +173,7 @@ def build_referral_dossier(company: str, role: str, job_url: str = "") -> Dict[s
 
     telegram_summary = (
         f"👥 <b>Warm Referral Radar: {comp_clean}</b>\n\n"
-        f"🔗 <a href=\"{alumni_url}\">Find KSU Alumni at {comp_clean}</a>\n"
+        f"🔗 <a href=\"{alumni_url}\">Find {school or 'University'} Alumni at {comp_clean}</a>\n"
         f"🔗 <a href=\"{lead_url}\">Find Hiring Leads / Security Managers</a>\n"
         f"🔗 <a href=\"{recruiter_url}\">Find Technical Recruiters</a>\n\n"
         f"📝 <b>Draft Note (Alumni):</b>\n<code>{alumni_note}</code>\n\n"

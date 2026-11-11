@@ -3,11 +3,20 @@ AJ AGENT BRAIN // ZERO-TOKEN FAST RESOLVER
 Instantaneous sub-millisecond local answer matching for screening questions.
 Resolves 90%+ of ATS questions with 0 tokens and 0 API latency.
 """
-import datetime, os, re
+import datetime, os, pathlib, re, sys
 from typing import Any, Dict, List, Optional, Tuple
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+import candidate  # noqa: E402  # the active candidate's .env facts (JOBDEC_HOME)
+
+
+def _fact(key: str) -> Optional[str]:
+    """This candidate's CANDIDATE_<key>, or None (the rule is dropped: never another person's value)."""
+    return candidate.fact(key) or None
+
+
 # Pre-compiled canonical answer mappings (Regex Pattern -> Canonical Answer)
-CANONICAL_RULES: List[Tuple[str, str]] = [
+_RULES: List[Tuple[str, Optional[str]]] = [
     # Work Authorization & Citizenship
     (r"(?i)(authorized|eligible|legally\s+(permitted|eligible)|lawful(ly)?\s+eligible)\s+(to\s+work|for\s+employment)", "Yes"),
     (r"(?i)legally\s+eligible\s+for\s+employment", "Yes"),
@@ -122,72 +131,62 @@ CANONICAL_RULES: List[Tuple[str, str]] = [
     (r"(?i)(please\s+enter\s+['\"]?yes['\"]?\s+if\s+you\s+acknowledge|enter\s+yes\s+if\s+you\s+acknowledge)", "Yes"),
 
     # Standard EEO Demographics
-    (r"(?i)pronoun", "He/Him/His"),
-    (r"(?i)^gender\b", "Male"),
-    (r"(?i)hispanic.*latino", "No"),
-    (r"(?i)race|ethnicity", "Black or African American"),
-    (r"(?i)veteran\s+status", "I am not a protected veteran"),
-    (r"(?i)disability\s+status", "No, I do not have a disability"),
+    (r"(?i)pronoun", _fact("PRONOUNS")),
+    (r"(?i)^gender\b", _fact("GENDER")),
+    (r"(?i)hispanic.*latino", _fact("HISPANIC_LATINO")),
+    (r"(?i)race|ethnicity", _fact("RACE")),
+    (r"(?i)veteran\s+status", _fact("VETERAN_STATUS")),
+    (r"(?i)disability\s+status", _fact("DISABILITY_STATUS")),
     (r"(?i)(in-office|onsite|on-site).*culture", "Yes"),
     (r"(?i)how\s+did\s+you\s+(hear|find|learn)", "LinkedIn"),
 
     # Academic & Location Defaults
-    (r"(?i)(name\s+of\s+(?:school|university|institution|college)|^(?:school|university|institution|college)\b|current\s+(?:school|university|institution|college)|what\s+(?:school|university|college))", os.getenv("CANDIDATE_UNIVERSITY", "Kennesaw State University")),
-    (r"(?i)(major|field\s+of\s+study)", os.getenv("CANDIDATE_MAJOR", "Cybersecurity")),
-    (r"(?i)degree\s+level", os.getenv("CANDIDATE_DEGREE", "Bachelor's")),
-    (r"(?i)(expected\s+)?graduation\s+(date|year)", os.getenv("CANDIDATE_EXPECTED_GRAD_DATE", "May 2028")),
-    (r"(?i)graduation\s+month", os.getenv("CANDIDATE_EXPECTED_GRAD_MONTH", "May")),
-    (r"(?i)desired\s+start\s+date", os.getenv("CANDIDATE_AVAILABLE_START_DATE", "06/01/2027")),
+    (r"(?i)(name\s+of\s+(?:school|university|institution|college)|^(?:school|university|institution|college)\b|current\s+(?:school|university|institution|college)|what\s+(?:school|university|college))", _fact("UNIVERSITY")),
+    (r"(?i)(major|field\s+of\s+study)", _fact("MAJOR")),
+    (r"(?i)degree\s+level", _fact("DEGREE")),
+    (r"(?i)(expected\s+)?graduation\s+(date|year)", _fact("EXPECTED_GRAD_DATE")),
+    (r"(?i)graduation\s+month", _fact("EXPECTED_GRAD_MONTH")),
+    (r"(?i)desired\s+start\s+date", _fact("AVAILABLE_START_DATE")),
     (r"(?i)start\s+month", "June"),
     (r"(?i)start\s+year", "2027"),
-    (r"(?i)city", os.getenv("CANDIDATE_CITY", "Powder Springs")),
-    (r"(?i)county\s*\/?\s*state|state\s*\/?\s*(?:province|county|region)|state\s+or\s+province|\bstate\b.*(reside|live|residence|located)|(reside|live|residence|located).*state|which.*state|indicate.*state|\bstate\b", os.getenv("CANDIDATE_STATE", "Georgia")),
-    (r"(?i)\bcounty\b", os.getenv("CANDIDATE_COUNTY", "Cobb")),
-    (r"(?i)postal.*code|zip\s*code", os.getenv("CANDIDATE_ZIP_CODE", "30127")),
-    (r"(?i)\baddress\s+line\s+1\b|\bstreet\s+address\b", os.getenv("CANDIDATE_ADDRESS_LINE_1", "4020 Saint George Walk SW")),
+    (r"(?i)city", _fact("CITY")),
+    (r"(?i)county\s*\/?\s*state|state\s*\/?\s*(?:province|county|region)|state\s+or\s+province|\bstate\b.*(reside|live|residence|located)|(reside|live|residence|located).*state|which.*state|indicate.*state|\bstate\b", _fact("STATE")),
+    (r"(?i)\bcounty\b", _fact("COUNTY")),
+    (r"(?i)postal.*code|zip\s*code", _fact("ZIP_CODE")),
+    (r"(?i)\baddress\s+line\s+1\b|\bstreet\s+address\b", _fact("ADDRESS_LINE_1")),
     (r"(?i)\baddress\s+line\s+[23]\b|\b(apartment|suite|unit)\b", os.getenv("CANDIDATE_ADDRESS_LINE_2", "")),
     (r"(?i)(?:legally\s+)?eligible\s+to\s+work|authorized\s+to\s+work|legal\s+right\s+to\s+work", "Yes"),
-    (r"(?i)^country\b|country\s*of\s*(?:residence|citizenship)|\baddress.*country|^(?:current\s+|residence\s+)?country\b", os.getenv("CANDIDATE_COUNTRY", "United States of America")),
+    (r"(?i)^country\b|country\s*of\s*(?:residence|citizenship)|\baddress.*country|^(?:current\s+|residence\s+)?country\b", _fact("COUNTRY")),
     (r"(?i)country\s*\/?\s*territory\s*phone\s*code", "United States of America (+1)"),
     (r"(?i)phone\s*code", "+1"),
     (r"(?i)(consider.*other\s+opportunities|talent\s+community|talent\s+pool|future.*opportunities)", "Yes"),
     (r"(?i)(twitter|facebook(\s*profile)?|instagram)", ""),
-    (r"(?i)linkedin", os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com")),
-    (r"(?i)github", os.getenv("CANDIDATE_GITHUB_URL", "https://github.com")),
+    (r"(?i)linkedin", _fact("LINKEDIN_URL")),
+    (r"(?i)github", _fact("GITHUB_URL")),
     (r"(?i)(graduated within the past 6 months|active student)", "Yes"),
     (r"(?i)share.*personal information with its (advertising|marketing) partners", "Yes"),
-    (r"(?i)website|portfolio", os.getenv("CANDIDATE_PORTFOLIO_URL", os.getenv("CANDIDATE_LINKEDIN_URL", "https://www.linkedin.com"))),
+    (r"(?i)website|portfolio", _fact("PORTFOLIO_URL") or _fact("LINKEDIN_URL")),
     (r"(?i)\bdate\b.*day|^\s*day\s*$", datetime.date.today().strftime("%d")),
     (r"(?i)\bdate\b.*month|^\s*month\s*$", datetime.date.today().strftime("%m")),
     (r"(?i)\bdate\b.*year|^\s*year\s*$", datetime.date.today().strftime("%Y")),
     (r"(?i)^\s*date\s*(\*|\b)?$", datetime.date.today().strftime("%m/%d/%Y")),
-    (r"(?i)^location\b|work.*location|job.*location|primary.*location", os.getenv("CANDIDATE_LOCATION_TEXT", f"{os.getenv('CANDIDATE_CITY', 'Atlanta')}, {os.getenv('CANDIDATE_STATE', 'GA')}")),
+    (r"(?i)^location\b|work.*location|job.*location|primary.*location", _fact("LOCATION_TEXT") or (f"{_fact('CITY')}, {_fact('STATE')}" if _fact("CITY") and _fact("STATE") else None)),
     (r"(?i)duration.*(allowed.*to\s+do\s+your\s+)?internship", "10-12 weeks"),
     (r"(?i)(share\s+any\s+)?relationship\s+you\s+have\s+with", "None"),
     (r"(?i)preference\s+to\s+receive\s+notification\s+updates|notification\s+updates", "Email"),
     (r"(?i)ready\s*to\s*submit", "Yes"),
-    (r"(?i)signature", os.getenv("CANDIDATE_FULL_NAME", "Candidate")),
+    (r"(?i)signature", _fact("FULL_NAME")),
 ]
+CANONICAL_RULES: List[Tuple[str, str]] = [(p, a) for p, a in _RULES if a is not None]  # unknown fact -> no rule
 
 # Standardized high-scoring answers for open-ended prompts (grounded in candidate's experience)
-OPEN_ENDED_TEMPLATES: List[Tuple[str, str]] = [
-    (
-        r"(?i)(why.*work\s+here|why.*interested\s+in|why\s+this\s+role)",
-        os.getenv("CANDIDATE_ELEVATOR_PITCH", "I have built agentic automation workflows, data systems, and enterprise process automations. I am eager to apply my technical, automation, and problem-solving skills to deliver measurable impact in this role.")
-    ),
-    (
-        r"(?i)(describe.*project|automation\s+experience|technical\s+achievement)",
-        os.getenv("CANDIDATE_PROUDEST_ACHIEVEMENT", "I designed and deployed automated multi-agent operational pipelines handling enterprise data and process workflows, cutting manual coordination time significantly while delivering robust, reliable results.")
-    ),
-    (
-        r"(?i)(what\s+are\s+your\s+)?(strengths|greatest\s+strength)\b",
-        "My key strengths are process automation, analytical problem-solving, and cross-functional communication. I specialize in turning complex, messy operational requirements into reliable automated systems using Python, SQL, and data visualization tools like Tableau and Power BI."
-    ),
-    (
-        r"(?i)(how\s+did\s+you\s+hear|source|referral)",
-        "LinkedIn"
-    )
-]
+OPEN_ENDED_TEMPLATES: List[Tuple[str, str]] = [(p, a) for p, a in [
+    (r"(?i)(why.*work\s+here|why.*interested\s+in|why\s+this\s+role)", _fact("ELEVATOR_PITCH")),
+    (r"(?i)(describe.*project|automation\s+experience|technical\s+achievement)", _fact("PROUDEST_ACHIEVEMENT")),
+    (r"(?i)(what\s+are\s+your\s+)?(strengths|greatest\s+strength)\b",
+     f"My key strengths are {_fact('TOP_SKILLS')}." if _fact("TOP_SKILLS") else None),
+    (r"(?i)(how\s+did\s+you\s+hear|source|referral)", "LinkedIn"),
+] if a is not None]
 
 
 class FastResolver:

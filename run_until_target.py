@@ -81,8 +81,11 @@ def run_triage():
         print(f"[Triage] Error: {e}")
 
 
-def run_batch(workers: int, limit: int, target: int, queue_file: str = "queue_ranked.txt"):
-    """Runs a batch of applications using the parallel multi-worker engine."""
+MAX_FAILED_CYCLES = 3  # consecutive crashed batches before the runner gives up (it used to relaunch forever)
+
+
+def run_batch(workers: int, limit: int, target: int, queue_file: str = "queue_ranked.txt") -> int:
+    """Runs a batch of applications using the parallel multi-worker engine. Returns the batch's exit code."""
     print(f"\n--- [Step 3: Multi-Worker Parallel Apply (Workers={workers}, Limit={limit}, Target={target})] ---")
     cmd = [
         sys.executable, "-u", "batch_apply_parallel.py",
@@ -93,7 +96,7 @@ def run_batch(workers: int, limit: int, target: int, queue_file: str = "queue_ra
     ]
     try:
         proc = subprocess.Popen(cmd, cwd=str(HERE))
-        proc.wait()
+        return proc.wait()
     except KeyboardInterrupt:
         print("\n[Runner] Interrupted by user. Stopping batch.")
         raise
@@ -122,6 +125,7 @@ def main():
 
     cycle = 1
     idle = 0
+    failed = 0
     learned_on = None
     while True:
         # once a day: read Gmail replies, retrain the outcome model that adjusts fit scores (daily_run.py isn't scheduled)
@@ -171,10 +175,17 @@ def main():
 
         batch_limit = args.batch_size
         try:
-            run_batch(workers=args.workers, limit=batch_limit, target=effective_target, queue_file="queue_ranked.txt")
+            rc = run_batch(workers=args.workers, limit=batch_limit, target=effective_target, queue_file="queue_ranked.txt")
         except KeyboardInterrupt:
             print("\n[Runner] Graceful exit requested. Saving state.")
             break
+        failed = failed + 1 if rc != 0 else 0
+        if failed >= MAX_FAILED_CYCLES:
+            print(f"\n[Runner] STOPPED: batch_apply_parallel.py failed {failed} cycles in a row (last exit code {rc}). "
+                  f"Fix the crash (see its output above / batch_apply.log), then restart this runner.")
+            return 1
+        if rc != 0:
+            print(f"[Runner] Batch exited with code {rc} ({failed}/{MAX_FAILED_CYCLES} consecutive failures).")
 
         # Refresh triage after each batch to re-rank fresh items
         run_triage()
@@ -187,7 +198,8 @@ def main():
             time.sleep(1800)
         else:
             time.sleep(5)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

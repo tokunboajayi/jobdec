@@ -1,4 +1,12 @@
+import pytest
+
+import fake_candidate
 from agents import cover_letter, llm
+
+
+@pytest.fixture(autouse=True)
+def _candidate(monkeypatch, tmp_path):
+    fake_candidate.use(monkeypatch, tmp_path)
 
 
 def test_body_is_addressed_and_keeps_only_generic_facts():

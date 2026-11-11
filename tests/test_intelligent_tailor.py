@@ -11,9 +11,14 @@ from pathlib import Path
 import pytest
 import pypdf
 
+import fake_candidate
 from agents import intelligent_tailor, context
 from agents.tailor_learning import TailorLearningEngine, get_learning_engine
-import resumes.resume_gen as resume_gen
+
+
+@pytest.fixture(autouse=True)
+def _candidate(monkeypatch, tmp_path):
+    fake_candidate.use(monkeypatch, tmp_path)
 
 
 class TestIntelligentTailor:
@@ -33,18 +38,17 @@ class TestIntelligentTailor:
 
     def test_master_resume_render_one_page(self, tmp_path):
         out_pdf = tmp_path / "test_master_resume.pdf"
-        bottom = resume_gen.render(resume_gen.MASTER, str(out_pdf))
+        bottom = context.resume_gen().render(context.MASTER, str(out_pdf))
         assert out_pdf.exists()
         assert bottom > 36.0, "Resume bottom margin must indicate single page fit"
 
         reader = pypdf.PdfReader(str(out_pdf))
         assert len(reader.pages) == 1, f"Expected 1 page, got {len(reader.pages)}"
         text = reader.pages[0].extract_text()
-        assert "Michael Azuka" in text
-        assert "Kennesaw State University" in text
-        assert "CompTIA" in text
-        assert "Wolters Kluwer" in text
-        assert "Castles Technology" in text
+        assert fake_candidate.FACTS["FULL_NAME"] in text
+        assert fake_candidate.FACTS["UNIVERSITY"] in text
+        for org in context.employers():
+            assert org in text
 
     def test_tailored_resume_generation_and_page_budget(self, tmp_path):
         # Test tailoring for an IAM role
@@ -87,11 +91,12 @@ class TestIntelligentTailor:
         assert len(reader.pages) == 1, "Cover letter must fit on 1 page"
 
         text = reader.pages[0].extract_text()
-        assert "Michael Azuka" in text
+        assert fake_candidate.FACTS["FULL_NAME"] in text
         assert "Abnormal Security" in text
         assert "Security Operations Analyst" in text
-        assert "Kennesaw State University" in text
-        assert "CompTIA Security+" in text
+        assert fake_candidate.FACTS["UNIVERSITY"] in text
+        assert "CompTIA Security+" in text  # the fixture resume lists it; a candidate without it never gets it
+        assert "SIEM Detection Lab" in text  # the SOC-matching resume bullet leads
 
         # Check banned buzzwords
         assert not intelligent_tailor.BANNED_WORDS.search(text), "Cover letter contains banned buzzwords"
@@ -113,7 +118,7 @@ class TestIntelligentTailor:
             role="Identity Engineer",
             domain="iam",
             keywords=["okta", "active directory", "gpo"],
-            bullet_indices={"Wolters Kluwer, Tax & Accounting North America": [0, 1, 2]},
+            bullet_indices={"Northwind Health": [0, 1, 2]},
             skill_order=["Identity & Access", "Technical", "Security", "Operations"]
         )
 
@@ -128,7 +133,7 @@ class TestIntelligentTailor:
         assert w2 > w1, "Weight must jump significantly on interview outcome"
 
         # Verify bullet boost
-        boost = engine.get_bullet_boost("Wolters Kluwer, Tax & Accounting North America", 0)
+        boost = engine.get_bullet_boost("Northwind Health", 0)
         assert boost > 0.0, "Bullet performance boost should be positive following interview"
 
         # Verify persistent save and reload

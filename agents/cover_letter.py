@@ -3,7 +3,7 @@ Per-application cover letter: the generic letter (resumes/cover_letter_gen.py) a
 with the experience paragraph that best matches the posting first. Same facts as the generic letter, nothing new.
 
 Toggle: strategy.json -> agents.autonomy.cover_letter = "auto" | "off". Off (or any failure) -> fill.py uploads the
-generic Ajayi_Olatokunbo_Cover_Letter.pdf as before.
+candidate's generic cover letter PDF as before.
 """
 import importlib.util
 import os
@@ -40,7 +40,7 @@ def clean_role(role):
 
 def body_for(company, role, jd=""):
     gen = _gen()
-    opening, delta, wa, close, sign = gen.BODY[1], gen.BODY[2], gen.BODY[3], gen.BODY[4], gen.BODY[5]
+    opening, exp1, exp2, close, sign = gen.BODY[1], gen.BODY[2], gen.BODY[3], gen.BODY[4], gen.BODY[5]
     company, role = clean_company(company), clean_role(role)
     if re.search(r"[a-z][A-Z]", company):  # still scraped-looking ("HpIq"): a generic letter beats a garbled name
         company = ""
@@ -49,9 +49,9 @@ def body_for(company, role, jd=""):
                                   f"applying for the {role} position at {company}")
         close = close.replace("to your team", f"to {company}")
     words = set(re.findall(r"[a-z]+", (jd or "").lower()))
-    # the paragraph sharing more words with the posting goes first; ties keep Delta first
+    # the paragraph sharing more words with the posting goes first; ties keep the letter's own order
     overlap = lambda p: len(words & set(re.findall(r"[a-z]+", p.lower())))
-    exp = sorted([delta, wa], key=overlap, reverse=True) if words else [delta, wa]
+    exp = sorted([exp1, exp2], key=overlap, reverse=True) if words else [exp1, exp2]
     return [gen.BODY[0], opening, *exp, close, sign]
 
 

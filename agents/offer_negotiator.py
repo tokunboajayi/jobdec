@@ -3,8 +3,13 @@ Autonomous Compensation & Offer Negotiator for Telegram.
 Analyzes compensation benchmarks for early-career Cyber, IAM, and IT Support roles,
 generates data-backed counter-offer strategies, and drafts recruiter negotiation emails.
 """
+import os
 import re
+import sys
 from typing import Dict, Any
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import candidate  # noqa: E402
 
 
 def analyze_offer_and_strategize(company: str, base_amount_str: str, location: str = "US") -> Dict[str, Any]:
@@ -23,15 +28,15 @@ def analyze_offer_and_strategize(company: str, base_amount_str: str, location: s
     counter_base_target = int(base_val * 1.12)
     counter_bonus_target = 8000 if base_val < 90000 else 12000
 
+    name = candidate.fact("FULL_NAME")
+    signature = "\n".join(x for x in (name, " | ".join(y for y in (candidate.fact("PHONE"), candidate.fact("EMAIL")) if y)) if x)
     recruiter_email = (
-        f"Subject: Thank you - {company} Offer Discussion - Michael Azuka\n\n"
+        f"Subject: Thank you - {company} Offer Discussion" + (f" - {name}" if name else "") + "\n\n"
         f"Hi [Recruiter Name],\n\n"
-        f"Thank you so much for extending the offer to join {company}! I am truly excited about the team's mission and the opportunity to contribute my cybersecurity, IAM, and technical support background to your security operations.\n\n"
-        f"Based on my current market research for early-career cybersecurity professionals with hands-on Active Directory, SIEM, and CompTIA Security+ credentials—as well as the responsibilities of this role—I would be thrilled to sign immediately if we can adjust the base compensation to ${counter_base_target:,} (or bridge the gap with a ${counter_bonus_target:,} signing incentive).\n\n"
+        f"Thank you so much for extending the offer to join {company}! I am truly excited about the team's mission and the opportunity to contribute my background to your team.\n\n"
+        f"Based on my current market research for early-career professionals in this field—as well as the responsibilities of this role—I would be thrilled to sign immediately if we can adjust the base compensation to ${counter_base_target:,} (or bridge the gap with a ${counter_bonus_target:,} signing incentive).\n\n"
         f"I am fully committed to making an immediate impact at {company} and look forward to hearing your thoughts!\n\n"
-        f"Best regards,\n"
-        f"Michael Azuka\n"
-        f"404-645-0373 | mazuka146@gmail.com"
+        f"Best regards,\n{signature}"
     )
 
     telegram_summary = (

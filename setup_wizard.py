@@ -8,11 +8,12 @@ zero-lag PC optimizer, and autonomous pipeline execution.
 
 import os
 import sys
-import json
 import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT))
+import candidate  # noqa: E402  # the active candidate (JOBDEC_HOME): .env, profile.json, resumes/
 
 BANNER = """
 ========================================================================
@@ -80,108 +81,74 @@ def check_python_and_deps() -> bool:
 
 
 def check_or_setup_profile() -> bool:
-    print_step_header(2, 7, "Candidate Identity & Guardrails Verification (profile.json)")
-    profile_path = ROOT / "profile.json"
-    data = {}
-    if profile_path.exists():
-        try:
-            with open(profile_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except Exception:
-            data = {}
+    print_step_header(2, 7, "Candidate Identity & Guardrails Verification (candidate .env)")
+    # identity lives in the active candidate's .env (CANDIDATE_*), never in code; see candidate.py
+    keys = [("FULL_NAME", "Full Name"), ("EMAIL", "Email Address"), ("PHONE", "Phone Number"),
+            ("UNIVERSITY", "University/College"), ("DEGREE", "Degree (e.g. Bachelor of Science)"),
+            ("MAJOR", "Major"), ("GPA", "GPA")]
+    facts = {k: candidate.fact(k) for k, _ in keys}
 
-    facts = data.get("facts", {})
-    name = facts.get("legal_name") or facts.get("first_name", "") + " " + facts.get("last_name", "")
-    email = facts.get("email", "")
-    school = facts.get("education_school", "")
-    major = facts.get("education_major", "")
-    degree = facts.get("education_degree", "")
-    gpa = facts.get("education_gpa", "")
+    print(f"• Candidate home: {candidate.HOME or 'default (single-user layout)'}")
+    print(f"• Candidate:     {facts['FULL_NAME'] or '[Not Set]'}")
+    print(f"• Email:         {facts['EMAIL'] or '[Not Set]'}")
+    print(f"• University:    {facts['UNIVERSITY'] or '[Not Set]'}")
+    print(f"• Degree/Major:  {facts['DEGREE'] or '[Not Set]'} in {facts['MAJOR'] or '[Not Set]'}")
+    print(f"• GPA:           {facts['GPA'] or '[Not Set]'}")
+    print("• Hard Invariant: ZERO Software Engineering / Coding roles [ENFORCED]")
 
-    print(f"• Candidate:     {name if name.strip() else '[Not Set]'}")
-    print(f"• Email:         {email if email else '[Not Set]'}")
-    print(f"• University:    {school if school else '[Not Set]'}")
-    print(f"• Degree/Major:  {degree} in {major if major else '[Not Set]'}")
-    print(f"• GPA:           {gpa if gpa else '[Not Set]'}")
-    print(f"• Target Spec:   Cybersecurity, IAM, Cloud Security, IT Support, SysAdmin")
-    print(f"• Hard Invariant: ZERO Software Engineering / Coding roles [ENFORCED]")
-
-    if not name.strip() or not email:
-        if not sys.stdin.isatty():
-            c_name = "Michael Azuka"
-            c_email = "mazuka146@gmail.com"
-            c_phone = "404-645-0373"
-            c_school = "Kennesaw State University"
-            c_degree = "Bachelor of Science"
-            c_major = "Cybersecurity"
-            c_gpa = "3.35"
-        else:
-            print("\nCandidate profile needs setup. Let's enter your core facts:")
-            c_name = input("Enter Full Name: ").strip() or "Michael Azuka"
-            c_email = input("Enter Email Address: ").strip() or "mazuka146@gmail.com"
-            c_phone = input("Enter Phone Number: ").strip() or "404-645-0373"
-            c_school = input("Enter University/College: ").strip() or "Kennesaw State University"
-            c_degree = input("Enter Degree (e.g. Bachelor of Science): ").strip() or "Bachelor of Science"
-            c_major = input("Enter Major (e.g. Cybersecurity): ").strip() or "Cybersecurity"
-            c_gpa = input("Enter GPA (e.g. 3.35): ").strip() or "3.35"
-
-        facts.update({
-            "legal_name": c_name,
-            "email": c_email,
-            "phone": c_phone,
-            "education_school": c_school,
-            "education_degree": c_degree,
-            "education_major": c_major,
-            "education_gpa": c_gpa,
-        })
-        data["facts"] = facts
-        with open(profile_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2)
-        print("profile.json saved successfully!")
-    else:
+    if facts["FULL_NAME"] and facts["EMAIL"]:
         print("Candidate profile is fully verified!")
+        return True
+    if not sys.stdin.isatty():
+        # unattended: never invent or copy anyone's details; the candidate fills their own .env
+        print(f"Candidate facts missing: add CANDIDATE_FULL_NAME, CANDIDATE_EMAIL, ... to {candidate.ENV}")
+        return True
 
+    print("\nCandidate profile needs setup. Let's enter your core facts (Enter to skip):")
+    lines = []
+    for k, label in keys:
+        if not facts[k]:
+            v = input(f"Enter {label}: ").strip()
+            if v:
+                lines.append(f"CANDIDATE_{k}={v}")
+    if lines:
+        candidate.ENV.parent.mkdir(parents=True, exist_ok=True)
+        with open(candidate.ENV, "a", encoding="utf-8") as f:
+            f.write("\n" + "\n".join(lines) + "\n")
+        print(f"Saved {len(lines)} facts to {candidate.ENV}")
     return True
 
 
 def check_resume() -> bool:
     print_step_header(3, 7, "Master Resume & Tailoring Engine Verification")
-    res_candidates = [
-        ROOT / "resumes" / "Candidate_Resume.pdf",
-        ROOT / "resumes" / "master_resume.pdf",
-        ROOT / "resumes" / "Resume.pdf"
-    ]
-    found = None
-    for r in res_candidates:
-        if r.exists():
-            found = r
-            break
+    res_candidates = [candidate.RESUMES / n for n in ("resume_gen.py", "Candidate_Resume.pdf", "master_resume.pdf", "Resume.pdf")]
+    found = next((r for r in res_candidates if r.exists()), None)
 
     if found:
-        print(f"• Master Resume: {found.relative_to(ROOT)} ({found.stat().st_size / 1024:.1f} KB) [OK]")
+        print(f"• Master Resume: {found} ({found.stat().st_size / 1024:.1f} KB) [OK]")
         print("• ATS Permutation Engine: ReportLab dynamic reordering enabled [OK]")
         print("• Anti-Fabrication Shield: Zero text hallucination [ENFORCED]")
         return True
     else:
-        print("• Master resume not found in resumes/ directory.")
-        print("  Place your standard PDF resume at 'resumes/Candidate_Resume.pdf'.")
+        print(f"• Master resume not found in {candidate.RESUMES}.")
+        print("  Add resume_gen.py (MASTER) or your standard PDF resume there as 'Candidate_Resume.pdf'.")
         return False
 
 
 def check_dual_channel_notifications() -> bool:
     print_step_header(4, 7, "Dual-Channel Setup (Telegram Cockpit + iMessage Pager)")
-    env_path = ROOT / ".env"
+    env_path = candidate.ENV
     from dotenv import dotenv_values
     config = dotenv_values(env_path) if env_path.exists() else {}
 
     tg_token = config.get("TELEGRAM_BOT_TOKEN", "").strip()
     tg_chat = config.get("TELEGRAM_CHAT_ID", "").strip()
     im_enabled = config.get("IMESSAGE_ENABLED", "true").lower() in ("true", "1", "yes")
-    im_target = config.get("IMESSAGE_TARGET_HANDLE", "+14046450373").strip()
+    im_target = config.get("IMESSAGE_TARGET_HANDLE", "").strip()
 
     print(f"• Telegram Bot Token: {'[Configured]' if tg_token else '[MISSING]'}")
     print(f"• Telegram Chat ID:   {'[Configured]' if tg_chat else '[MISSING]'}")
-    print(f"• iMessage Pager:     {'[Active: ' + im_target + ']' if im_enabled else '[Disabled]'}")
+    print(f"• iMessage Pager:     {'[Active: ' + (im_target or 'no handle set') + ']' if im_enabled else '[Disabled]'}")
     print(f"• iMessage Webhook:   Port 5055 (Two-way commands: status, run, turbo, stop, prep)")
 
     if not tg_token or not tg_chat:
@@ -202,7 +169,7 @@ def check_dual_channel_notifications() -> bool:
 
 def check_recruiter_radar_and_gmail() -> bool:
     print_step_header(5, 7, "Recruiter Radar, Decision Tracking & 1-Tap Links")
-    env_path = ROOT / ".env"
+    env_path = candidate.ENV
     from dotenv import dotenv_values
     config = dotenv_values(env_path) if env_path.exists() else {}
 
@@ -252,7 +219,7 @@ def run_preflight_and_finish():
     print("   • Tap [🧹 Boost PC] - Instant RAM trimming and zombie elimination")
     print("   • Type /imessage - Send an instant test alert to your iPhone")
     print("   • Speak any voice memo - Hands-free voice execution")
-    print("3. iMessage 2-Way Commands (Text +14046450373):")
+    print(f"3. iMessage 2-Way Commands (text {os.getenv('IMESSAGE_TARGET_HANDLE') or 'your IMESSAGE_TARGET_HANDLE'}):")
     print("   • 'status' - Receive real-time verified submission counts")
     print("   • 'run'    - Start 3 parallel workers")
     print("   • 'turbo'  - Launch dynamic max workers")

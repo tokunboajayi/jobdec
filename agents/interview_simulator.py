@@ -5,6 +5,11 @@ Evaluates answers using the STAR framework, gives feedback, and scores responses
 """
 from typing import Dict, Any, List, Optional
 import random
+import os
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import candidate  # noqa: E402
 
 INTERVIEW_SESSIONS: Dict[int, Dict[str, Any]] = {}
 
@@ -53,7 +58,7 @@ def start_interview_session(chat_id: int, company: str = "Target Employer", role
         f"<b>Role:</b> {role}\n"
         f"<b>Interviewer:</b> Lead Information Security Manager\n\n"
         f"─────────────────────────────\n"
-        f"<i>\"Welcome Michael. Thanks for taking the time to speak with our security team today. Let's dive right into our first technical scenario:\"</i>\n\n"
+        f"<i>\"Welcome{(' ' + candidate.fact('FIRST_NAME')) if candidate.fact('FIRST_NAME') else ''}. Thanks for taking the time to speak with our security team today. Let's dive right into our first technical scenario:\"</i>\n\n"
         f"❓ <b>Question 1/4 ({CYBER_QUESTION_BANK[0]['topic']}):</b>\n"
         f"\"{first_q}\"\n\n"
         f"💡 <i>Reply with a voice memo or text answer using the STAR method. Type /exit to cancel.</i>"

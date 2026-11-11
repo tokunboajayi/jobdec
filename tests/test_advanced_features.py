@@ -11,7 +11,16 @@ import re
 from pathlib import Path
 import pytest
 
+import fake_candidate
 from agents import ats_optimizer, interview_prep, referral_radar, vision_solver, context
+
+
+@pytest.fixture(autouse=True)
+def _candidate(monkeypatch, tmp_path):
+    fake_candidate.use(monkeypatch, tmp_path)
+    monkeypatch.setattr(interview_prep, "INTERVIEWS_DIR", tmp_path / "interviews")
+    monkeypatch.setattr(referral_radar, "DOSSIERS_DIR", tmp_path / "referrals")
+    monkeypatch.setattr(referral_radar, "OUTREACH_CSV", tmp_path / "outreach_drafts.csv")
 
 
 class TestAdvancedFeatures:
@@ -40,9 +49,8 @@ class TestAdvancedFeatures:
         assert Path(dossier["file_path"]).exists()
 
         content = dossier["content"]
-        assert "Michael Azuka" in content
-        assert "CompTIA Security+" in content
-        assert "Active Directory & Identity Lifecycle Automation" in content
+        assert fake_candidate.FACTS["FULL_NAME"] in content
+        assert "CompTIA Security+" in content  # on the fixture resume
         assert "Situation:" in content
         assert "Action:" in content
         assert "Result:" in content
@@ -50,6 +58,9 @@ class TestAdvancedFeatures:
 
         # Check zero-hallucination numbers in candidate's STAR story
         star_section = content.split("## 🌟 Primary STAR Model Story")[1].split("## ❓ Top Predicted")[0]
+        # the STAR story is an IAM entry from the candidate's own resume
+        assert "Active Directory" in star_section
+        assert any(e["org"] in star_section for s in context.MASTER["sections"] for e in s.get("entries", []))
         unsupported = context.unsupported_numbers(star_section)
         assert len(unsupported) == 0, f"Found unsupported numbers in battlecard STAR story: {unsupported}"
 
@@ -66,6 +77,9 @@ class TestAdvancedFeatures:
         assert len(dossier["alumni_note"]) <= 300, f"Alumni note exceeds 300 chars: {len(dossier['alumni_note'])}"
         assert len(dossier["lead_note"]) <= 300, f"Lead note exceeds 300 chars: {len(dossier['lead_note'])}"
         assert Path(dossier["file_path"]).exists()
+        assert fake_candidate.FACTS["UNIVERSITY"] in dossier["alumni_note"]
+        assert dossier["alumni_note"].endswith(f"- {fake_candidate.FACTS['FIRST_NAME']}")
+        assert fake_candidate.FACTS["EMAIL"] in dossier["inmail_body"]
 
     def test_vision_solver_regex_matching(self):
         valid_buttons = [

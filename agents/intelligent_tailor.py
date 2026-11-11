@@ -7,6 +7,7 @@ guarantees single-page ATS-optimized PDF generation, and learns from application
 import copy
 import os
 import re
+from xml.sax.saxutils import escape
 from pathlib import Path
 from typing import Dict, List, Tuple, Any
 
@@ -16,6 +17,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 
 from . import context, jd_fetch, llm
+from .context import C
 from .tailor_learning import get_learning_engine
 from .resume_tailor import OUT_DIR
 
@@ -64,6 +66,11 @@ def clean_company_name(company: str) -> str:
         split = re.sub(r"(?<=[a-z])(?=[A-Z][a-z])", " ", raw)
         raw = split if all(len(w) >= 2 for w in split.split()) else raw
     return raw
+
+
+def _lower_first(text: str) -> str:
+    """'Resolved tickets' -> 'resolved tickets'; acronyms ('AI', 'IT') stay as they are."""
+    return text[:1].lower() + text[1:] if len(text) > 1 and text[1].islower() else text
 
 
 def clean_role_title(role: str) -> str:
@@ -149,6 +156,48 @@ def _score_bullet(bullet: str, analysis: Dict[str, Any], org: str, bullet_idx: i
     return score
 
 
+def _plain(text: str) -> str:
+    return re.sub(r"<[^>]+>", "", text or "").strip()
+
+
+def candidate_brief() -> Dict[str, Any]:
+    """Who the active candidate is, from their .env facts and master resume only. Unknown -> "" / []."""
+    m = context.MASTER
+    name = C.fact("FULL_NAME") or m.get("name", "")
+    certs, experience = [], []
+    for sec in m.get("sections", []):
+        title = sec.get("title", "").upper()
+        if "CERT" in title:
+            certs += [_plain(x) for x in sec.get("plain", [])] + [_plain(e.get("org", "")) for e in sec.get("entries", [])]
+            certs += [_plain(v) for _, v in sec.get("labeled", [])]
+        certs += [_plain(v) for k, v in sec.get("labeled", []) if "cert" in k.lower() and "CERT" not in title]
+        for e in sec.get("entries", []):
+            for i, b in enumerate(e.get("bullets", [])):
+                experience.append({"org": _plain(e.get("org", "")), "role": e.get("role", ""), "idx": i, "bullet": b,
+                                   "employer": "EXPERIENCE" in title})
+    return {
+        "name": name,
+        "first": C.fact("FIRST_NAME") or (name.split()[0] if name else ""),
+        "contact": m.get("contact", "") or "  •  ".join(x for x in (C.fact("LOCATION_TEXT"), C.fact("PHONE"), C.fact("EMAIL")) if x),
+        "email": C.fact("EMAIL"), "phone": C.fact("PHONE"), "linkedin": C.fact("LINKEDIN_URL"),
+        "school": C.fact("UNIVERSITY"), "major": C.fact("MAJOR"), "grad": C.fact("EXPECTED_GRAD_DATE"),
+        "employers": list(dict.fromkeys(x["org"] for x in experience if x["employer"] and x["org"])),
+        "certs": [c for c in certs if c],
+        "experience": experience,
+    }
+
+
+def best_bullets(analysis: Dict[str, Any], n: int = 2) -> List[Dict[str, Any]]:
+    """The candidate's resume bullets that best fit this job (one per org)."""
+    scored = sorted(candidate_brief()["experience"], key=lambda x: -_score_bullet(x["bullet"], analysis, x["org"], x["idx"]))
+    out, seen = [], set()
+    for x in scored:
+        if x["org"] not in seen:
+            out.append(x)
+            seen.add(x["org"])
+    return out[:n]
+
+
 def tailor_resume(company: str, role: str, url: str, default_resume: str = None) -> str:
     """
     Creates a tailored single-page PDF resume optimized for the given job.
@@ -176,8 +225,8 @@ def tailor_resume(company: str, role: str, url: str, default_resume: str = None)
     learning_engine = get_learning_engine()
 
     # Deep copy master resume structure
-    import resumes.resume_gen as resume_gen
-    resume_data = copy.deepcopy(resume_gen.MASTER)
+    resume_gen = context.resume_gen()
+    resume_data = copy.deepcopy(context.MASTER)
 
     bullet_indices_record = {}
 
@@ -295,82 +344,41 @@ def create_cover_letter(company: str, role: str, url: str, jd_text: str = "") ->
     analysis = analyze_job(company, role, jd_text)
     comp = analysis["company_clean"]
     role_title = analysis["role_clean"]
-    domain = analysis["domain"]
 
-    # Candidate Invariants
-    c_name = "Michael Azuka"
-    c_contact = "Atlanta, GA  •  404-645-0373  •  mazuka146@gmail.com  •  linkedin.com/in/michael-azuka"
+    me = candidate_brief()
+    c_name = escape(me["name"])
+    c_contact = escape(me["contact"])
 
-    # Dynamic Opening
-    salutation = f"Dear {comp} Hiring Team,"
-    opening_p = (
-        f"I am writing to express my strong enthusiasm for the {role_title} role at {comp}. "
-        f"As a Cybersecurity senior at Kennesaw State University graduating in December 2026, accepted into KSU's "
-        f"Master of Science in Cybersecurity program, and holding the CompTIA Security+ certification, I am eager "
-        f"to contribute to {comp}'s mission with hands-on systems defense, automation, and operational discipline."
-    )
+    # Opening: only the school, major, graduation and certifications the candidate's own facts state
+    salutation = f"Dear {escape(comp)} Hiring Team,"
+    opening_p = f"I am writing to express my strong interest in the {escape(role_title)} role at {escape(comp)}."
+    if me["school"]:
+        study = f"{me['major']} student" if me["major"] else "student"
+        opening_p += f" I am a {escape(study)} at {escape(me['school'])}"
+        opening_p += f", graduating {escape(me['grad'])}." if me["grad"] else "."
+    if me["certs"]:
+        opening_p += f" I hold the {escape(', '.join(me['certs'][:2]))}."
 
-    # Core Experience Focus based on Domain
-    if domain == "iam":
-        core_p = (
-            f"My technical background directly aligns with {comp}'s identity and access governance needs. "
-            f"In my Active Directory Automation Lab, I engineered end-to-end user provisioning and deprovisioning "
-            f"workflows using PowerShell and configured Group Policy Objects (GPOs) to enforce least-privilege access "
-            f"across provisioned accounts. Furthermore, at Wolters Kluwer, I resolved complex customer account access "
-            f"and permission discrepancies across high-volume enterprise tax environments, ensuring continuous auditability "
-            f"and strict adherence to security protocols."
-        )
-    elif domain == "soc_analyst":
-        core_p = (
-            f"My practical experience strongly complements {comp}'s security monitoring and incident response operations. "
-            f"In my Azure Sentinel SIEM Lab, I simulated real-world threat detection scenarios, tuned custom detection "
-            f"alert rules to minimize false positives, and documented detailed remediation logic mapped to the MITRE ATT&CK "
-            f"and NIST Cybersecurity Frameworks. Additionally, through my university coursework and Mastercard job simulation, "
-            f"I have analyzed Wireshark packet captures, modeled threat vectors, and investigated email phishing threats."
-        )
-    elif domain == "it_support":
-        core_p = (
-            f"My professional experience has prepared me to deliver immediate value to {comp}'s technical operations. "
-            f"As a Professional Technical Support Intern at Wolters Kluwer, I diagnosed customer-reported login and "
-            f"software configuration faults across the CCH ProSystem fx product suite, closing routine incidents independently "
-            f"while collaborating closely on complex escalations. Previously at Castles Technology, I configured, tested, "
-            f"and deployed POS hardware and client-specific software on a rapid deployment team shipping approximately 500 "
-            f"devices per week under tight delivery deadlines."
-        )
-    elif domain == "cloud_sec_sysadmin":
-        core_p = (
-            f"My background combines hands-on systems administration with proactive security engineering. "
-            f"I manage and configure both Linux and Windows environments, utilizing PowerShell and Bash scripting to automate "
-            f"routine administrative tasks and maintain infrastructure resilience. My lab work in Azure and VMware environments "
-            f"focuses on secure configuration management, least-privilege identity access, and continuous endpoint visibility, "
-            f"ensuring systems remain stable, monitored, and compliant."
-        )
-    else: # network_sec or general_cyber
-        core_p = (
-            f"My coursework and applied lab work provide a solid foundation for {comp}'s security objectives. "
-            f"I have conducted in-depth Wireshark packet analysis, implemented network defense strategies, and tuned "
-            f"Azure Sentinel SIEM detection rules against simulated attacks. Holding the CompTIA Security+ credential, "
-            f"I focus on vulnerability remediation, threat surface reduction, and maintaining robust standard operating "
-            f"procedures that protect enterprise assets."
-        )
+    # Core paragraph: the resume bullets that best fit this job, verbatim
+    picks = best_bullets(analysis, 2)
+    core_p = " ".join(f"At {escape(x['org'])}, I {escape(_lower_first(x['bullet']).rstrip('.'))}." for x in picks)
+    if core_p:
+        core_p = f"My experience matches what {escape(comp)} needs. " + core_p
 
-    # Complementary Strengths Paragraph
-    skills_p = (
-        f"Beyond core security technical skills, I bring proven communication abilities, meticulous documentation habits, "
-        f"and proficiency in Python, PowerShell, and SQL. Whether isolating software root causes or maintaining audit-ready "
-        f"records in ticketing and tracking databases, I take pride in delivering dependable, high-quality results."
-    )
+    skills = [v for s in context.MASTER.get("sections", []) for k, v in s.get("labeled", []) if "cert" not in k.lower()]
+    tools = [t.strip() for t in ", ".join(_plain(v) for v in skills).split(",") if t.strip()][:8]
+    skills_p = (f"My toolkit includes {escape(', '.join(tools))}. " if tools else "") + (
+        "I communicate clearly, document my work carefully, and take pride in dependable, high-quality results.")
 
     # Closing
     closing_p = (
-        f"I am eager to bring my problem-solving mindset, fast ramp-up ability, and commitment to excellence to {comp}. "
-        f"Thank you for your time and consideration, and I look forward to the possibility of discussing how my skills "
-        f"can support your team's goals."
+        f"I am eager to bring my problem-solving mindset and fast ramp-up ability to {escape(comp)}. "
+        f"Thank you for your time and consideration; I look forward to discussing how I can support your team's goals."
     )
 
-    sign_off = "Sincerely,\nMichael Azuka"
+    sign_off = f"Sincerely,\n{c_name}"
 
-    paragraphs = [salutation, opening_p, core_p, skills_p, closing_p, sign_off]
+    paragraphs = [p for p in (salutation, opening_p, core_p, skills_p, closing_p) if p] + [sign_off]
 
     # ReportLab Generation
     try:
