@@ -30,6 +30,8 @@ from pathlib import Path
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from dotenv import load_dotenv
 
+import candidate
+
 ROOT = Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
@@ -37,12 +39,12 @@ load_dotenv(ROOT / ".env")
 IMESSAGE_ENABLED = os.getenv("IMESSAGE_ENABLED", "true").lower() in ("true", "1", "yes")
 IMESSAGE_SERVER_URL = os.getenv("IMESSAGE_SERVER_URL", "http://localhost:1234").rstrip("/")
 IMESSAGE_PASSWORD = os.getenv("IMESSAGE_PASSWORD", "")
-IMESSAGE_TARGET_HANDLE = os.getenv("IMESSAGE_TARGET_HANDLE", "+14046450373")  # Michael Azuka's verified cell
+IMESSAGE_TARGET_HANDLE = os.getenv("IMESSAGE_TARGET_HANDLE", "").strip()  # the candidate's own handle, from .env only
 SENDBLUE_API_KEY = os.getenv("SENDBLUE_API_KEY", "")
 SENDBLUE_API_SECRET = os.getenv("SENDBLUE_API_SECRET", "")
 IMESSAGE_WEBHOOK_PORT = int(os.getenv("IMESSAGE_WEBHOOK_PORT", "5055"))
 
-OUTBOX_LOG_FILE = ROOT / "agents" / "logs" / "imessage_outbox.jsonl"
+OUTBOX_LOG_FILE = candidate.DATA / "imessage_outbox.jsonl"
 OUTBOX_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
 
 
@@ -290,10 +292,31 @@ def handle_incoming_imessage_command(text: str, sender: str = "") -> str:
     return f"Received: '{raw}'. Reply 'status' or 'help' for available Job Deck commands."
 
 
+_LOCAL_HOSTS = {"localhost", "127.0.0.1", "[::1]"}
+
+
+def webhook_request_allowed(host_header: str, origin: str, sender: str) -> bool:
+    """The webhook can start/stop the runner, so: loopback Host only (DNS rebinding), no browser Origin (CSRF from a
+    web page), and the sender must be the candidate's own configured handle."""
+    host = (host_header or "").strip().lower()
+    host = host.rsplit(":", 1)[0] if not host.endswith("]") else host
+    if host not in _LOCAL_HOSTS:
+        return False
+    if origin:
+        return False
+    return bool(IMESSAGE_TARGET_HANDLE) and sender.strip() == IMESSAGE_TARGET_HANDLE
+
+
 class IMessageWebhookHandler(BaseHTTPRequestHandler):
+    def _deny(self):
+        self.send_response(403)
+        self.end_headers()
+
     def do_POST(self):
         try:
-            length = int(self.headers.get("Content-Length", 0))
+            if (self.headers.get("Host") or "").rsplit(":", 1)[0].lower() not in _LOCAL_HOSTS or self.headers.get("Origin"):
+                return self._deny()
+            length = min(int(self.headers.get("Content-Length", 0)), 64 * 1024)
             body = self.rfile.read(length) if length > 0 else b""
             data = {}
             if body:
@@ -314,11 +337,10 @@ class IMessageWebhookHandler(BaseHTTPRequestHandler):
                 sender = handle.get("address", "") if isinstance(handle, dict) else str(handle)
 
             if text:
+                if not webhook_request_allowed(self.headers.get("Host"), self.headers.get("Origin"), str(sender)):
+                    return self._deny()
                 reply_text = handle_incoming_imessage_command(text, sender)
-                if sender:
-                    send_imessage(reply_text, recipient=sender)
-                elif IMESSAGE_TARGET_HANDLE:
-                    send_imessage(reply_text, recipient=IMESSAGE_TARGET_HANDLE)
+                send_imessage(reply_text, recipient=IMESSAGE_TARGET_HANDLE)
 
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -329,6 +351,8 @@ class IMessageWebhookHandler(BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_GET(self):
+        if (self.headers.get("Host") or "").rsplit(":", 1)[0].lower() not in _LOCAL_HOSTS:
+            return self._deny()
         self.send_response(200)
         self.send_header("Content-Type", "text/plain")
         self.end_headers()
@@ -338,7 +362,7 @@ class IMessageWebhookHandler(BaseHTTPRequestHandler):
         pass
 
 
-def start_imessage_webhook_listener(port: int = IMESSAGE_WEBHOOK_PORT, host: str = "0.0.0.0") -> Optional[threading.Thread]:
+def start_imessage_webhook_listener(port: int = IMESSAGE_WEBHOOK_PORT, host: str = "127.0.0.1") -> Optional[threading.Thread]:
     """Starts the background HTTP listener for incoming iMessage webhooks."""
     try:
         server = HTTPServer((host, port), IMessageWebhookHandler)

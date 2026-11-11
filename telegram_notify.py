@@ -1,93 +1,31 @@
 """
-Telegram Notification & Smart Question Resolver for Job Deck
-Intercepts known candidate facts and AI-resolvable questions so the user is never asked
-questions the system already knows. Dispatches only novel, personal-choice questions.
+Telegram notifications and the outbox reader for Job Deck.
+fill.py never calls Telegram: it writes unanswered questions to candidate.DATA/unanswered.json and submissions to
+candidate.APPLICATIONS. The bot service calls process_outbox() to turn those into question prompts and alerts.
+Nothing here saves an answer: only the user's own button tap or "answer <id>: ..." reply does (C-4).
 """
 
 import os
 import re
+import csv
 import json
+import time
+import urllib.error
 import urllib.request
 import urllib.parse
-from pathlib import Path
-from dotenv import load_dotenv
 
-ROOT = Path(__file__).resolve().parent
-load_dotenv(ROOT / ".env")
+import candidate
+from telegram_query_engine import FileLock, h, question_id, _read_json, _write_json_atomic
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 
-# Strict Known Facts Knowledge Base
-KNOWN_FACTS_MAP = [
-    # Location
-    (r"\b(location|city)\b", "Atlanta, GA", r"Atlanta|Powder Springs|Georgia|GA"),
-    (r"\bstate\b", "Georgia", r"Georgia|^GA\b"),
-    (r"\bcountry|territory\b", "United States", r"United States|USA|^US\b"),
-    (r"\bzip|postal\b", "30127", r"30127"),
-    (r"\baddress\b", "4020 Saint George Walk SW, Powder Springs, GA 30127", None),
-
-    # Education
-    (r"\b(school|university|college|alma mater)\b(?!.*cap.exempt)", "Kennesaw State University", r"Kennesaw|KSU"),
-    (r"\bdegree\b", "Bachelor of Science", r"Bachelor|B\.S|Undergraduate"),
-    (r"\bdiscipline|major|field of study\b", "Cybersecurity", r"Cybersecurity|Cyber|Information Security|Computer"),
-    (r"\bgpa\b|grade point", "3.35", r"3\.35|3\.0\s*-\s*3\.5|3\.0\+"),
-    (r"\bgraduat.*year|\byear of graduation\b|\bgraduation\b", "2026", r"2026|2027|2028|Dec 2026"),
-    (r"\bstudent.*status|class standing|academic status\b|sophomore.*junior.*senior", "Senior", r"Senior|Junior|Undergraduate"),
-
-    # Work Auth & Clearance
-    (r"\bcitizenship status\b", "U.S. Citizen", r"U\.S\.\s*Citizen|United States Citizen|^Citizen\b|U\.S\.\s*Person"),
-    (r"h-?1b", "No", r"^No\b"),
-    (r"authori[sz]ed to work|legally eligible|authorized in the (united states|us)|work authorization", "Yes", r"^Yes\b"),
-    (r"sponsorship|require.*visa|visa sponsorship|now or in the future require", "No", r"^No\b"),
-    (r"active.*security clearance|hold.*clearance", "No", r"^No\b"),
-    (r"eligible to obtain.*clearance", "Yes", r"^Yes\b"),
-    (r"18 years|at least 18|age of 18|over 18|legal age", "Yes", r"^Yes\b|^18\b|Under 30"),
-    (r"what is your.*age|current age", "Under 30", r"Under 30|< 30|18-29"),
-
-    # Demographics & EEO
-    (r"\bgender\b|\bsex\b", "Male", r"^Male\b|Decline|Prefer not"),
-    (r"\brace\b|\bethnic", "Black or African American", r"Black|African American|Decline|Prefer not"),
-    (r"\bveteran\b", "I am not a protected veteran", r"not a protected veteran|not a veteran|^No\b"),
-    (r"\bdisabilit", "No, I do not have a disability", r"No, I do not have a disability|do not have a disability|^No\b"),
-    (r"\bhispanic|latino\b", "No", r"^No\b"),
-    (r"\btransgender\b", "No", r"^No\b"),
-    (r"\bpronouns?\b", "He/Him", r"He/Him|he/him|^He\b"),
-    (r"sexual orientation", "Heterosexual", r"Heterosexual|Straight|Decline|Prefer not"),
-    (r"\bprefix\b|\btitle\b", "Mr.", r"Mr\.|Mr"),
-    (r"privacy policy|consent to.*process|candidate privacy", "I agree", r"agree|consent|accept"),
-
-    # Experience, Skills & Agreements
-    (r"essential functions.*(role|job)|perform.*essential functions", "Yes", r"^Yes\b"),
-    (r"production.*level code|production.*code", "Yes", r"^Yes\b"),
-    (r"applied cryptography|cryptographic|security capabilities|security boundaries", "Yes", r"^Yes\b"),
-    (r"active on the platform|years.*active", "3", r"3|1-3|2-4"),
-    (r"how did you (first )?(hear|learn) about", "Job Board - LinkedIn", r"LinkedIn|Job Board"),
-    (r"military experience|veteran status mapping", "No", r"^No\b|Decline"),
-    (r"start date month", "May", r"May|June"),
-    (r"end date month", "August", r"August|July"),
-    (r"\bregion\b", "Georgia", r"Georgia|^GA\b"),
-
-    # Personal Identifiers & Agreements
-    (r"first name", "Michael", None),
-    (r"last name", "Azuka", None),
-    (r"full name|legal name", "Michael Azuka", None),
-    (r"email", "mazuka146@gmail.com", None),
-    (r"phone", "404-645-0373", None),
-    (r"linkedin", "https://www.linkedin.com/in/michael-azuka", None),
-    (r"github", "https://github.com/1Zuski", None),
-    (r"certify|electronic signature|type your name|signature", "Michael Azuka", None),
-    (r"sms|text message|consent to receive", "Yes", r"^Yes\b|Consent"),
-    (r"spacex.*employment.*history|ever.*employed by spacex", "I have never been employed by SpaceX, SpaceXAI, xAI, X, or Twitter", r"never been employed|never worked|not a former|^No\b"),
-    (r"previously applied|worked (for|with) us before|employed by.*before", "No", r"^No\b"),
-    (r"relative.*work|family.*work|conflict of interest", "No", r"^No\b"),
-    (r"non-?compet|non-?solicit", "No", r"^No\b"),
-    (r"intellectual property", "No", r"^No\b"),
-    (r"military officer in grades o-?7|covered dod official", "No", r"^No\b"),
-]
-
-# Track recently asked questions to eliminate spam
-_RECENTLY_ASKED = set()
+OUTBOX_QUESTIONS = candidate.DATA / "unanswered.json"
+OUTBOX_STATE = candidate.DATA / "telegram_outbox_state.json"
+ASKED_FILE = candidate.DATA / "telegram_asked.json"
+ASK_TTL = 24 * 3600   # the same question is asked at most once a day, however many workers hit it (A-6)
+MAX_ACTIVE_QUESTIONS = 3  # anti-spam: more wait in the outbox until these are answered or expire
+MAX_APP_ALERTS_PER_POLL = 10
 
 
 def send_message(text: str, reply_markup=None, parse_mode: str = "HTML"):
@@ -164,11 +102,11 @@ def delete_message(message_id: int, chat_id: str = None) -> bool:
 
 
 def notify_applied(company: str, role: str, job_url: str = ""):
-    url_link = f'\n<a href="{job_url}">View Job Posting</a>' if job_url else ""
+    url_link = f'\n<a href="{h(job_url)}">View Job Posting</a>' if str(job_url).startswith(("http://", "https://")) else ""
     msg = (
         f"🎯 <b>Application Submitted!</b>\n\n"
-        f"🏢 <b>Company:</b> {company}\n"
-        f"💼 <b>Role:</b> {role}"
+        f"🏢 <b>Company:</b> {h(company)}\n"
+        f"💼 <b>Role:</b> {h(role)}"
         f"{url_link}"
     )
     msg_id = send_message(msg)
@@ -182,121 +120,103 @@ def notify_applied(company: str, role: str, job_url: str = ""):
                 job_url=job_url,
                 chat_id=CHAT_ID
             )
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"[Telegram Notify] could not track message: {e}")
     return msg_id
 
 
 def notify_urgent_inbox(company: str, subject: str, action: str):
     msg = (
         f"🚨 <b>Urgent Inbox Action!</b>\n\n"
-        f"🏢 <b>Company:</b> {company}\n"
-        f"✉️ <b>Subject:</b> {subject}\n"
-        f"⚡ <b>Action:</b> {action}"
+        f"🏢 <b>Company:</b> {h(company)}\n"
+        f"✉️ <b>Subject:</b> {h(subject)}\n"
+        f"⚡ <b>Action:</b> {h(action)}"
     )
     return send_message(msg)
 
 
-def check_and_auto_resolve_fact(question: str, options: list = None) -> bool:
-    """Checks if the question matches known candidate facts and silently saves rule."""
-    import telegram_query_engine
-    q_norm = question.strip()
-
-    for pattern, ans, opt_pat in KNOWN_FACTS_MAP:
-        if re.search(pattern, q_norm, re.I):
-            # Known fact! Save rule silently to profile.json
-            fake_item = telegram_query_engine.add_pending_question(q_norm, options)
-            if fake_item:
-                telegram_query_engine.resolve_pending_question(fake_item["id"], ans)
-                print(f"[Auto-Resolved Known Fact] '{q_norm[:50]}' -> '{ans}' saved to profile.json silently.")
-            return True
-    return False
-
-
 def ask_question_interactive(question: str, options: list = None, company: str = ""):
-    """Dispatches a form question to Telegram ONLY if it cannot be auto-resolved by AI Brain."""
-    q_clean = question.strip()
-    if not q_clean or len(q_clean) < 3:
-        return False
-
-    # 1. Multi-Tier Intelligent AI Resolver (Resolves silently without pinging user)
-    try:
-        from agents import intelligent_resolver
-        res = intelligent_resolver.resolve_field(q_clean, options=options, company=company)
-        if res and res.get("answer"):
-            print(f"[Intelligent Auto-Resolution] '{q_clean[:50]}' -> '{res['answer']}' (Silently resolved, not sent to Telegram)")
-            return True
-    except Exception as ex:
-        pass
-
-    # 2. Check known fact map
-    if check_and_auto_resolve_fact(q_clean, options):
-        return True
-
-    # 3. Permanent suppression for standard screening & EEO questions (never bother user)
-    suppress_patterns = re.compile(
-        r"gender|race|ethnic|veteran|disabilit|hispanic|latino|pronoun|sexual\s*orientation|"
-        r"address|city|county|state|zip|postal|phone|email|name|signature|certify|"
-        r"work\s*authorization|citizen|sponsorship|visa|non-?compete|non-?solicit|felon|"
-        r"school|university|degree|major|gpa|graduation|date\s*of\s*birth|birth|age|"
-        r"how\s*did\s*you\s*hear|referral|source|sms|text\s*message|privacy\s*policy|"
-        r"language|driver|relocate|commute|clearance|export|itar",
-        re.I
-    )
-    if suppress_patterns.search(q_clean):
-        return True
-
-    # 4. Strict session deduplication & anti-spam rate limit
-    if q_clean.lower() in _RECENTLY_ASKED:
-        return True
-    _RECENTLY_ASKED.add(q_clean.lower())
-
-    if len(_RECENTLY_ASKED) > 3:
-        print(f"[Anti-Spam Filter] Suppressed Telegram alert for '{q_clean[:40]}' (Session rate limit reached).")
-        return True
-
+    """Sends one form question to Telegram, deduped by question hash across workers/runs (A-6).
+    Returns True when the question was sent or was already asked recently, False when it was not sent."""
     import telegram_query_engine
-    item = telegram_query_engine.add_pending_question(q_clean, options, company)
-    if not item:
+    q_clean = " ".join((question or "").split())
+    if len(q_clean) < 4:
+        return False
+    if not os.getenv("TELEGRAM_BOT_TOKEN", BOT_TOKEN).strip() or not os.getenv("TELEGRAM_CHAT_ID", CHAT_ID).strip():
         return False
 
-    comp_str = f" for <b>{company}</b>" if company else ""
-    msg = (
-        f"❓ <b>Input Needed{comp_str}:</b>\n\n"
-        f"<i>\"{q_clean}\"</i>\n"
-    )
+    q_id = question_id(q_clean)
+    with FileLock(ASKED_FILE):
+        asked = _read_json(ASKED_FILE, {})
+        now = time.time()
+        if now - asked.get(q_id, 0) < ASK_TTL:
+            return True
+        if len(telegram_query_engine.load_pending_questions()) >= MAX_ACTIVE_QUESTIONS:
+            return False
 
-    clean_opts = [o.strip() for o in (options or []) if o and len(o.strip()) < 35][:6]
-    reply_markup = None
-    if clean_opts:
-        keyboard = []
-        row = []
-        for opt in clean_opts:
-            cb_data = f"ans_{item['id']}_{opt}"[:60]
-            row.append({"text": opt, "callback_data": cb_data})
-            if len(row) == 2:
-                keyboard.append(row)
-                row = []
-        if row:
-            keyboard.append(row)
-        reply_markup = {"inline_keyboard": keyboard}
-        msg += "\nTap an answer below, or type: <code>answer: [your answer]</code>"
-    else:
-        msg += "\nReply with: <code>answer: [your answer]</code>"
+        item = telegram_query_engine.add_pending_question(q_clean, options, company)
+        if not item:
+            return False
 
-    msg += "\n\n⏱️ <i>Auto-expires and disappears in 5 minutes</i>"
+        comp_str = f" for <b>{h(company)}</b>" if company else ""
+        msg = f"❓ <b>Input Needed{comp_str}:</b>\n\n<i>\"{h(q_clean)}\"</i>\n"
+        # callback carries the question id and the option's index into item["options"], so it round-trips (C-3)
+        buttons = [{"text": o.strip(), "callback_data": f"ans|{q_id}|{i}"}
+                   for i, o in enumerate(item["options"]) if o and len(o.strip()) < 35][:6]
+        reply_markup = None
+        if buttons:
+            reply_markup = {"inline_keyboard": [buttons[i:i + 2] for i in range(0, len(buttons), 2)]}
+            msg += "\nTap an answer below, or type:"
+        else:
+            msg += "\nReply with:"
+        msg += f" <code>answer {q_id}: your answer</code>"
+        msg += "\n\n⏱️ <i>Auto-expires and disappears in 5 minutes</i>"
 
-    msg_id = send_message(msg, reply_markup=reply_markup)
-    if msg_id and isinstance(msg_id, int):
+        msg_id = send_message(msg, reply_markup=reply_markup)
+        if not msg_id:
+            return False
+        asked[q_id] = now
+        _write_json_atomic(ASKED_FILE, asked)
+
+    if isinstance(msg_id, int):
         telegram_query_engine.record_question_message(
-            q_id=item["id"],
+            q_id=q_id,
             question=q_clean,
             message_id=msg_id,
             company=company,
             chat_id=os.getenv("TELEGRAM_CHAT_ID", CHAT_ID),
             ttl_seconds=300
         )
-    return bool(msg_id)
+    return True
+
+
+def process_outbox() -> dict:
+    """Reads what fill.py wrote (unanswered.json, applications.csv) and sends prompts / alerts. Called by the bot."""
+    sent_q = 0
+    data = _read_json(OUTBOX_QUESTIONS, [])
+    for entry in data if isinstance(data, list) else []:
+        company = urllib.parse.urlparse(str(entry.get("url", ""))).hostname or ""
+        for q in entry.get("questions") or []:
+            if isinstance(q, dict) and ask_question_interactive(q.get("label", ""), q.get("options"), company):
+                sent_q += 1
+
+    # shortcut: new submissions are detected by row count; an upsert of an existing row is not re-announced
+    sent_apps = 0
+    rows = []
+    if candidate.APPLICATIONS.exists():
+        with open(candidate.APPLICATIONS, "r", encoding="utf-8", errors="ignore") as f:
+            rows = list(csv.DictReader(f))
+    state = _read_json(OUTBOX_STATE, {})
+    seen = state.get("apps_seen")
+    if seen is None or seen > len(rows):
+        seen = len(rows)  # first run (or ledger rewritten): don't replay history
+    for r in rows[seen:seen + MAX_APP_ALERTS_PER_POLL]:
+        if notify_applied(r.get("Company", ""), r.get("Role", ""), r.get("Job URL", "")):
+            sent_apps += 1
+        seen += 1
+    if state.get("apps_seen") != seen:
+        _write_json_atomic(OUTBOX_STATE, {**state, "apps_seen": seen})
+    return {"questions": sent_q, "applications": sent_apps}
 
 
 def cleanup_expired_questions(force_all: bool = False) -> int:

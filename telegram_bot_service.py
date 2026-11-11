@@ -6,6 +6,7 @@ and JobQueue 3-hour scheduled updates.
 """
 
 import os
+import re
 import sys
 import csv
 import json
@@ -29,7 +30,10 @@ from telegram.ext import (
     filters,
 )
 
+import candidate
+import telegram_notify
 import telegram_query_engine
+from telegram_query_engine import h
 from agents.telegram_visuals import (
     find_latest_tailored_resume,
     find_latest_tailored_letter,
@@ -59,7 +63,7 @@ BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
 CHAT_ID_STR = os.getenv("TELEGRAM_CHAT_ID", "").strip()
 AUTHORIZED_USER_ID = int(CHAT_ID_STR) if CHAT_ID_STR.isdigit() else 0
 
-PINNED_STATUS_FILE = ROOT / "pinned_status.json"
+PINNED_STATUS_FILE = candidate.DATA / "pinned_status.json"
 ACTIVE_HUD_STATE = {"chat_id": None, "message_id": None}
 ACTIVE_DECISION_TAB = {"chat_id": None, "message_id": None}
 
@@ -166,9 +170,7 @@ async def ensure_pinned_live_status(context: ContextTypes.DEFAULT_TYPE, chat_id:
 
 def get_realtime_metrics():
     """Calculates comprehensive, ultra-accurate metrics from live ledgers and processes."""
-    csv_path = ROOT / "applications.csv"
-    if not csv_path.exists():
-        csv_path = ROOT.parent / "applications.csv"
+    csv_path = candidate.APPLICATIONS
 
     total_applied = 0
     today_applied = 0
@@ -427,7 +429,7 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     ]
 
     if metrics["current_target"] and is_running:
-        lines.append(f"📍 <b>Active Target:</b> <i>{metrics['current_target']}</i>")
+        lines.append(f"📍 <b>Active Target:</b> <i>{h(metrics['current_target'])}</i>")
 
     lines.extend([
         "",
@@ -446,14 +448,14 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     try:
         from agents.imessage_bridge import is_imessage_available, IMESSAGE_TARGET_HANDLE
         im_active = is_imessage_available()
-        lines.append(f"📱 <b>iMessage Dual-Channel Pager:</b> {'🟢 Connected' if im_active else '⚪ Inactive'} <code>({IMESSAGE_TARGET_HANDLE})</code>")
+        lines.append(f"📱 <b>iMessage Dual-Channel Pager:</b> {'🟢 Connected' if im_active else '⚪ Inactive'} <code>({h(IMESSAGE_TARGET_HANDLE)})</code>")
     except Exception:
         pass
 
     if metrics["recent"]:
         lines.append("\n<b>Recent Submissions:</b>")
         for r in metrics["recent"][-3:]:
-            lines.append(f"• <b>{r.get('Company')}</b> — {r.get('Role')}")
+            lines.append(f"• <b>{h(r.get('Company'))}</b> — {h(r.get('Role'))}")
 
     return "\n".join(lines)
 
@@ -504,10 +506,10 @@ def get_onboarding_step_message(step: int = 1):
             "🧭 <b>Job Deck Setup Wizard (Step 3 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "👤 <b>Candidate Identity & Rule-Based Shield</b>\n\n"
-            "• <b>Candidate:</b> Michael Azuka\n"
-            "• <b>Education:</b> B.S. Cybersecurity, Kennesaw State University (Dec 2026)\n"
-            "• <b>GPA:</b> 3.35 | Accepted to M.S. Cybersecurity\n"
-            "• <b>Certifications:</b> CompTIA Security+, NSF BPC AI & ML Certificate\n"
+            f"• <b>Candidate:</b> {h(candidate.fact('FULL_NAME') or 'not set (CANDIDATE_FULL_NAME)')}\n"
+            f"• <b>Education:</b> {h(candidate.fact('DEGREE_EXACT') or candidate.fact('DEGREE') or 'not set')}, "
+            f"{h(candidate.fact('UNIVERSITY') or 'not set')} ({h(candidate.fact('EXPECTED_GRAD_DATE') or 'grad date not set')})\n"
+            f"• <b>GPA:</b> {h(candidate.fact('GPA') or 'not set')}\n"
             "• <b>Target Specializations:</b> Cybersecurity Analyst, IAM Specialist, SOC Analyst, Cloud Security, IT Support, SysAdmin\n\n"
             "🔒 <b>Anti-Hallucination Policy:</b>\n"
             "All screening responses are locked to factual entries in <code>profile.json</code>. The agent will never "
@@ -556,7 +558,7 @@ def get_onboarding_step_message(step: int = 1):
             "🧭 <b>Job Deck Setup Wizard (Step 6 of 8)</b>\n"
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
             "📱 <b>Apple iMessage Dual-Channel Emergency Pager</b>\n\n"
-            "Job Deck bridges directly to Apple iMessage on your phone (<code>+14046450373</code>)!\n\n"
+            "Job Deck bridges directly to Apple iMessage on the phone set in <code>IMESSAGE_TARGET_HANDLE</code>.\n\n"
             "✨ <b>How it works:</b>\n"
             "• <b>Critical Pager:</b> Interview requests, assessment deadlines, and job offers ping your iPhone instantly via native blue bubbles.\n"
             "• <b>2-Way Text Commands:</b> Text your Job Deck bridge anytime from iMessage:\n"
@@ -770,7 +772,7 @@ def replenish_queue_action() -> int:
     applied_urls = set()
     applied_pairs = set()
 
-    csv_path = ROOT / "applications.csv"
+    csv_path = candidate.APPLICATIONS
     if csv_path.exists():
         with open(csv_path, "r", encoding="utf-8", errors="ignore") as f:
             for r in csv.DictReader(f):
@@ -1229,19 +1231,30 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
     data = query.data
     await query.answer()
 
-    # 1. Answer button tapped: ans_{q_id}_{option}
-    if data.startswith("ans_"):
-        parts = data.split("_", 2)
-        if len(parts) >= 3:
-            q_id = f"{parts[0]}_{parts[1]}"
-            selected_answer = parts[2]
-            res = telegram_query_engine.resolve_pending_question(q_id, selected_answer)
+    # 0. Confirm / discard a Gemini-proposed change: prop|<proposal id>|y|n (only this button applies it)
+    if data.startswith("prop|"):
+        parts = data.split("|")
+        if len(parts) != 3 or parts[2] not in ("y", "n"):
+            await safe_edit(query, "⚠️ Invalid button.")
+            return
+        result = telegram_query_engine.apply_proposal(parts[1], confirm=parts[2] == "y")
+        await safe_edit(query, result)
+        return
+
+    # 1. Answer button tapped: ans|<q_id>|<option index>
+    if data.startswith("ans|"):
+        parts = data.split("|")
+        if len(parts) == 3:
+            q_id, idx = parts[1], parts[2]
+            res = telegram_query_engine.resolve_by_option_index(q_id, idx)
+            if not res.get("ok"):
+                await safe_edit(query, f"⚠️ {res.get('msg', 'Unknown question')}")
+                return
             telegram_query_engine.mark_question_deleted_or_resolved(message_id=query.message.message_id, q_id=q_id)
 
-            clean_q = res.get("question", "Field")
             confirm_text = (
-                f"✅ <b>Answer Recorded:</b> <code>{selected_answer}</code>\n"
-                f"<b>Field:</b> {clean_q}\n\n"
+                f"✅ <b>Answer Recorded:</b> <code>{h(res.get('answer'))}</code>\n"
+                f"<b>Field:</b> {h(res.get('question', 'Field'))}\n\n"
                 f"<i>🧹 Smart auto-delete: removing message in 4s to keep chat clean...</i>"
             )
             await safe_edit(query, confirm_text)
@@ -1334,15 +1347,15 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             lines = ["📋 <b>Latest Verified Submissions:</b>\n"]
             for r in reversed(recent):
                 url = r.get("Job URL", "")
-                link_html = f'<a href="{url}">{r.get("Company")}</a>' if url else f"<b>{r.get('Company')}</b>"
-                lines.append(f"• {link_html} — {r.get('Role')} (<i>{r.get('Date Applied')}</i>)")
+                link_html = f'<a href="{h(url)}">{h(r.get("Company"))}</a>' if url.startswith("http") else f"<b>{h(r.get('Company'))}</b>"
+                lines.append(f"• {link_html} — {h(r.get('Role'))} (<i>{h(r.get('Date Applied'))}</i>)")
         kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
         await safe_edit(query, "\n".join(lines), reply_markup=kb)
 
     elif data == "btn_stats":
         m = get_realtime_metrics()
         top_co = sorted(m["companies"].items(), key=lambda x: -x[1])[:5]
-        top_str = "\n".join(f"  • {c}: {count} applied" for c, count in top_co) if top_co else "  • No data yet"
+        top_str = "\n".join(f"  • {h(c)}: {count} applied" for c, count in top_co) if top_co else "  • No data yet"
         cats = m["roles_category"]
         cats_str = "\n".join(f"  • {k}: {v}" for k, v in cats.items())
 
@@ -1369,14 +1382,14 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
         )
 
     elif data == "btn_questions":
-        ans = telegram_query_engine.answer_natural_language_query("pending questions")
+        ans, _ = telegram_query_engine.answer_natural_language_query("pending questions")
         kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
         await safe_edit(query, ans, reply_markup=kb)
 
     elif data == "btn_alerts":
         m = get_realtime_metrics()
         inbox = m["inbox_actions"]
-        msg = ("📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(inbox[:10])) if inbox else "✅ <b>No urgent recruiter actions pending!</b>"
+        msg = ("📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(h(i) for i in inbox[:10])) if inbox else "✅ <b>No urgent recruiter actions pending!</b>"
         kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
         await safe_edit(query, msg, reply_markup=kb)
 
@@ -1465,7 +1478,7 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
             with open(pdf_p, "rb") as f:
                 await query.message.reply_document(
                     document=f,
-                    caption=f"📄 <b>Document:</b> <code>{pdf_p.name}</code>",
+                    caption=f"📄 <b>Document:</b> <code>{h(pdf_p.name)}</code>",
                     parse_mode=ParseMode.HTML
                 )
         else:
@@ -1486,7 +1499,7 @@ async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_
         img_bytes = await asyncio.to_thread(render_pdf_to_image_bytes, pdf_path)
         co_display = pdf_path.parent.name.replace("_", " ") if pdf_path.parent.name != "resumes" else "Master Candidate"
         caption = (
-            f"📄 <b>Quick-View {doc_type}:</b> <code>{co_display}</code>\n"
+            f"📄 <b>Quick-View {doc_type}:</b> <code>{h(co_display)}</code>\n"
             f"🎯 <i>Tap photo above to view full-screen without downloading!</i>"
         )
         keyboard = InlineKeyboardMarkup([
@@ -1504,7 +1517,7 @@ async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_
         with open(pdf_path, "rb") as f:
             sent = await target_msg.reply_document(
                 document=f,
-                caption=f"📄 <b>{doc_type}</b> ({pdf_path.name})",
+                caption=f"📄 <b>{doc_type}</b> ({h(pdf_path.name)})",
                 parse_mode=ParseMode.HTML
             )
             if sent:
@@ -1519,7 +1532,7 @@ async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
         status_text = (
             "📸 <b>Live Screen Cam:</b> <i>Browser is currently idle or initializing.</i>\n\n"
             f"⚡ <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n"
-            f"📍 <b>Active Target:</b> <i>{m.get('current_target') or 'None'}</i>\n\n"
+            f"📍 <b>Active Target:</b> <i>{h(m.get('current_target') or 'None')}</i>\n\n"
             f"<i>Tap [🚀 Launch 3 Workers] below to start active browser automation!</i>"
         )
         sent = await safe_reply(target_msg, status_text, reply_markup=get_smart_keyboard(m))
@@ -1529,7 +1542,7 @@ async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
     img_bytes, caption = snap
     sent = await target_msg.reply_photo(
         photo=img_bytes,
-        caption=f"{caption}\n<i>⚡ Live view from active Playwright worker</i>",
+        caption=f"{h(caption)}\n<i>⚡ Live view from active Playwright worker</i>",
         reply_markup=get_smart_keyboard(m),
         parse_mode=ParseMode.HTML
     )
@@ -1560,7 +1573,7 @@ async def handle_live_hud(target_msg, context: ContextTypes.DEFAULT_TYPE):
             await context.bot.edit_message_text(
                 chat_id=old_chat_id,
                 message_id=old_msg_id,
-                text="📡 <b>[AJ Dynamic HUD — Turned OFF]</b>\n\n<i>Live dynamic ticker paused. Tap [📡 Live Dynamic HUD] below or text /hud to restart anytime.</i>",
+                text="📡 <b>[Job Deck Dynamic HUD — Turned OFF]</b>\n\n<i>Live dynamic ticker paused. Tap [📡 Live Dynamic HUD] below or text /hud to restart anytime.</i>",
                 reply_markup=get_smart_keyboard(m),
                 parse_mode=ParseMode.HTML
             )
@@ -1573,9 +1586,9 @@ async def handle_live_hud(target_msg, context: ContextTypes.DEFAULT_TYPE):
     # If HUD is NOT active -> TOGGLE ON
     m = get_realtime_metrics()
     now_str = datetime.now().strftime("%I:%M:%S %p")
-    target_str = f"📍 <b>Target:</b> <i>{m['current_target']}</i>\n" if m.get("current_target") else ""
+    target_str = f"📍 <b>Target:</b> <i>{h(m['current_target'])}</i>\n" if m.get("current_target") else ""
     hud_text = (
-        f"📡 <b>[AJ Dynamic HUD — Live Ticker ACTIVE]</b> <i>({now_str})</i>\n\n"
+        f"📡 <b>[Job Deck Dynamic HUD — Live Ticker ACTIVE]</b> <i>({now_str})</i>\n\n"
         f"⚡ <b>Runner:</b> {'🟢 ' + str(m['worker_count']) + ' Workers Active' if m['is_running'] else '⚪ Idle'}\n"
         f"{target_str}"
         f"📊 <b>Today:</b> <b>+{m['today_applied']}</b> applied | Total: <b>{m['total_applied']} / 3000</b>\n"
@@ -1621,7 +1634,7 @@ async def _update_hud_tick(context: ContextTypes.DEFAULT_TYPE):
             await context.bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=msg_id,
-                text="📡 <b>[AJ Dynamic HUD — Auto-Paused]</b>\n\n<i>Live ticker paused after 3 minutes of active telemetry. Tap button below to resume anytime!</i>",
+                text="📡 <b>[Job Deck Dynamic HUD — Auto-Paused]</b>\n\n<i>Live ticker paused after 3 minutes of active telemetry. Tap button below to resume anytime!</i>",
                 reply_markup=get_smart_keyboard(m),
                 parse_mode=ParseMode.HTML
             )
@@ -1631,10 +1644,10 @@ async def _update_hud_tick(context: ContextTypes.DEFAULT_TYPE):
 
     m = get_realtime_metrics()
     now_str = datetime.now().strftime("%I:%M:%S %p")
-    target_str = f"📍 <b>Target:</b> <i>{m['current_target']}</i>\n" if m.get("current_target") else ""
+    target_str = f"📍 <b>Target:</b> <i>{h(m['current_target'])}</i>\n" if m.get("current_target") else ""
 
     hud_text = (
-        f"📡 <b>[AJ Dynamic HUD — Live Ticker ACTIVE]</b> <i>({now_str})</i>\n\n"
+        f"📡 <b>[Job Deck Dynamic HUD — Live Ticker ACTIVE]</b> <i>({now_str})</i>\n\n"
         f"⚡ <b>Runner:</b> {'🟢 ' + str(m['worker_count']) + ' Workers Active' if m['is_running'] else '⚪ Idle'}\n"
         f"{target_str}"
         f"📊 <b>Today:</b> <b>+{m['today_applied']}</b> applied | Total: <b>{m['total_applied']} / 3000</b>\n"
@@ -1672,8 +1685,8 @@ async def handle_url_drop(url: str, target_msg, context: ContextTypes.DEFAULT_TY
     await safe_reply(
         target_msg,
         f"🎯 <b>Auto-Apply Triggered!</b>\n"
-        f"<b>Employer:</b> {comp_name}\n"
-        f"<b>URL:</b> <code>{canonical_url}</code>\n\n"
+        f"<b>Employer:</b> {h(comp_name)}\n"
+        f"<b>URL:</b> <code>{h(canonical_url)}</code>\n\n"
         f"⚡ <i>Launching isolated priority worker in headless mode...</i>"
     )
 
@@ -1697,7 +1710,7 @@ async def send_daily_morning_brief(context: ContextTypes.DEFAULT_TYPE):
     now_str = datetime.now().strftime("%A, %B %d, %Y")
 
     brief = (
-        f"🌅 <b>GOOD MORNING MICHAEL — EXECUTIVE BRIEFING</b>\n"
+        f"🌅 <b>GOOD MORNING {h((candidate.fact('PREFERRED_NAME') or candidate.fact('FIRST_NAME')).upper())} — EXECUTIVE BRIEFING</b>\n"
         f"📅 <i>{now_str}</i>\n"
         f"─────────────────────────────\n"
         f"🎯 <b>Milestone Progress:</b> <b>{total} / 3000</b> ({(total/3000)*100:.1f}%)\n"
@@ -1756,7 +1769,7 @@ async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
             urgent_items = "\n".join(f"• {item}" for item in inbox[:5])
             alert = (
                 f"🚨 <b>RECRUITER & INTERVIEW RADAR ALERT</b>\n\n"
-                f"{urgent_items}\n\n"
+                f"{h(urgent_items)}\n\n"
                 f"💡 <i>Type /prep &lt;Company&gt; for an instant Interview Battlecard!</i>"
             )
             await context.bot.send_message(
@@ -1796,13 +1809,13 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
 
         await update.message.reply_text(
-            f"🗣️ <b>Voice Command Heard:</b> <i>\"{transcribed_text}\"</i>",
+            f"🗣️ <b>Voice Command Heard:</b> <i>\"{h(transcribed_text)}\"</i>",
             parse_mode=ParseMode.HTML
         )
         update.message.text = transcribed_text
         await handle_text(update, context)
     except Exception as e:
-        await safe_reply(update.message, f"⚠️ Voice memo error: {e}")
+        await safe_reply(update.message, f"⚠️ Voice memo error: {h(e)}")
 
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1820,6 +1833,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         eval_text = evaluate_and_advance_interview(update.effective_chat.id, text)
         await safe_reply(update.message, eval_text)
+        return
+
+    # Priority 0.5: answers / rules before keyword routing ("answer qX: I can start in May" must not launch the runner)
+    if await handle_answer_text(update, context, text):
         return
 
     # Priority 1: Instant URL Drop & Auto-Apply
@@ -1935,7 +1952,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not inbox:
             await safe_reply(update.message, "✅ <b>No urgent recruiter actions pending in your inbox!</b>")
         else:
-            await safe_reply(update.message, "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(f"• {item}" for item in inbox[:10]))
+            await safe_reply(update.message, "📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(f"• {h(item)}" for item in inbox[:10]))
         return
 
     # Priority 10: Decision Tracking & Stage Advancements (Active for 3 min tab)
@@ -1980,12 +1997,12 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await safe_reply(
                 update.message,
                 f"📱 <b>iMessage Notification Dispatched!</b>\n\n"
-                f"• <b>Target:</b> <code>{IMESSAGE_TARGET_HANDLE}</code>\n"
-                f"• <b>Transport:</b> <code>{res.get('method')}</code>\n\n"
+                f"• <b>Target:</b> <code>{h(IMESSAGE_TARGET_HANDLE)}</code>\n"
+                f"• <b>Transport:</b> <code>{h(res.get('method'))}</code>\n\n"
                 f"<i>Your dual-channel pager is active. Critical recruiter alerts will ping your iPhone instantly.</i>"
             )
         else:
-            await safe_reply(update.message, f"⚠️ <b>iMessage Notice:</b>\n{res.get('error', 'Check configuration in .env')}")
+            await safe_reply(update.message, f"⚠️ <b>iMessage Notice:</b>\n{h(res.get('error', 'Check configuration in .env'))}")
         return
 
     if any(k in t_lower for k in ["clean", "clear", "clearchat", "clean chat", "clear chat", "wipe chat", "reset chat", "clean apps", "clear apps"]) or t_lower in ["/clean", "/clear"]:
@@ -2030,32 +2047,49 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif t_lower.startswith("target:"):
         target_query = text.split(":", 1)[1].strip()
         launch_runner(workers=1, queue="queue_cyber_iam.txt")
-        await safe_reply(update.message, f"🎯 <b>Targeting '{target_query}'!</b> Worker launched in priority mode.")
-    elif t_lower.startswith("answer:") or t_lower.startswith("ans:") or t_lower in ["yes", "no", "i agree"]:
-        ans_val = text.split(":", 1)[1].strip() if ":" in text else text.strip()
-        res = telegram_query_engine.resolve_pending_question("latest", ans_val)
-        if res.get("ok"):
-            q_msg_id = res.get("message_id")
-            if q_msg_id:
-                await safe_delete_message(context.bot, update.effective_chat.id, q_msg_id)
-
-            clean_q = res.get("question", "Field")
-            reply_msg = await safe_reply(
-                update.message,
-                f"✅ <b>Rule Saved:</b> <code>{res['answer']}</code>\n<b>Field:</b> {clean_q}\n\n<i>🧹 Deleting confirmation in 4s to keep chat clean...</i>"
-            )
-            if context.job_queue:
-                context.job_queue.run_once(_delayed_delete_job, when=4.0, data={"chat_id": update.effective_chat.id, "message_id": reply_msg.message_id})
-                context.job_queue.run_once(_delayed_delete_job, when=4.0, data={"chat_id": update.effective_chat.id, "message_id": update.message.message_id})
-            return
-        else:
-            await safe_reply(update.message, res.get("msg", "No pending question found."))
-            return
+        await safe_reply(update.message, f"🎯 <b>Targeting '{h(target_query)}'!</b> Worker launched in priority mode.")
     else:
-        # Route through natural language query & rule answering engine
-        answer = telegram_query_engine.answer_natural_language_query(text)
-        m = get_realtime_metrics()
-        await safe_reply(update.message, answer, reply_markup=get_smart_keyboard(m))
+        await reply_with_engine(update, text)
+
+
+async def reply_with_engine(update: Update, text: str):
+    """Natural-language engine reply. A Gemini proposal gets Apply/Discard buttons and is applied only on tap."""
+    answer, proposal_id = await asyncio.to_thread(telegram_query_engine.answer_natural_language_query, text)
+    if proposal_id:
+        kb = InlineKeyboardMarkup([[
+            InlineKeyboardButton("✅ Apply change", callback_data=f"prop|{proposal_id}|y"),
+            InlineKeyboardButton("🗑️ Discard", callback_data=f"prop|{proposal_id}|n"),
+        ]])
+    else:
+        kb = get_smart_keyboard(get_realtime_metrics())
+    await safe_reply(update.message, answer, reply_markup=kb)
+
+
+async def handle_answer_text(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str) -> bool:
+    """'answer <id>: value' saves an answer for exactly that question. Returns True if the message was an answer."""
+    t_lower = text.strip().lower()
+    if not (t_lower.startswith("answer") or t_lower.startswith("ans ") or t_lower.startswith("ans:")
+            or t_lower.startswith("set rule")):
+        return False
+    parsed = telegram_query_engine.parse_answer_command(text)
+    if not parsed:  # bare "answer: x" or "set rule: ..." -> engine explains / handles it
+        await reply_with_engine(update, text)
+        return True
+    res = telegram_query_engine.resolve_pending_question(*parsed)
+    if not res.get("ok"):
+        await safe_reply(update.message, res.get("msg", "No pending question found."))
+        return True
+    q_msg_id = res.get("message_id")
+    if q_msg_id:
+        await safe_delete_message(context.bot, update.effective_chat.id, q_msg_id)
+    reply_msg = await safe_reply(
+        update.message,
+        f"✅ <b>Rule Saved:</b> <code>{h(res['answer'])}</code>\n<b>Field:</b> {h(res.get('question', 'Field'))}\n\n<i>🧹 Deleting confirmation in 4s to keep chat clean...</i>"
+    )
+    if context.job_queue:
+        context.job_queue.run_once(_delayed_delete_job, when=4.0, data={"chat_id": update.effective_chat.id, "message_id": reply_msg.message_id})
+        context.job_queue.run_once(_delayed_delete_job, when=4.0, data={"chat_id": update.effective_chat.id, "message_id": update.message.message_id})
+    return True
 
 
 async def cmd_clean(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -2103,6 +2137,14 @@ async def refresh_pinned_status_job(context: ContextTypes.DEFAULT_TYPE):
         await ensure_pinned_live_status(context, chat_id=AUTHORIZED_USER_ID, force_repin=False)
     except Exception:
         pass
+
+
+async def poll_outbox_job(context: ContextTypes.DEFAULT_TYPE):
+    """Turns what fill.py wrote (unanswered.json, applications.csv) into question prompts and submitted alerts."""
+    try:
+        await asyncio.to_thread(telegram_notify.process_outbox)
+    except Exception as e:
+        print(f"[Outbox Poll Error] {e}", flush=True)
 
 
 async def periodic_pc_optimizer_job(context: ContextTypes.DEFAULT_TYPE):
@@ -2159,6 +2201,7 @@ def main():
     if app.job_queue:
         app.job_queue.run_repeating(send_3hour_update, interval=3 * 3600, first=3 * 3600)
         app.job_queue.run_repeating(sweep_expired_questions_job, interval=30, first=10)
+        app.job_queue.run_repeating(poll_outbox_job, interval=30, first=15)
         app.job_queue.run_daily(send_daily_morning_brief, time=dt_time(hour=8, minute=0, second=0))
         app.job_queue.run_repeating(check_inbox_radar_job, interval=1800, first=60)
         app.job_queue.run_repeating(refresh_pinned_status_job, interval=45, first=2)

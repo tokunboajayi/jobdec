@@ -8,11 +8,12 @@ import os
 import pathlib
 import re
 from typing import Optional, Tuple
-from PIL import Image
 import pypdfium2 as pdfium
 
+import candidate
+
 HERE = pathlib.Path(__file__).resolve().parent.parent
-RESUMES_DIR = HERE / "resumes"
+RESUMES_DIR = candidate.RESUMES  # this candidate's resumes; none live in the repo
 
 
 def render_pdf_to_image_bytes(pdf_path: pathlib.Path, scale: float = 2.0) -> bytes:

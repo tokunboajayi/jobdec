@@ -11,35 +11,61 @@ import pytest
 import os
 import json
 from pathlib import Path
+from agents import imessage_bridge
 from agents.imessage_bridge import (
     is_imessage_available,
     send_imessage,
     forward_advancement_to_imessage,
     handle_incoming_imessage_command,
-    OUTBOX_LOG_FILE,
-    IMESSAGE_TARGET_HANDLE,
+    webhook_request_allowed,
 )
 
+FAKE_HANDLE = "+15550000000"  # reserved fictional number
 
-def test_imessage_availability():
+
+@pytest.fixture(autouse=True)
+def offline_bridge(tmp_path, monkeypatch):
+    """No real handle, no real transport: every send lands in a temp outbox log."""
+    monkeypatch.setattr(imessage_bridge, "IMESSAGE_ENABLED", True)
+    monkeypatch.setattr(imessage_bridge, "IMESSAGE_TARGET_HANDLE", FAKE_HANDLE)
+    monkeypatch.setattr(imessage_bridge, "IMESSAGE_PASSWORD", "")
+    monkeypatch.setattr(imessage_bridge, "SENDBLUE_API_KEY", "")
+    monkeypatch.setattr(imessage_bridge, "SENDBLUE_API_SECRET", "")
+    monkeypatch.setattr(imessage_bridge.sys, "platform", "win32")
+    monkeypatch.setattr(imessage_bridge, "OUTBOX_LOG_FILE", tmp_path / "outbox.jsonl")
+
+
+def test_no_hardcoded_handle():
+    src = Path(imessage_bridge.__file__).read_text(encoding="utf-8")
+    assert '"IMESSAGE_TARGET_HANDLE", "")' in src
+
+
+def test_imessage_availability(monkeypatch):
     assert is_imessage_available() is True
-    assert IMESSAGE_TARGET_HANDLE == "+14046450373"
+    monkeypatch.setattr(imessage_bridge, "IMESSAGE_TARGET_HANDLE", "")
+    assert is_imessage_available() is False
 
 
 def test_imessage_send_and_audit_logging():
-    test_msg = "Automated Test Message for Michael Azuka"
+    test_msg = "Automated Test Message"
     res = send_imessage(test_msg)
     assert res.get("success") is True
-    assert res.get("target") == "+14046450373"
+    assert res.get("target") == FAKE_HANDLE
 
-    # Verify audit log on disk
-    assert OUTBOX_LOG_FILE.exists()
-    with open(OUTBOX_LOG_FILE, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-    assert len(lines) > 0
+    log = imessage_bridge.OUTBOX_LOG_FILE
+    lines = log.read_text(encoding="utf-8").splitlines()
     latest = json.loads(lines[-1])
     assert latest.get("text") == test_msg
-    assert latest.get("target") == "+14046450373"
+    assert latest.get("target") == FAKE_HANDLE
+
+
+def test_webhook_rejects_rebinding_cross_origin_and_strangers():
+    assert webhook_request_allowed("127.0.0.1:5055", "", FAKE_HANDLE)
+    assert webhook_request_allowed("localhost:5055", None, FAKE_HANDLE)
+    assert not webhook_request_allowed("evil.example:5055", "", FAKE_HANDLE)   # DNS rebinding
+    assert not webhook_request_allowed("127.0.0.1:5055", "http://127.0.0.1:9999", FAKE_HANDLE)  # web page POST
+    assert not webhook_request_allowed("127.0.0.1:5055", "", "+15551112222")  # anyone else
+    assert not webhook_request_allowed("127.0.0.1:5055", "", "")
 
 
 def test_imessage_forward_advancement():

@@ -25,18 +25,29 @@ from agents.offer_negotiator import analyze_offer_and_strategize
 from agents.ats_gap_analyzer import analyze_ats_gap
 
 
-def test_quickview_pdf_rendering():
+@pytest.fixture
+def fake_resumes(tmp_path, monkeypatch):
+    """A blank generated PDF stands in for a resume: no real person's resume is read by tests."""
+    import pypdfium2 as pdfium
+    from agents import telegram_visuals
+    doc = pdfium.PdfDocument.new()
+    doc.new_page(612, 792)
+    doc.save(str(tmp_path / "Candidate_Resume.pdf"))
+    monkeypatch.setattr(telegram_visuals, "RESUMES_DIR", tmp_path)
+    return tmp_path
+
+
+def test_quickview_pdf_rendering(fake_resumes):
     resume_path = find_latest_tailored_resume()
-    assert resume_path is not None
-    assert resume_path.exists()
+    assert resume_path == fake_resumes / "Candidate_Resume.pdf"
     
     # Must produce valid PNG bytes
     img_bytes = render_pdf_to_image_bytes(resume_path, scale=1.5)
-    assert len(img_bytes) > 10000
+    assert len(img_bytes) > 1000
     assert img_bytes[:8] == b"\x89PNG\r\n\x1a\n"  # PNG magic header
 
 
-def test_quickview_cover_letter_lookup():
+def test_quickview_cover_letter_lookup(fake_resumes):
     letter_path = find_latest_tailored_letter()
     if letter_path:
         assert letter_path.exists()
@@ -81,8 +92,7 @@ def test_offer_negotiator():
     assert res["base_val"] == 85000
     assert res["counter_base"] > 85000
     assert "Autonomous Compensation Dossier" in res["telegram_summary"]
-    assert "Michael Azuka" in res["email_draft"]
-    assert "404-645-0373" in res["email_draft"]
+    assert res["email_draft"]
 
 
 def test_ats_gap_analyzer():
@@ -90,7 +100,8 @@ def test_ats_gap_analyzer():
     assert res["match_pct"] >= 70
     assert len(res["matched"]) > 0
     assert "ATS Keyword Heatmap" in res["telegram_summary"]
-    assert "CompTIA Security+" in res["telegram_summary"] or "Active Directory" in res["telegram_summary"]
+    summary = res["telegram_summary"].lower()
+    assert "comptia security+" in summary or "active directory" in summary
 
 
 def test_pinned_status_state_and_keyboard():
@@ -162,8 +173,10 @@ def test_dynamic_turbo_and_hud_toggle():
     ACTIVE_HUD_STATE["message_id"] = None
 
 
-def test_onboarding_wizard_steps_and_keyboard():
+def test_onboarding_wizard_steps_and_keyboard(monkeypatch):
     from telegram_bot_service import get_onboarding_step_message, get_smart_keyboard
+    monkeypatch.setenv("CANDIDATE_FULL_NAME", "Test <Candidate>")
+    monkeypatch.setenv("CANDIDATE_GPA", "3.9")
 
     # Test all 8 steps generate valid HTML messages and keyboards
     for step in range(1, 9):
@@ -177,16 +190,15 @@ def test_onboarding_wizard_steps_and_keyboard():
     assert "Cybersecurity" in t1
     assert "Zero Software Engineering" in t1
 
-    # Step 3 should contain candidate identity
+    # Step 3 shows this candidate's facts from .env (escaped), never a hardcoded person
     t3, _ = get_onboarding_step_message(3)
-    assert "Michael Azuka" in t3
-    assert "3.35" in t3
-    assert "Security+" in t3
+    assert "Test &lt;Candidate&gt;" in t3
+    assert "3.9" in t3
 
-    # Step 6 should contain iMessage Pager details
+    # Step 6 should contain iMessage Pager details, without any phone number in code
     t6, _ = get_onboarding_step_message(6)
     assert "iMessage" in t6
-    assert "+14046450373" in t6
+    assert "IMESSAGE_TARGET_HANDLE" in t6
 
     # Step 8 should have the final launch button
     t8, kb8 = get_onboarding_step_message(8)
@@ -235,8 +247,8 @@ def test_decision_tab_lifecycle_and_auto_disappear():
         assert bot_mock.send_message.called
         sent_args = bot_mock.send_message.call_args[1]
         assert "Active for 3 minutes" in sent_args["text"]
-        assert "Autonomous Decision & Pipeline Summary" in sent_args["text"]
-        assert "🔗" in sent_args["text"] or "URL" in sent_args["text"]
+        from agents.decision_tracker import get_decision_pipeline_summary
+        assert get_decision_pipeline_summary() in sent_args["text"]
         assert job_queue_mock.run_once.called
         assert job_queue_mock.run_once.call_args[0][1] == 180.0  # 3 minutes
 
