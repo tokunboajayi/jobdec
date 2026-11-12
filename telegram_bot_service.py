@@ -2827,9 +2827,10 @@ def main():
     # One bot per token: on 2026-11-11 three old copies were still polling, so taps landed on old code at random
     others = []
     my_pid = os.getpid()
+    parent_pid = os.getppid()
     for p in psutil.process_iter(["pid", "name"]):
         try:
-            if p.pid == my_pid:
+            if p.pid in (my_pid, parent_pid):
                 continue
             if (p.info.get("name") or "").lower().startswith("python"):
                 cmd = p.cmdline()
