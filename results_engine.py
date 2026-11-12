@@ -228,7 +228,7 @@ def ats_priority(url):
 
 def job_key(company, role, url):
     """Same job posted on several career pages -> same key (used to drop duplicates)."""
-    m = re.search(r"(?:_|/)(R-?\d{4,}|JR-?\d{4,}|RQ\d{4,}|R\d{5,})(?:-\d)?\b", url or "", re.I) or \
+    m = re.search(r"(?:_|/)(R-?\d{4,}|JR-?\d{4,}|RQ\d{4,}|R\d{5,}|REF\d{4,}W?)(?:-\d)?\b", url or "", re.I) or \
         re.search(r"/jobs/(\d{6,})|gh_jid=(\d{6,})", url or "")
     req = next((g for g in (m.groups() if m else []) if g), "")
     if req:  # same requisition on the same employer site = same job, whatever the queue calls the company

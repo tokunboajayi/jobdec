@@ -14,6 +14,15 @@ FALLBACK_MODELS = (
     "google/gemini-2.0-flash-001",
     "meta-llama/llama-3.3-70b-instruct",
 )
+# Tried last, when the paid models fail (2026-11-11: account at $0 credits -> HTTP 402 on every real request).
+# shortcut: free-tier models are rate-limited and may log prompts; add credits to go back to the paid ones.
+# OPENROUTER_FREE_FALLBACK=0 turns this off.
+FREE_MODELS = (
+    "nvidia/nemotron-3-ultra-550b-a55b:free",
+    "nvidia/nemotron-3.5-super-vl:free",
+    "google/gemma-4-31b-it:free",
+    "baidu/ernie-5.5-flash-preview:free",
+)
 
 
 class OpenRouterError(Exception):
@@ -76,7 +85,7 @@ def chat(system, messages, max_tokens=600, temperature=0.3, json_mode=False, tim
     primary_model = os.getenv("OPENROUTER_MODEL", "").strip() or DEFAULT_MODEL
     models_to_try = [primary_model]
     if key != "test-key-not-real":
-        for m in FALLBACK_MODELS:
+        for m in FALLBACK_MODELS + (FREE_MODELS if os.getenv("OPENROUTER_FREE_FALLBACK", "1") != "0" else ()):
             if m not in models_to_try:
                 models_to_try.append(m)
 
@@ -101,7 +110,11 @@ def chat(system, messages, max_tokens=600, temperature=0.3, json_mode=False, tim
                 if attempt == 1 and (e.code == 429 or e.code >= 500):
                     time.sleep(2)
                     continue
-                last_err = OpenRouterError(f"OpenRouter HTTP {e.code}")
+                try:
+                    detail = json.loads(e.read().decode("utf-8", "ignore")).get("error", {}).get("message", "")
+                except Exception:
+                    detail = ""
+                last_err = OpenRouterError(f"OpenRouter HTTP {e.code}" + (f": {detail[:160]}" if detail else ""))
                 break
             except (urllib.error.URLError, TimeoutError, OSError) as e:
                 last_err = OpenRouterError(f"OpenRouter unreachable ({type(e).__name__})")

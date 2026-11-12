@@ -11,6 +11,8 @@ import sys
 import csv
 import json
 import glob
+import hashlib
+import threading
 import subprocess
 import asyncio
 import time as time_mod
@@ -236,13 +238,15 @@ def get_realtime_metrics():
     active_worker_pids = []
     total_mem_mb = 0
     try:
-        for p in psutil.process_iter(["pid", "name", "cmdline", "memory_info"]):
+        for p in psutil.process_iter(["pid", "cmdline"]):  # memory only for matches: all ~600 took 2s on the event loop
             cmd = " ".join(p.info["cmdline"] or [])
             # python running the scripts, not anything that mentions them ("tail -f batch_apply.log" read as a live runner)
             if "python" in cmd.lower() and re.search(r"batch_apply_parallel\.py|fill\.py", cmd) and p.info["pid"] != curr_pid:
                 active_worker_pids.append(p.info["pid"])
-                if p.info.get("memory_info"):
-                    total_mem_mb += p.info["memory_info"].rss / (1024 * 1024)
+                try:
+                    total_mem_mb += p.memory_info().rss / (1024 * 1024)
+                except psutil.Error:
+                    pass
     except Exception:
         pass
 
@@ -310,108 +314,83 @@ def get_smart_keyboard(metrics=None):
     if metrics is None:
         metrics = get_realtime_metrics()
 
-    is_running = metrics.get("is_running", False)
+    B = InlineKeyboardButton
     pending_q = metrics.get("pending_questions") or []
-    inbox = metrics.get("inbox_actions") or []
-
-    keyboard = []
-
-    # Row 1: Core Lifecycle Controls (Adapts dynamically to runner state)
-    if is_running:
-        row1 = [
-            InlineKeyboardButton("📊 Live Status", callback_data="btn_status"),
-            InlineKeyboardButton("🛑 Pause Runner", callback_data="btn_stop"),
-        ]
-    else:
-        row1 = [
-            InlineKeyboardButton("📊 Live Status", callback_data="btn_status"),
-            InlineKeyboardButton("▶ Run 3 Workers", callback_data="btn_run"),
-        ]
-    keyboard.append(row1)
-
-    # Row 1.5: Start Full Job Deck Anywhere & Mid-Session Company Customizer
-    keyboard.append([
-        InlineKeyboardButton("🚀 Start Full Job Deck", callback_data="btn_start_deck"),
-        InlineKeyboardButton("🎯 Mid-Session Target Apply", callback_data="btn_target"),
-    ])
-
-    # Row 2: Tactical Application Operations
-    turbo_w, _ = calculate_dynamic_turbo_workers()
-    if is_running:
-        row2 = [
-            InlineKeyboardButton(f"⚡ Turbo ({turbo_w} Workers)", callback_data="btn_turbo"),
-            InlineKeyboardButton("📋 Recent Apps", callback_data="btn_recent"),
-        ]
-    else:
-        row2 = [
-            InlineKeyboardButton(f"⚡ Turbo ({turbo_w} Workers)", callback_data="btn_turbo"),
-            InlineKeyboardButton("🚀 1-Worker Sweep", callback_data="btn_sweep"),
-        ]
-    keyboard.append(row2)
-
-    # Row 3: High Priority User-Interaction (Urgent alerts pushed to front!)
-    if len(pending_q) > 0:
-        row3 = [
-            InlineKeyboardButton(f"⚠️ Answer Questions ({len(pending_q)})", callback_data="btn_questions"),
-            InlineKeyboardButton("🧹 Clean Questions", callback_data="btn_clean_questions"),
-        ]
-    elif len(inbox) > 0:
-        row3 = [
-            InlineKeyboardButton(f"📬 Recruiter Action ({len(inbox)})", callback_data="btn_alerts"),
-            InlineKeyboardButton("🧹 Clean Chat", callback_data="btn_clean_questions"),
-        ]
-    else:
-        row3 = [
-            InlineKeyboardButton("🎯 Replenish Queue", callback_data="btn_replenish"),
-            InlineKeyboardButton("🧹 Clean Chat", callback_data="btn_clean_questions"),
-        ]
-    keyboard.append(row3)
-
-    # Row 4: Assessments & Analytics
-    row4 = [
-        InlineKeyboardButton("🧠 Solve Assessments", callback_data="btn_assessments"),
-        InlineKeyboardButton("📈 Stats Breakdown", callback_data="btn_stats"),
-    ]
-    keyboard.append(row4)
-
-    # Row 5: Quick-View Resume & Live Screen Cam
-    row5 = [
-        InlineKeyboardButton("📄 Quick Resume", callback_data="btn_resume"),
-        InlineKeyboardButton("📸 Screen Cam", callback_data="btn_view"),
-    ]
-    keyboard.append(row5)
-
-    # Row 6: Live Dynamic HUD & AI Mock Interview
-    hud_active = bool(ACTIVE_HUD_STATE.get("message_id"))
-    hud_label = "📡 Stop Dynamic HUD" if hud_active else "📡 Live Dynamic HUD"
-    row6 = [
-        InlineKeyboardButton(hud_label, callback_data="btn_hud"),
-        InlineKeyboardButton("🎙️ Mock Interview", callback_data="btn_interview"),
-    ]
-    keyboard.append(row6)
-
-    # Row 7: Decision Stages & Recruiter Scan
-    row7 = [
-        InlineKeyboardButton("🎯 Decision Stages", callback_data="btn_decisions"),
-        InlineKeyboardButton("📬 Scan Decisions Now", callback_data="btn_scan_inbox"),
-    ]
-    keyboard.append(row7)
-
-    # Row 8: Pin Live Status & Quick Refresh
-    row8 = [
-        InlineKeyboardButton("📌 Pin Live Status", callback_data="btn_pin_status"),
-        InlineKeyboardButton("🔄 Refresh View", callback_data="btn_status"),
-    ]
-    keyboard.append(row8)
-
-    # Row 9: PC Optimizer & Resource Boost + Setup Wizard
-    row9 = [
-        InlineKeyboardButton("🧹 Boost PC", callback_data="btn_optimize_pc"),
-        InlineKeyboardButton("🧭 Setup Wizard", callback_data="btn_setup_wizard"),
-    ]
-    keyboard.append(row9)
-
+    run_btn = B("⏸ Pause", callback_data="btn_stop") if metrics.get("is_running") else B("▶ Run", callback_data="btn_run")
+    keyboard = [[run_btn, B("🔄 Refresh", callback_data="btn_status")],
+                [B("📋 Recent", callback_data="btn_recent"), B("📈 Stats", callback_data="btn_stats")]]
+    if pending_q:
+        keyboard.append([B(f"⚠️ Answer questions ({len(pending_q)})", callback_data="btn_questions")])
+    keyboard.append([B("⚙️ Settings", callback_data="btn_settings"), B("☰ More", callback_data="btn_more")])
     return InlineKeyboardMarkup(keyboard)
+
+
+# Owner's bot settings (candidate home, not the repo). workers 0 = auto-size to free RAM.
+SETTINGS_FILE = candidate.DATA / "bot_settings.json"
+DEFAULT_SETTINGS = {"workers": 3, "delay": 2.0, "autopilot": True, "desired": "running"}
+PACE_NAMES = {4.0: "🐢 Careful", 2.0: "Normal", 1.0: "⚡ Fast"}
+
+
+def load_settings() -> dict:
+    try:
+        return {**DEFAULT_SETTINGS, **json.loads(SETTINGS_FILE.read_text(encoding="utf-8"))}
+    except Exception:
+        return dict(DEFAULT_SETTINGS)
+
+
+_SETTINGS_LOCK = threading.Lock()  # taps run concurrently; read-modify-write must not lose a change
+
+
+def save_settings(**changes) -> dict:
+    if "delay" in changes and float(changes["delay"]) not in PACE_NAMES:  # only the offered paces (no 0, negative, nan)
+        changes.pop("delay")
+    if "workers" in changes and not 0 <= int(changes["workers"]) <= 8:
+        changes.pop("workers")
+    with _SETTINGS_LOCK:
+        s = {**load_settings(), **changes}
+        try:
+            SETTINGS_FILE.write_text(json.dumps(s, indent=2), encoding="utf-8")
+        except Exception as e:
+            print(f"[Settings Save Error] {e}", flush=True)
+    return s
+
+
+def settings_summary(s=None) -> str:
+    s = s or load_settings()
+    w = s["workers"] or "auto"
+    return f"{w} workers · {PACE_NAMES.get(float(s['delay']), str(s['delay']) + 's')} pace · autopilot {'on' if s['autopilot'] else 'off'}"
+
+
+def get_settings_view():
+    s = load_settings()
+    B = InlineKeyboardButton
+    mark = lambda on, label: ("✅ " if on else "") + label
+    text = ("⚙️ <b>Settings</b>\n\n"
+            f"<b>Workers:</b> {s['workers'] or 'auto (sized to free RAM)'} — browsers applying at once\n"
+            f"<b>Pace:</b> {PACE_NAMES.get(float(s['delay']), s['delay'])} — wait between page steps\n"
+            f"<b>Autopilot:</b> {'on — restarts the runner if it stops and refills the queue' if s['autopilot'] else 'off — runs only when you tap Run'}\n\n"
+            "<i>Changes apply the next time the runner starts.</i>")
+    kb = InlineKeyboardMarkup([
+        [B(mark(s["workers"] == n, str(n) if n else "Auto"), callback_data=f"set|workers|{n}") for n in (1, 2, 3, 4, 0)],
+        [B(mark(float(s["delay"]) == d, name), callback_data=f"set|delay|{d}") for d, name in PACE_NAMES.items()],
+        [B(f"🤖 Autopilot: {'ON' if s['autopilot'] else 'OFF'}", callback_data=f"set|autopilot|{'off' if s['autopilot'] else 'on'}")],
+        [B("⬅ Back", callback_data="btn_status")],
+    ])
+    return text, kb
+
+
+def get_more_view():
+    B = InlineKeyboardButton
+    text = "☰ <b>More</b>\n<i>Each button sends its result as a new message.</i>"
+    kb = InlineKeyboardMarkup([
+        [B("🎯 Apply to a company", callback_data="btn_target"), B("➕ Refill queue", callback_data="btn_replenish")],
+        [B("📸 Browser screen", callback_data="btn_view"), B("📄 Resume", callback_data="btn_resume")],
+        [B("📬 Recruiter decisions", callback_data="btn_decisions"), B("🔍 Scan inbox", callback_data="btn_scan_inbox")],
+        [B("🧠 Assessments", callback_data="btn_assessments"), B("🎙️ Mock interview", callback_data="btn_interview")],
+        [B("🧹 Clean chat", callback_data="btn_clean_questions"), B("🖥️ Free up PC", callback_data="btn_optimize_pc")],
+        [B("⬅ Back", callback_data="btn_status")],
+    ])
+    return text, kb
 
 
 def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metrics=None):
@@ -428,54 +407,28 @@ def format_status_message(header="📊 <b>Job Deck Live Control Panel</b>", metr
     is_running = metrics["is_running"]
     workers = metrics["worker_count"]
     mem = metrics["total_mem_mb"]
+    s = load_settings()
     if is_running:
-        runner_str = f"🟢 <b>RUNNING</b> ({workers} workers active, {mem}MB RAM)"
-    elif RUNNER_SUPERVISOR_STATE.get("desired") == "running":
-        runner_str = "🟡 <b>RE-IGNITING...</b> (Autonomous Supervisor Active)"
+        runner_str = f"🟢 <b>Running</b> ({workers} processes, {mem}MB)"
+    elif RUNNER_SUPERVISOR_STATE.get("desired") == "running" and s["autopilot"]:
+        runner_str = "🟡 <b>Restarting…</b> (autopilot)"
     else:
-        runner_str = "⚪ <b>PAUSED</b> (User Paused)"
+        runner_str = "⏸ <b>Paused</b> — tap ▶ Run"
 
-    now_str = datetime.now().strftime("%I:%M:%S %p")
+    now_str = datetime.now().strftime("%I:%M %p")
     lines = [
         f"{header} <i>({now_str})</i>",
         "",
-        f"🎯 <b>Milestone Progress:</b> <code>[{bar}]</code> {pct:.1f}%",
-        f"• <b>Total Verified:</b> <b>{total}</b> / {target_goal}",
-        f"• <b>Submitted Today:</b> <b>+{today}</b> applications",
-        "",
-        f"⚡ <b>Runner Status:</b> {runner_str}",
+        f"<b>Applied:</b> {total} total · +{today} today  <code>[{bar}]</code> {pct:.0f}% of {target_goal}",
+        f"<b>Runner:</b> {runner_str}",
     ]
-
     if metrics["current_target"] and is_running:
-        lines.append(f"📍 <b>Active Target:</b> <i>{h(metrics['current_target'])}</i>")
-
-    lines.extend([
-        "",
-        f"🧠 <b>Memory & Auto-Scale:</b> {metrics.get('avail_gb', 0):.1f}GB free ({metrics.get('mem_pct', 0)}% RAM) ➔ Optimal: <b>{metrics.get('optimal_workers', 3)} workers</b>",
-        f"📋 <b>FDE / AI / Product Queue:</b> {metrics['unapplied_count']} unapplied ({metrics['queue_count']} ranked)",
-        f"💬 <b>Telegram Bar Target:</b> <i>Type <code>Apply to this job with Visa</code> or <code>Apply to this job with Goldman</code> anytime!</i>",
-    ])
-
-    if len(metrics["pending_questions"]) > 0:
-        lines.append(f"⚠️ <b>Action Needed:</b> <b>{len(metrics['pending_questions'])} pending question(s)</b> awaiting input!")
-    else:
-        lines.append("✅ <b>Form Screening:</b> 100% auto-resolved (0 pending)")
-
-    if len(metrics["inbox_actions"]) > 0:
-        lines.append(f"📬 <b>Recruiter Inbox:</b> {len(metrics['inbox_actions'])} urgent recruiter item(s)!")
-
-    try:
-        from agents.imessage_bridge import is_imessage_available, IMESSAGE_TARGET_HANDLE
-        im_active = is_imessage_available()
-        lines.append(f"📱 <b>iMessage Dual-Channel Pager:</b> {'🟢 Connected' if im_active else '⚪ Inactive'} <code>({h(IMESSAGE_TARGET_HANDLE)})</code>")
-    except Exception:
-        pass
-
-    if metrics["recent"]:
-        lines.append("\n<b>Recent Submissions:</b>")
-        for r in metrics["recent"][-3:]:
-            lines.append(f"• <b>{h(r.get('Company'))}</b> — {h(r.get('Role'))}")
-
+        lines.append(f"<b>Now:</b> <i>{h(metrics['current_target'])}</i>")
+    lines.append(f"<b>Queue:</b> {metrics['unapplied_count']} jobs left · <b>Settings:</b> {settings_summary(s)}")
+    if metrics["pending_questions"]:
+        lines.append(f"⚠️ <b>{len(metrics['pending_questions'])} question(s)</b> need your answer")
+    if metrics["inbox_actions"]:
+        lines.append(f"📬 <b>{len(metrics['inbox_actions'])} recruiter item(s)</b> in your inbox")
     return "\n".join(lines)
 
 
@@ -632,7 +585,7 @@ def get_onboarding_step_message(step: int = 1):
     return text, kb
 
 RUNNER_SUPERVISOR_STATE = {
-    "desired": "running",
+    "desired": load_settings()["desired"],  # a Pause survives a bot restart
     "workers": 3,
     "delay": 2.0,
     "queue": "queue_ranked.txt",
@@ -869,15 +822,35 @@ def resolve_targeted_company_jobs(query_str: str, include_applied: bool = False)
         except Exception:
             pass
 
-    if not include_applied:
-        unapplied = [c for c in candidates if not c["applied"]]
-        if unapplied:
-            candidates = unapplied
+    if not include_applied:  # never fall back to applied jobs when nothing new matches
+        candidates = [c for c in candidates if not c["applied"]]
 
     # Rank: highest score (including role keyword boost), then FDE/AI/Product/Data track preference, then easiest ATS
     cat_rank = {"fde": 0, "ai_automation": 0, "product": 1, "analyst_data": 1, "business_systems": 2, "consulting_strategy": 2, "finance_tech": 2}
     candidates.sort(key=lambda c: (c["applied"], -c["score"], cat_rank.get(c["category"], 5), c["ats_prio"]))
     return candidates
+
+
+def _in_flight_keys() -> set:
+    import results_engine as RE
+    return {RE.job_key(j["company"], j["role"], j["url"]) for j in ACTIVE_TARGETED_JOBS
+            if j.get("pid") and psutil.pid_exists(j["pid"])}
+
+
+def eligible_targets(candidates: list) -> list:
+    """The batch runner's own gates (batch_apply_parallel.py): never applied, not protected, fit >= min_fit_score,
+    and not already being filled by an earlier tap. A Telegram tap must not reach a job the runner would refuse."""
+    import results_engine as RE
+    min_fit = RE.strategy().get("min_fit_score", 5.0)
+    busy, seen, out = _in_flight_keys(), set(), []
+    for m in candidates:
+        key = RE.job_key(m["company"], m["role"], m["url"])
+        if (m.get("applied") or key in busy or key in seen or RE.is_protected(m["company"])
+                or RE.score_job(m["company"], m["role"], m["url"])[0] < min_fit):
+            continue
+        seen.add(key)
+        out.append(m)
+    return out
 
 
 def launch_mid_session_targeted_job(target_query: str, ensure_runner_active: bool = True, max_to_launch: int = 1, role_index: int = 0, dry_run: bool = False) -> dict:
@@ -889,14 +862,12 @@ def launch_mid_session_targeted_job(target_query: str, ensure_runner_active: boo
     global NEXT_TARGET_WORKER_ID, ACTIVE_TARGETED_JOBS
     import results_engine as RE
 
-    # never resubmit, never an excluded company or a non-internship (score_job returns 0 for those)
-    matches = [m for m in resolve_targeted_company_jobs(target_query, include_applied=False)
-               if RE.score_job(m["company"], m["role"], m["url"])[0] > 0]
+    matches = eligible_targets(resolve_targeted_company_jobs(target_query, include_applied=False))
     if not matches:
         return {
             "ok": False,
             "query": target_query,
-            "error": f"No eligible internship postings for '{target_query}' (already applied, excluded, or not an internship).",
+            "error": f"No eligible internship postings for '{target_query}' (already applied, in progress, protected, below your fit score, or not an internship).",
             "launched": [],
             "alternates": [],
         }
@@ -916,7 +887,8 @@ def launch_mid_session_targeted_job(target_query: str, ensure_runner_active: boo
     launched_items = []
     today_str = date.today().isoformat()
     log_dir = ROOT / "records" / today_str
-    log_dir.mkdir(parents=True, exist_ok=True)
+    if not dry_run:
+        log_dir.mkdir(parents=True, exist_ok=True)
 
     for job in to_launch:
         comp = job["company"]
@@ -1166,6 +1138,7 @@ def launch_runner(workers=None, queue="queue_ranked.txt", delay=2.0, user_action
         queue = "queue_ranked.txt" if (ROOT / "queue_ranked.txt").exists() else ("queue.txt" if (ROOT / "queue.txt").exists() else "queue_cyber_iam.txt")
     if user_action:
         RUNNER_SUPERVISOR_STATE["desired"] = "running"
+        save_settings(desired="running")
         if workers is not None:
             RUNNER_SUPERVISOR_STATE["workers"] = workers
         RUNNER_SUPERVISOR_STATE["delay"] = delay
@@ -1223,12 +1196,46 @@ def launch_runner(workers=None, queue="queue_ranked.txt", delay=2.0, user_action
     ]
     log_file = open(ROOT / "batch_apply.log", "a", encoding="utf-8")
     flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
-    subprocess.Popen(cmd, cwd=str(ROOT), stdout=log_file, stderr=subprocess.STDOUT, creationflags=flags)
+    return subprocess.Popen(cmd, cwd=str(ROOT), stdout=log_file, stderr=subprocess.STDOUT, creationflags=flags).pid
+
+
+def _log_tail(n=6) -> str:
+    try:
+        return "\n".join((ROOT / "batch_apply.log").read_text(encoding="utf-8", errors="ignore").splitlines()[-n:])
+    except Exception:
+        return ""
+
+
+async def start_runner_and_report(workers=None, delay=None, force=False) -> str:
+    """Starts the runner off the event loop (it can refill the queue for ~15s), checks it stayed up, says what happened."""
+    s = load_settings()
+    if not force and get_realtime_metrics()["is_running"]:  # a restart would kill applications mid-form
+        RUNNER_SUPERVISOR_STATE["desired"] = "running"
+        save_settings(desired="running")
+        return "🟢 <b>Already applying.</b> Nothing was restarted. Tap ⏸ Pause first to change workers or pace."
+    w = workers if workers is not None else (s["workers"] or None)
+    d = delay if delay is not None else float(s["delay"])
+    pid = await asyncio.to_thread(launch_runner, w, "queue_ranked.txt", d, True)
+    await asyncio.sleep(4)
+    if not (pid and psutil.pid_exists(pid)):
+        return f"❌ <b>The runner stopped right after starting.</b>\n<pre>{h(_log_tail())}</pre>"
+    m = get_realtime_metrics()
+    return ("✅ <b>Applying now</b>\n"
+            f"• Workers: {w or 'auto (' + str(m.get('optimal_workers', 3)) + ')'} · pace {d:g}s\n"
+            f"• Queue: {m['unapplied_count']} jobs left\n"
+            f"• Autopilot: {'on — restarts it if it stops' if s['autopilot'] else 'off'}\n"
+            "<i>Submitted applications and questions arrive here as they happen.</i>")
+
+
+async def stop_runner_and_report() -> str:
+    stopped = await asyncio.to_thread(halt_runner)
+    return f"⏸ <b>Paused.</b> Stopped {stopped} process(es). Nothing restarts until you tap ▶ Run."
 
 
 def halt_runner():
     global RUNNER_SUPERVISOR_STATE
     RUNNER_SUPERVISOR_STATE["desired"] = "paused"
+    save_settings(desired="paused")
     curr_pid = os.getpid()
     stopped = 0
     for p in psutil.process_iter(["pid", "name", "cmdline"]):
@@ -1257,7 +1264,7 @@ async def runner_watchdog_supervisor_job(context: ContextTypes.DEFAULT_TYPE):
     and autonomously relaunches the parallel runner until 3,000 target is reached.
     """
     global RUNNER_SUPERVISOR_STATE
-    if RUNNER_SUPERVISOR_STATE.get("desired") != "running":
+    if RUNNER_SUPERVISOR_STATE.get("desired") != "running" or not load_settings()["autopilot"]:
         return
 
     m = get_realtime_metrics()
@@ -1286,10 +1293,9 @@ async def runner_watchdog_supervisor_job(context: ContextTypes.DEFAULT_TYPE):
         except Exception as e:
             print(f"[Supervisor Watchdog] Auto-replenish error: {e}", flush=True)
 
-    w = RUNNER_SUPERVISOR_STATE.get("workers", 3)
-    d = RUNNER_SUPERVISOR_STATE.get("delay", 2.0)
+    s = load_settings()
     q = RUNNER_SUPERVISOR_STATE.get("queue", "queue_ranked.txt")
-    launch_runner(workers=w, queue=q, delay=d, user_action=False)
+    await asyncio.to_thread(launch_runner, s["workers"] or None, q, float(s["delay"]), False)
 
 
 def replenish_queue_action() -> int:
@@ -1468,6 +1474,40 @@ async def safe_edit(query, text: str, reply_markup=None):
             parse_mode=None,
             disable_web_page_preview=True
         )
+
+
+CLOSE_KB = InlineKeyboardMarkup([[InlineKeyboardButton("✖ Close", callback_data="btn_close")]])
+PANEL_HOLD = {"until": 0.0}  # while a menu is open on the pinned panel, the 45s refresh leaves it alone
+
+
+def is_panel(query) -> bool:
+    return bool(query.message) and query.message.message_id == load_pinned_status_info().get("message_id")
+
+
+def hold_panel_view(query, seconds: float = 120.0):
+    if is_panel(query):
+        PANEL_HOLD["until"] = time_mod.time() + seconds
+
+
+async def show(query, text: str, kb=None):
+    """A button's result. Tapped on the pinned panel -> new message (the panel stays the panel); elsewhere -> edit in place."""
+    if is_panel(query):
+        return await safe_reply(query.message, text, reply_markup=kb or CLOSE_KB)
+    return await safe_edit(query, text, reply_markup=kb or CLOSE_KB)
+
+
+async def finish(msg, text: str, kb=None):
+    """Replace a '⏳ working…' message with the result."""
+    try:
+        await msg.edit_text(text, reply_markup=kb or CLOSE_KB, parse_mode=ParseMode.HTML, disable_web_page_preview=True)
+    except Exception as e:
+        if "not modified" not in str(e).lower():
+            await msg.reply_text(re.sub(r"<[^>]+>", "", text), reply_markup=kb or CLOSE_KB)
+
+
+async def refresh_panel(context):
+    PANEL_HOLD["until"] = 0.0
+    await ensure_pinned_live_status(context, chat_id=AUTHORIZED_USER_ID, force_repin=False)
 
 
 async def safe_delete_message(bot, chat_id: int, message_id: int) -> bool:
@@ -1715,49 +1755,8 @@ async def sweep_expired_questions_job(context: ContextTypes.DEFAULT_TYPE):
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != AUTHORIZED_USER_ID:
         return
-    # Ensure the single always-active Control Panel is updated and pinned at top of chat
     await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=False)
-    text = (
-        "👋 <b>Welcome to Job Deck Autonomous Headquarters!</b>\n\n"
-        "🚀 <b>Start Your Job Deck From Anywhere:</b>\n"
-        "• <code>/deck</code> or tap <b>[🚀 Start Full Job Deck]</b> — Launches 3 parallel FDE/AI/Product workers from anywhere\n"
-        "• <code>/apply [Company]</code> — Mid-session targeted apply\n"
-        "• Or type naturally in the Telegram bar:\n"
-        "  <i>\"Apply to this job with Visa\"</i>\n"
-        "  <i>\"Apply to this job with Goldman\"</i>\n"
-        "  <i>\"Apply to this job with Palantir\"</i>\n\n"
-        "⚡ <b>Autonomous Speed & Assessments:</b>\n"
-        "• <code>/run</code> — Launch 3 workers with auto-scaling\n"
-        "• <code>/turbo</code> — Max velocity (auto-tuned concurrency, fast 1.0s delay)\n"
-        "• <code>/assessments</code> or <code>/oa</code> — Run Autonomous Assessment Solver\n"
-        "• <code>/queue</code> — View & customize top queued FDE / AI / Product roles\n"
-        "• <code>/stop</code> or <code>/nuke</code> — Immediate pause / emergency kill\n\n"
-        "📄 <b>Tailored Documents & Screen Cam:</b>\n"
-        "• <code>/resume [Company]</code> — Quick-view tailored resume (photo preview, no download!)\n"
-        "• <code>/letter [Company]</code> — Quick-view tailored cover letter\n"
-        "• <code>/view</code> or <code>/snap</code> — Live screenshot of active browser window\n"
-        "• <code>/hud</code> or <code>/ticker</code> — Single-message live dynamic ticker\n"
-        "• <code>/pin</code> — Pin the live status control panel to top banner\n\n"
-        "🎯 <b>Auto-Apply & Radar:</b>\n"
-        "• Paste any job URL directly — Auto-applies on the spot mid-session\n"
-        "• <code>/inbox</code> — Urgent recruiter replies & interview alerts\n"
-        "• <code>/gap [Company]</code> — ATS keyword heatmap & missing skills\n"
-        "• <code>/prep [Company]</code> — Complete Interview Battlecard\n"
-        "• <code>/radar [Company]</code> — Recruiter & warm referral dossiers\n\n"
-        "🎙️ <b>AI Mock Interview & Negotiation:</b>\n"
-        "• <code>/interview [Company]</code> — Interactive technical mock interview (Voice or Text!)\n"
-        "• <code>/negotiate [Details]</code> — Market salary counter-offer packages\n"
-        "• 🗣️ <i>Send any voice memo to execute commands hands-free!</i>"
-    )
-    kb = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton("🚀 Start Full Job Deck", callback_data="btn_start_deck"),
-            InlineKeyboardButton("🎯 Mid-Session Target Apply", callback_data="btn_target"),
-        ],
-        [InlineKeyboardButton("📌 View Live Control Panel", callback_data="btn_status")],
-        [InlineKeyboardButton("🧭 Launch Setup Wizard", callback_data="btn_setup_wizard")],
-    ])
-    await update.message.reply_text(text, reply_markup=kb, parse_mode=ParseMode.HTML)
+    await update.message.reply_text(HELP_TEXT, parse_mode=ParseMode.HTML)
 
 
 async def cmd_setup(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1845,168 +1844,101 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
                 asyncio.create_task(_del())
             return
 
-    elif data == "btn_clean_questions":
-        await clean_all_questions_action(context, query.message.chat_id, trigger_msg_id=query.message.message_id)
-        m = get_realtime_metrics()
-        await safe_edit(query, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
+    # 2. Panel and menus: these change the panel in place
+    if data in ("btn_status", "btn_settings", "btn_more", "btn_target") or data.startswith("set|"):
+        if data.startswith("set|"):
+            _, key, val = (data.split("|") + ["", ""])[:3]
+            s = load_settings()
+            if key == "workers" and val.isdigit():
+                save_settings(workers=int(val))
+            elif key == "delay":
+                try:
+                    save_settings(delay=float(val))
+                except ValueError:
+                    pass
+            elif key == "autopilot" and val in ("on", "off"):
+                save_settings(autopilot=val == "on")
+            data = "btn_settings"
+        if data == "btn_status":
+            if is_panel(query):
+                PANEL_HOLD["until"] = 0.0  # back on the panel: live refresh resumes
+            m = get_realtime_metrics()
+            text_out, kb = format_status_message(metrics=m), get_smart_keyboard(m)
+        else:
+            text_out, kb = {"btn_settings": get_settings_view, "btn_more": get_more_view,
+                            "btn_target": get_target_customizer_panel}[data]()
+            hold_panel_view(query)
+        await safe_edit(query, text_out, reply_markup=kb)
         return
 
-    # 2. Control panel buttons
-    if data == "btn_status":
-        m = get_realtime_metrics()
-        await safe_edit(query, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
+    if data == "btn_close":
+        await safe_delete_message(context.bot, query.message.chat_id, query.message.message_id)
+        return
 
-    elif data == "btn_setup_wizard" or data == "onboard:step:1":
-        text_out, kb = get_onboarding_step_message(1)
-        await safe_edit(query, text_out, reply_markup=kb)
-
-    elif data.startswith("onboard:step:"):
+    if data == "btn_setup_wizard" or data.startswith("onboard:step:"):
         try:
             step_num = int(data.split(":")[-1])
-        except Exception:
+        except ValueError:
             step_num = 1
         text_out, kb = get_onboarding_step_message(step_num)
+        hold_panel_view(query)
         await safe_edit(query, text_out, reply_markup=kb)
+        return
 
-    elif data == "onboard:launch":
-        launch_runner(workers=3)
-        m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = 3
-        await safe_edit(query, format_status_message(header="🚀 <b>Setup Complete! 3 Parallel Workers Launched!</b>", metrics=m), reply_markup=get_smart_keyboard(m))
-        await query.answer("🚀 Setup Complete! 3 parallel workers active!", show_alert=True)
-
-    elif data == "btn_run":
-        launch_runner(workers=3)
-        m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = 3
-        await safe_edit(query, format_status_message(header="🚀 <b>Launched 3 Parallel Workers! Auto-Applying...</b>", metrics=m), reply_markup=get_smart_keyboard(m))
-        await query.answer("🚀 3 parallel workers active!", show_alert=False)
-
-    elif data == "btn_turbo":
-        turbo_w, desc = calculate_dynamic_turbo_workers()
-        launch_runner(workers=turbo_w, delay=1.0)
-        m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = turbo_w
-        await safe_edit(query, format_status_message(header=f"⚡ <b>TURBO VELOCITY ACTIVE ({turbo_w} Workers)!</b>", metrics=m), reply_markup=get_smart_keyboard(m))
-        await query.answer(f"⚡ Turbo: {desc}", show_alert=True)
-
-    elif data == "btn_sweep":
-        launch_runner(workers=1, delay=3.0)
-        m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = 1
-        await safe_edit(query, format_status_message(header="🚀 <b>Single Worker Sweep Launched!</b>", metrics=m), reply_markup=get_smart_keyboard(m))
-        await query.answer("🚀 1-Worker Sweep active!", show_alert=False)
+    # 3. Actions: each one answers with its own result message
+    if data in ("btn_run", "btn_start_deck", "onboard:launch", "btn_turbo", "btn_sweep"):
+        msg = await show(query, "⏳ <i>Starting the runner…</i>")
+        if data == "btn_turbo":
+            text_out = await start_runner_and_report(calculate_dynamic_turbo_workers()[0], 1.0, force=True)
+        elif data == "btn_sweep":
+            text_out = await start_runner_and_report(1, 3.0, force=True)
+        else:
+            text_out = await start_runner_and_report()
+        await finish(msg, text_out)
+        await refresh_panel(context)
 
     elif data == "btn_stop":
-        stopped = halt_runner()
-        m = get_realtime_metrics()
-        m["is_running"] = False
-        m["worker_count"] = 0
-        await safe_edit(query, format_status_message(header=f"🛑 <b>Runner Paused ({stopped} halted).</b> System idle.", metrics=m), reply_markup=get_smart_keyboard(m))
-        await query.answer(f"🛑 Halted {stopped} worker process(es)", show_alert=False)
+        await show(query, await stop_runner_and_report())
+        await refresh_panel(context)
+
+    elif data == "btn_clean_questions":
+        await clean_all_questions_action(context, query.message.chat_id, trigger_msg_id=query.message.message_id)
+        await refresh_panel(context)
 
     elif data == "btn_recent":
-        m = get_realtime_metrics()
-        recent = m["recent"]
-        if not recent:
-            lines = ["📋 <b>Latest Verified Submissions:</b>\n\n<i>No submissions recorded yet today.</i>"]
-        else:
-            lines = ["📋 <b>Latest Verified Submissions:</b>\n"]
-            for r in reversed(recent):
-                url = r.get("Job URL", "")
-                link_html = f'<a href="{h(url)}">{h(r.get("Company"))}</a>' if url.startswith("http") else f"<b>{h(r.get('Company'))}</b>"
-                lines.append(f"• {link_html} — {h(r.get('Role'))} (<i>{h(r.get('Date Applied'))}</i>)")
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
-        await safe_edit(query, "\n".join(lines), reply_markup=kb)
+        await show(query, recent_text())
 
     elif data == "btn_stats":
-        m = get_realtime_metrics()
-        top_co = sorted(m["companies"].items(), key=lambda x: -x[1])[:5]
-        top_str = "\n".join(f"  • {h(c)}: {count} applied" for c, count in top_co) if top_co else "  • No data yet"
-        cats = m["roles_category"]
-        cats_str = "\n".join(f"  • {k}: {v}" for k, v in cats.items())
-
-        stats_msg = (
-            "📈 <b>Comprehensive Portfolio Analytics</b>\n\n"
-            f"🎯 <b>Total Verified Applications:</b> {m['total_applied']} / 3000\n"
-            f"📅 <b>Applied Today:</b> +{m['today_applied']}\n"
-            f"📋 <b>Active Queue Inventory:</b> {m['unapplied_count']} unapplied ({m['queue_count']} total)\n\n"
-            f"🏢 <b>Top Companies Applied:</b>\n{top_str}\n\n"
-            f"🛡️ <b>Specialization Breakdown:</b>\n{cats_str}\n\n"
-            f"⚡ <b>Runner Hardware:</b> {m['worker_count']} workers active ({m['total_mem_mb']}MB RSS)"
-        )
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
-        await safe_edit(query, stats_msg, reply_markup=kb)
-
-    elif data == "btn_replenish":
-        await safe_edit(query, "⏳ <i>Scanning 2,000+ job sources for fresh Cyber, IAM & Cloud roles...</i>")
-        added = await asyncio.to_thread(replenish_queue_action)
-        m = get_realtime_metrics()
-        await safe_edit(
-            query,
-            format_status_message(header=f"🎯 <b>Queue Replenished (+{added} fresh roles)!</b>", metrics=m),
-            reply_markup=get_smart_keyboard(m)
-        )
+        await show(query, stats_text())
 
     elif data == "btn_questions":
         ans, _ = telegram_query_engine.answer_natural_language_query("pending questions")
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
-        await safe_edit(query, ans, reply_markup=kb)
+        await show(query, ans)
 
     elif data == "btn_alerts":
-        m = get_realtime_metrics()
-        inbox = m["inbox_actions"]
-        msg = ("📬 <b>Urgent Recruiter Inbox Items:</b>\n\n" + "\n".join(h(i) for i in inbox[:10])) if inbox else "✅ <b>No urgent recruiter actions pending!</b>"
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
-        await safe_edit(query, msg, reply_markup=kb)
+        inbox = get_realtime_metrics()["inbox_actions"]
+        await show(query, ("📬 <b>Recruiter inbox items:</b>\n\n" + "\n".join(h(i) for i in inbox[:10])) if inbox else "✅ <b>No recruiter actions pending.</b>")
 
-    elif data == "btn_start_deck":
-        deck_res = await asyncio.to_thread(launch_full_job_deck, 3)
+    elif data == "btn_replenish":
+        msg = await show(query, "⏳ <i>Searching job sources for new internships…</i>")
+        added = await asyncio.to_thread(replenish_queue_action)
         m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = max(3, m.get("worker_count", 3))
-        await safe_edit(
-            query,
-            format_status_message(
-                header=f"🚀 <b>Full Job Deck Started ({deck_res['unapplied_count']} FDE/AI/Product roles queued)!</b>",
-                metrics=m,
-            ),
-            reply_markup=get_smart_keyboard(m),
-        )
-        await query.answer("🚀 Full Job Deck pipeline launched!", show_alert=False)
+        await finish(msg, f"➕ <b>Queue refilled:</b> {added} new eligible job(s) added. {m['unapplied_count']} left to apply.")
 
     elif data == "btn_assessments":
-        msg = ASSESSMENTS_MSG
-        kb = InlineKeyboardMarkup([[InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]])
-        await safe_edit(query, msg, reply_markup=kb)
+        await show(query, ASSESSMENTS_MSG)
 
-    elif data == "btn_target":
-        target_text, kb = get_target_customizer_panel()
-        await safe_edit(query, target_text, reply_markup=kb)
-
-    elif data.startswith("quick_apply|"):
-        target_q = data.split("|", 1)[1].strip()
-        res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 1)
-        msg, kb = format_targeted_launch_message(res)
-        await safe_edit(query, msg, reply_markup=kb)
-
-    elif data.startswith("target_idx|"):
+    elif data.startswith(("quick_apply|", "target_idx|", "target_all|")):
         parts = data.split("|")
-        target_q = parts[1].strip() if len(parts) > 1 else "Visa"
-        r_idx = int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else 1
-        res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 1, r_idx)
-        msg, kb = format_targeted_launch_message(res)
-        await safe_edit(query, msg, reply_markup=kb)
-
-    elif data.startswith("target_all|"):
-        target_q = data.split("|", 1)[1].strip()
-        res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 3)
-        msg, kb = format_targeted_launch_message(res)
-        await safe_edit(query, msg, reply_markup=kb)
+        target_q = parts[1].strip() if len(parts) > 1 else ""
+        msg = await show(query, f"⏳ <i>Starting {h(target_q)}…</i>")
+        if data.startswith("target_idx|"):
+            r_idx = int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else 1
+            res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 1, r_idx)
+        else:
+            res = await asyncio.to_thread(launch_mid_session_targeted_job, target_q, True, 3 if data.startswith("target_all|") else 1)
+        text_out, kb = format_targeted_launch_message(res)
+        await finish(msg, text_out, kb)
 
     elif data == "btn_resume":
         await send_quickview_doc(query.message, context, is_letter=False)
@@ -2016,78 +1948,90 @@ async def handle_callback_query(update: Update, context: ContextTypes.DEFAULT_TY
 
     elif data == "btn_hud":
         await handle_live_hud(query.message, context)
-        m = get_realtime_metrics()
-        await safe_edit(query, format_status_message(metrics=m), reply_markup=get_smart_keyboard(m))
 
     elif data == "btn_interview":
-        session_text = start_interview_session(query.message.chat_id, "Target Employer", "Cybersecurity Specialist")
-        sent = await safe_reply(query.message, session_text)
+        sent = await safe_reply(query.message, start_interview_session(query.message.chat_id, "Target Employer", "Cybersecurity Specialist"))
         if sent:
             telegram_query_engine.save_application_message(sent.message_id, query.message.chat_id)
 
-    elif data == "btn_decisions":
-        await open_or_refresh_decision_tab(context, chat_id=query.message.chat_id, is_scan=False, query=query)
-        return
-
-    elif data == "btn_scan_inbox":
-        await open_or_refresh_decision_tab(context, chat_id=query.message.chat_id, is_scan=True, query=query)
-        return
+    elif data in ("btn_decisions", "btn_scan_inbox"):
+        # the decision tab is its own message (edited in place by its saved id), never the pinned panel
+        await open_or_refresh_decision_tab(context, chat_id=query.message.chat_id, is_scan=data == "btn_scan_inbox")
 
     elif data == "btn_close_decision_tab":
         mid = query.message.message_id
-        cid = query.message.chat_id
-        await safe_delete_message(context.bot, cid, mid)
+        await safe_delete_message(context.bot, query.message.chat_id, mid)
         if ACTIVE_DECISION_TAB.get("message_id") == mid:
             ACTIVE_DECISION_TAB["message_id"] = None
         if context.job_queue:
             for j in context.job_queue.get_jobs_by_name("decision_tab_timer"):
                 j.schedule_removal()
-        try:
-            await query.answer("🎯 Decision tab closed.", show_alert=False)
-        except Exception:
-            pass
-        return
 
     elif data == "btn_optimize_pc":
-        await query.answer("🧹 Optimizing PC memory & priority...", show_alert=False)
+        msg = await show(query, "⏳ <i>Freeing memory…</i>")
         from agents.pc_optimizer import run_full_system_optimization
         res = await asyncio.to_thread(run_full_system_optimization)
-        msg = (
-            f"🚀 <b>PC & Memory Optimized!</b>\n\n"
-            f"• <b>RAM Reclaimed:</b> <b>+{res['reclaimed_mb']} MB</b> returned to OS\n"
-            f"• <b>Zombie Browsers Eliminated:</b> <b>{res['zombies_killed']}</b>\n"
-            f"• <b>Processes Set to Low Priority:</b> <b>{res['procs_optimized']}</b>\n"
-            f"• <b>Active Memory Trimmed:</b> <b>{res['procs_trimmed']} processes</b>\n\n"
-            f"✨ <i>Zero PC lag: Windows will now prioritize your foreground applications 100%.</i>"
-        )
-        kb = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🧹 Boost Again", callback_data="btn_optimize_pc")],
-            [InlineKeyboardButton("⬅️ Back to Controls", callback_data="btn_status")]
-        ])
-        await safe_edit(query, msg, reply_markup=kb)
+        await finish(msg, f"🖥️ <b>PC cleaned up:</b> {res['reclaimed_mb']} MB freed, {res['zombies_killed']} stuck browser(s) closed, "
+                          f"{res['procs_optimized']} process(es) set to low priority.")
 
     elif data == "btn_pin_status":
-        pinned_id = await ensure_pinned_live_status(context, chat_id=query.message.chat_id, force_repin=True)
-        await query.answer("📌 Live status pinned to top banner!", show_alert=False)
-        m = get_realtime_metrics()
-        await safe_edit(
-            query,
-            format_status_message(header="📌 <b>Live Status View (Pinned at Top Banner)</b>", metrics=m),
-            reply_markup=get_smart_keyboard(m)
-        )
+        await ensure_pinned_live_status(context, chat_id=query.message.chat_id, force_repin=True)
+
+    elif data.startswith(("prep:", "radar:")):
+        kind, comp = data.split(":", 1)
+        msg = await show(query, f"⏳ <i>Building {'interview battlecard' if kind == 'prep' else 'referral dossier'} for {h(comp)}…</i>")
+        if kind == "prep":
+            from agents import interview_prep
+            res = await asyncio.to_thread(interview_prep.generate_interview_battlecard, company=comp, role="Cybersecurity Specialist")
+        else:
+            from agents import referral_radar
+            res = await asyncio.to_thread(referral_radar.build_referral_dossier, company=comp, role="Cybersecurity")
+        await finish(msg, res["telegram_summary"])
 
     elif data.startswith("dl_pdf:"):
-        pdf_path_str = data.split(":", 1)[1]
-        pdf_p = Path(pdf_path_str)
-        if pdf_p.exists():
+        pdf_p = PDF_TOKENS.get(data.split(":", 1)[1])
+        if pdf_p and pdf_p.exists():
             with open(pdf_p, "rb") as f:
-                await query.message.reply_document(
-                    document=f,
-                    caption=f"📄 <b>Document:</b> <code>{h(pdf_p.name)}</code>",
-                    parse_mode=ParseMode.HTML
-                )
+                await query.message.reply_document(document=f, caption=f"📄 <code>{h(pdf_p.name)}</code>", parse_mode=ParseMode.HTML)
         else:
             await query.message.reply_text("❌ PDF file not found on disk.")
+
+    else:
+        await show(query, "⚠️ That button is from an old menu. Use the pinned panel.")
+
+
+def recent_text() -> str:
+    recent = get_realtime_metrics()["recent"]
+    if not recent:
+        return "📋 <b>Recent applications</b>\n\n<i>None recorded yet.</i>"
+    lines = ["📋 <b>Recent applications</b>\n"]
+    for r in reversed(recent):
+        url = r.get("Job URL", "")
+        name = f'<a href="{h(url)}">{h(r.get("Company"))}</a>' if url.startswith("http") else f"<b>{h(r.get('Company'))}</b>"
+        lines.append(f"• {name} — {h(r.get('Role'))} (<i>{h(r.get('Date Applied'))}</i>)")
+    return "\n".join(lines)
+
+
+def stats_text() -> str:
+    m = get_realtime_metrics()
+    top = sorted(m["companies"].items(), key=lambda x: -x[1])[:5]
+    top_str = "\n".join(f"  • {h(c)}: {n}" for c, n in top) or "  • No data yet"
+    cats = "\n".join(f"  • {k}: {v}" for k, v in m["roles_category"].items() if v)
+    return ("📈 <b>Stats</b>\n\n"
+            f"<b>Applied:</b> {m['total_applied']} total · +{m['today_applied']} today\n"
+            f"<b>Queue:</b> {m['unapplied_count']} left of {m['queue_count']}\n\n"
+            f"<b>Top companies:</b>\n{top_str}\n\n"
+            f"<b>By type:</b>\n{cats or '  • No data yet'}\n\n"
+            f"<b>Runner:</b> {m['worker_count']} process(es), {m['total_mem_mb']}MB")
+
+
+PDF_TOKENS = {}  # callback_data is capped at 64 bytes and must not carry a file path
+
+
+def pdf_token(path) -> str:
+    tok = hashlib.sha1(str(path).encode()).hexdigest()[:12]
+    PDF_TOKENS[tok] = Path(path)
+    return tok
 
 
 async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_letter: bool = False, query_comp: str = ""):
@@ -2108,7 +2052,7 @@ async def send_quickview_doc(target_msg, context: ContextTypes.DEFAULT_TYPE, is_
             f"🎯 <i>Tap photo above to view full-screen without downloading!</i>"
         )
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("📥 Download PDF File", callback_data=f"dl_pdf:{pdf_path}")]
+            [InlineKeyboardButton("📥 Download PDF File", callback_data=f"dl_pdf:{pdf_token(pdf_path)}")]
         ])
         sent = await target_msg.reply_photo(
             photo=img_bytes,
@@ -2138,9 +2082,9 @@ async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
             "📸 <b>Live Screen Cam:</b> <i>Browser is currently idle or initializing.</i>\n\n"
             f"⚡ <b>Runner Status:</b> {'🟢 Running' if m['is_running'] else '⚪ Idle'}\n"
             f"📍 <b>Active Target:</b> <i>{h(m.get('current_target') or 'None')}</i>\n\n"
-            f"<i>Tap [🚀 Launch 3 Workers] below to start active browser automation!</i>"
+            f"<i>Tap ▶ Run on the pinned panel to start applying.</i>"
         )
-        sent = await safe_reply(target_msg, status_text, reply_markup=get_smart_keyboard(m))
+        sent = await safe_reply(target_msg, status_text, reply_markup=CLOSE_KB)
         if sent:
             telegram_query_engine.save_application_message(sent.message_id, target_msg.chat_id)
         return
@@ -2148,7 +2092,7 @@ async def send_screen_cam(target_msg, context: ContextTypes.DEFAULT_TYPE):
     sent = await target_msg.reply_photo(
         photo=img_bytes,
         caption=f"{h(caption)}\n<i>⚡ Live view from active Playwright worker</i>",
-        reply_markup=get_smart_keyboard(m),
+        reply_markup=CLOSE_KB,
         parse_mode=ParseMode.HTML
     )
     if sent:
@@ -2179,13 +2123,13 @@ async def handle_live_hud(target_msg, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=old_chat_id,
                 message_id=old_msg_id,
                 text="📡 <b>[Job Deck Dynamic HUD — Turned OFF]</b>\n\n<i>Live dynamic ticker paused. Tap [📡 Live Dynamic HUD] below or text /hud to restart anytime.</i>",
-                reply_markup=get_smart_keyboard(m),
+                reply_markup=CLOSE_KB,
                 parse_mode=ParseMode.HTML
             )
         except Exception:
             pass
 
-        await safe_reply(target_msg, "📡 <b>Dynamic HUD Ticker Turned OFF.</b>", reply_markup=get_smart_keyboard(m))
+        await safe_reply(target_msg, "📡 <b>Dynamic HUD Ticker Turned OFF.</b>", reply_markup=CLOSE_KB)
         return
 
     # If HUD is NOT active -> TOGGLE ON
@@ -2240,7 +2184,7 @@ async def _update_hud_tick(context: ContextTypes.DEFAULT_TYPE):
                 chat_id=chat_id,
                 message_id=msg_id,
                 text="📡 <b>[Job Deck Dynamic HUD — Auto-Paused]</b>\n\n<i>Live ticker paused after 3 minutes of active telemetry. Tap button below to resume anytime!</i>",
-                reply_markup=get_smart_keyboard(m),
+                reply_markup=CLOSE_KB,
                 parse_mode=ParseMode.HTML
             )
         except Exception:
@@ -2335,7 +2279,7 @@ async def send_daily_morning_brief(context: ContextTypes.DEFAULT_TYPE):
         await context.bot.send_message(
             chat_id=AUTHORIZED_USER_ID,
             text=brief,
-            reply_markup=get_smart_keyboard(m),
+            reply_markup=CLOSE_KB,
             parse_mode=ParseMode.HTML
         )
     except Exception as e:
@@ -2449,27 +2393,44 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if await handle_answer_text(update, context, text):
         return
 
+    # Priority 0.6: a Telegram reply to one of the bot's messages. Reply to a question -> that is its answer;
+    # reply to anything else -> the AI sees what you replied to.
+    replied = update.message.reply_to_message
+    if replied and text.strip() and not text.startswith(("/", "http://", "https://")):
+        q = next((p for p in telegram_query_engine.load_pending_questions()
+                  if str(p.get("message_id")) == str(replied.message_id)), None)
+        if q:
+            res = telegram_query_engine.resolve_pending_question(q["id"], text.strip())
+            if res.get("ok"):
+                await safe_delete_message(context.bot, update.effective_chat.id, replied.message_id)
+                await safe_reply(update.message, f"✅ <b>Saved:</b> <code>{h(res['answer'])}</code>\n<b>Question:</b> {h(res.get('question', ''))}", reply_markup=CLOSE_KB)
+            else:
+                await safe_reply(update.message, f"⚠️ {h(res.get('msg', 'Could not save that answer.'))}")
+            return
+        quoted = (replied.text or replied.caption or "").strip()
+        if quoted:
+            await reply_with_engine(update, f'(Replying to your earlier message: "{quoted[:800]}")\n\n{text}')
+            return
+
     # Priority 1: Instant URL Drop & Auto-Apply
     if text.startswith("http://") or text.startswith("https://") or t_lower.startswith("/add") or t_lower.startswith("add:"):
         url = text.split(":", 1)[1].strip() if (t_lower.startswith("add:") or t_lower.startswith("/add")) else text.strip()
         await handle_url_drop(url, update.message, context)
         return
 
-    # Priority 1.2: Start Full Job Deck From Anywhere
-    if t_lower in ["/deck", "deck", "/daily", "daily", "/startdeck", "start job deck", "start my job deck", "run job deck", "launch job deck", "open job deck"]:
-        deck_res = await asyncio.to_thread(launch_full_job_deck, 3)
-        m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = max(3, m.get("worker_count", 3))
-        await ensure_pinned_live_status(context, chat_id=update.effective_chat.id, force_repin=False)
-        await safe_reply(
-            update.message,
-            f"🚀 <b>Job Deck Started From Telegram Bar!</b>\n\n"
-            f"• <b>Active Workers:</b> <b>3 parallel workers</b> on <code>{h(deck_res['queue'])}</code>\n"
-            f"• <b>Ranked Queue:</b> <b>{deck_res['unapplied_count']}</b> unapplied FDE, AI, Product & Data roles\n"
-            f"• <b>Mid-Session Customizer Ready:</b> Type <code>Apply to this job with Visa</code> or <code>Apply to this job with Goldman</code> anytime to run a targeted job alongside your active session!",
-            reply_markup=get_smart_keyboard(m),
-        )
+    # Priority 1.2: start applying / pause / status / settings (exact commands only: "close the tab" must not halt the runner)
+    if t_lower in RUN_WORDS:
+        msg = await safe_reply(update.message, "⏳ <i>Starting the runner…</i>")
+        await finish(msg, await start_runner_and_report())
+        await refresh_panel(context)
+        return
+    if t_lower in STOP_WORDS:
+        await safe_reply(update.message, await stop_runner_and_report(), reply_markup=CLOSE_KB)
+        await refresh_panel(context)
+        return
+    if t_lower in VIEW_WORDS:
+        text_out, kb = VIEW_WORDS[t_lower]()
+        await safe_reply(update.message, text_out, reply_markup=kb)
         return
 
     # Priority 1.4: Open Mid-Session Target Customizer Menu (/target)
@@ -2486,12 +2447,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Priority 1.8: assessments (/assessments, /oa)
     if t_lower in ["/assessments", "assessments", "/oa", "oa", "solve assessments", "run assessments", "complete assessments"]:
-        await safe_reply(update.message, ASSESSMENTS_MSG, reply_markup=get_smart_keyboard(get_realtime_metrics()))
+        await safe_reply(update.message, ASSESSMENTS_MSG, reply_markup=CLOSE_KB)
         return
 
     # Priority 1.9: Queue Inspector & Customizer (/queue)
     if t_lower in ["/queue", "queue", "show queue", "view queue", "top queue", "my queue"]:
-        top_jobs = resolve_targeted_company_jobs("Palantir", include_applied=False)[:2] + resolve_targeted_company_jobs("Visa", include_applied=False)[:2] + resolve_targeted_company_jobs("Goldman", include_applied=False)[:1] + resolve_targeted_company_jobs("Scale AI", include_applied=False)[:2]
+        top_jobs = []
+        for comp_q, n in (("Palantir", 2), ("Visa", 2), ("Goldman", 1), ("Scale AI", 2)):
+            top_jobs += eligible_targets(await asyncio.to_thread(resolve_targeted_company_jobs, comp_q, False))[:n]
         lines = [
             "📋 <b>Top Priority FDE / AI / Product / Data Queue</b>",
             "━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
@@ -2566,7 +2529,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         comp = subparts[0] if len(subparts) > 0 else "Employer"
         amount = subparts[1] if len(subparts) > 1 else "$85,000"
         loc = " ".join(subparts[2:]) if len(subparts) > 2 else "US"
-        strat = analyze_offer_and_strategize(comp, amount, loc)
+        strat = await asyncio.to_thread(analyze_offer_and_strategize, comp, amount, loc)
         await safe_reply(update.message, strat["telegram_summary"])
         return
 
@@ -2574,33 +2537,16 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif t_lower.startswith("/gap") or t_lower.startswith("gap:") or t_lower.startswith("/heatmap") or t_lower.startswith("heatmap:"):
         parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
         comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
-        gap_res = analyze_ats_gap(comp, "Cybersecurity Specialist")
+        gap_res = await asyncio.to_thread(analyze_ats_gap, comp, "Cybersecurity Specialist")
         await safe_reply(update.message, gap_res["telegram_summary"])
         return
 
-    # Priority 8: Speed Shifters (Turbo / Stealth / Nuke)
-    elif t_lower in ["/turbo", "turbo"]:
-        turbo_w, desc = calculate_dynamic_turbo_workers()
-        launch_runner(workers=turbo_w, delay=1.0)
-        m = get_realtime_metrics()
-        await safe_reply(
-            update.message,
-            f"⚡ <b>TURBO VELOCITY ACTIVATED ({turbo_w} Workers)!</b>\n\n"
-            f"• <b>Auto-Tuned:</b> <i>{desc}</i>\n"
-            f"• <b>Fast-Fill Delay:</b> <code>1.0s</code> (Accelerated)\n\n"
-            f"<i>Headless browser workers running at peak machine velocity!</i>",
-            reply_markup=get_smart_keyboard(m)
-        )
-        return
-    elif t_lower in ["/stealth", "stealth"]:
-        launch_runner(workers=1, delay=8.0)
-        m = get_realtime_metrics()
-        await safe_reply(update.message, "🕵️ <b>STEALTH MODE ACTIVATED!</b> Launched 1 worker with human jitter (8s delay).", reply_markup=get_smart_keyboard(m))
-        return
-    elif t_lower in ["/nuke", "nuke", "/halt", "halt"]:
-        stopped = halt_runner()
-        m = get_realtime_metrics()
-        await safe_reply(update.message, f"💥 <b>SYSTEM NUKED!</b> Halted {stopped} worker process(es) and purged lock files.", reply_markup=get_smart_keyboard(m))
+    # Priority 8: speed presets
+    elif t_lower in ["/turbo", "turbo", "/stealth", "stealth"]:
+        turbo = "turbo" in t_lower
+        msg = await safe_reply(update.message, "⏳ <i>Starting the runner…</i>")
+        await finish(msg, await start_runner_and_report(calculate_dynamic_turbo_workers()[0] if turbo else 1, 1.0 if turbo else 8.0, force=True))
+        await refresh_panel(context)
         return
 
     # Priority 9: Recruiter Inbox Radar
@@ -2624,7 +2570,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if update.message:
             asyncio.create_task(_delete_after(context.bot, update.effective_chat.id, [update.message.message_id], 3.0))
         return
-    elif any(k in t_lower for k in ["optimize", "/optimize", "boost", "clean ram", "optimize pc", "free ram", "boost pc", "lag", "speed up"]):
+    elif t_lower in ["optimize", "/optimize", "/boost", "boost", "/cleanram", "clean ram", "optimize pc", "free ram", "boost pc", "speed up"]:
         await safe_reply(update.message, "🧹 <i>Running comprehensive PC & Job Deck optimization...</i>")
         from agents.pc_optimizer import run_full_system_optimization
         res = await asyncio.to_thread(run_full_system_optimization)
@@ -2639,14 +2585,15 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await safe_reply(update.message, msg)
         return
 
-    if any(k in t_lower for k in ["setup", "/setup", "onboarding", "/onboarding", "welcome", "/welcome", "wizard"]):
+    if t_lower in ["setup", "/setup", "onboarding", "/onboarding", "welcome", "/welcome", "wizard", "/wizard"]:
         text_out, kb = get_onboarding_step_message(1)
         await safe_reply(update.message, text_out, reply_markup=kb)
         return
 
-    elif any(k in t_lower for k in ["imessage", "/imessage", "test imessage", "ping imessage"]):
+    elif t_lower in ["imessage", "/imessage", "/sms", "test imessage", "ping imessage"]:
         from agents.imessage_bridge import send_imessage, is_imessage_available, IMESSAGE_TARGET_HANDLE
-        res = send_imessage(
+        res = await asyncio.to_thread(
+            send_imessage,
             "🔔 Test Alert from Job Deck Autonomous Cockpit: Your dual-channel iMessage Pager is live and connected! "
             "You will receive instant blue-bubble notifications here for all interview invitations, assessments, and offers.",
             recipient=IMESSAGE_TARGET_HANDLE
@@ -2663,43 +2610,21 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await safe_reply(update.message, f"⚠️ <b>iMessage Notice:</b>\n{h(res.get('error', 'Check configuration in .env'))}")
         return
 
-    if any(k in t_lower for k in ["clean", "clear", "clearchat", "clean chat", "clear chat", "wipe chat", "reset chat", "clean apps", "clear apps"]) or t_lower in ["/clean", "/clear"]:
+    if t_lower in ["clean", "clear", "/clean", "/clear", "clean chat", "clear chat", "wipe chat", "reset chat", "clean apps", "clear apps"]:
         await clean_all_questions_action(context, update.effective_chat.id, trigger_msg_id=update.message.message_id)
         return
-    elif any(k in t_lower for k in ["status", "update", "metrics", "dashboard", "how are things", "how is it going", "how are we doing", "progress", "stats", "give me an update"]) or t_lower in ["/status", "/update"]:
-        target_chat = update.effective_chat.id
-        await ensure_pinned_live_status(context, chat_id=target_chat, force_repin=False)
-        if update.message:
-            notice = await update.message.reply_text(
-                "📌 <b>Job Deck Live Control Panel updated live above!</b>\n<i>(Single always-active control panel)</i>",
-                parse_mode=ParseMode.HTML
-            )
-            asyncio.create_task(_delete_after(context.bot, target_chat, [update.message.message_id, notice.message_id], 3.0))
-        return
-    elif any(k in t_lower for k in ["start applying", "start runner", "start workers", "launch workers", "keep applying", "run workers", "start", "begin", "launch", "apply", "run"]) or t_lower in ["/run", "/apply", "/start"]:
-        launch_runner(workers=3)
-        m = get_realtime_metrics()
-        m["is_running"] = True
-        m["worker_count"] = 3
-        await safe_reply(update.message, "🚀 <b>Started 3 headless workers!</b>", reply_markup=get_smart_keyboard(m))
-    elif any(k in t_lower for k in ["stop applying", "pause runner", "stop workers", "halt workers", "pause", "halt", "freeze", "stop", "terminate", "end", "close"]) or t_lower in ["/stop", "/pause", "/halt"]:
-        stopped = halt_runner()
-        m = get_realtime_metrics()
-        m["is_running"] = False
-        m["worker_count"] = 0
-        await safe_reply(update.message, f"🛑 <b>Runner paused ({stopped} stopped).</b>", reply_markup=get_smart_keyboard(m))
     elif t_lower.startswith("prep:") or t_lower.startswith("/prep") or t_lower.startswith("battlecard:"):
         parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
         comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
         from agents import interview_prep
-        card = interview_prep.generate_interview_battlecard(company=comp, role="Cybersecurity Specialist")
+        card = await asyncio.to_thread(interview_prep.generate_interview_battlecard, company=comp, role="Cybersecurity Specialist")
         await safe_reply(update.message, card["telegram_summary"])
         return
     elif t_lower.startswith("radar:") or t_lower.startswith("/radar") or t_lower.startswith("/referrals") or t_lower.startswith("referral:"):
         parts = text.split(":", 1) if ":" in text else text.split(maxsplit=1)
         comp = parts[1].strip() if len(parts) > 1 else "Target Employer"
         from agents import referral_radar
-        dossier = referral_radar.build_referral_dossier(company=comp, role="Cybersecurity")
+        dossier = await asyncio.to_thread(referral_radar.build_referral_dossier, company=comp, role="Cybersecurity")
         await safe_reply(update.message, dossier["telegram_summary"])
         return
     elif t_lower.startswith("target:"):
@@ -2714,20 +2639,49 @@ ASSESSMENTS_MSG = (
     "and a flagged assessment can cost the offer. Open the assessment email and take it yourself."
 )
 
+RUN_WORDS = {"/run", "run", "/deck", "deck", "/daily", "/startdeck", "start", "start applying", "start runner",
+             "run workers", "keep applying", "resume applying", "start job deck", "start my job deck", "run job deck"}
+STOP_WORDS = {"/stop", "stop", "/pause", "pause", "/halt", "halt", "/nuke", "nuke", "stop applying", "pause runner",
+              "stop workers", "stop the runner", "pause applying"}
+HELP_TEXT = ("👋 <b>Job Deck</b>\n\n"
+             "The pinned panel at the top runs everything:\n"
+             "• <b>▶ Run / ⏸ Pause</b> — start or stop applying\n"
+             "• <b>📋 Recent · 📈 Stats</b> — what was submitted\n"
+             "• <b>⚙️ Settings</b> — workers, pace, autopilot\n"
+             "• <b>☰ More</b> — apply to a company, refill queue, screen, resume, recruiter decisions\n\n"
+             "You can also type <code>run</code>, <code>pause</code>, <code>status</code>, <code>apply to Visa</code>, "
+             "paste a job link, or ask a question.")
+
+
+def _status_view():
+    m = get_realtime_metrics()
+    return format_status_message(metrics=m), get_smart_keyboard(m)
+
+
+VIEW_WORDS = {
+    **dict.fromkeys(["status", "update", "/panel", "panel"], _status_view),
+    **dict.fromkeys(["/settings", "settings"], get_settings_view),
+    **dict.fromkeys(["/more", "more", "/menu", "menu"], get_more_view),
+    **dict.fromkeys(["/recent", "recent"], lambda: (recent_text(), CLOSE_KB)),
+    **dict.fromkeys(["/stats", "stats", "progress"], lambda: (stats_text(), CLOSE_KB)),
+    **dict.fromkeys(["help"], lambda: (HELP_TEXT, None)),
+    **dict.fromkeys(["/apply", "apply"], get_target_customizer_panel),  # bare /apply: pick a company
+}
+
 
 async def confirm_targeted_apply(target_msg, query_str: str):
     """A typed or spoken request only previews the job; the application starts when Apply now is tapped."""
     import results_engine as RE
     q = query_str.strip()[:40]  # Telegram callback_data is limited to 64 bytes
-    matches = [m for m in await asyncio.to_thread(resolve_targeted_company_jobs, q, False)
-               if RE.score_job(m["company"], m["role"], m["url"])[0] > 0]
+    matches = eligible_targets(await asyncio.to_thread(resolve_targeted_company_jobs, q, False))
     if not matches:
-        await safe_reply(target_msg, f"🤷 No eligible internship postings for <b>{h(q)}</b> (already applied, excluded, or not an internship). Nothing was started.")
+        protected = " Protected companies are yours to apply to yourself." if RE.is_protected(q) else ""
+        await safe_reply(target_msg, f"🤷 No eligible internship postings for <b>{h(q)}</b> (already applied, in progress, below your fit score, or not an internship).{protected} Nothing was started.")
         return
     top = matches[0]
-    note = "\n⚠️ <i>Protected company: you normally apply here yourself.</i>" if RE.is_protected(top["company"]) else ""
+    note = ""
     kb = InlineKeyboardMarkup([[InlineKeyboardButton("✅ Apply now", callback_data=f"quick_apply|{q}"),
-                                InlineKeyboardButton("✖️ Cancel", callback_data="btn_status")]])
+                                InlineKeyboardButton("✖️ Cancel", callback_data="btn_close")]])
     await safe_reply(target_msg, f"🎯 <b>Apply to this job?</b>\n\n<b>{h(top['company'])}</b> — {h(top['role'])}\n"
                                  f"<i>{len(matches)} eligible posting(s). Nothing starts until you tap Apply now.</i>{note}",
                      reply_markup=kb)
@@ -2742,7 +2696,7 @@ async def reply_with_engine(update: Update, text: str):
             InlineKeyboardButton("🗑️ Discard", callback_data=f"prop|{proposal_id}|n"),
         ]])
     else:
-        kb = get_smart_keyboard(get_realtime_metrics())
+        kb = None
     await safe_reply(update.message, answer, reply_markup=kb)
 
 
@@ -2812,7 +2766,7 @@ async def send_3hour_update(context: ContextTypes.DEFAULT_TYPE):
 
 async def refresh_pinned_status_job(context: ContextTypes.DEFAULT_TYPE):
     """Silently refreshes the pinned live status message so the pinned banner stays real-time."""
-    if not AUTHORIZED_USER_ID:
+    if not AUTHORIZED_USER_ID or time_mod.time() < PANEL_HOLD["until"]:
         return
     try:
         await ensure_pinned_live_status(context, chat_id=AUTHORIZED_USER_ID, force_repin=False)
@@ -2841,23 +2795,19 @@ async def register_telegram_bar_commands(app):
     """Registers the persistent Telegram Command Bar menu so the user can launch & customize jobs from anywhere."""
     from telegram import BotCommand
     commands = [
-        BotCommand("deck", "🚀 Start full Job Deck pipeline from anywhere"),
-        BotCommand("apply", "🎯 Apply to a specific company/job mid-session (e.g. /apply Visa)"),
-        BotCommand("target", "✈️ Open Mid-Session Company Customizer (Visa, Goldman, FDE)"),
-        BotCommand("run", "▶️ Launch 3 parallel FDE/AI/Product workers"),
-        BotCommand("turbo", "⚡ Activate hardware-tuned Turbo velocity"),
-        BotCommand("queue", "📋 View & customize top FDE, AI & Product roles in queue"),
-        BotCommand("assessments", "🧠 Run Autonomous Assessment Solver on pending OAs"),
-        BotCommand("status", "📊 Open/refresh Live Job Deck Control Panel"),
-        BotCommand("hud", "📡 Toggle real-time 4s Live Dynamic HUD ticker"),
-        BotCommand("view", "📸 Capture live screenshot of active browser worker"),
-        BotCommand("resume", "📄 Quick-view tailored resume (photo preview)"),
-        BotCommand("decisions", "🎯 View recruiter decision stages & deadlines"),
-        BotCommand("stop", "🛑 Pause active background workers"),
+        BotCommand("status", "Live panel: progress and runner state"),
+        BotCommand("run", "Start applying (uses your settings)"),
+        BotCommand("stop", "Pause applying"),
+        BotCommand("recent", "Latest submitted applications"),
+        BotCommand("stats", "Totals, top companies, queue"),
+        BotCommand("settings", "Workers, pace, autopilot"),
+        BotCommand("apply", "Apply to one company, e.g. /apply Visa"),
+        BotCommand("more", "Screen, resume, refill queue, recruiter decisions"),
+        BotCommand("help", "What each button does"),
     ]
     try:
         await app.bot.set_my_commands(commands)
-        print("[Job Deck Control Bot] Telegram Command Bar menu registered (13 commands).", flush=True)
+        print(f"[Job Deck Control Bot] Telegram Command Bar menu registered ({len(commands)} commands).", flush=True)
     except Exception as e:
         print(f"[Telegram Command Bar Notice] {e}", flush=True)
 
@@ -2867,12 +2817,24 @@ def main():
         print("[!] TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID missing in .env")
         sys.exit(1)
 
+    # One bot per token: on 2026-11-11 three old copies were still polling, so taps landed on old code at random
+    others = []
+    for p in psutil.process_iter(["pid", "name"]):
+        try:
+            if p.pid != os.getpid() and (p.info["name"] or "").lower().startswith("python") and "telegram_bot_service" in " ".join(p.cmdline()):
+                others.append(p.pid)
+        except psutil.Error:
+            pass
+    if others:
+        print(f"[!] Another Job Deck bot is already running (pid {others}). Stop it first; not starting a second one.", flush=True)
+        sys.exit(1)
     print("[Job Deck Control Bot] Initializing two-way AI engine...", flush=True)
     # concurrent_updates: a slow handler (replenish ~15s, Gmail scan, AI reply) must not queue every later tap past Telegram's ~15s answer window
     app = ApplicationBuilder().token(BOT_TOKEN).concurrent_updates(True).post_init(register_telegram_bar_commands).build()
     app.add_error_handler(handle_bot_error)
 
     app.add_handler(CommandHandler(["start", "help"], cmd_start))
+    app.add_handler(CommandHandler(["settings", "more", "menu", "recent", "stats", "panel"], handle_text))
     app.add_handler(CommandHandler(["setup", "onboarding", "welcome", "wizard"], cmd_setup))
     app.add_handler(CommandHandler(["status", "update"], cmd_status))
     app.add_handler(CommandHandler(["deck", "daily", "startdeck"], handle_text))

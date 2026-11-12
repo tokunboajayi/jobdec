@@ -816,7 +816,7 @@ def _fill_file_field(c, st, resume, resume_fields):
             pass
 
     # Dynamic Tailored Resume Resolution
-    if resume and (getattr(c, "company", None) or getattr(c, "role", None)):
+    if resume and not os.getenv("AF_RESUME_LOCKED") and (getattr(c, "company", None) or getattr(c, "role", None)):
         try:
             from agents import intelligent_tailor
             page_url = getattr(getattr(c, "page", None), "url", "")
@@ -2286,6 +2286,9 @@ def main():
     auto = not a.review
     resume = (ROOT / a.resume).resolve() if a.resume and not pathlib.Path(a.resume).is_absolute() else (pathlib.Path(a.resume) if a.resume else None)
     if resume and not resume.exists(): sys.exit(f"Resume not found: {resume}")
+    # AJ 2026-11-12: a resume passed explicitly (hand-tailored) must be uploaded as-is - skip auto re-tailoring
+    if a.resume and str(a.resume) != str(PROFILE.get("default_resume")):
+        os.environ["AF_RESUME_LOCKED"] = "1"
 
     # Determine headless mode
     env_headless = os.getenv("HEADLESS", "true").lower() in ("true", "1", "yes")

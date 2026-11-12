@@ -124,13 +124,9 @@ def test_pinned_status_state_and_keyboard():
         "current_target": ""
     }
     kb = get_smart_keyboard(m)
-    found_pin_btn = False
-    for row in kb.inline_keyboard:
-        for btn in row:
-            if btn.callback_data == "btn_pin_status":
-                found_pin_btn = True
-                break
-    assert found_pin_btn, "btn_pin_status must be present in keyboard"
+    cbs = {btn.callback_data for row in kb.inline_keyboard for btn in row}
+    assert {"btn_run", "btn_status", "btn_recent", "btn_stats", "btn_settings", "btn_more"} <= cbs
+    assert len(cbs) <= 7, "the panel stays small; everything else lives under More"
 
     # Test state persistence
     test_chat = 123456789
@@ -156,21 +152,6 @@ def test_dynamic_turbo_and_hud_toggle():
     assert 2 <= workers <= 8
     assert "workers auto-tuned" in desc or "workers" in desc
 
-    # Test HUD button toggling label based on active state
-    ACTIVE_HUD_STATE["message_id"] = None
-    kb_off = get_smart_keyboard()
-    hud_btns_off = [btn.text for row in kb_off.inline_keyboard for btn in row if btn.callback_data == "btn_hud"]
-    assert len(hud_btns_off) == 1
-    assert "Live Dynamic HUD" in hud_btns_off[0]
-
-    ACTIVE_HUD_STATE["message_id"] = 55555
-    kb_on = get_smart_keyboard()
-    hud_btns_on = [btn.text for row in kb_on.inline_keyboard for btn in row if btn.callback_data == "btn_hud"]
-    assert len(hud_btns_on) == 1
-    assert "Stop Dynamic HUD" in hud_btns_on[0]
-
-    # Reset
-    ACTIVE_HUD_STATE["message_id"] = None
 
 
 def test_onboarding_wizard_steps_and_keyboard(monkeypatch):
@@ -206,11 +187,6 @@ def test_onboarding_wizard_steps_and_keyboard(monkeypatch):
     assert len(launch_btns) == 1
     assert "Launch" in launch_btns[0].text
 
-    # Main dashboard smart keyboard must include [🧭 Setup Wizard]
-    kb_main = get_smart_keyboard()
-    setup_btns = [btn for row in kb_main.inline_keyboard for btn in row if btn.callback_data == "btn_setup_wizard"]
-    assert len(setup_btns) == 1
-    assert "Setup Wizard" in setup_btns[0].text
 
 
 def test_decision_tab_lifecycle_and_auto_disappear():
@@ -320,30 +296,36 @@ def test_telegram_bar_targeted_apply_intent_parsing():
     assert parse_targeted_apply_intent("/deck") is None
 
 
-def test_mid_session_targeted_job_visa_and_goldman():
-    from telegram_bot_service import (
-        resolve_targeted_company_jobs,
-        launch_mid_session_targeted_job,
-        format_targeted_launch_message,
-    )
+def test_mid_session_targeted_job_uses_the_runners_gates(monkeypatch):
+    # 2026-11-11 live smoke: a tap launched a Visa SWE intern (below min_fit), a protected company, and one posting twice
+    import telegram_bot_service as TB
+    from agents import resume_tailor, cover_letter
+    W = "https://visa.wd5.myworkdayjobs.com/{}/job/Foster-City/Product-Management-Intern_REF089881W{}"
+    jobs = [
+        {"company": "Visa", "role": "Product Management Intern", "url": W.format("Visa", "-1"), "applied": False},
+        {"company": "Visa", "role": "Product Management Intern", "url": W.format("Visa_Early_Careers", ""), "applied": False},
+        {"company": "Visa", "role": "Software Engineer Intern", "url": "https://visa.wd5.myworkdayjobs.com/Visa/job/Austin/SWE_REF089918W", "applied": False},
+        {"company": "Visa", "role": "Data Science Intern", "url": "https://visa.wd5.myworkdayjobs.com/Visa/job/x/DS_REF089883W", "applied": True},
+        {"company": "Goldman Sachs", "role": "Product Analyst Intern", "url": "https://hdpc.fa.us2.oraclecloud.com/job/1", "applied": False},
+    ]
+    for j in jobs:
+        j.update(score=9.0, base_score=9.0, category="product", ats_prio=0, resume=None)
+    monkeypatch.setattr(TB, "resolve_targeted_company_jobs", lambda q, include_applied=False: [dict(j) for j in jobs])
+    monkeypatch.setattr(resume_tailor, "tailor", lambda *a, **k: None)  # no network in tests
+    monkeypatch.setattr(cover_letter, "build", lambda *a, **k: "")
+    TB.ACTIVE_TARGETED_JOBS.clear()
 
-    visa_jobs = resolve_targeted_company_jobs("Visa", include_applied=True)
-    assert len(visa_jobs) >= 1
-    assert "visa" in visa_jobs[0]["company"].lower()
-    assert visa_jobs[0]["score"] >= 9.0
+    res = TB.launch_mid_session_targeted_job("Visa", ensure_runner_active=False, max_to_launch=3, dry_run=True)
+    assert res["ok"] is True
+    assert [(j["company"], j["role"]) for j in res["launched"]] == [("Visa", "Product Management Intern")]
+    assert 91 <= res["launched"][0]["worker_id"] <= 99
+    msg, kb = TB.format_targeted_launch_message(res)
+    assert "Visa" in msg and kb is not None
 
-    goldman_jobs = resolve_targeted_company_jobs("Goldman", include_applied=True)
-    assert len(goldman_jobs) >= 1
-    assert "goldman" in goldman_jobs[0]["company"].lower()
-
-    res_visa = launch_mid_session_targeted_job("Visa", ensure_runner_active=False, max_to_launch=1, dry_run=True)
-    assert res_visa["ok"] is True
-    assert len(res_visa["launched"]) == 1
-    assert 91 <= res_visa["launched"][0]["worker_id"] <= 99
-    msg, kb = format_targeted_launch_message(res_visa)
-    assert "Mid-Session Targeted Job Launched" in msg
-    assert "Visa" in msg
-    assert kb is not None
+    # a second tap while that application is still running launches nothing
+    TB.ACTIVE_TARGETED_JOBS[-1]["pid"] = __import__("os").getpid()
+    assert TB.launch_mid_session_targeted_job("Visa", ensure_runner_active=False, dry_run=True)["ok"] is False
+    TB.ACTIVE_TARGETED_JOBS.clear()
 
 
 def test_telegram_bar_command_menu_and_start_deck():
@@ -354,9 +336,11 @@ def test_telegram_bar_command_menu_and_start_deck():
         launch_assessment_solver_from_telegram,
     )
 
-    kb = get_smart_keyboard()
+    from telegram_bot_service import get_more_view
+    kb = get_more_view()[1]
     cb_ids = {btn.callback_data for row in kb.inline_keyboard for btn in row}
-    assert "btn_start_deck" in cb_ids
+    panel = {b.callback_data for row in get_smart_keyboard({"is_running": False}).inline_keyboard for b in row}
+    assert panel == {"btn_run", "btn_status", "btn_recent", "btn_stats", "btn_settings", "btn_more"}
     assert "btn_target" in cb_ids
     assert "btn_assessments" in cb_ids
 

@@ -68,15 +68,15 @@ def test_status_message_reflects_supervisor_state():
     # Desired running but idle -> Re-igniting
     tbs.RUNNER_SUPERVISOR_STATE["desired"] = "running"
     msg_reigniting = tbs.format_status_message(metrics=mock_metrics)
-    assert "RE-IGNITING" in msg_reigniting
+    assert "Restarting" in msg_reigniting
 
     # Desired paused -> Paused
     tbs.RUNNER_SUPERVISOR_STATE["desired"] = "paused"
     msg_paused = tbs.format_status_message(metrics=mock_metrics)
-    assert "PAUSED" in msg_paused
+    assert "Paused" in msg_paused
 
     # Running -> Running
     mock_metrics["is_running"] = True
     mock_metrics["worker_count"] = 3
     msg_running = tbs.format_status_message(metrics=mock_metrics)
-    assert "RUNNING" in msg_running
+    assert "Running" in msg_running

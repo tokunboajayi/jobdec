@@ -79,3 +79,14 @@ answers.json
 # per-candidate homes (JOBDEC_HOME): personal data, never committed
 profiles/*
 !profiles/README.md
+
+# bot / review state written at runtime (2026-11-11)
+bot_settings.json
+pinned_status.json
+decisions_cache.json
+telegram_asked.json
+telegram_outbox_state.json
+telegram_*_state.json
+learning_report.md
+REVIEW*.md
+.wai-tmp/

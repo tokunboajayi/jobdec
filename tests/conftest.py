@@ -30,3 +30,19 @@ def sandbox(tmp_path, monkeypatch):
     monkeypatch.setattr(smarts, "PREP_DIR", tmp_path / "prep")
     monkeypatch.setattr(RE, "LEDGER_FILE", tmp_path / "results.csv")
     return tmp_path
+
+
+@pytest.fixture(autouse=True)
+def _fresh_bot_state():
+    """Bot settings, the panel hold and the supervisor state are module globals: reset them so test order can't matter."""
+    yield
+    import sys as _sys
+    TB = _sys.modules.get("telegram_bot_service")
+    if TB is None:
+        return
+    try:
+        TB.SETTINGS_FILE.unlink(missing_ok=True)
+    except OSError:
+        pass
+    TB.PANEL_HOLD["until"] = 0.0
+    TB.RUNNER_SUPERVISOR_STATE["desired"] = "running"

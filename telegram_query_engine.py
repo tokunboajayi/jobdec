@@ -746,6 +746,48 @@ def answer_natural_language_query(text: str):
     t_lower = t.lower()
     is_multi_question = (t.count("?") >= 2) or bool(re.search(r"(?:^|\n)\s*1[\.\)]\s+.+(?:\n|\s+)2[\.\)]\s+", t, re.DOTALL))
 
+    # 6. User answering a question: only with an explicit id
+    parsed = parse_answer_command(t)
+    if parsed:
+        return resolve_pending_question(*parsed)["msg"], None
+    if re.match(r"^\s*(?:answer|ans)\s*:", t, re.I):
+        return "⚠️ Include the question id: <code>answer &lt;id&gt;: your answer</code> (the id is shown on each question).", None
+
+    m_rule = re.search(r"^set rule\s*:\s*(.+?)\s*=\s*(.+)$", t, re.I)
+    if m_rule:
+        res = save_rule(m_rule.group(1), m_rule.group(2), "telegram_user")
+        if res["ok"]:
+            return f"✅ Rule saved: <b>{h(m_rule.group(1).strip())}</b> ➔ <b>{h(res['answer'])}</b>", None
+        return f"⚠️ {res['msg']}", None
+
+    # 7. Everything else goes to the AI first: it gets the live database context, so it answers "how many today",
+    # "did we apply to Visa" etc. itself. The keyword shortcuts are only the no-AI fallback; they used to run first
+    # and swallowed any message containing "reply", "email", "next", "today" or a company name.
+    ai_error = None
+    try:
+        ai_resp, proposal_id = ask_ai(t)
+        if ai_resp:
+            return f"✨ <b>Job Deck AI:</b>\n\n{ai_resp}", proposal_id
+    except AIError as e:
+        ai_error = e
+        print(f"[AI Error] {type(e).__name__}: {str(e)[:200]}", flush=True)
+        if os.getenv("OPENROUTER_API_KEY", "").strip() == "test-key-not-real":
+            return f"⚠️ <b>AI assistant error:</b> {h(e)}. Your message was not acted on; try again in a minute.", None
+
+    fallback = _keyword_answer(t, t_lower, is_multi_question)
+    if fallback is None and ai_error is not None:
+        fallback = _answer_from_live_database(t)
+    if fallback is not None:
+        note = f"\n\n<i>⚠️ AI unavailable ({h(str(ai_error)[:80])}); answered from the local database.</i>" if ai_error else ""
+        return fallback + note, None
+    if ai_error is not None:
+        return f"⚠️ <b>AI assistant error:</b> {h(str(ai_error)[:160])}. Nothing was changed.", None
+    return (f"🤷 I didn't recognize <i>\"{h(t)}\"</i> as a command, and the AI assistant is not configured "
+            f"(no OPENROUTER_API_KEY). Nothing was changed. Send /help for the command list."), None
+
+
+def _keyword_answer(t, t_lower, is_multi_question):
+    """No-AI fallback for common lookups. Returns html or None."""
     # 1. Did we apply to X? / Search company (only for single-question lookups)
     m_apply = None if is_multi_question else re.search(r"(?:did we apply to|have we applied to|search|check|look for)\s+([a-zA-Z0-9\s\-]+)", t_lower)
     company_candidate = None
@@ -767,7 +809,7 @@ def answer_natural_language_query(text: str):
                 url = r.get("Job URL") or ""
                 link_html = f" - <a href=\"{h(url)}\">Link</a>" if url.startswith("http") else ""
                 lines.append(f"• <b>{h(r.get('Company') or company_candidate.title())}</b> | {h(r.get('Role') or 'Role')}\n  <i>Date: {h(date_str)}</i>{link_html}")
-            return "\n".join(lines), None
+            return "\n".join(lines)
         in_queue = []
         for q_candidate in [QUEUE_PATH, ROOT / "queue.txt", ROOT / "queue_ranked.txt"]:
             if q_candidate.exists():
@@ -776,8 +818,8 @@ def answer_natural_language_query(text: str):
                 if in_queue:
                     break
         if in_queue:
-            return f"📋 <b>{cc}</b> has not been submitted yet, but is <b>waiting in your priority queue</b> ({len(in_queue)} postings queued).\n\nType <code>Apply to this job with {cc}</code> or <code>/apply {cc}</code> to run it right now!", None
-        return f"❌ No submitted applications found for <b>'{cc}'</b>.", None
+            return f"📋 <b>{cc}</b> has not been submitted yet, but is <b>waiting in your priority queue</b> ({len(in_queue)} postings queued).\n\nType <code>Apply to this job with {cc}</code> or <code>/apply {cc}</code> to run it right now!"
+        return f"❌ No submitted applications found for <b>'{cc}'</b>."
 
     # 2. What jobs were applied today / yesterday?
     if not is_multi_question:
@@ -785,10 +827,10 @@ def answer_natural_language_query(text: str):
             if word in t_lower:
                 rows = get_applications_by_date(str(day))
                 if not rows:
-                    return f"📅 <b>No applications recorded for {word} ({day}).</b>", None
+                    return f"📅 <b>No applications recorded for {word} ({day}).</b>"
                 lines = [f"📅 <b>Applications Submitted {word.title()} ({len(rows)} total):</b>", ""]
                 lines += [f"• <b>{h(r.get('Company'))}</b> — {h(r.get('Role'))}" for r in rows[-8:]]
-                return "\n".join(lines), None
+                return "\n".join(lines)
 
     # 3. Next in queue / top of queue
     if not is_multi_question and any(k in t_lower for k in ["next", "upcoming", "top of queue", "queue next", "what's next"]):
@@ -798,8 +840,8 @@ def answer_natural_language_query(text: str):
             if lines:
                 out = ["📋 <b>Next 5 Roles in Priority Queue:</b>", ""]
                 out += [f"{i}. {h(l.split('   ')[0])}" for i, l in enumerate(lines, 1)]
-                return "\n".join(out), None
-        return "Queue is currently empty or loading.", None
+                return "\n".join(out)
+        return "Queue is currently empty or loading."
 
     # 4. Inbox actions / replies / interviews
     if not is_multi_question and any(k in t_lower for k in ["inbox", "reply", "replies", "interview", "assessment", "recruiter", "email"]):
@@ -807,8 +849,8 @@ def answer_natural_language_query(text: str):
         if inbox_file.exists():
             lines = [l for l in inbox_file.read_text(encoding="utf-8").splitlines() if l.startswith("- [")]
             if lines:
-                return "\n".join(["📬 <b>Urgent Recruiter Inbox Actions:</b>", ""] + [h(l) for l in lines[-5:]]), None
-        return "📬 <b>No urgent recruiter actions or interview requests pending in your inbox right now.</b>", None
+                return "\n".join(["📬 <b>Urgent Recruiter Inbox Actions:</b>", ""] + [h(l) for l in lines[-5:]])
+        return "📬 <b>No urgent recruiter actions or interview requests pending in your inbox right now.</b>"
 
     # 5. Pending questions
     if not is_multi_question and any(k in t_lower for k in ["pending question", "questions", "need answer", "needs you", "unanswered"]):
@@ -820,32 +862,8 @@ def answer_natural_language_query(text: str):
                 if item.get("options"):
                     out.append(f"  Options: {h(', '.join(item['options'][:4]))}")
                 out.append(f"  Reply: <code>answer {h(item.get('id'))}: your answer</code>")
-            return "\n".join(out), None
-        return "✅ <b>All caught up!</b> There are no pending questions waiting for your answer.", None
+            return "\n".join(out)
+        return "✅ <b>All caught up!</b> There are no pending questions waiting for your answer."
 
-    # 6. User answering a question: only with an explicit id
-    parsed = parse_answer_command(t)
-    if parsed:
-        return resolve_pending_question(*parsed)["msg"], None
-    if re.match(r"^\s*(?:answer|ans)\s*:", t, re.I):
-        return "⚠️ Include the question id: <code>answer &lt;id&gt;: your answer</code> (the id is shown on each question).", None
+    return None
 
-    m_rule = re.search(r"^set rule\s*:\s*(.+?)\s*=\s*(.+)$", t, re.I)
-    if m_rule:
-        res = save_rule(m_rule.group(1), m_rule.group(2), "telegram_user")
-        if res["ok"]:
-            return f"✅ Rule saved: <b>{h(m_rule.group(1).strip())}</b> ➔ <b>{h(res['answer'])}</b>", None
-        return f"⚠️ {res['msg']}", None
-
-    # 7. Ask OpenRouter / Gemini AI (with live DB fallback when using real keys)
-    try:
-        ai_resp, proposal_id = ask_ai(t)
-    except AIError as e:
-        if os.getenv("OPENROUTER_API_KEY", "").strip() == "test-key-not-real":
-            return f"⚠️ <b>AI assistant error:</b> {h(e)}. Your message was not acted on; try again in a minute.", None
-        return _answer_from_live_database(t), None
-    if ai_resp:
-        return f"✨ <b>Job Deck AI:</b>\n\n{ai_resp}", proposal_id
-
-    return (f"🤷 I didn't recognize <i>\"{h(t)}\"</i> as a command, and the AI assistant is not configured "
-            f"(no OPENROUTER_API_KEY). Nothing was changed. Send /start for the command list."), None
