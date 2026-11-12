@@ -1285,8 +1285,10 @@ async def runner_watchdog_supervisor_job(context: ContextTypes.DEFAULT_TYPE):
     restart_num = RUNNER_SUPERVISOR_STATE["auto_restarts"]
     print(f"[Supervisor Watchdog] Detected IDLE runner (desired=running). Auto-restarting #{restart_num}...", flush=True)
 
-    # Replenish if queue inventory is low
-    if m.get("unapplied_count", 0) < 25:
+    # Refill when low, or every 30 min while the runner keeps stopping: the raw unapplied count includes jobs the
+    # gates reject, so it never looked low while the eligible supply was empty
+    if m.get("unapplied_count", 0) < 25 or now - RUNNER_SUPERVISOR_STATE.get("last_refill", 0.0) > 1800:
+        RUNNER_SUPERVISOR_STATE["last_refill"] = now
         try:
             added = await asyncio.to_thread(replenish_queue_action)
             print(f"[Supervisor Watchdog] Auto-replenished +{added} fresh target roles.", flush=True)

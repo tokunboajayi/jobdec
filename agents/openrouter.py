@@ -38,7 +38,7 @@ def _anthropic_fallback(system, messages, max_tokens=600, temperature=0.3, timeo
     if not ankey or ankey == "test-key-not-real":
         return None
     req_body = json.dumps({
-        "model": "claude-sonnet-4-5",
+        "model": os.getenv("ANTHROPIC_MODEL", "claude-haiku-5-5"),  # owner 2026-11-11: Anthropic first, cheapest model
         "max_tokens": max_tokens,
         "temperature": temperature,
         "system": system,
@@ -77,6 +77,10 @@ def _anthropic_fallback(system, messages, max_tokens=600, temperature=0.3, timeo
 def chat(system, messages, max_tokens=600, temperature=0.3, json_mode=False, timeout=20):
     """messages: [{"role": "user"|"assistant", "content": str}]. Returns (text, usage). Raises OpenRouterError."""
     key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    if key != "test-key-not-real" and os.getenv("AI_PROVIDER", "anthropic") == "anthropic":
+        fb = _anthropic_fallback(system, messages, max_tokens=max_tokens, temperature=temperature, timeout=timeout)
+        if fb:
+            return fb
     if not key:
         fb = _anthropic_fallback(system, messages, max_tokens=max_tokens, temperature=temperature, timeout=timeout)
         if fb:
