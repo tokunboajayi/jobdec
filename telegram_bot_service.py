@@ -270,14 +270,11 @@ def get_realtime_metrics():
     pending_questions = telegram_query_engine.load_pending_questions()
 
     # Inbox Actions Check
-    inbox_actions = []
-    inbox_path = ROOT / "agents" / "inbox_actions.md"
-    if inbox_path.exists():
-        try:
-            with open(inbox_path, "r", encoding="utf-8", errors="ignore") as f:
-                inbox_actions = [l.strip() for l in f if l.strip().startswith("-") or l.strip().startswith("*")]
-        except Exception:
-            pass
+    try:  # last 14 days only: month-old, finished assessments kept showing as urgent
+        from agents.inbox_analyst import open_actions
+        inbox_actions = open_actions(14)
+    except Exception:
+        inbox_actions = []
 
     # System RAM & Adaptive Concurrency
     mem = psutil.virtual_memory()
@@ -2319,8 +2316,16 @@ async def check_inbox_radar_job(context: ContextTypes.DEFAULT_TYPE):
             except Exception:
                 pass
 
-        m = get_realtime_metrics()
-        inbox = m.get("inbox_actions", [])
+        # only new items from the last 14 days, each alerted once (it re-sent the 5 oldest every 30 min forever)
+        from agents.inbox_analyst import open_actions
+        sent_file = candidate.DATA / "radar_alerted.json"
+        try:
+            sent = set(json.loads(sent_file.read_text(encoding="utf-8")))
+        except Exception:
+            sent = set()
+        inbox = [l for l in open_actions(14) if l not in sent]
+        if inbox:
+            sent_file.write_text(json.dumps(sorted(sent | set(inbox))), encoding="utf-8")
         if inbox and not new_advs:
             urgent_items = "\n".join(f"• {item}" for item in inbox[:5])
             alert = (

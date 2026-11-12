@@ -90,3 +90,4 @@ telegram_*_state.json
 learning_report.md
 REVIEW*.md
 .wai-tmp/
+radar_alerted.json
