@@ -198,18 +198,33 @@ def classify_decision_text(subject: str, body: str) -> Dict[str, Any]:
 
 
 def find_matching_application(sender: str, subject: str, body: str, applications: List[Dict[str, str]]) -> Optional[Dict[str, str]]:
-    """Matches an incoming email to a specific row in applications.csv."""
-    combined = f"{sender} {subject} {body[:500]}".lower()
+    """Matches an incoming email to a specific row in applications.csv.
 
-    for app in applications:
+    AJ 2026-11-12 fix: the old version matched any company name as a raw substring of the first 500 body
+    chars, so 'Icon' matched words like 'silicon'/'icons' and a Sovrano AI email was filed under Icon.
+    Now: whole-word match only; the company must appear in the SENDER or SUBJECT (body-only mentions are
+    ignored); longest company names are tried first so 'Nissan Global' beats 'Nissan'.
+    """
+    head = f"{sender} {subject}".lower()
+    head_compact = re.sub(r"[^a-z0-9]", "", head)
+
+    def _hit(comp: str) -> bool:
+        words = re.sub(r"[^a-z0-9 ]", " ", comp).split()
+        if not words:
+            return False
+        phrase = r"\b" + r"\W*".join(map(re.escape, words)) + r"\b"
+        if re.search(phrase, head):
+            return True
+        # sender domains like no-reply@icon.com / prizepicks@myworkday.com: compact match only for names >= 6 chars
+        compact = "".join(words)
+        return len(compact) >= 6 and compact in head_compact
+
+    for app in sorted(applications, key=lambda a: -len(a.get("Company", ""))):
         comp = app.get("Company", "").strip().lower()
         if not comp or len(comp) < 3:
             continue
-        # Clean company name
-        comp_clean = re.sub(r"[^a-zA-Z0-9]", "", comp)
-        if comp in combined or comp_clean in re.sub(r"[^a-zA-Z0-9]", "", combined):
+        if _hit(comp):
             return app
-
     return None
 
 

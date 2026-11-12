@@ -13,14 +13,47 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT))
+sys.stdout.reconfigure(errors="replace")  # emoji crashed piped output on Windows cp1252 consoles
+
+
+def create_account(name: str) -> Path:
+    """Beta sign-up: a new private candidate home profiles/<name>/ built from the templates (git-ignored)."""
+    import re
+    import shutil
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{1,31}", name):
+        sys.exit("Account name: 2-32 lowercase letters, digits, - or _ (e.g. jane-doe).")
+    home = ROOT / "profiles" / name
+    if home.exists():
+        sys.exit(f"{home} already exists. Use it with: set JOBDEC_HOME=profiles/{name}")
+    (home / "resumes").mkdir(parents=True)
+    # the template's sample person (name, citizenship, GPA...) must never be submitted as this person's facts
+    env = re.sub(r"(?m)^(CANDIDATE_\w+)=.*$", r"\1=", (ROOT / ".env.example").read_text(encoding="utf-8"))
+    (home / ".env").write_text(env, encoding="utf-8")
+    shutil.copy(ROOT / "profile.example.json", home / "profile.json")
+    os.environ["JOBDEC_HOME"] = f"profiles/{name}"  # read by candidate.py on import below
+    print(f"Created account '{name}' at {home} (private: profiles/ is git-ignored).")
+    return home
+
+
+if len(sys.argv) == 3 and sys.argv[1] == "--new":
+    create_account(sys.argv[2].strip().lower())
+
 import candidate  # noqa: E402  # the active candidate (JOBDEC_HOME): .env, profile.json, resumes/
 
 BANNER = """
 ========================================================================
-             AJ AUTONOMOUS APPLICATION ENGINE & JOB DECK
+               JOB DECK AUTONOMOUS APPLICATION ENGINE
                  Comprehensive Step-by-Step Setup Wizard
 ========================================================================
 """
+
+
+def ask(prompt: str) -> str:
+    """input() that treats end of input as skip (on Windows NUL claims to be a tty)."""
+    try:
+        return input(prompt).strip()
+    except EOFError:
+        return ""
 
 
 def clear_screen():
@@ -108,7 +141,7 @@ def check_or_setup_profile() -> bool:
     lines = []
     for k, label in keys:
         if not facts[k]:
-            v = input(f"Enter {label}: ").strip()
+            v = ask(f"Enter {label}: ")
             if v:
                 lines.append(f"CANDIDATE_{k}={v}")
     if lines:
@@ -157,8 +190,8 @@ def check_dual_channel_notifications() -> bool:
             print("1. Open Telegram and search for @BotFather.")
             print("2. Send /newbot and copy the API token.")
             print("3. Search for @userinfobot to get your numeric Chat ID.")
-            token_input = input("Enter TELEGRAM_BOT_TOKEN (or press Enter to skip): ").strip()
-            chat_input = input("Enter TELEGRAM_CHAT_ID (or press Enter to skip): ").strip()
+            token_input = ask("Enter TELEGRAM_BOT_TOKEN (or press Enter to skip): ")
+            chat_input = ask("Enter TELEGRAM_CHAT_ID (or press Enter to skip): ")
             if token_input and chat_input:
                 with open(env_path, "a", encoding="utf-8") as f:
                     f.write(f"\nTELEGRAM_BOT_TOKEN={token_input}\nTELEGRAM_CHAT_ID={chat_input}\n")

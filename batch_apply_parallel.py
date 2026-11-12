@@ -734,6 +734,7 @@ def main():
 
     def scaler_monitor():
         nonlocal current_target_workers, next_worker_id
+        last_up_reading = None
         while not stop_flag:
             time.sleep(15)
             # PC Optimizer: Purge orphaned zombie browsers & trim active memory
@@ -746,6 +747,12 @@ def main():
             if not args.adaptive or stop_flag:
                 continue
             new_target = calculate_optimal_workers(args.min_workers, args.max_workers)
+            # RAM hovering at a threshold flipped 1<->2 every 15s, spawning a new worker each time: scale up only
+            # when two readings in a row agree; scale down at once.
+            up_ready = new_target <= current_target_workers or new_target == last_up_reading
+            last_up_reading = new_target if new_target > current_target_workers else None
+            if not up_ready:
+                continue
             with state_lock:
                 if new_target != current_target_workers:
                     old_target = current_target_workers

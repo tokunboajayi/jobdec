@@ -135,7 +135,20 @@ pip install -r requirements.txt
 playwright install chromium
 ```
 
-### 2. Configure Your Environment
+### 2. Create Your Account (beta)
+```bash
+python setup_wizard.py --new your-name
+```
+This creates your private home `profiles/your-name/` (`.env`, `profile.json`, `resumes/`; git-ignored, never committed) and walks you through your details. Put your resume in `profiles/your-name/resumes/`, then run any command with your account selected:
+```bash
+# Windows (cmd):   set JOBDEC_HOME=profiles/your-name
+# PowerShell:      $env:JOBDEC_HOME = "profiles/your-name"
+# macOS / Linux:   export JOBDEC_HOME=profiles/your-name
+python daily_run.py --dry-run
+```
+Each account has its own applications, results, queues and Telegram state. See `profiles/README.md`.
+
+### Single-user setup (alternative)
 ```bash
 # 1. Create your environment variables
 cp .env.example .env
