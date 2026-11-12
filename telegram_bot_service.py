@@ -2826,11 +2826,17 @@ def main():
 
     # One bot per token: on 2026-11-11 three old copies were still polling, so taps landed on old code at random
     others = []
+    my_pid = os.getpid()
     for p in psutil.process_iter(["pid", "name"]):
         try:
-            if p.pid != os.getpid() and (p.info["name"] or "").lower().startswith("python") and "telegram_bot_service" in " ".join(p.cmdline()):
-                others.append(p.pid)
-        except psutil.Error:
+            if p.pid == my_pid:
+                continue
+            if (p.info.get("name") or "").lower().startswith("python"):
+                cmd = p.cmdline()
+                # Ignore self, launcher scripts, or one-off python -c commands
+                if any("telegram_bot_service.py" in arg for arg in cmd) and not any("-c" in arg for arg in cmd):
+                    others.append(p.pid)
+        except (psutil.Error, Exception):
             pass
     if others:
         print(f"[!] Another Job Deck bot is already running (pid {others}). Stop it first; not starting a second one.", flush=True)
