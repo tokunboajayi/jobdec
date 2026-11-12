@@ -59,11 +59,24 @@ def _read_json(path: Path, default):
 
 
 def _write_json_atomic(path: Path, obj):
-    """tmp + os.replace so a crash or a concurrent reader never sees a half-written file (A-5)."""
+    """tmp + os.replace with Windows retry so a crash or a concurrent reader never sees a half-written file (A-5)."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(f"{path.name}.{os.getpid()}.tmp")
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.{time.time_ns()}.tmp")
     tmp.write_text(json.dumps(obj, indent=2), encoding="utf-8")
-    os.replace(tmp, path)
+    for attempt in range(5):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            if attempt == 4:
+                # Direct overwrite fallback for Windows file lock hiccups
+                try:
+                    path.write_text(json.dumps(obj, indent=2), encoding="utf-8")
+                    tmp.unlink(missing_ok=True)
+                    return
+                except Exception:
+                    raise
+            time.sleep(0.05)
 
 
 def question_id(label: str) -> str:

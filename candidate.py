@@ -23,10 +23,14 @@ def path(name, legacy):
     return HOME / name if HOME else legacy
 
 
-ENV = path(".env", AUTOFILL.parent.parent / ".env")
+_legacy_env = AUTOFILL / ".env" if (AUTOFILL / ".env").exists() else (AUTOFILL.parent / ".env" if (AUTOFILL.parent / ".env").exists() else AUTOFILL.parent.parent / ".env")
+_legacy_resumes = AUTOFILL / "resumes" if (AUTOFILL / "resumes").exists() else AUTOFILL.parent / "resumes"
+_legacy_applications = AUTOFILL / "applications.csv" if (AUTOFILL / "applications.csv").exists() else AUTOFILL.parent / "applications.csv"
+
+ENV = path(".env", _legacy_env)
 PROFILE = path("profile.json", AUTOFILL / "profile.json")
-RESUMES = path("resumes", AUTOFILL.parent / "resumes")
-APPLICATIONS = path("applications.csv", AUTOFILL.parent / "applications.csv")
+RESUMES = path("resumes", _legacy_resumes)
+APPLICATIONS = path("applications.csv", _legacy_applications)
 DATA = path("data", AUTOFILL)  # results.csv, queues, response cache, Telegram state
 if HOME:
     DATA.mkdir(parents=True, exist_ok=True)
